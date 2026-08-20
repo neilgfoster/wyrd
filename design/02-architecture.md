@@ -120,6 +120,9 @@ The dice roller being external code is not pedantry. It is the thing that makes 
 feel indifferent to the player, and it is the only defence against constraint 1 eroding
 quietly over a long campaign.
 
+Engineering ground rules for all of this — deterministic-over-inference, stdlib-only Python,
+the MCP-shaped tool catalog, and model tiering — are in [`07-tooling.md`](07-tooling.md).
+
 ## Deployment
 
 Runs on the lab server, reached from a phone via remote control. The chronicle is a git

@@ -22,6 +22,7 @@ Fate, Fear.
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the NPC party |
 | [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, the long defeat |
 | [06-state](design/06-state.md) | The save schema |
+| [07-tooling](design/07-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
 
 **Reference** — where it came from:
 
