@@ -23,6 +23,7 @@ Fate, Fear.
 | [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, the long defeat |
 | [06-state](design/06-state.md) | The save schema |
 | [07-tooling](design/07-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
+| [08-maintenance](design/08-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
 
 **Reference** — where it came from:
 

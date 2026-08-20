@@ -104,7 +104,12 @@ wyrd advance-time <days>               # calendar, Threat activation, expected-v
 wyrd threat-check                      # weekly d12 per Threat
 wyrd save / wyrd load / wyrd validate  # atomic writes, schema validation
 wyrd recap                             # regenerate recap.md from state
+wyrd doctor [--repair|--propose]       # chronicle health: integrity, decay, budget
+wyrd optimise                          # reindex, recompact, canonicalise
 ```
+
+Maintenance is a first-class engine function, not a chore — see
+[`08-maintenance.md`](08-maintenance.md).
 
 Everything else is **skills** — prompt-level instructions Claude follows:
 
