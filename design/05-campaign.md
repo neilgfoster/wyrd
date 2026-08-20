@@ -186,9 +186,71 @@ and defend your own.
 ## Succession
 
 A chronicle running years may outlast one rat-catcher. When the PC dies, is damned, or
-retires, the default is **succession, not replacement**: an apprentice, a child, a
-companion. They inherit the holdings, the threads, the enemies, and the reputation —
-and none of the competence.
+retires, the default is **succession, not replacement** — but succession is inherited
+**through the thread, not the bloodline**.
 
-"Your daughter inherits the ledger and the enemies" keeps a decade of history live in a way
-a fresh character never can.
+"Your son takes up the sword" is the weakest available version. It is sentimental, it is
+not how the Old World works, and it makes the chronicle about a family when it should be
+about a rot that outlives everyone who touches it.
+
+### The successor comes from the codex
+
+The next PC is someone **already in the chronicle** — a name that has appeared, however
+briefly. Claude selects from `codex/npc/` by *entanglement*, not affection. Strong
+candidates, roughly in order of how well they carry a story:
+
+- **Someone the old PC wronged.** The debt they never repaid; the family they failed to
+  warn; the witness they left in the cellar. They inherit the consequences and the grudge.
+- **Someone who was investigating them.** A witch hunter, a bailiff's clerk, a rival
+  agitator who had a file on you and now has to finish what you started, hating it.
+- **A bystander whose life the old PC's actions changed.** The miller's daughter, after the
+  mill. She never chose this.
+- **A rival.** Someone who wanted what you had and now has your enemies as well.
+- **Whoever found what you left behind.** The ledger, the body, the thing in the cellar.
+  Possession of the evidence is itself an inheritance.
+- **A companion** — still permitted, but the *least* interesting option, because the bond is
+  already established and nothing has to be re-earned.
+
+The successor need not have liked the old PC. They may have been hunting them. A witch
+hunter who took the case, and now carries the corruption they were sent to burn out, is a
+better second act than any heir.
+
+### What is actually inherited
+
+**Not property. Unfinished business.**
+
+| Inherited | Not inherited |
+|---|---|
+| Open **threads**, at their current heat | Skills, careers, advances |
+| The **enemies** the old PC made | Stamina, Luck, Fate |
+| Active **Threats** and their Imminence | Reputation *(a new label starts, possibly hostile)* |
+| What the world **believes** about the old PC | Corruption, mutations, derangements |
+| The **rot** itself, still growing | Any assumption of goodwill |
+
+**Holdings are not automatically passed on.** A cottage may be seized for debt, burned,
+occupied by squatters, or fall to someone else entirely. If it does reach the successor it
+should arrive encumbered — with the debt, the obligation, or the thing living under it.
+Losing the holding is often the better story, and it is a legitimate outcome of the old PC's
+death rather than a punishment.
+
+Reputation is the sharpest inheritance. `reputation 6 (the Grenzstadt murders)` does not
+die with the person it described. The successor may spend years being mistaken for what
+their predecessor was, or condemned for it.
+
+### The old PC does not leave
+
+If they were **damned**, they became an NPC Claude controls — and the successor may meet
+them. If they **died**, what they did persists in the codex as fact and in the world as
+rumour, and the two need not match. If they **retired**, they are somewhere, and can be
+found, and may not want to be.
+
+This is the mechanism that makes an era boundary meaningful: the chronicle continues, the
+protagonist does not, and the thing they were fighting is still there — larger, and now
+partly their fault.
+
+### At the table
+
+Succession is offered, never imposed. On a character's end Claude proposes **two or three
+candidates from the codex** with a line each on how they are entangled, and the player
+chooses — or declines and starts clean. Declining is legitimate; the threads simply stay
+open and go cold in their own time.

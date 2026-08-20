@@ -123,6 +123,20 @@ Each carries a one-line summary at the top for cheap matching, then detail, then
 `last_seen:` and `knows:` block recording what the *player* has learned — distinct from what
 is true.
 
+NPC entries also carry an **entanglement** block, which is what makes thread-based
+succession possible (see [`05-campaign.md`](05-campaign.md)):
+
+```yaml
+entanglement:
+  threads: [the-escaped-patron, the-rot-beneath-grenzstadt]
+  owed: "the PC left her brother in the cellar"
+  disposition: hostile        # ally | wary | hostile | hunting | unaware
+  viable_successor: true
+```
+
+`viable_successor` is set by Claude when an NPC becomes sufficiently entangled to carry a
+chronicle on their own. On the PC's death these are the candidates offered.
+
 ## `recap.md`
 
 Regenerated at every session close. Always loaded. Target ~200 words:
