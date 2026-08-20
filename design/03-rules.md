@@ -23,6 +23,36 @@ Warlock book is usable as printed.
 
 **Difficulty:** a penalty of **2** (difficult) or **4** (very difficult) to skill.
 
+### Declaration — how you say it changes the odds
+
+The same action declared well is a different action. Wyrd rewards this mechanically, using
+the same 2/4 steps as difficulty but in the player's favour:
+
+| Declaration | Effect |
+|---|---|
+| So well-judged it removes the risk | **No roll.** It works. |
+| Specific and in character — names the thing, uses what the character knows or carries | **+2** |
+| Specific *and* leverages something established — a prior fact, a relationship, a piece of gear, an open thread | **+4** |
+| Brief or unelaborated | no bonus, **no penalty** |
+| Against the character's established nature | GM may invoke a Passion for **−5** |
+
+Two guard rails that matter more than the table:
+
+**Never reward length.** A terse declaration that is specific and in character earns the
+bonus; a paragraph of atmosphere that could apply to anyone does not. "I show her the key
+and ask her to check the lock herself" is worth +2 in six words.
+
+**Never penalise brevity.** Sessions happen on a phone in twenty minutes. "I search the
+ledger" must remain a completely viable way to play — it simply forfeits the bonus. The
+mechanic is an upside for engagement, never a tax on being busy.
+
+**Prefer no roll to a big bonus.** Warlock only calls for a roll when the action is
+"difficult, dangerous, or has a large risk of failure". A plan good enough to remove the
+risk should just succeed. Saying yes is stronger than granting +4, and it is the correct
+reward for a player who has actually solved the problem.
+
+Passion invocation (+5, once per session) stacks with this.
+
 **Opposed:** both roll `d20 + skill`; higher wins; ties to the defender. Wyrd dice are rolled
 by the acting side.
 

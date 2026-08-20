@@ -97,6 +97,26 @@ threats:
     known_to_player: partial       # none | rumoured | partial | understood
 ```
 
+## Objectives — what the world is doing
+
+Simulation needs the world's intentions in state, not in Claude's head, or they drift.
+Every NPC and faction that matters carries a live objective with a *current step*:
+
+```yaml
+# in codex/npc/*.md front matter, or factions.yaml
+objective:
+  wants: "the debt written off before the Overseer sees the ledger"
+  because: "her brother signed it and she witnessed it"
+  next_step: "find out whether Wendel remembers the tavern"
+  blocked_by: "cannot be seen taking an interest in the record house"
+  will_escalate_to: "burn the shrine's outbuilding as a distraction"
+  timeline: "before Marktag"
+```
+
+`next_step` advances whether or not the player is present, and is what Claude consults
+before deciding how an NPC reacts. This is the difference between an NPC who responds
+plausibly and one who responds *predictably*.
+
 ## `threads.yaml`
 
 ```yaml
