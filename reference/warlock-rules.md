@@ -144,3 +144,23 @@ Near-mechanical, on this base:
 - Magic -> psychic powers; **Wrath of the Otherworld becomes Perils of the Warp with no
   structural change** — reskin the miscast table, keep the mechanism
 - Compendium 2's firearms rules (Readiness / Misfire / Boom!) port directly
+
+## Editions and other notes
+
+**Which book is canonical:** *Traitor's Edition* (2022) is the fuller revision of the 2020
+first printing — same 146pp, same structure, ~18% more text. Content differences are
+minor. **Use Traitor's Edition.** The Compendia are additive, not replacements.
+
+**Scenario guidance is thin.** The "Mastery" chapter's *Scenario Forms* section is general
+GM advice — it names the scripted-vs-freeform tension and recommends a blend, but offers no
+scenario format or structure. Wyrd must design its own. Worth noting the tension it
+identifies is exactly the one Wyrd has to resolve: scripted scenarios railroad and get
+abandoned when the player deviates; pure freeform makes players "lose focus... if they
+think the games master is making it up." **Situation-with-agendas, not script** is the
+answer to both.
+
+**Warhammer Fighting Fantasy Roleplay** (`Advanced Fighting Fantasy/03 - Warhammer Fighting
+Fantasy Roleplay`) is a 43-page fan conversion of Warhammer to Advanced Fighting Fantasy 2e
+(SKILL / STAMINA / LUCK / MAGIC). It has races, skills, equipment, settlement tables and
+good Old World name lists — but **no careers, corruption, insanity, fate or fear rules**.
+Useful as a naming and flavour resource; not as a mechanical source.
