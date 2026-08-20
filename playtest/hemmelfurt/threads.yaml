@@ -1,0 +1,29 @@
+threads:
+  - id: the-cut-page
+    opened: {year: 2512, month: Pflugzeit, day: 1}
+    summary: "a page cut cleanly from the shrine ledger; entries either side dated
+              11 Pflugzeit — nine days before it was taken"
+    hooks: [law, records, debt, hemmelfurt]
+    heat: 5
+    status: open
+  - id: the-man-who-was-buying
+    opened: {year: 2512, month: Pflugzeit, day: 1}
+    summary: "someone bought Wendel drink after drink at the Drowned Cat and laughed
+              at his jokes. Unidentified."
+    hooks: [drinking, the-drowned-cat, hemmelfurt]
+    heat: 4
+    status: open
+  - id: the-hinge
+    opened: {year: 2512, month: Pflugzeit, day: 1}
+    summary: "Wendel remembers the shrine door's lower hinge in the missing hours.
+              He came back. He does not know what he did, or whether he was alone."
+    hooks: [memory, the-cut-page]
+    heat: 4
+    status: open
+  - id: who-knew-the-reckoning-was-coming
+    opened: {year: 2512, month: Pflugzeit, day: 1}
+    summary: "the page was cut nine days after its entries and four days before the
+              Overseer's boat. Someone was working to a calendar."
+    hooks: [overseer, hemmelfurt, law]
+    heat: 3
+    status: open

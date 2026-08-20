@@ -1,0 +1,16 @@
+# Playtest chronicle — Wyrd 0.0.x, rules being tuned in play.
+# Hand-maintained: no engine exists yet. Schema per design/06-state.md.
+name: hemmelfurt
+setting: reikland
+engine_version: 0.0.3          # dice mechanic revised twice during session 1
+created_under: 0.0.1
+calendar: {year: 2512, month: Pflugzeit, day: 1}
+era: "The Quiet Years"
+sessions: 1
+deadline: "the Overseer arrives on the Marktag boat — day 4"
+migrations:
+  - {from: 0.0.1, to: 0.0.2, class: tuning,
+     note: "3d6 target 20 -> 17; starting characters unplayable at 20"}
+  - {from: 0.0.2, to: 0.0.3, class: behavioural,
+     note: "3d6 replaced by d20 + separate 2d6 Wyrd dice; 3d6@17 made skill-14 infallible.
+            Forward-only: both session-1 failures stand (they fail under d20 too)."}

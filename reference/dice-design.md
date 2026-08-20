@@ -36,40 +36,80 @@ On a hard task a success *cannot* carry a bane: if the total cleared a high targ
 coloured die cannot have been a 1. **Rejected** — the awkward quadrants vanish precisely
 when they would be most dramatic.
 
-## Target number: 17, not 20 *(corrected by playtest)*
+## Resolution: d20 for the total, 2d6 alongside it *(settled by playtest)*
 
-**The equal-mean argument was wrong in effect.** `3d6` and `d20` do share a mean of 10.5,
-but that is irrelevant — what matters is the probability at the range actually rolled, and
-Warlock's target of 20 puts starting characters (skills 4-6) in the far tail of a bell
-curve:
+Two earlier attempts failed, and both failures were instructive.
 
-| Skill | Need vs 20 | d20 | 3d6 |
-|---|---|---|---|
-| 4 | 16 | 25% | **4.6%** |
-| 5 | 15 | 30% | **9.3%** |
-| 6 | 14 | 35% | **16.2%** |
+**Attempt 1 — `3d6 + skill vs 20`.** The equal-mean argument (`3d6` and `d20` both average
+10.5) was true and irrelevant. What matters is the probability *at the range actually
+rolled*, and target 20 puts starting characters in the far tail of a bell curve. Found on
+the first two rolls of the first playtest: a skill-6 test succeeds 16.2% of the time instead
+of d20's 35%.
 
-Found on the first two rolls of the first playtest: a starting Initiate attempted two things
-well within his competence at 9% and 16%. Unplayable.
+**Attempt 2 — `3d6 + skill vs 17`.** Fixed the bottom by breaking the top:
 
-**Target is 17.** With Warlock's existing difficulty penalties of 2 and 4 intact:
+| Skill | 3d6 vs 17 | d20 vs 20 |
+|---|---|---|
+| 4 | 25.9% | 25.0% |
+| 6 | 50.0% | 35.0% |
+| 10 | 90.7% | 55.0% |
+| 12 *(career cap)* | 98.1% | 65.0% |
+| 14 | **100.0%** | 75.0% |
 
-| Skill | Need vs 17 | P(success) | at -2 | at -4 |
-|---|---|---|---|---|
-| 4 (untrained) | 13 | 25.9% | 16.2% | 9.3% |
-| 6 (starting career) | 11 | 50.0% | 37.5% | 25.9% |
-| 8 | 9 | 74.1% | 62.5% | 50.0% |
-| 10 | 7 | 90.7% | 83.8% | 74.1% |
-| 12 (career cap) | 5 | 98.1% | 95.4% | 90.7% |
+At skill 14 a character literally cannot fail. A bell curve compresses its tails by nature,
+so you can have playable novices **or** fallible veterans, not both.
 
-The bell curve still compresses the top — a maxed career skill is near-certain at its own
-speciality. That is acceptable and arguably correct: **Wyrd's lethality comes from combat
-criticals and corruption, not from veterans fumbling their own trade.** The 2/4 difficulty
-penalties are what keep hard tasks hard for the competent, and they now matter much more
-than they did in Warlock, so use them.
+**The error in both was making the side-effect dice part of the total.** Separate them and
+the problem dissolves.
 
-Note this means Warlock's printed skill values carry over but its **target number does
-not**. Any Warlock material must be read with 17 substituted for 20.
+### The mechanic
+
+> **Roll `d20 + skill vs 20` for success** — Warlock, entirely unchanged.
+> **Roll `2d6` alongside — the Wyrd dice — which never contribute to the total.**
+> **If they match, something else happened. The matched value says what.**
+
+| Wyrd dice | Chance | Result |
+|---|---|---|
+| 1,1 | 2.8% | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
+| 2,2 | 2.8% | **Bane** — a complication |
+| 3,3 / 4,4 | 5.6% | **Twist** — a detail, no mechanical weight |
+| 5,5 | 2.8% | **Boon** — an advantage |
+| 6,6 | 2.8% | **Comet** — a significant break in the player's favour |
+| no match | 83.3% | nothing |
+
+Snake eyes is the Chaos Star; boxcars is the Comet.
+
+### Why this one works
+
+- **Warlock's maths is preserved exactly** — 25% at skill 4, 65% at skill 12, 75% at skill
+  14. Novices can act; veterans stay fallible. Every Warlock book in the library is usable
+  **as printed**, with no substitution and no retuning.
+- **The axes are genuinely independent** — not merely orthogonal-ish as with AGE's doubles,
+  but statistically unrelated, because the `2d6` contribute nothing to the outcome. Success
+  with a Chaos Star and failure with a Comet are equally possible at *every* difficulty.
+  This was the original requirement and it is the first scheme to fully meet it.
+- **Difficulty** stays Warlock's penalty of 2 or 4 to skill.
+
+### The known cost
+
+Side-effect frequency drops from AGE's 44% to **16.7%** — roughly one in six rolls, so
+perhaps one per short session. That may prove too sparse.
+
+It is the safer direction to be wrong in, and it is tunable without an engine release
+(see [`../design/09-evolution.md`](../design/09-evolution.md)): widen by treating any single
+`1` on a Wyrd die as a bane even without a match, which adds ~14%.
+
+### Corruption still bends the dice
+
+Following TOR's Eye-of-Sauron precedent, the threat is gated by state:
+
+| Corruption | Reads as Chaos Star |
+|---|---|
+| 0-2 | 1,1 |
+| 3-5 | 1,1 and 2,2 |
+| 6+ | 1,1 · 2,2 · 3,3 |
+
+The world goes wrong around you more often as you rot, and your competence is untouched.
 
 ## Prior art
 

@@ -13,42 +13,38 @@ read, and TOR's Hope/Shadow balance. Sources:
 
 ## 1. Resolution
 
-> **Roll 3d6 + skill vs 17.** One die is the **Wyrd die**, a different colour.
-> - **The total** decides success or failure.
-> - **Doubles** (any two dice matching) decide *whether something else happened*.
-> - **The Wyrd die** decides *what kind*.
+> **Roll `d20 + skill vs 20`** for success — Warlock, unchanged.
+> **Roll `2d6` alongside — the Wyrd dice — which never touch the total.**
+> **If they match, something else happened; the matched value says what.**
 
-Warlock's printed **skill values carry over; its target number does not.** Warlock uses
-`d20 + skill >= 20`; on `3d6` that target puts starting characters in the far tail of the
-bell curve (a skill-6 test would succeed 16% of the time instead of 35%). **17** restores
-playable odds at the low end while letting competence tell at the high end. See
-[dice-design](../reference/dice-design.md) for the full table. Read any Warlock material
-with 17 substituted for 20.
+Warlock's numbers carry over exactly: 25% at skill 4, 65% at a career cap of 12. Novices can
+act and veterans stay fallible, which a bell curve cannot deliver at both ends. Every
+Warlock book is usable as printed.
 
-**Difficulty:** a penalty of **2** (difficult) or **4** (very difficult) to skill. That is
-the whole difficulty system, as in Warlock.
+**Difficulty:** a penalty of **2** (difficult) or **4** (very difficult) to skill.
 
-**Opposed:** both roll `3d6 + skill`; higher total wins. Ties go to the defender.
+**Opposed:** both roll `d20 + skill`; higher wins; ties to the defender. Wyrd dice are rolled
+by the acting side.
 
 ### The Wyrd die
 
 Read **only when doubles are rolled** (44.4% of rolls):
 
-| Wyrd die | Result |
-|---|---|
-| 1 | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
-| 2 | **Bane** — a complication |
-| 3–4 | **Twist** — a detail, no mechanical weight |
-| 5 | **Boon** — an advantage |
-| 6 | **Comet** — a significant break in the player's favour |
+| Wyrd dice | Chance | Result |
+|---|---|---|
+| 1,1 | 2.8% | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
+| 2,2 | 2.8% | **Bane** — a complication |
+| 3,3 / 4,4 | 5.6% | **Twist** — a detail, no mechanical weight |
+| 5,5 | 2.8% | **Boon** — an advantage |
+| 6,6 | 2.8% | **Comet** — a significant break in the player's favour |
+| no match | 83.3% | nothing |
 
-Because doubles are orthogonal to the total, *every* combination is reachable: a success
-carrying a Chaos Star, a failure carrying a Comet. Rare, but never impossible — which is
-what margin-based systems get wrong.
+Because the Wyrd dice contribute nothing to the total, the axes are **statistically
+independent**: a success carrying a Chaos Star and a failure carrying a Comet are equally
+possible at every difficulty. This is what margin-based systems get wrong.
 
-**Magnitude**, when it matters, is the doubled value (as AGE's stunt points). Banes and
-boons should draw from a costed menu per the AGE model rather than being invented freely —
-see `engine/tables/`.
+Banes and boons should draw from a costed menu (the AGE stunt model) rather than being
+invented freely — see `engine/tables/`.
 
 ### Corruption bends the die
 

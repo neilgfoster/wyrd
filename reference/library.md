@@ -12,9 +12,18 @@ Folders nest up to 7 levels; major lines are split by edition (e.g. WFRP v1–v4
 ## How to pull a file
 
 ```bash
-rclone cat "onedrive:Games/Tabletop/<path>" > /tmp/book.pdf   # single file, on demand
-rclone lsf "onedrive:Games/Tabletop/<folder>" --recursive      # browse without downloading
+rclone lsf "onedrive:Games/Tabletop/<folder>" --recursive       # browse — works
+python3 tools/pull.py "<path under Games/Tabletop>" out.pdf     # fetch one file
 ```
+
+**Do not use `rclone cat` / `rclone copy` for content.** Debian's rclone 1.60.1 (2022) fails
+on OneDrive *personal* downloads with `unauthenticated` — listing uses a different code path
+and works fine, which is why the catalogue above could be built. `tools/pull.py` goes
+straight to the Graph `@microsoft.graph.downloadUrl` and handles token refresh.
+
+Microsoft's refresh tokens are **single-use/rotating**, so concurrent refreshes invalidate
+each other and kill the stored token. `pull.py` serialises refresh behind an `flock`; do not
+work around it.
 
 ---
 

@@ -65,3 +65,7 @@ and loss.
 ## Status
 
 Design and research complete. No implementation yet.
+
+A hand-run playtest is under way in [`playtest/`](playtest/) — no engine, dice by script,
+state by hand. It has already corrected the resolution mechanic twice; see
+[playtest/README](playtest/README.md).

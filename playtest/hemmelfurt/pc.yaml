@@ -1,0 +1,45 @@
+name: Wendel Kastner
+career: initiate
+career_history: [initiate]
+god: Verena                    # rolled "The Heartstone, solid and wise"
+creed: "Power is weakness, weakness is strength."   # rolled 3
+career_skills: {incantation: 12, medicine: 12, persuasion: 12, command: 10, ostler: 10}
+career_skill: 6
+skills:
+  level_6: [incantation, persuasion, medicine, command, ostler,
+            endurance, history, appraise, streetwise, dodge]
+  level_5: [athletics, bargain, brawling, blunt, perception,
+            stealth, survival, language, navigation, etiquette]
+  default: 4
+stamina: {current: 16, max: 16}    # 2d6+12, rolled 1+3
+luck: {current: 8, max: 8}         # 1d6+7, rolled 1
+fate: {current: 2, max: 2}
+fortune: {current: 2}
+hope: {current: 5, max: 5}
+corruption: 0
+corruption_weakness: null          # derive from Vice (Drinking) — TODO
+doom_clock: null
+insanity: 0
+stress: 0
+derangements: []
+mutations: []
+fear_points: 0
+reputation: {score: 0, label: null}
+passions:
+  - {type: vice, object: drinking}
+  - {type: respect, object: "home town"}
+cruel_misfortune:
+  roll: 10
+  text: "Mistaken identity — he resembles someone famous, and at the worst
+         possible times someone makes the connection."
+  resembles: UNRESOLVED            # awaiting player input
+equipment:
+  - long robes of Verena
+  - helmet and shield of the faith (light armour)
+  - mace
+  - book of prayer
+  - one spell (unassigned)
+  - key to the record house
+wounds: []
+holdings: []
+advances_unspent: 0
