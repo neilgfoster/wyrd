@@ -24,6 +24,7 @@ Fate, Fear.
 | [06-state](design/06-state.md) | The save schema |
 | [07-tooling](design/07-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
 | [08-maintenance](design/08-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
+| [09-evolution](design/09-evolution.md) | How the engine changes without rewriting history |
 
 **Reference** — where it came from:
 
@@ -50,8 +51,10 @@ and loss.
 
 ## Build order
 
-1. **Skeleton** — save schema, atomic writes, validation, the `wyrd` CLI's dice and track
-   verbs. Prove one fight and one corruption gain round-trip through a save.
+1. **Skeleton** — save schema (including `engine_version`, `migrations[]` and provenance
+   stamping from the first commit — see [09-evolution](design/09-evolution.md)), atomic
+   writes, validation, and the `wyrd` CLI's dice and track verbs. Prove one fight and one
+   corruption gain round-trip through a save, then freeze it as the first golden chronicle.
 2. **Ruleset** — combat, criticals, the Aftermath table, Corruption/Insanity/Fate/Fear.
 3. **Reikland** — one setting, because you know instantly whether the voice is right.
 4. **One scenario, three sessions.** Play it. This is the real test.
