@@ -22,6 +22,12 @@ A **beat** is the smallest complete thing: a single goal, attempted, resolved, p
 Searching the crypt is a beat. Fighting what was in it is a second beat. Getting out with
 the ledger is a third.
 
+**This entire structure is internal.** The player never hears the words beat, Rally, episode
+or arc. They are how the engine knows when to persist, when to offer a stopping point, and
+when to compact — the equivalent of a page break, not a plot point. A Rally is felt as a
+moment where the pressure drops and it is obvious you could stop; it is never announced.
+See the GM contract in [`01-principles.md`](01-principles.md).
+
 **A session is one or more beats.** Two beats is a real session. One beat is a real session.
 
 ## The two modes
@@ -82,6 +88,10 @@ Not every session is an adventure. Four legitimate shapes:
 The Interlude is important and easy to neglect. Constraint 7 says most sessions are small;
 a session that is *only* a companion telling you something over bad beer is a good session
 and the engine should say so.
+
+Note that shape is Claude's internal read of what the session is likely to be, used for
+pacing. It is not announced either — the player does not get told they are in an Interlude,
+they get told the beer is bad.
 
 ## The Fellowship phase
 
