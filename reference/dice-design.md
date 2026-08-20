@@ -36,20 +36,40 @@ On a hard task a success *cannot* carry a bane: if the total cleared a high targ
 coloured die cannot have been a 1. **Rejected** — the awkward quadrants vanish precisely
 when they would be most dramatic.
 
-## The 3d6 coincidence worth keeping either way
+## Target number: 17, not 20 *(corrected by playtest)*
 
-**3d6 and d20 have the same mean (10.5)** and cross 50% at the same point:
+**The equal-mean argument was wrong in effect.** `3d6` and `d20` do share a mean of 10.5,
+but that is irrelevant — what matters is the probability at the range actually rolled, and
+Warlock's target of 20 puts starting characters (skills 4-6) in the far tail of a bell
+curve:
 
-| Need on dice | d20 | 3d6 |
-|---|---|---|
-| 8 | 65% | 84% |
-| 11 | **50%** | **50%** |
-| 14 | 35% | 16% |
+| Skill | Need vs 20 | d20 | 3d6 |
+|---|---|---|---|
+| 4 | 16 | 25% | **4.6%** |
+| 5 | 15 | 30% | **9.3%** |
+| 6 | 14 | 35% | **16.2%** |
 
-So `3d6 + skill >= 20` preserves Warlock's target number and **every skill value in the
-book**, unchanged. What changes is variance: competence starts telling, extremes become
-rare rather than a flat 5% each. Right curve for a game where a veteran should reliably
-beat a novice but can still be killed by a crossbow.
+Found on the first two rolls of the first playtest: a starting Initiate attempted two things
+well within his competence at 9% and 16%. Unplayable.
+
+**Target is 17.** With Warlock's existing difficulty penalties of 2 and 4 intact:
+
+| Skill | Need vs 17 | P(success) | at -2 | at -4 |
+|---|---|---|---|---|
+| 4 (untrained) | 13 | 25.9% | 16.2% | 9.3% |
+| 6 (starting career) | 11 | 50.0% | 37.5% | 25.9% |
+| 8 | 9 | 74.1% | 62.5% | 50.0% |
+| 10 | 7 | 90.7% | 83.8% | 74.1% |
+| 12 (career cap) | 5 | 98.1% | 95.4% | 90.7% |
+
+The bell curve still compresses the top — a maxed career skill is near-certain at its own
+speciality. That is acceptable and arguably correct: **Wyrd's lethality comes from combat
+criticals and corruption, not from veterans fumbling their own trade.** The 2/4 difficulty
+penalties are what keep hard tasks hard for the competent, and they now matter much more
+than they did in Warlock, so use them.
+
+Note this means Warlock's printed skill values carry over but its **target number does
+not**. Any Warlock material must be read with 17 substituted for 20.
 
 ## Prior art
 

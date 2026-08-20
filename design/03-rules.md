@@ -13,14 +13,17 @@ read, and TOR's Hope/Shadow balance. Sources:
 
 ## 1. Resolution
 
-> **Roll 3d6 + skill vs 20.** One die is the **Wyrd die**, a different colour.
+> **Roll 3d6 + skill vs 17.** One die is the **Wyrd die**, a different colour.
 > - **The total** decides success or failure.
 > - **Doubles** (any two dice matching) decide *whether something else happened*.
 > - **The Wyrd die** decides *what kind*.
 
-`3d6` has the same mean as `d20` (10.5), so **Warlock's target of 20 and every skill value
-in its books carry over unchanged** — but the curve tightens, so competence tells and
-extremes are rare.
+Warlock's printed **skill values carry over; its target number does not.** Warlock uses
+`d20 + skill >= 20`; on `3d6` that target puts starting characters in the far tail of the
+bell curve (a skill-6 test would succeed 16% of the time instead of 35%). **17** restores
+playable odds at the low end while letting competence tell at the high end. See
+[dice-design](../reference/dice-design.md) for the full table. Read any Warlock material
+with 17 substituted for 20.
 
 **Difficulty:** a penalty of **2** (difficult) or **4** (very difficult) to skill. That is
 the whole difficulty system, as in Warlock.
