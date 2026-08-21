@@ -37,8 +37,22 @@ line: fantasy
 requires_engine: ">=0.1.0"
 version: 0.3.0
 description: >
-  One paragraph. What the world is, and what its horror is made of.
+  One paragraph. What the world is, and what it is about.
+
+tone:                       # the tone contract — see 01-principles.md
+  prophecy: forbidden       # forbidden | rare | central
+  victory: mitigation       # mitigation | mixed | triumph
+  power_curve: flat         # flat | moderate | heroic
+  scope: personal           # personal | regional | world
+  scale_drift: suppressed   # suppressed | allowed
+  mortality: high           # low | standard | high
+  register: "one line naming the voice"
 ```
+
+**The tone contract is the setting's most load-bearing declaration after `voice.md`.** The
+engine will hold whatever line it draws — refusing to invent a destiny under
+`prophecy: forbidden`, and building one under `prophecy: central`. Getting it wrong produces
+a technically correct chronicle that feels like the wrong game.
 
 `version` matters: a chronicle pins **both** an engine version and a setting version
 ([`09-evolution.md`](09-evolution.md)). Setting changes are almost always *additive* and
