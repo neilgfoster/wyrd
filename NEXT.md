@@ -2,7 +2,7 @@
 
 ## Housekeeping
 
-- **`wyrd-40k` needs deleting** — superseded by wyrd-darkheresy / wyrd-onlywar /
+- **`wyrd-<sf-setting>` needs deleting** — superseded by wyrd-darkheresy / wyrd-onlywar /
   wyrd-roguetrader. `gh` lacks the `delete_repo` scope here:
   `gh auth refresh -h github.com -s delete_repo`
 - Four transient corpus PULLFAILs to retry; five White Dwarf PDFs (#005, #034, #077, #079,
@@ -24,7 +24,7 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
 
    Then the `scenarios` index, which is the big one: selection filters checkable against
    `pc.yaml`, plus `requires_threads`/`emits_threads` so the meta-campaign tree emerges from
-   thread matching rather than being authored. Library-wide, not just WFRP. Haiku-tier,
+   thread matching rather than being authored. Library-wide, not just the source system. Haiku-tier,
    lazy, cached.
 
 3. **Extract 2e engine data.** All four sources are digital with text layers — no OCR
@@ -34,16 +34,16 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
      against their blocks, and exit lists bleed into following prose. Validate by checking
      the graph closes — every exit must resolve to a real career node, so the data checks
      itself. Emits `settings/reikland/careers.yaml`.
-   - **Gear and prices** — *Old World Armoury*
-   - **Creatures** — *Old World Bestiary*
+   - **Gear and prices** — *world Armoury*
+   - **Creatures** — *world Bestiary*
    - **Mutation and corruption tables** — *Tome of Corruption*
 
 4. **Mine the v1 adventures** for rules that never made the core book — career expansions,
-   critical variants, Chaos material. Fold into the Reikland career graph and corruption
+   critical variants, the corrupting power material. Fold into the starting region career graph and corruption
    tables.
 
-5. **Apply the two 40k findings**, if approved — see
-   [reference/40k-engine-impact.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/40k-engine-impact.md):
+5. **Apply the two the science-fiction line findings**, if approved — see
+   [reference/the science-fiction line-engine-impact.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/the science-fiction line-engine-impact.md):
    - split companions into a rich narrative layer and a deliberately thin mechanical one
    - give the party track a positive direction (Cohesion), and corruption a direction as
      well as a magnitude
@@ -53,7 +53,7 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
 - Engine skeleton: `TOOLS` catalog, `describe`, state layer with atomic writes and invariant
   validation, and `roll` / `damage` / `track`. Freeze the first golden chronicle immediately
   (see [design/09-evolution.md](design/09-evolution.md)).
-- Resume the Hemmelfurt playtest — day 1 of 4, four leads open, and Wendel still needs to
+- Resume the the town playtest — day 1 of 4, four leads open, and the PC still needs to
   know who he resembles. Chronicle now lives at `neilgfoster/wyrd-chronicle-hemmelfurt`
   (private).
 

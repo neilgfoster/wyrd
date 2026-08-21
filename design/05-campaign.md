@@ -3,7 +3,7 @@
 The layer that makes a chronicle run for years: how the world moves while you are away, how
 scenarios are selected rather than scripted, and how a long defeat is shaped.
 
-Sources: Beyond the Wall's Threat Packs, The One Ring's Tale of Years, WFRP 3e's Progress
+Sources: a sandbox source system's Threat Packs, another source system's Tale of Years, one source system's Progress
 Tracker. See [systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md) and
 [tor-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/tor-concepts.md).
 
@@ -12,7 +12,7 @@ Tracker. See [systems-mined](https://github.com/neilgfoster/wyrd-research/blob/m
 ## Threats
 
 A **Threat** is a campaign-length antagonist that acts on its own schedule whether or not
-the player is present. Format from Beyond the Wall, which had the best one found.
+the player is present. Format from a sandbox source system, which had the best one found.
 
 ```yaml
 name: The Rot Beneath Grenzstadt
@@ -58,7 +58,7 @@ Claude chooses *when in the week* it lands — while the player is present (a sc
 they are elsewhere (they hear about it later, late and partially).
 
 **If a Threat acts and the player was not there, they must still find out.** A peddler
-brings word; a companion's family writes; the market is talking. This is TOR's *News from
+brings word; a companion's family writes; the market is talking. This is another source system's *News from
 Afar* — and information should arrive **late, incomplete, and sometimes wrong**.
 
 ### Threats are personal
@@ -74,7 +74,7 @@ marked you.
 
 Real sessions are weeks apart. Wyrd does **not** simulate every intervening week.
 
-From Beyond the Wall's *Abstracting Weekly Threat*: take the **expected value** over the
+From a sandbox source system's *Abstracting Weekly Threat*: take the **expected value** over the
 elapsed period. A Threat at Imminence 4 activates roughly once per three weeks — so a
 five-week gap produces about two activations. Roll those, apply them, and generate the
 resulting world-state.
@@ -108,8 +108,8 @@ Every scenario **consumes** threads (it needs hooks that match live ones) and **
 ones. Selecting the next scenario means finding one whose hooks match threads that are
 currently hot.
 
-**This is Wyrd's genuinely original piece.** TOR's Tale of Years is authored — year 2953 has
-a fixed adventure. Beyond the Wall's Threats are procedural but not sequenced. Wyrd must
+**This is Wyrd's genuinely original piece.** another source system's Tale of Years is authored — year 2953 has
+a fixed adventure. a sandbox source system's Threats are procedural but not sequenced. Wyrd must
 *select and sequence*, which is exactly the judgment an LLM is good at, provided the state
 is written down.
 
@@ -125,7 +125,7 @@ At the start of an arc, or when a scenario closes, Claude picks the next by:
 
 1. Reading live threads by heat
 2. Matching against `scenarios/*/scenario.yaml` hooks, filtered by setting
-3. Scaling it to the current **Threat rating `T`** (see [`03-rules.md`](03-rules.md))
+3. Scaling it to the current **danger rating** (see [`03-rules.md`](03-rules.md))
 4. Rewriting names, places and faction to fit the chronicle
 5. Recording `source:` — what it was adapted from and what changed
 
@@ -154,7 +154,7 @@ of the campaign's thesis: **things get worse.**
 
 ## The long defeat
 
-The register, from TOR, stated better than I can restate it:
+The register, from another source system, stated better than I can restate it:
 
 > "Even heroes can hardly avert this fate — all the odds are against them. But there is
 > something they can certainly do: they can fight to hold back the darkness for another day,
@@ -174,7 +174,7 @@ This is the mechanical answer to constraint 5 and constraint 6 together.
 
 ## Holdings
 
-From TOR. Over years the player accumulates something — a cottage, a boat, a workshop, a
+From another source system. Over years the player accumulates something — a cottage, a boat, a workshop, a
 name in a guild, a family. It is recorded in the chronicle and it is **leverage**:
 
 > "If Spiders attack a Woodman village, that's a tragedy for the heroes to avenge — but if
@@ -185,12 +185,12 @@ and defend your own.
 
 ## Succession
 
-A chronicle running years may outlast one rat-catcher. When the PC dies, is damned, or
+A chronicle running years may outlast one labourer. When the PC dies, is damned, or
 retires, the default is **succession, not replacement** — but succession is inherited
 **through the thread, not the bloodline**.
 
 "Your son takes up the sword" is the weakest available version. It is sentimental, it is
-not how the Old World works, and it makes the chronicle about a family when it should be
+not how the world works, and it makes the chronicle about a family when it should be
 about a rot that outlives everyone who touches it.
 
 ### The successor comes from the codex

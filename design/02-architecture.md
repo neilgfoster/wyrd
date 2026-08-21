@@ -9,8 +9,8 @@ Wyrd is four kinds of thing with four different lifecycles, so it is four reposi
 | Repo | Holds | Changes |
 |---|---|---|
 | **`wyrd`** | the engine — rules, CLI, GM contract, design, mechanics research | when the game changes |
-| **`wyrd-wfrp`** | Reikland setting, fantasy scenarios, fantasy corpus indexes | when content is added |
-| **`wyrd-40k`** | Imperium setting, 40k scenarios, 40k corpus indexes | when content is added |
+| **`wyrd-<setting>`** | the setting, fantasy scenarios, fantasy corpus indexes | when content is added |
+| **`wyrd-<sf-setting>`** | the science-fiction setting setting, the science-fiction line scenarios, the science-fiction line corpus indexes | when content is added |
 | **`wyrd-chronicle-*`** | one per chronicle — the save, its codex, its threads | every beat |
 
 A chronicle **references** an engine version and a setting version; a setting references a
@@ -31,7 +31,7 @@ another faction written up, another career added. Mixing them makes both histori
 unreadable, and makes it impossible to say which version of *what* a chronicle is pinned to.
 
 It also keeps the engine repository genuinely setting-agnostic rather than
-setting-agnostic-in-principle. If a rule cannot be written without naming Sigmar, it is not
+setting-agnostic-in-principle. If a rule cannot be written without naming a god, it is not
 an engine rule.
 
 ### The source corpus lives in the setting repos
@@ -51,7 +51,7 @@ content, and are the part with real value. The master catalogue of source materi
 the raw material both settings draw from.
 
 Cross-setting sources are indexed **in both** settings, because a Deadlands adventure adapted
-for the Reikland and the same adventure adapted for a hive world are two different
+for the starting region and the same adventure adapted for a hive world are two different
 adaptations, not one shared record.
 
 ## Inside each repository
@@ -63,7 +63,7 @@ wyrd/
 ├─ reference/       # mechanics research across systems
 └─ tools/
 
-wyrd-wfrp/
+wyrd-<setting>/
 ├─ setting/         # voice, careers, gear, factions, deities, names, calendar
 ├─ scenarios/       # situations and Threat Packs
 └─ index/           # documents, nouns, terms, tables, scenarios
@@ -83,24 +83,24 @@ wyrd-chronicle-<name>/
 - `contract.md` — the GM contract from [`01-principles.md`](01-principles.md), in the form
   loaded every session
 
-Setting-neutral. A rule that names Sigmar belongs in `settings/`, not here.
+Setting-neutral. A rule that names a god belongs in `settings/`, not here.
 
-### wyrd-wfrp / wyrd-40k — the settings
+### wyrd-<setting> — a setting
 
 A setting is **data plus a voice document**.
 
 ```
-wyrd-wfrp/setting/
+wyrd-<setting>/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
-├─ careers.yaml      # the career tree (Warlock careers, Reikland-named)
+├─ careers.yaml      # the career tree (the chassis system careers, the setting-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
 ├─ factions.yaml     # cults, guilds, watch, nobility — with agendas
 ├─ deities.yaml
 ├─ names.yaml        # given/family/place name tables
-└─ calendar.yaml     # months, festivals, Morrslieb cycle
+└─ calendar.yaml     # months, festivals, the ill moon cycle
 ```
 
-The 40k setting is the same shape with different data and one extra rules overlay
+The the science-fiction line setting is the same shape with different data and one extra rules overlay
 (psychic powers reskinned from magic; see [`03-rules.md`](03-rules.md)).
 
 ### scenarios — inside each setting repo
@@ -108,7 +108,7 @@ The 40k setting is the same shape with different data and one extra rules overla
 Two kinds, and the distinction matters:
 
 - **Threat** — a campaign-length antagonist with an Imminence rating that acts on its own
-  schedule. Format taken from Beyond the Wall. See [`05-campaign.md`](05-campaign.md).
+  schedule. Format taken from a sandbox source system. See [`05-campaign.md`](05-campaign.md).
 - **Situation** — a one-shot to three-session scenario. A place, people with agendas, a
   clock, and a cost. **Never a script.**
 

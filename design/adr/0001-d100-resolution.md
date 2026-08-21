@@ -5,7 +5,7 @@
 
 ## Context
 
-Wyrd currently resolves as `d20 + skill vs 20` (Warlock's mechanic) with a separate `2d6`
+Wyrd currently resolves as `d20 + skill vs 20` (the chassis system's mechanic) with a separate `2d6`
 pair — the Wyrd dice — carrying the side-effect axis. Two earlier schemes were rejected in
 [`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md).
 
@@ -105,19 +105,19 @@ Systematically **anti-correlated**, and at skill 45+ a success cannot produce a 
 The extremes of the reversed value map straight back onto the extremes of the original —
 the same class of bug as reading the side effect from the margin.
 
-(Worth noting the reversed d100 *does* have a real use in WFRP: it is how 4e determines hit
+(Worth noting the reversed d100 *does* have a real use in the source system: it is how 4e determines hit
 location. Wyrd has no hit locations — criticals are by damage type — so the digit is free.)
 
 ### Also rejected: the d100's own doubles
 
 A d100 shows doubles (11, 22, … 00) at 10%. On roll-under, a low double is a *good* roll and
 a high double a *bad* one, so reading direction from the doubled value is anti-correlated in
-the same way. WFRP 4e and Zweihander use exactly this (doubles = critical on a success,
+the same way. a later source system and Zweihander use exactly this (doubles = critical on a success,
 fumble on a failure), which is right for a crit mechanic and wrong for an independent axis.
 
 ## Migration is exact
 
-Warlock's skill ladder maps to percentages with **no probability drift at all**:
+the chassis system's skill ladder maps to percentages with **no probability drift at all**:
 
 > **`skill% = (skill + 1) × 5`**
 
@@ -129,20 +129,20 @@ Warlock's skill ladder maps to percentages with **no probability drift at all**:
 | 12 *(career cap)* | 65% | 65% |
 | 14 | 75% | 75% |
 
-Difficulty maps as cleanly: Warlock's −2 / −4 become **−10 / −20**, which lands exactly on
-WFRP's own difficulty ladder (Easy +20, Average +0, Challenging −10, Difficult −20, Hard
-−30, Very Hard −40). We inherit a tested six-band ladder in place of Warlock's two.
+Difficulty maps as cleanly: the chassis system's −2 / −4 become **−10 / −20**, which lands exactly on
+the source system's own difficulty ladder (Easy +20, Average +0, Challenging −10, Difficult −20, Hard
+−30, Very Hard −40). We inherit a tested six-band ladder in place of the chassis system's two.
 
 ## What d100 adds
 
-**1. The library.** This is the decisive argument. Every WFRP edition (1e–4e), Zweihander,
-and the entire 40k line — Dark Heresy, Rogue Trader, Deathwatch, Black Crusade, Only War —
+**1. The library.** This is the decisive argument. Every the source system edition (1e–4e), Zweihander,
+and the entire the science-fiction line line — a science-fiction source system, Rogue Trader, Deathwatch, Black Crusade, Only War —
 is d100. That is roughly 700 PDFs of careers, NPCs, stat blocks, creatures, gear and
 adventures that become **directly usable rather than requiring conversion**. The corpus
-currently being OCR'd is d100 material. Under Warlock's scale, every one of those stat
+currently being OCR'd is d100 material. Under the chassis system's scale, every one of those stat
 blocks needs translating by hand or by model; under d100 they are read as printed.
 
-For the 40k setting this is close to decisive on its own: Dark Heresy's careers and gear are
+For the the science-fiction line setting this is close to decisive on its own: a science-fiction source system's careers and gear are
 the obvious source and they are percentile-native.
 
 **2. A magnitude axis for free.** `d100` yields **Success Levels** naturally — the tens digit
@@ -152,20 +152,20 @@ comparable. Useful for opposed tests, for scaling damage, and for the "succeed a
 texture Wyrd wants.
 
 **3. Granularity that suits a decade.** Advancement in 1–5% steps gives a long chronicle
-somewhere to go without the numbers inflating. Warlock's 4–12 ladder has nine rungs total.
+somewhere to go without the numbers inflating. the chassis system's 4–12 ladder has nine rungs total.
 
 **4. It reads well in text.** "Stealth 35, rolled 28 — success, 1 degree" is at least as
 legible as `d20 + skill vs 20`, and roll-under needs no addition at all.
 
 ## What it costs
 
-- **Warlock's own material needs converting** — careers, skill caps, tables. One book, and
+- **the chassis system's own material needs converting** — careers, skill caps, tables. One book, and
   the mapping above is mechanical. Everything else in the library gets *easier*.
 - **Opposed tests change shape** — from "higher total wins" to comparing Success Levels.
   This is a genuine behavioural change, not a representation change.
-- **Some of Warlock's charm is its lightness.** `d100` is marginally more system. Though
+- **Some of the chassis system's charm is its lightness.** `d100` is marginally more system. Though
   roll-under is arguably simpler than add-and-compare.
-- Career caps of 10–12 become 55–65%, which is squarely WFRP-shaped and probably correct for
+- Career caps of 10–12 become 55–65%, which is squarely the source system-shaped and probably correct for
   a game where veterans stay fallible.
 
 ## Decision
@@ -183,7 +183,7 @@ values and a stamina track — which is minutes of work now.
 
 ## Open
 
-- Do we adopt WFRP's **characteristics + skill advances** model wholesale, or keep Warlock's
+- Do we adopt the source system's **characteristics + skill advances** model wholesale, or keep the chassis system's
   flat single-value skills expressed as percentages? The latter is simpler and preserves
   Wyrd's lightness; the former buys even closer library compatibility. **Leaning flat**, on
   the grounds that stat blocks are read for their numbers, not their derivation.

@@ -1,13 +1,7 @@
 # Wyrd — the ruleset
 
-Warlock! as the chassis, with the four Warhammer subsystems fitted, an AGE-derived dice
-read, and TOR's Hope/Shadow balance. Sources:
-[warlock-rules](https://github.com/neilgfoster/wyrd-research/blob/main/reference/warlock-rules.md) ·
-[wfrp-mechanics](https://github.com/neilgfoster/wyrd-research/blob/main/reference/wfrp-mechanics.md) ·
-[wfrp3-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/wfrp3-concepts.md) ·
-[tor-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/tor-concepts.md) ·
-[dice-design](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) ·
-[systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md)
+the chassis system! as the chassis, with the four the source line subsystems fitted, an AGE-derived dice
+read, and another source system's Hope/Shadow balance. Sources:
 
 ---
 
@@ -23,21 +17,21 @@ One roll, three independent axes, no extra dice. See
 
 ### Skill percentages
 
-Warlock's ladder converts with **no probability drift at all**: `skill% = (skill + 1) × 5`.
+the chassis system's ladder converts with **no probability drift at all**: `skill% = (skill + 1) × 5`.
 
-| Warlock skill | Wyrd |
+| the chassis system skill | Wyrd |
 |---|---|
 | 4 *(untrained)* | 25% |
 | 6 *(starting career)* | 35% |
 | 10 *(career cap)* | 55% |
 | 12 *(career cap)* | 65% |
 
-WFRP 2e and Dark Heresy stat blocks are read **as printed** — `WS 41` *is* 41%. See
-[ADR 0002](adr/0002-wfrp2-compatibility.md).
+the base source system and a science-fiction source system stat blocks are read **as printed** — `WS 41` *is* 41%. See
+[ADR 0002](adr/0002-source-system-compatibility.md).
 
 ### Difficulty
 
-2e's six bands, replacing Warlock's two:
+2e's six bands, replacing the chassis system's two:
 
 | Band | Modifier |
 |---|---|
@@ -60,7 +54,7 @@ Read from the **units digit of the natural roll**:
 
 | Units | Result |
 |---|---|
-| 0 | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
+| 0 | **Chaos Star** — something goes wrong in a the corrupting power-flavoured way |
 | 9 | **Comet** — a significant break in the player's favour |
 | 1–8 | nothing |
 
@@ -94,13 +88,13 @@ The world goes wrong around you more often as you rot; your competence is untouc
 
 ### Luck
 
-Warlock's Luck, unchanged in function: a percentage the player *may choose* to test to dodge
+the chassis system's Luck, unchanged in function: a percentage the player *may choose* to test to dodge
 a misfortune or break a tie. **Testing Luck costs 1 Luck for the rest of the adventure, pass
 or fail.** Always the player's choice.
 
 ## 2. Combat
 
-Warlock's model, unchanged, because it already delivers grim lethality with no map.
+the chassis system's model, unchanged, because it already delivers grim lethality with no map.
 
 - Attacks are opposed rolls. The winner rolls the weapon's damage dice.
 - **Stamina is not meat** — it is cuts, bruises, and losing control of the fight.
@@ -115,7 +109,7 @@ Warlock's model, unchanged, because it already delivers grim lethality with no m
 
 ### Mobs — the Fray die
 
-One PC plus companions cannot resolve six thugs one roll at a time. Adopt Scarlet Heroes'
+One PC plus companions cannot resolve six thugs one roll at a time. Adopt a solo source system'
 **Fray die**: each round, in addition to their action, a character automatically cuts down
 petty enemies weaker than themselves. Companions get a smaller one. Named enemies are never
 affected.
@@ -123,7 +117,7 @@ affected.
 ### Death is deferred
 
 **Nothing resolves a character's fate during the fight.** When a combatant drops, they are
-*out of action*. After the encounter, roll on the **Aftermath table** — Mordheim's D66,
+*out of action*. After the encounter, roll on the **Aftermath table** — a skirmish source's D66,
 reskinned:
 
 | Band | Result |
@@ -145,8 +139,8 @@ complements Fate points rather than competing with them.
 
 ## 3. Fate and Fortune
 
-Warlock has no death valve. A multi-year chronicle cannot lose three years to one damage
-roll. WFRP 2e's two-tier design, adopted directly:
+the chassis system has no death valve. A multi-year chronicle cannot lose three years to one damage
+roll. the base source system's two-tier design, adopted directly:
 
 - **Fate points** — few, permanent, spent to **avoid death**. Lost forever when spent; new
   ones are rare rewards.
@@ -165,13 +159,13 @@ well as its anti-frustration valve.
 
 ## 4. Hope and Shadow
 
-TOR's balance, replacing WFRP's one-way corruption ratchet.
+another source system's balance, replacing the source system's one-way corruption ratchet.
 
 - **Hope** — spendable, renewable. Spend for a bonus after a failed roll. Recovered in
   downtime and through companions.
 - **Corruption** *(called Shadow in engine terms)* — accrues and sticks.
 
-**When Hope falls to equal Corruption, the character is Beset** (TOR's *Miserable*). At
+**When Hope falls to equal Corruption, the character is Beset** (another source system's *Miserable*). At
 Hope 0 they are spent — they will not press any struggle and will withdraw from danger.
 A character with Corruption 0 can never be Beset however exhausted they are.
 
@@ -193,9 +187,9 @@ Three routes, deliberately covering both directions:
    | Moderate | 2 | 1 | 0 |
    | Major | 3 | 2 | 1 |
 
-   Minor: witnessing a lesser daemon, contact with a mutant or warpstone, **giving in to
+   Minor: witnessing a lesser daemon, contact with a mutant or tainted matter, **giving in to
    despair, rage or excess**. Moderate: contact with a daemon or profane artefact,
-   *embracing* those impulses. Major: making a deal with a daemon, consuming warpstone.
+   *embracing* those impulses. Major: making a deal with a daemon, consuming tainted matter.
 
    Note how many are moral rather than supernatural. That is the setting's thesis.
 3. **GM Invocation** *(3e)* — before a roll, Claude may **spend one of the character's
@@ -208,9 +202,9 @@ thresholds.
 
 ### Corruption Weakness
 
-Following TOR, corruption is **specific, not generic**. Each character has a Weakness
-derived at creation from their **Passion** and **Cruel Misfortune** (both Warlock
-Compendium 2). The rat-catcher who took the trade to feed his family falls differently from
+Following another source system, corruption is **specific, not generic**. Each character has a Weakness
+derived at creation from their **Passion** and **Cruel Misfortune** (both the chassis system
+Compendium 2). The labourer who took the trade to feed his family falls differently from
 the scholar who wanted to know what was in the book. The Weakness names the path.
 
 ### Mutation and the doom clock
@@ -239,23 +233,23 @@ Three tiers of mental harm, distinguished by how long they last.
   Recovered at a Rally (see [`04-session.md`](04-session.md)). The bad night that mostly
   clears by morning.
 - **Insanity points** *(2e)* — long-term and sticky. **1 per critical hit taken** (the
-  trigger already exists in Warlock's combat), 1 per failed Terror test, more at Claude's
+  trigger already exists in the chassis system's combat), 1 per failed Terror test, more at Claude's
   discretion for genuinely terrible events.
 - **Derangements** — permanent. At **6+ Insanity**, test Willpower on every further point
   gained; on a failure take a derangement and **lose 6 Insanity**. The track sawtooths, so a
   character can be broken many times across years.
 
-**Fear and Terror tests** are the connective tissue Warlock lacks entirely: Fear makes you
+**Fear and Terror tests** are the connective tissue the chassis system lacks entirely: Fear makes you
 unable to press an attack; Terror routs you and costs an Insanity point on a failure.
 
-In the Old World, insanity is believed to be Chaos working on the mind — "a mutation on the
+In the world, insanity is believed to be the corrupting power working on the mind — "a mutation on the
 inside". The mad are feared, not pitied.
 
 ---
 
 ## 6. Advancement
 
-Warlock's, because it is already the flat curve the setting requires.
+the chassis system's, because it is already the flat curve the setting requires.
 
 - 1–3 advances per session.
 - An advance raises **one skill in the current career only**, to that career's cap.
@@ -263,7 +257,7 @@ Warlock's, because it is already the flat curve the setting requires.
 - **Max Stamina +1** only when the career skill rises. This is the *only* durability growth.
 - Real progression is **changing careers** — different access and standing, not more power.
 
-**Advance triggers** (Warlock Compendium 2) rather than XP: one for learning something new,
+**Advance triggers** (the chassis system Compendium 2) rather than XP: one for learning something new,
 one for **following your Passion even when it cost you**, and one per career-specific
 condition ("mark an advance when you stir people up against authority"). Checkable, so
 Claude cannot be generous by accident.
@@ -274,10 +268,10 @@ Claude cannot be generous by accident.
 
 ---
 
-## 7. Scenario scaling
+## 7. Danger scaling
 
-Scenarios are written once with a **Threat rating `T`** used as a multiplier inside the
-content (Scarlet Heroes): a trap doing `Td4` does `6d4` in a T6 scenario; enemy counts and
+Content is written once with a **danger rating** used as a multiplier inside the
+content (a solo source system): a trap written `Nd4` does `6d4` at danger 6; enemy counts and
 skill values scale from it.
 
 This is how a chronicle stays interesting for years **without escalating the fiction**. The
@@ -286,16 +280,16 @@ the mechanical expression of constraint 6.
 
 ---
 
-## 8. The 40k overlay
+## 8. The the science-fiction line overlay
 
 The same engine with different data, plus one rules overlay:
 
-- Careers → 40k careers (Dark Heresy supplies the list)
-- casual/martial → civilian/military; the social constraint is *stronger* in the Imperium
+- Careers → the science-fiction line careers (a science-fiction source system supplies the list)
+- casual/martial → civilian/military; the social constraint is *stronger* in the the science-fiction setting
 - The existing **blast** critical table covers energy weapons
 - Magic → psychic powers; **Wrath of the Otherworld becomes Perils of the Warp with no
   structural change** — reskin the miscast table, keep the mechanism
 - Corruption stays exactly as-is; only its vocabulary changes
-- Warlock Compendium 2's firearms rules (Readiness / Misfire / Boom!) port directly
+- the chassis system Compendium 2's firearms rules (Readiness / Misfire / Boom!) port directly
 
 Fantasy first. The overlay is a data exercise once the engine is proven.

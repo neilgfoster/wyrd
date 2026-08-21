@@ -60,7 +60,7 @@ concordance says it already belongs to somebody, and a collision is avoided.
 ### 3. `terms.json` — mechanical vocabulary
 
 A **curated** vocabulary of mechanical terms — Fear, Terror, corruption, mutation, critical,
-career exit, insanity, Fate, miscast, warpstone — mapped to postings, ranked by whether the
+career exit, insanity, Fate, miscast, tainted matter — mapped to postings, ranked by whether the
 hit looks like a *definition* (near a heading, near a table) or a passing mention.
 
 Curated rather than derived, because the vocabulary is small, stable, and known in advance.
@@ -86,7 +86,7 @@ term for "a village with something under it."**
 It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
 scenarios *chain* into a meta-campaign.
 
-Scope is **the whole library, not the WFRP shelf** — a Deadlands investigation, a Maelstrom
+Scope is **the whole library, not the the source system shelf** — a Deadlands investigation, a Maelstrom
 village horror and a *White Dwarf* six-pager are equally valid inputs, judged on theme
 ([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
@@ -95,13 +95,13 @@ what conversion costs.
 id: the-drowning-well
 source: {system: "White Dwarf", ref: "WD 98", pages: "34-39"}
 adaptation: reskin                    # none | reskin | rewrite
-settings: [reikland, imperium]
+settings: [<setting-id>]
 
 # --- selection inputs: deterministic, evaluated against pc.yaml ---
 scale: village                        # village|town|city|wilderness|underground|waterway|road|ship|fortress
 region: any
-threat: 3                             # T as written, for party_written_for (see 03-rules)
-party_written_for: 4                  # SCALING INPUT, never a gate
+danger: 3                             # as written, for written_for (see 03-rules)
+written_for: 4                        # SCALING INPUT, never a gate
 length: 2                             # sessions
 season: any                           # or winter | harvest | festival
 needs_access: [temple]                # an in is required — obtaining it may itself be play
@@ -128,20 +128,23 @@ The library is far too valuable to filter aggressively, and the obvious filters 
 
 **Party size is a scaling input, never a gate.** Nearly every published adventure is written
 for four to six adventurers; gating on party size would exclude the entire corpus we went to
-the trouble of building. Instead `party_written_for` feeds the threat calculation:
+the trouble of building. Instead `written_for` feeds the danger calculation:
 
-> `T_effective = T × (party_effective / party_written_for)`
+> `danger_effective = danger × (party_effective / written_for)`
 
 where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
 are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
 plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
-that already scales content ([`03-rules.md`](03-rules.md)). Scarlet Heroes' Fray die does the
+that already scales content ([`03-rules.md`](03-rules.md)). a solo source system' Fray die does the
 rest of the work in combat.
 
-`threat` in the record is therefore *intrinsic danger as written for its stated party size*,
-not the danger this table will face. The engine computes the latter.
+`danger` in the record is therefore *intrinsic difficulty as written for its stated party
+size*, not what this table will face. The engine computes the latter.
 
-**Access and capability are inputs too, not walls.** A rat-catcher can be hired by someone
+Field names match the beat schema in [`15-arcs-and-beats.md`](15-arcs-and-beats.md) exactly;
+the index is a projection of the entities, not a parallel vocabulary.
+
+**Access and capability are inputs too, not walls.** A labourer can be hired by someone
 with court access, or smuggled in — and *getting the in is often the better scenario*.
 A companion can read the grimoire the PC cannot. So:
 
@@ -152,7 +155,7 @@ A companion can read the grimoire the PC cannot. So:
 | `helped_by` | flags only — easier with it, and more desperate and interesting without |
 
 `helped_by` is the one that repays attention. A scenario easier with literacy is a *better*
-scenario for an Initiate and a *harder, more frightening* one for a rat-catcher. That is a
+scenario for an Initiate and a *harder, more frightening* one for a labourer. That is a
 reason to choose it.
 
 The genuine exclusions are few: wrong setting, or an `adaptation: rewrite` cost that is not

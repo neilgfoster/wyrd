@@ -1,6 +1,6 @@
 # Wyrd — settings, and running two chronicles at once
 
-Fantasy and 40k share an engine and a library. They must not share anything else — and
+Fantasy and the science-fiction line share an engine and a library. They must not share anything else — and
 eventually both may be live at the same time.
 
 ---
@@ -21,10 +21,10 @@ eventually both may be live at the same time.
 The mechanical engine is genuinely setting-agnostic. What changes is **data and register**,
 which is why the layering in [`02-architecture.md`](02-architecture.md) holds.
 
-**The 40k setting is not a reskin, though.** Corruption is the same mechanic with a different
+**The the science-fiction line setting is not a reskin, though.** Corruption is the same mechanic with a different
 theology; the long defeat is *more* pronounced, not less; and the voice is a different
-language — the Old World's dry municipal grimness against the Imperium's liturgical
-brutality. `settings/imperium/voice.md` is the hardest file in that directory, not the
+language — the world's dry municipal grimness against the the science-fiction setting's liturgical
+brutality. the science-fiction setting's `voice.md` is the hardest file in that directory, not the
 easiest.
 
 ## The corpus is shared; the indexes are tagged
@@ -32,7 +32,7 @@ easiest.
 One library, one extraction, one set of indexes. Every scenario record already carries
 `settings: [...]` and an `adaptation` cost
 ([`11-corpus-index.md`](11-corpus-index.md)), so the same index serves both and a
-`wyrd find scenario` in an Imperium chronicle simply never sees Reikland-only material.
+`wyrd find scenario` in an the science-fiction setting chronicle simply never sees the setting-only material.
 
 This is deliberate. A Deadlands investigation may suit either; a *White Dwarf* hive-gang
 piece suits one. Tagging beats duplicating.
@@ -43,9 +43,9 @@ See [`02-architecture.md`](02-architecture.md) for the full layout:
 
 ```
 wyrd/                        # engine only
-wyrd-wfrp/                # Reikland setting, scenarios, indexes
-wyrd-40k/             # Imperium setting, scenarios, indexes
-wyrd-chronicle-hemmelfurt/   # one per chronicle
+wyrd-<setting>/                # the setting, scenarios, indexes
+wyrd-<sf-setting>/             # the science-fiction setting setting, scenarios, indexes
+wyrd-chronicle-<name>/   # one per chronicle
 ```
 
 Reasons, in order of weight:
@@ -58,16 +58,16 @@ Reasons, in order of weight:
 4. **Blast radius.** `wyrd doctor --repair` touches one chronicle and cannot disturb another.
 
 Each chronicle pins `engine_version` and migrates on its own schedule
-([`09-evolution.md`](09-evolution.md)) — so the Reikland chronicle can sit on 0.4 while the
-Imperium one runs 0.5, which is exactly what you want when a rules change is being tried out.
+([`09-evolution.md`](09-evolution.md)) — so the starting region chronicle can sit on 0.4 while the
+the science-fiction setting one runs 0.5, which is exactly what you want when a rules change is being tried out.
 
 ## Session isolation
 
 **One chronicle per session. Always. No exceptions.**
 
 This belongs in the GM contract, because the failure is subtle and serious: knowledge
-bleeding between chronicles. If a name, an NPC, a Threat or a plot turn from the Reikland
-chronicle surfaces in the Imperium one, the second chronicle stops being its own world —
+bleeding between chronicles. If a name, an NPC, a Threat or a plot turn from the starting region
+chronicle surfaces in the the science-fiction setting one, the second chronicle stops being its own world —
 and the player has no way to detect it happening.
 
 So:
@@ -89,8 +89,8 @@ Two chronicles, two sessions, two terminals — or one on the lab box and one fr
 Because the repos are separate and every verb is explicit about its target, there is no
 contention and no locking to design.
 
-The realistic pattern is not simultaneous play but **alternating** — a Reikland session on
-Tuesday, an Imperium one on Thursday. That makes the resumption machinery matter more, not
+The realistic pattern is not simultaneous play but **alternating** — a the setting session on
+Tuesday, an the science-fiction setting one on Thursday. That makes the resumption machinery matter more, not
 less: `recap.md`, elapsed-time computation and thread heat all have to carry the weight of
 "which world is this and what was happening" after a fortnight away.
 
@@ -105,5 +105,5 @@ changed ([`05-campaign.md`](05-campaign.md)).
 
 The interesting case is the same scenario run in both chronicles. That is allowed, and it
 will not feel repetitive — different characters, different threads, different companions, and
-a corrupt miller in Hemmelfurt is not a corrupt tithe-clerk on a forge world. But
+a corrupt miller in the town is not a corrupt tithe-clerk on a forge world. But
 `source:` makes it visible, so the reuse is a choice rather than an accident.

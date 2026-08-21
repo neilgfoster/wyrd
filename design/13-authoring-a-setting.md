@@ -3,8 +3,8 @@
 Everything needed to build a new setting for Wyrd, without reading the existing ones.
 
 A "setting" in Wyrd is closer to a **game module** than a backdrop: it supplies the world,
-its content, its voice — and, where it needs to, a rules overlay. The Reikland and the
-Imperium are two; The One Ring's Wilderland would be a third and would look quite different.
+its content, its voice — and, where it needs to, a rules overlay. The the setting and the
+the science-fiction setting are two; another source system's Wilderland would be a third and would look quite different.
 
 ---
 
@@ -30,8 +30,8 @@ wyrd-<name>/
 ### `setting.yaml`
 
 ```yaml
-name: reikland
-title: The Reikland
+name: <setting-id>
+title: The the setting
 line: fantasy
 requires_engine: ">=0.1.0"
 version: 0.3.0
@@ -52,14 +52,14 @@ Everything else is data that can be typed in. The voice is the setting.
 
 It should state, with examples drawn from the source material:
 
-1. **Register** — the narrator's relationship to the world. The Old World's is a weary
+1. **Register** — the narrator's relationship to the world. The world's is a weary
    civil servant who has seen the paperwork. Only War's is bureaucratic doom. These are not
    interchangeable.
 2. **What institutions look like** — named, mundane, and administratively real, or vast and
    incomprehensible. This is where most of the tone actually lives.
 3. **How danger is stated** — as an occupational hazard, or as prophecy, or as liturgy.
 4. **What a critical failure looks like here.** Concretely.
-5. **Vocabulary** — the words that belong and the words that do not. A Reikland scene does
+5. **Vocabulary** — the words that belong and the words that do not. A the setting scene does
    not contain the word "cosmic".
 6. **What the joke is, and who it is on.** Some settings are dry; some have no humour at all.
    Getting this wrong is the fastest way to break immersion.
@@ -134,12 +134,12 @@ Overlays are declared in `setting.yaml` and loaded after engine defaults, exactl
 
 ## A worked example: what a One Ring setting would need
 
-Useful because it is *not* Warhammer and so tests the boundary.
+Useful because it is *not* the source line and so tests the boundary.
 
 | Need | Where it goes |
 |---|---|
 | Cultures instead of careers | `careers.yaml` — the graph shape still fits |
-| Hope and Shadow | **already engine** — Wyrd took this from TOR |
+| Hope and Shadow | **already engine** — Wyrd took this from another source system |
 | Shadow Weakness from Calling | `setting/rules/` — a mapping table |
 | The Fellowship phase | **already engine** |
 | Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |

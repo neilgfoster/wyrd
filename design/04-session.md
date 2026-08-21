@@ -3,32 +3,31 @@
 How twenty minutes on a train becomes a legitimate unit of play, and how the party works
 when every companion is an NPC.
 
-Structure adapted from WFRP 3e (Episode / Act / Rally) and The One Ring (Adventuring /
-Fellowship phases).
+Structure adapted from prior art; provenance is recorded in the private research repo.
 
 ---
 
-## The nesting
+## Where a beat sits
 
 ```
-Chronicle  ──  years of play
- └ Arc      ──  5-10 scenarios around one Threat
-   └ Scenario ── 1-3 sessions. A situation with a cost.
-     └ Episode ── one cohesive activity, one place
-       └ Beat  ── one goal. THE ATOMIC UNIT.
+Chronicle          years of play
+ └ arc             recursive, to whatever depth the material warrants
+   └ arc           (campaign · adventure · scenario · scene are labels, not levels)
+     └ beat        one goal. THE ATOMIC UNIT.
 ```
+
+Arcs nest freely ([`14-entities.md`](14-entities.md)); only the beat is structurally special.
 
 A **beat** is the smallest complete thing: a single goal, attempted, resolved, persisted.
-Searching the crypt is a beat. Fighting what was in it is a second beat. Getting out with
-the ledger is a third.
-
-**This entire structure is internal.** The player never hears the words beat, Rally, episode
-or arc. They are how the engine knows when to persist, when to offer a stopping point, and
-when to compact — the equivalent of a page break, not a plot point. A Rally is felt as a
-moment where the pressure drops and it is obvious you could stop; it is never announced.
-See the GM contract in [`01-principles.md`](01-principles.md).
+Searching the crypt is a beat. Fighting what was in it is a second. Getting out with the
+ledger is a third.
 
 **A session is one or more beats.** Two beats is a real session. One beat is a real session.
+
+**This entire structure is internal.** The player never hears the words beat, rally or arc.
+They are how the engine knows when to persist, when to offer a stopping point, and when to
+compact — the equivalent of a page break, not a plot point. See the GM contract in
+[`01-principles.md`](01-principles.md).
 
 ## The two modes
 
@@ -71,7 +70,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 ```
 
 Step 2 matters more than it looks. The elapsed-time pass runs *before* the recap so that the
-recap can say "you have been three weeks in Ubersreik; word came that the mill at Grenzstadt
+recap can say "you have been three weeks in a town; word came that the mill at Grenzstadt
 burned" — the world having moved is the first thing the player learns.
 
 ## Session shapes
@@ -95,7 +94,7 @@ they get told the beer is bad.
 
 ## The Fellowship phase
 
-From TOR, where downtime is a phase with its own rules rather than a skip.
+From another source system, where downtime is a phase with its own rules rather than a skip.
 
 Triggered at the end of a scenario or arc, or when the player asks. Structure:
 
@@ -128,7 +127,7 @@ Each companion in `party.yaml` carries:
 
 ```yaml
 - name: Grete Vollen
-  career: rat-catcher
+  career: labourer
   agenda: "get her brother out of the debt he owes the Meisters"
   flaw: "cannot leave a wrong alone"
   bond: 3            # to the PC; -3..+3

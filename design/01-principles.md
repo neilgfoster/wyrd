@@ -4,7 +4,7 @@ Wyrd is a framework for Claude to run a grim, low-fantasy tabletop RPG for **one
 over text, across years of real time. This document is the constitution: everything else in
 `design/` must be consistent with it.
 
-Research backing these choices is in [`../reference/`](../reference/).
+Research backing these choices is in [`../reference/`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/).
 
 ---
 
@@ -12,7 +12,7 @@ Research backing these choices is in [`../reference/`](../reference/).
 
 - **One player, one character.** Claude is GM *and* plays the whole rest of the party as
   NPCs. There is no second human and none is expected.
-- **Warhammer register**, Fantasy first (Reikland), 40k later on the same engine.
+- **the source line register**, Fantasy first (the setting), the science-fiction line later on the same engine.
 - **Text only.** No maps, no grids, no positioning, no tokens.
 - **Sessions of twenty minutes**, often on a phone, at unpredictable intervals.
 - **A chronicle running years**, resumable after weeks of absence.
@@ -58,7 +58,7 @@ cost-free total success is essentially absent.
 
 Advancement is **lateral** — careers, access, reputation. A veteran and a novice die to the
 same crossbow bolt. What accumulates over years is what the character *knows* and what it
-cost them. Scenario danger scales via a Threat rating (see [`03-rules.md`](03-rules.md));
+cost them. Content danger scales via a danger rating (see [`03-rules.md`](03-rules.md));
 the character's lethality does not.
 
 ### 7. Suppress inflation

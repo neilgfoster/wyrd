@@ -1,6 +1,6 @@
 # Wyrd — the character sheet you never see
 
-The player must be able to know their character without reading their statistics. Wendel
+The player must be able to know their character without reading their statistics. the PC
 does not know he has 2 stamina left; he knows he is not going to win another fight today. He
 does not know he is Blunt 5; he knows a mace feels honest in his hand in a way a sword never
 has.
@@ -47,7 +47,7 @@ vocabulary every session.
 
 Fractions, not absolutes, so it holds as max stamina grows.
 
-### Skills — Warlock's ladder
+### Skills — the chassis system's ladder
 
 | Level | The character knows |
 |---|---|
@@ -58,7 +58,7 @@ Fractions, not absolutes, so it holds as max stamina grows.
 | 9-10 | expert. People ask you about this |
 | 11-12 | it is part of who you are |
 
-So Wendel "has held a book of prayer since he was fourteen" (Incantation 6) but "has swung a
+So the PC "has held a book of prayer since he was fourteen" (Incantation 6) but "has swung a
 mace exactly twice, both times badly" (Blunt 5).
 
 ### Corruption — felt as wrongness, never as a score
@@ -102,8 +102,8 @@ The character also knows what is **missing** without being told, because people 
 
 ## The character as a knowledge source
 
-The character knows things the player does not. Wendel knows Hemmelfurt — who drinks where,
-which magistrate is bribable, what the Verenan liturgy says about a damaged record. The
+The character knows things the player does not. the PC knows the town — who drinks where,
+which magistrate is bribable, what the liturgy says about a damaged record. The
 player does not, and should not have to.
 
 So the player can ask **in character** — *"what do I know about the Overseer?"* — and get an
@@ -128,5 +128,5 @@ table, only the sentence is written. This is the tooling rule in
 [`07-tooling.md`](07-tooling.md) applied to prose: the model chooses the words, never the
 band.
 
-Bands are per-setting where the idiom differs. A Reikland rat-catcher and an Imperial Guard
+Bands are per-setting where the idiom differs. A the setting labourer and an Imperial Guard
 trooper describe exhaustion differently; the thresholds are the same.

@@ -4,13 +4,13 @@
 across years.
 
 Wyrd is **setting-agnostic**. It is its own system — percentile resolution descended from
-WFRP 2e, simplified for narrative play — plus the machinery a solo campaign actually needs:
+the base source system, simplified for narrative play — plus the machinery a solo campaign actually needs:
 a world that moves while you are away, companions the GM plays as people, corruption you
 choose, consequences that outlive characters, and a chronicle that stays correct for a
 decade.
 
-Settings live in their own repositories and are overlaid onto a chronicle. Warhammer Fantasy
-and 40k exist; The One Ring is a stub; anything else can be authored
+Settings live in their own repositories and are overlaid onto a chronicle. the fantasy line
+and the science-fiction line exist; another source system is a stub; anything else can be authored
 ([13-authoring-a-setting](design/13-authoring-a-setting.md)).
 
 ## Start a chronicle
@@ -41,7 +41,7 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 - **Power stays flat.** What grows over years is what you know and what it cost.
 - **The world does not wait.** Threats advance on their own calendar; you hear late.
 - **Adventures are beats**, not scripts — recombinable into campaigns their authors never
-  wrote ([15-adventures-as-beats](design/15-adventures-as-beats.md)).
+  wrote ([15-arcs-and-beats](design/15-arcs-and-beats.md)).
 - **Settings and chronicles are Obsidian vaults.** The graph view is the world.
 - **The past is a fact.** Rules change forward; history is never recomputed
   ([09-evolution](design/09-evolution.md)).
@@ -65,8 +65,8 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 | [11-corpus-index](design/11-corpus-index.md) | Finding the right passage in a library of 3,841 PDFs |
 | [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Two settings, and running two chronicles at once |
 | [13-authoring-a-setting](design/13-authoring-a-setting.md) | Everything needed to build a new setting |
-| [14-entities-and-schema](design/14-entities-and-schema.md) | The world mesh — entities, overlays, Obsidian |
-| [15-adventures-as-beats](design/15-adventures-as-beats.md) | Beats, the campaign matrix, lazy conversion |
+| [14-entities](design/14-entities.md) | The world mesh — entities, overlays, Obsidian |
+| [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, the campaign matrix, lazy conversion |
 | [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
 | [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
 
@@ -75,7 +75,7 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 
 ## The core idea in one paragraph
 
-Warhammer's register is that you are a rat-catcher, not a chosen one. Wyrd enforces that
+the source line's register is that you are a labourer, not a chosen one. Wyrd enforces that
 mechanically: power stays flat while danger scales, victory is usually mitigation, the world
 darkens whether or not you attend, and the things that break are the people beside you.
 Corruption is a bargain you may choose to make. Death is deferred and usually survivable at
@@ -89,11 +89,11 @@ and loss.
    writes, validation, and the `wyrd` CLI's dice and track verbs. Prove one fight and one
    corruption gain round-trip through a save, then freeze it as the first golden chronicle.
 2. **Ruleset** — combat, criticals, the Aftermath table, Corruption/Insanity/Fate/Fear.
-3. **Reikland** — one setting, because you know instantly whether the voice is right.
+3. **the setting** — one setting, because you know instantly whether the voice is right.
 4. **One scenario, three sessions.** Play it. This is the real test.
 5. **Memory tiers and compaction** — driven by what actually broke in step 4.
 6. **Campaign layer** — Threats, threads, elapsed time, scenario selection.
-7. **Second setting (40k)** to prove the layer boundary holds.
+7. **Second setting (the science-fiction line)** to prove the layer boundary holds.
 
 ## Status
 

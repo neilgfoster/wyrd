@@ -10,7 +10,7 @@ Principle: **if the player could catch Claude cheating at it, it lives here.**
 
 ```yaml
 name: the-drowning-well
-setting: reikland
+setting: <setting-id>
 engine_version: 0.1.0
 created: 2026-08-20
 calendar:
@@ -27,8 +27,8 @@ last_played: 2026-08-19
 
 ```yaml
 name: Anselm Vogt
-career: rat-catcher
-career_history: [rat-catcher]
+career: labourer
+career_history: [labourer]
 skills:
   brawling: 3
   stealth: 4
@@ -67,7 +67,7 @@ render of `pc.yaml` for the player must strip it.
 ```yaml
 companions:
   - name: Grete Vollen
-    career: rat-catcher
+    career: labourer
     agenda: "get her brother out of the debt he owes the Meisters"
     flaw: "cannot leave a wrong alone"
     bond: 3                        # -3..+3, to the PC
@@ -107,7 +107,7 @@ Every NPC and faction that matters carries a live objective with a *current step
 objective:
   wants: "the debt written off before the Overseer sees the ledger"
   because: "her brother signed it and she witnessed it"
-  next_step: "find out whether Wendel remembers the tavern"
+  next_step: "find out whether the PC remembers the tavern"
   blocked_by: "cannot be seen taking an interest in the record house"
   will_escalate_to: "burn the shrine's outbuilding as a distraction"
   timeline: "before Marktag"

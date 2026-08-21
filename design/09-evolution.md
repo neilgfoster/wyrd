@@ -40,7 +40,7 @@ Every engine change is classified. The class determines what happens to live chr
 | **Corrective** | A bug produced results the rules never intended | Forward-only by default; retroactive repair only with explicit consent |
 
 Additive is the class to aim for. Most Wyrd growth — more scenarios, more careers, more
-table entries, the whole 40k setting — is additive by construction, which is a direct
+table entries, the whole the science-fiction line setting — is additive by construction, which is a direct
 benefit of the layering in [`02-architecture.md`](02-architecture.md).
 
 ---
@@ -179,7 +179,7 @@ The first few are already implicit in the existing docs and should be extracted:
 
 - the dice mechanic, and why margin and a summed side-die were rejected
 - deferred death via an Aftermath table rather than in-combat resolution
-- Hope/Shadow as a balance rather than WFRP's one-way ratchet
+- Hope/Shadow as a balance rather than the source system's one-way ratchet
 - succession through the thread rather than the bloodline
 - deterministic-over-inference
 

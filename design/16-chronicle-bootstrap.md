@@ -51,7 +51,7 @@ closest thing Wyrd has to a session-zero conversation, and they are revisable.
 
 ```yaml
 engine: {repo: wyrd, version: 0.4.0}
-setting: {repo: wyrd-wfrp2e, version: 0.3.1}
+setting: {repo: wyrd-<setting>, version: 0.3.1}
 ```
 
 Both are **copies**, not references. A chronicle does not break because an upstream repo
@@ -66,7 +66,7 @@ wyrd update --setting 0.4.0     # new content merges; overlay is preserved
 
 A setting update is nearly always additive — more beats, more characters, another adventure
 converted. The chronicle's `overlay/` is never touched by either
-([`14-entities-and-schema.md`](14-entities-and-schema.md)).
+([`14-entities.md`](14-entities.md)).
 
 Declining an update forever is legitimate. A chronicle two years deep on an old engine is a
 valid chronicle.

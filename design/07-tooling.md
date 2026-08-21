@@ -36,7 +36,7 @@ Ask, in order:
 | Elapsed-time expected-value events | What the peddler says about them |
 | Thread heat decay | Which thread is worth pulling on |
 | Advance eligibility against career triggers | NPC voice, motive, and choice |
-| Calendar, Morrslieb cycle, festivals | Scenario adaptation and pacing |
+| Calendar, the ill moon cycle, festivals | Scenario adaptation and pacing |
 | Save read/write, schema validation, commit | Party tension events and their shape |
 | Aftermath / critical / mutation table lookups | Companion behaviour |
 | Reputation test, recognition roll | The consequence of being recognised |
@@ -83,7 +83,7 @@ engine/wyrd/
 ├─ rules.py       # resolution, damage, tracks, thresholds — pure functions
 ├─ tables.py      # criticals, aftermath, mutations, oracles — pure data
 ├─ state.py       # load/save/validate, atomic writes, invariants
-├─ calendar.py    # dates, Morrslieb, elapsed time
+├─ calendar.py    # dates, the ill moon, elapsed time
 ├─ campaign.py    # threats, threads, activation, decay
 └─ render.py      # output formatting (json | text)
 ```
@@ -132,7 +132,7 @@ Claude narrates from that object. It does not need to know how any of it was der
 ### Modular and extensible
 
 - `rules.py` and `tables.py` are **pure** — no I/O, no state, trivially testable
-- Settings supply data, never code: a 40k weapon table is a data file, not a new module
+- Settings supply data, never code: a the science-fiction line weapon table is a data file, not a new module
 - Adding a verb means adding a catalog entry and a function; nothing else changes
 - Errors are structured (`{"error": {...}}`) and actionable, never bare tracebacks
 
