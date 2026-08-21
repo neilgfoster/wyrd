@@ -13,7 +13,7 @@ takes the same shape: **the past is a fact; only the future is negotiable.**
 
 > **Rule changes apply forward. They never recompute the past.**
 
-If corruption gain is retuned in year three, the corruption accrued in years one and two
+If taint gain is retuned in year three, the taint accrued in years one and two
 stands. If the Aftermath table gains entries, past injuries do not change. If a probability
 is corrected because it was wrong, the rolls it produced still happened.
 
@@ -54,7 +54,7 @@ engine_version: 0.1.0        # the version this chronicle currently runs under
 created_under: 0.1.0
 migrations:                  # append-only history
   - {from: 0.1.0, to: 0.2.0, applied: 2026-11-03, class: tuning,
-     note: "corruption exposure tiers rebalanced; forward-only"}
+     note: "taint exposure tiers rebalanced; forward-only"}
 ```
 
 On load, the engine compares its own version with the chronicle's:
@@ -128,7 +128,7 @@ The engine should not need forking to be tuned. A chronicle may carry overrides:
 resolution:
   wyrd_die:
     neutral_band: [2, 3, 4, 5]     # widen if side effects prove too busy
-corruption:
+taint:
   dark_deal_enabled: true
 session:
   advances_per_session: [1, 2]
@@ -179,7 +179,7 @@ The first few are already implicit in the existing docs and should be extracted:
 
 - the dice mechanic, and why margin and a summed side-die were rejected
 - deferred death via an Aftermath table rather than in-combat resolution
-- Hope/Shadow as a balance rather than the source system's one-way ratchet
+- Resolve/Shadow as a balance rather than the source system's one-way ratchet
 - succession through the thread rather than the bloodline
 - deterministic-over-inference
 

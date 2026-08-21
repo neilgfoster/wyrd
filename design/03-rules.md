@@ -1,7 +1,31 @@
 # Wyrd — the ruleset
 
 the chassis system! as the chassis, with the four the source line subsystems fitted, an AGE-derived dice
-read, and another source system's Hope/Shadow balance. Sources:
+read, and another source system's Resolve/Shadow balance. Sources:
+
+---
+
+## 0. Names are defaults
+
+Every mechanic below has a **neutral default label**. The engine's names are placeholders;
+a setting is expected to rename them via `rename:`
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)), and doing so changes nothing
+mechanical.
+
+| Engine label | What it measures | Typical setting names |
+|---|---|---|
+| **Taint** | permanent accrual that transforms you at thresholds | Corruption · Shadow · Sin · Humanity |
+| **Trauma** | long-term mental accrual, breaking into Afflictions | Insanity · Scars · Stress |
+| **Strain** | short-term pressure, recovered at a Rally | Fatigue · Stress · Wear |
+| **Resolve** | the spendable counterweight to Taint | Hope · Faith · Nerve |
+| **Fate** | the death valve | Fate · Luck · Destiny · Infamy |
+| **Transformation** | the permanent change at a Taint threshold | Mutation · Gift · Mark |
+| **Affliction** | the lasting condition at a Trauma threshold | Derangement · Disorder |
+| **Dread** | how frightening your changes make you to others | Fear points |
+| **Ill Omen / Fair Omen** | the two Wyrd-die faces | Chaos Star / Comet · Peril / Grace |
+
+A setting may also **disable** any of them outright — a light adventure setting can switch
+off Taint and Trauma and lose nothing else.
 
 ---
 
@@ -29,7 +53,7 @@ the chassis system's ladder converts with **no probability drift at all**: `skil
 the base source system and a science-fiction source system stat blocks are read **as printed** — `WS 41` *is* 41%. See
 [ADR 0002](adr/0002-source-system-compatibility.md).
 
-### Difficulty
+### Diffisecty
 
 2e's six bands, replacing the chassis system's two:
 
@@ -38,7 +62,7 @@ the base source system and a science-fiction source system stat blocks are read 
 | Easy | +20 |
 | Average | +0 |
 | Challenging | −10 |
-| Difficult | −20 |
+| Diffisect | −20 |
 | Hard | −30 |
 | Very Hard | −40 |
 
@@ -54,8 +78,8 @@ Read from the **units digit of the natural roll**:
 
 | Units | Result |
 |---|---|
-| 0 | **Chaos Star** — something goes wrong in a the corrupting power-flavoured way |
-| 9 | **Comet** — a significant break in the player's favour |
+| 0 | **Ill Omen** — something goes wrong in a the corrupting power-flavoured way |
+| 9 | **Fair Omen** — a significant break in the player's favour |
 | 1–8 | nothing |
 
 20% frequency. Widen to `0–1` / `8–9` (adding Bane and Boon at 40%) via `houserules.yaml` if
@@ -70,15 +94,15 @@ independence than any scheme with separate dice achieved.
 **The Wyrd die is read from the dice as they first fell. Never modified. Never rerolled.**
 
 - **Fortune** buys the *result*, never the world's reaction to the first attempt. Reroll a
-  failure into a success and the Chaos Star you already rolled still lands.
-- **The Dark Deal** is therefore not a clean trade: pay corruption, try again, and live with
+  failure into a success and the Ill Omen you already rolled still lands.
+- **The Dark Deal** is therefore not a clean trade: pay taint, try again, and live with
   what the first attempt set in motion.
 
 > You can change what happened. You cannot change what it cost.
 
-### Corruption bends the die
+### Taint bends the die
 
-| Corruption | Chaos Star on units |
+| Taint | Ill Omen on units |
 |---|---|
 | 0–2 | 0 |
 | 3–5 | 0–1 |
@@ -94,7 +118,7 @@ or fail.** Always the player's choice.
 
 ## 2. Combat
 
-the chassis system's model, unchanged, because it already delivers grim lethality with no map.
+the chassis system's model, unchanged, because it already delivers lethal consequence with no map.
 
 - Attacks are opposed rolls. The winner rolls the weapon's damage dice.
 - **Stamina is not meat** — it is cuts, bruises, and losing control of the fight.
@@ -157,27 +181,27 @@ well as its anti-frustration valve.
 
 ---
 
-## 4. Hope and Shadow
+## 4. Resolve and Shadow
 
-another source system's balance, replacing the source system's one-way corruption ratchet.
+another source system's balance, replacing the source system's one-way taint ratchet.
 
-- **Hope** — spendable, renewable. Spend for a bonus after a failed roll. Recovered in
+- **Resolve** — spendable, renewable. Spend for a bonus after a failed roll. Recovered in
   downtime and through companions.
-- **Corruption** *(called Shadow in engine terms)* — accrues and sticks.
+- **Taint** *(called Shadow in engine terms)* — accrues and sticks.
 
-**When Hope falls to equal Corruption, the character is Beset** (another source system's *Miserable*). At
-Hope 0 they are spent — they will not press any struggle and will withdraw from danger.
-A character with Corruption 0 can never be Beset however exhausted they are.
+**When Resolve falls to equal Taint, the character is Spent** (another source system's *Miserable*). At
+Resolve 0 they are spent — they will not press any struggle and will withdraw from danger.
+A character with Taint 0 can never be Spent however exhausted they are.
 
-This means the same Corruption score means different things at different times, and
+This means the same Taint score means different things at different times, and
 recovery is part of the loop rather than an afterthought.
 
-### Gaining Corruption
+### Gaining Taint
 
 Three routes, deliberately covering both directions:
 
 1. **Dark Deal** *(4e)* — you failed a test that mattered and have no Fortune left. You may
-   **choose** to take 1 Corruption to reroll it. **Always the player's choice**; Claude may
+   **choose** to take 1 Taint to reroll it. **Always the player's choice**; Claude may
    mention the option exists, never apply it.
 2. **Exposure** — resist with a test; tiers from 4e:
 
@@ -187,62 +211,62 @@ Three routes, deliberately covering both directions:
    | Moderate | 2 | 1 | 0 |
    | Major | 3 | 2 | 1 |
 
-   Minor: witnessing a lesser daemon, contact with a mutant or tainted matter, **giving in to
-   despair, rage or excess**. Moderate: contact with a daemon or profane artefact,
-   *embracing* those impulses. Major: making a deal with a daemon, consuming tainted matter.
+   Minor: witnessing a lesser otherworldly power, contact with a transformed or tainted matter, **giving in to
+   despair, rage or excess**. Moderate: contact with a otherworldly power or profane artefact,
+   *embracing* those impulses. Major: making a deal with a otherworldly power, consuming tainted matter.
 
    Note how many are moral rather than supernatural. That is the setting's thesis.
 3. **GM Invocation** *(3e)* — before a roll, Claude may **spend one of the character's
-   Corruption points** to add a penalty, narrating how the taint surfaces: temptation,
+   Taint points** to add a penalty, narrating how the taint surfaces: temptation,
    cramps, whispered voices only they hear. Max one per check. It *consumes* the point, so
    it cannot be leaned on.
 
-Together these make corruption a live presence rather than a number that matters only at
+Together these make taint a live presence rather than a number that matters only at
 thresholds.
 
-### Corruption Weakness
+### Fault Line
 
-Following another source system, corruption is **specific, not generic**. Each character has a Weakness
+Following another source system, taint is **specific, not generic**. Each character has a Weakness
 derived at creation from their **Passion** and **Cruel Misfortune** (both the chassis system
 Compendium 2). The labourer who took the trade to feed his family falls differently from
 the scholar who wanted to know what was in the book. The Weakness names the path.
 
-### Mutation and the doom clock
+### Transformation and the hidden threshold
 
-Crossing the Corruption threshold forces a **mutation** (body) or a **derangement** (mind).
-The result consumes Corruption equal to its severity, dropping the character back below
+Crossing the Taint threshold forces a **transformation** (body) or a **affliction** (mind).
+The result consumes Taint equal to its severity, dropping the character back below
 threshold; if still over, roll again.
 
-On the **first** mutation, the engine **secretly rolls `1d10 + Toughness`** — the number of
-mutations this character can endure before they are lost. **The player never sees it.**
-Written to state once, so every later mutation is narrated against a real countdown.
+On the **first** transformation, the engine **secretly rolls `1d10 + Toughness`** — the number of
+transformations this character can endure before they are lost. **The player never sees it.**
+Written to state once, so every later transformation is narrated against a real countdown.
 
-When the clock runs out the character is **damned** — and becomes an NPC that Claude
+When the clock runs out the character is **lost** — and becomes an NPC that Claude
 controls. They do not leave the chronicle; they join the opposition.
 
-Mutations carry **Fear points** — corruption's cost is social as well as mechanical. The
-mutant's problem is being seen.
+Transformations carry **Dread points** — taint's cost is social as well as mechanical. The
+transformed's problem is being seen.
 
 ---
 
-## 5. Insanity, Fear and Stress
+## 5. Trauma, Fear and Stress
 
 Three tiers of mental harm, distinguished by how long they last.
 
-- **Stress** *(3e)* — short-term. Gained from failed mental tests, horror, exhaustion.
+- **Stress** *(3e)* — short-term. Gained from failed mental tests, terror, exhaustion.
   Recovered at a Rally (see [`04-session.md`](04-session.md)). The bad night that mostly
   clears by morning.
-- **Insanity points** *(2e)* — long-term and sticky. **1 per critical hit taken** (the
+- **Trauma points** *(2e)* — long-term and sticky. **1 per critical hit taken** (the
   trigger already exists in the chassis system's combat), 1 per failed Terror test, more at Claude's
   discretion for genuinely terrible events.
-- **Derangements** — permanent. At **6+ Insanity**, test Willpower on every further point
-  gained; on a failure take a derangement and **lose 6 Insanity**. The track sawtooths, so a
+- **Afflictions** — permanent. At **6+ Trauma**, test Willpower on every further point
+  gained; on a failure take a affliction and **lose 6 Trauma**. The track sawtooths, so a
   character can be broken many times across years.
 
 **Fear and Terror tests** are the connective tissue the chassis system lacks entirely: Fear makes you
-unable to press an attack; Terror routs you and costs an Insanity point on a failure.
+unable to press an attack; Terror routs you and costs an Trauma point on a failure.
 
-In the world, insanity is believed to be the corrupting power working on the mind — "a mutation on the
+In the world, trauma is believed to be the corrupting power working on the mind — "a transformation on the
 inside". The mad are feared, not pitied.
 
 ---
@@ -353,7 +377,7 @@ The same engine with different data, plus one rules overlay:
 - The existing **blast** critical table covers energy weapons
 - Magic → psychic powers; **Wrath of the Otherworld becomes Perils of the Warp with no
   structural change** — reskin the miscast table, keep the mechanism
-- Corruption stays exactly as-is; only its vocabulary changes
+- Taint stays exactly as-is; only its vocabulary changes
 - the chassis system Compendium 2's firearms rules (Readiness / Misfire / Boom!) port directly
 
 Fantasy first. The overlay is a data exercise once the engine is proven.

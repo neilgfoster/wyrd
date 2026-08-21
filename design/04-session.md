@@ -105,11 +105,11 @@ Triggered at the end of a scenario or arc, or when the player asks. Structure:
 | **Advances** | Spend earned advances (see [`03-rules.md`](03-rules.md)). |
 | **Undertaking** | Choose **one** activity for the period. |
 
-Undertakings include: **Recover** (reduce Corruption or Stress), **Mend** (treat a lasting
-wound), **Pursue** (advance a personal thread), **Cultivate** (build a relationship or a
+Undertakings include: **Recover** (reduce Taint or Stress), **Mend** (treat a lasting
+wound), **Pursue** (advance a personal thread), **Sectivate** (build a relationship or a
 holding), **Learn** (open a new career), **Ask** (gather information on a Threat).
 
-The constraint is that you choose **one**. Recovering from corruption means *not* pursuing
+The constraint is that you choose **one**. Recovering from taint means *not* pursuing
 the thing that corrupted you. That trade is the whole point.
 
 A Fellowship phase **advances the calendar** — typically weeks to a season — which means
@@ -131,7 +131,7 @@ Each companion in `party.yaml` carries:
   agenda: "get her brother out of the debt he owes the Meisters"
   flaw: "cannot leave a wrong alone"
   bond: 3            # to the PC; -3..+3
-  corruption: 1
+  taint: 1
   stress: 0
   secret: "she already knows what happened to the brother"  # PC does not know this
   arc: "will have to choose between the debt and the party"
@@ -151,7 +151,7 @@ A single **Tension** track, 0-6. It rises when:
 - a companion is hurt by the player's choice
 - the party goes hungry, unpaid, or unrested
 - a secret surfaces
-- corruption shows
+- taint shows
 
 At **3**, friction is visible — sniping, reluctance, a companion holding something back.
 At **6**, something breaks: a departure, a betrayal, a confession, a refusal at the worst

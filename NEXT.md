@@ -36,16 +36,16 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
      itself. Emits `settings/reikland/careers.yaml`.
    - **Gear and prices** — *world Armoury*
    - **Creatures** — *world Bestiary*
-   - **Mutation and corruption tables** — *Tome of Corruption*
+   - **Transformation and taint tables** — *Tome of Taint*
 
 4. **Mine the v1 adventures** for rules that never made the core book — career expansions,
-   critical variants, the corrupting power material. Fold into the starting region career graph and corruption
+   critical variants, the corrupting power material. Fold into the starting region career graph and taint
    tables.
 
 5. **Apply the two the science-fiction line findings**, if approved — see
    [reference/the science-fiction line-engine-impact.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/the science-fiction line-engine-impact.md):
    - split companions into a rich narrative layer and a deliberately thin mechanical one
-   - give the party track a positive direction (Cohesion), and corruption a direction as
+   - give the party track a positive direction (Cohesion), and taint a direction as
      well as a magnitude
 
 ## Then

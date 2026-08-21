@@ -78,8 +78,8 @@ wyrd-chronicle-<name>/
 
 ### wyrd — the engine
 
-- `rules/` — resolution, combat, corruption, insanity, fate, fear, advancement
-- `tables/` — criticals, injuries, mutations, miscasts, oracles
+- `rules/` — resolution, combat, taint, trauma, fate, fear, advancement
+- `tables/` — criticals, injuries, transformations, miscasts, oracles
 - `contract.md` — the GM contract from [`01-principles.md`](01-principles.md), in the form
   loaded every session
 
@@ -94,7 +94,7 @@ wyrd-<setting>/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
 ├─ careers.yaml      # the career tree (the chassis system careers, the setting-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
-├─ factions.yaml     # cults, guilds, watch, nobility — with agendas
+├─ factions.yaml     # sects, guilds, watch, nobility — with agendas
 ├─ deities.yaml
 ├─ names.yaml        # given/family/place name tables
 └─ calendar.yaml     # months, festivals, the ill moon cycle
@@ -158,9 +158,9 @@ mechanical, not optional.
 freehand:
 
 ```
-wyrd roll <skill> [--difficulty N]     # 3d6 + Wyrd die, returns full structured result
+wyrd roll <skill> [--diffisecty N]     # 3d6 + Wyrd die, returns full structured result
 wyrd damage <target> <expr>            # applies damage, stamina, criticals
-wyrd track <pc> corruption +1          # mutates tracks, fires thresholds
+wyrd track <pc> taint +1          # mutates tracks, fires thresholds
 wyrd advance-time <days>               # calendar, Threat activation, expected-value events
 wyrd threat-check                      # weekly d12 per Threat
 wyrd save / wyrd load / wyrd validate  # atomic writes, schema validation

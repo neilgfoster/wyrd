@@ -1,7 +1,7 @@
 # Wyrd — the meta-campaign
 
 The layer that makes a chronicle run for years: how the world moves while you are away, how
-scenarios are selected rather than scripted, and how a long defeat is shaped.
+scenarios are selected rather than scripted, and how a losing struggle is shaped.
 
 Sources: a sandbox source system's Threat Packs, another source system's Tale of Years, one source system's Progress
 Tracker. See [systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md) and
@@ -29,9 +29,9 @@ effects:                  # rolled when the Threat activates
   2: "the tainted district permanently worsens"
   3-6: "spreads to an adjacent location"
   7: "a named NPC is taken or turned"
-  8: "an open, public horror — the town knows"
+  8: "an open, public calamity — the settlement knows"
 ambient:                  # true while inside its reach
-  - "corruption exposure: minor, weekly"
+  - "taint exposure: minor, weekly"
   - "no restful sleep"
 denizens: [...]
 counters:                 # how it can actually be fought
@@ -47,7 +47,7 @@ weakness: "it cannot cross running water"
 | 1-2 | Interacts rarely and randomly. A rumour, an occasional body. |
 | 3-4 | An active force, a growing concern. Named people start disappearing. |
 | 5-6 | Serious concern for everyone; troubles the region constantly. |
-| 7+ | An almost constant source of trouble — "perhaps spelling its ultimate doom". |
+| 7+ | An almost constant source of trouble — "perhaps spelling its ultimate ruin". |
 
 ### Activation
 
@@ -99,7 +99,7 @@ know, a companion's unresolved arc.
 ```yaml
 - id: the-escaped-patron
   opened: 2512-Nachexen
-  summary: "the man who paid the cultists walked away; you saw his ring"
+  summary: "the man who paid the zealots walked away; you saw his ring"
   hooks: [nobility, altdorf, jewellery, the-rot-beneath-grenzstadt]
   heat: 2        # 0-5. rises when touched, decays slowly when ignored
 ```
@@ -149,17 +149,10 @@ Darkening of Mirkwood*:
 
 > The Quiet Years → The First Signs → The Bad Winter → What Came After
 
-Eras are named in advance and set the ambient register. They are also the honest statement
-of the campaign's thesis: **things get worse.**
+> A losing struggle is a legitimate shape for a chronicle, and settings that declare one
+> should say so in their tone contract. The engine's part is only to hold the line the
+> setting draws — see [`01-principles.md`](01-principles.md).
 
-## The long defeat
-
-The register, from another source system, stated better than I can restate it:
-
-> "Even heroes can hardly avert this fate — all the odds are against them. But there is
-> something they can certainly do: they can fight to hold back the darkness for another day,
-> another month, maybe another year... they will at least save something from the inevitable
-> doom."
 
 And:
 
@@ -185,7 +178,7 @@ and defend your own.
 
 ## Succession
 
-A chronicle running years may outlast one labourer. When the PC dies, is damned, or
+A chronicle running years may outlast one labourer. When the PC dies, is lost, or
 retires, the default is **succession, not replacement** — but succession is inherited
 **through the thread, not the bloodline**.
 
@@ -212,7 +205,7 @@ candidates, roughly in order of how well they carry a story:
   already established and nothing has to be re-earned.
 
 The successor need not have liked the old PC. They may have been hunting them. A witch
-hunter who took the case, and now carries the corruption they were sent to burn out, is a
+hunter who took the case, and now carries the taint they were sent to burn out, is a
 better second act than any heir.
 
 ### What is actually inherited
@@ -224,7 +217,7 @@ better second act than any heir.
 | Open **threads**, at their current heat | Skills, careers, advances |
 | The **enemies** the old PC made | Stamina, Luck, Fate |
 | Active **Threats** and their Imminence | Reputation *(a new label starts, possibly hostile)* |
-| What the world **believes** about the old PC | Corruption, mutations, derangements |
+| What the world **believes** about the old PC | Taint, transformations, afflictions |
 | The **rot** itself, still growing | Any assumption of goodwill |
 
 **Holdings are not automatically passed on.** A cottage may be seized for debt, burned,
@@ -239,7 +232,7 @@ their predecessor was, or condemned for it.
 
 ### The old PC does not leave
 
-If they were **damned**, they became an NPC Claude controls — and the successor may meet
+If they were **lost**, they became an NPC Claude controls — and the successor may meet
 them. If they **died**, what they did persists in the codex as fact and in the world as
 rumour, and the two need not match. If they **retired**, they are somewhere, and can be
 found, and may not want to be.

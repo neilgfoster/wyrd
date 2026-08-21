@@ -17,7 +17,7 @@ multi-dimensional outcome survive it?
 **It survives, and gets cheaper and cleaner.** The `2d6` Wyrd dice contribute
 nothing to the success calculation — that was the whole point of the third design. They do
 not know or care what resolves success. Swapping `d20 + skill vs 20` for `d100 roll-under`
-changes nothing about them: same 16.7% trigger, same five outcomes, same corruption gating.
+changes nothing about them: same 16.7% trigger, same five outcomes, same taint gating.
 
 That decoupling was adopted to fix an independence bug. It turns out to have made the
 success mechanic **swappable**, which is a stronger property than it was designed for and is
@@ -54,13 +54,13 @@ Proposed bands, with the natural 10% granularity:
 
 | Units | Result |
 |---|---|
-| 0 | **Chaos Star** |
-| 9 | **Comet** |
+| 0 | **Ill Omen** |
+| 9 | **Fair Omen** |
 | 1–8 | nothing |
 
 20% frequency, close to the `2d6` scheme's 16.7%, and **widening is a one-line house rule**:
-`0–1` / `8–9` gives 40% with banes and boons added. Corruption gating gets natural
-granularity too — the Chaos Star range widens from `0` to `0–1` to `0–2` as corruption rises.
+`0–1` / `8–9` gives 40% with banes and boons added. Taint gating gets natural
+granularity too — the Ill Omen range widens from `0` to `0–1` to `0–2` as taint rises.
 
 It reads cleanly in text: *"Stealth 35, rolled 37 — failure by 0 degrees, and the 7 means
 nothing else went wrong."*
@@ -82,9 +82,9 @@ fix it. Negligible, and not worth a die.)
 would let a player buy their way out of consequences entirely. Under this invariant:
 
 - **Fortune** buys the *result*, never the world's reaction to the first attempt. Reroll the
-  failure into a success and the Chaos Star you already rolled still lands.
-- **The Dark Deal** gains real teeth. It stops being a clean trade ("pay corruption, try
-  again") and becomes "pay corruption, try again, and live with what the first attempt set in
+  failure into a success and the Ill Omen you already rolled still lands.
+- **The Dark Deal** gains real teeth. It stops being a clean trade ("pay taint, try
+  again") and becomes "pay taint, try again, and live with what the first attempt set in
   motion" — which is the correct shape for a Faustian bargain.
 
 > You can change what happened. You cannot change what it cost.
@@ -96,12 +96,12 @@ independent. `reversed ≤ 04` requires units 0 and a low tens, so the original 
 {00,10,20,30,40} — all low, all successes. `reversed ≥ 95` requires units 9 and a high tens,
 so the original is in {59,69,79,89,99} — all failures. Measured:
 
-| | Chaos Star | Comet |
+| | Ill Omen | Fair Omen |
 |---|---|---|
 | on a success | 7–12% | **0–3%** |
 | on a failure | 0–3% | 7–12% |
 
-Systematically **anti-correlated**, and at skill 45+ a success cannot produce a Comet at all.
+Systematically **anti-correlated**, and at skill 45+ a success cannot produce a Fair Omen at all.
 The extremes of the reversed value map straight back onto the extremes of the original —
 the same class of bug as reading the side effect from the margin.
 
@@ -129,8 +129,8 @@ the chassis system's skill ladder maps to percentages with **no probability drif
 | 12 *(career cap)* | 65% | 65% |
 | 14 | 75% | 75% |
 
-Difficulty maps as cleanly: the chassis system's −2 / −4 become **−10 / −20**, which lands exactly on
-the source system's own difficulty ladder (Easy +20, Average +0, Challenging −10, Difficult −20, Hard
+Diffisecty maps as cleanly: the chassis system's −2 / −4 become **−10 / −20**, which lands exactly on
+the source system's own diffisecty ladder (Easy +20, Average +0, Challenging −10, Diffisect −20, Hard
 −30, Very Hard −40). We inherit a tested six-band ladder in place of the chassis system's two.
 
 ## What d100 adds

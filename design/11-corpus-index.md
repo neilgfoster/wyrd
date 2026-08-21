@@ -18,7 +18,7 @@ shapes:
 | "A scenario about a village with something under it" | thematic — no literal term to match | `scenarios` |
 | "What are the Fear rules?" | mechanical — known vocabulary | `terms` |
 | "Who was Hallam Weissbruck?" | proper noun — literal but unguessable | `nouns` |
-| "A d100 mutation table" | structural — a *kind* of content | `tables` |
+| "A d100 transformation table" | structural — a *kind* of content | `tables` |
 | "What's in White Dwarf 98?" | bibliographic | `documents` |
 
 A single full-text search serves the middle three badly and the first not at all, because
@@ -59,8 +59,8 @@ concordance says it already belongs to somebody, and a collision is avoided.
 
 ### 3. `terms.json` — mechanical vocabulary
 
-A **curated** vocabulary of mechanical terms — Fear, Terror, corruption, mutation, critical,
-career exit, insanity, Fate, miscast, tainted matter — mapped to postings, ranked by whether the
+A **curated** vocabulary of mechanical terms — Fear, Terror, taint, transformation, critical,
+career exit, trauma, Fate, miscast, tainted matter — mapped to postings, ranked by whether the
 hit looks like a *definition* (near a heading, near a table) or a passing mention.
 
 Curated rather than derived, because the vocabulary is small, stable, and known in advance.
@@ -75,7 +75,7 @@ ranges (`01-05`, `2`, `11-15`), preceded by a caption, often near a dice notatio
 Record: document, offset, dice type (`d6`/`d10`/`d66`/`d100`), row count, and the nearest
 preceding heading as a caption guess.
 
-Deterministic. This turns "I need a d100 mutation table" from a search into a lookup, and it
+Deterministic. This turns "I need a d100 transformation table" from a search into a lookup, and it
 harvests the tables Wyrd's own `engine/tables/` should be seeded from.
 
 ### 5. `scenarios.json` — thematic, selectable, and a campaign graph
@@ -87,7 +87,7 @@ It does three jobs: describe the scenario, let it be *filtered* for fitness, and
 scenarios *chain* into a meta-campaign.
 
 Scope is **the whole library, not the the source system shelf** — a Deadlands investigation, a Maelstrom
-village horror and a *White Dwarf* six-pager are equally valid inputs, judged on theme
+village haunting and a magazine six-pager are equally valid inputs, judged on theme
 ([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
 
@@ -110,7 +110,7 @@ helped_by: [medicine]                 # easier with; harder and better without
 
 # --- thematic: model-generated once, cached ---
 tone: [investigation, folk-horror]
-themes: [corruption-of-water, a-debt-unpaid, complicity]
+themes: [taint-of-water, a-debt-unpaid, complicity]
 shape: "a slow poisoning the village already half-knows about"
 
 # --- graph ---
@@ -138,7 +138,7 @@ plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via th
 that already scales content ([`03-rules.md`](03-rules.md)). a solo source system' Fray die does the
 rest of the work in combat.
 
-`danger` in the record is therefore *intrinsic difficulty as written for its stated party
+`danger` in the record is therefore *intrinsic diffisecty as written for its stated party
 size*, not what this table will face. The engine computes the latter.
 
 Field names match the beat schema in [`15-arcs-and-beats.md`](15-arcs-and-beats.md) exactly;
@@ -180,7 +180,7 @@ current `T`. The meta-campaign tree is **emergent** rather than authored — whi
 way it can span a library this heterogeneous, and it avoids the railroad that a fixed tree
 would impose.
 
-Where a real chain exists — *The Enemy Within*'s eight parts, *Paths of the Damned* — it is
+Where a real chain exists — a published multi-part campaign — it is
 recorded in `chain`. Published campaigns keep their sequence; everything else earns its place
 by matching threads.
 
@@ -195,8 +195,8 @@ Regenerated only when the schema changes.
 ```
 wyrd find noun "Weissbruck"
 wyrd find rule "fear test"
-wyrd find table --dice d100 --about mutation
-wyrd find scenario --hook cult --tone investigation --length short
+wyrd find table --dice d100 --about transformation
+wyrd find scenario --hook sect --tone investigation --length short
 wyrd find doc --system "White Dwarf" --issue 98
 ```
 
@@ -231,7 +231,7 @@ against the corpus.
 
 ## What is not indexed
 
-Prose setting material — regional gazetteers, cult descriptions, histories. It is read on
+Prose setting material — regional gazetteers, sect descriptions, histories. It is read on
 demand and its value is in the reading. The concordance already makes it findable by name,
 which is how it is actually reached in play: not "tell me about Ostland" but "what is this
 place the player just mentioned?"

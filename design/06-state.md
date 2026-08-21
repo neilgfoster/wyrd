@@ -39,14 +39,14 @@ stamina: {current: 9, max: 9}
 luck: {current: 5, max: 5}
 fate: {current: 2, max: 2}         # permanent; spent to avoid death
 fortune: {current: 2}              # renewable daily, = fate max
-hope: {current: 4, max: 5}
-corruption: 1
-corruption_weakness: "will do anything to keep his sister fed"
-doom_clock: null                   # SECRET. 1d10+toughness, set at first mutation.
-insanity: 0
+resolve: {current: 4, max: 5}
+taint: 1
+fault_line: "will do anything to keep his sister fed"
+hidden_threshold: null                   # SECRET. 1d10+toughness, set at first transformation.
+trauma: 0
 stress: 0
-derangements: []
-mutations: []
+afflictions: []
+transformations: []
 fear_points: 0
 reputation: {score: 1, label: "the man who found the child"}
 passions:
@@ -59,7 +59,7 @@ advances_unspent: 1
 conditions: []                     # beset, weary, etc — derived, cached
 ```
 
-`doom_clock` is written once, on first mutation, and **never shown to the player**. Any
+`hidden_threshold` is written once, on first transformation, and **never shown to the player**. Any
 render of `pc.yaml` for the player must strip it.
 
 ## `party.yaml`
@@ -71,17 +71,17 @@ companions:
     agenda: "get her brother out of the debt he owes the Meisters"
     flaw: "cannot leave a wrong alone"
     bond: 3                        # -3..+3, to the PC
-    corruption: 1
+    taint: 1
     stress: 0
     secret: "she already knows what happened to the brother"
     arc: "will have to choose between the debt and the party"
-    status: with-party             # with-party | away | dead | damned | departed
+    status: with-party             # with-party | away | dead | lost | departed
     skills: {brawling: 2, stealth: 3}
     stamina: {current: 7, max: 7}
 tension: 2                         # 0-6 party tension (see 04-session)
 ```
 
-Companions are **cheaper to model than the PC** — no fate, no fortune, no doom clock. Only
+Companions are **cheaper to model than the PC** — no fate, no fortune, no hidden threshold. Only
 the player carries the full state.
 
 ## `threats.yaml`
@@ -123,7 +123,7 @@ plausibly and one who responds *predictably*.
 threads:
   - id: the-escaped-patron
     opened: {year: 2512, month: Jahrdrung}
-    summary: "the man who paid the cultists walked away; you saw his ring"
+    summary: "the man who paid the zealots walked away; you saw his ring"
     hooks: [nobility, altdorf, jewellery, the-rot-beneath-grenzstadt]
     heat: 2                        # 0-5; rises when touched, decays when ignored
     status: open                   # open | resolved | cold | never-answered
@@ -172,9 +172,9 @@ Regenerated at every session close. Always loaded. Target ~200 words:
 - `career_skill` == lowest skill in the current career
 - `stamina.max` only rises when `career_skill` rises
 - `fortune.current` <= `fate.max`
-- character is **Beset** iff `hope.current <= corruption` and `corruption > 0`
-- `insanity >= 6` triggers a Willpower test on every further gain
-- mutations count > `doom_clock` → status becomes `damned`
+- character is **Spent** iff `resolve.current <= taint` and `taint > 0`
+- `trauma >= 6` triggers a Willpower test on every further gain
+- transformations count > `hidden_threshold` → status becomes `lost`
 - `tension` in 0..6; reaching 6 fires an event and resets to 0
 - every write is atomic; every write is followed by a schema validation
 - **no write may be skipped because narration already happened** — persist precedes narrate

@@ -9,9 +9,9 @@ eventually both may be live at the same time.
 
 | Layer | Shared | Per setting |
 |---|---|---|
-| **Resolution** | d100, Wyrd die, SL, difficulty bands | — |
+| **Resolution** | d100, Wyrd die, SL, diffisecty bands | — |
 | **Combat** | stamina, armour dice, criticals, Aftermath | flavour of the critical tables |
-| **Tracks** | Corruption, Insanity, Fate, Hope, Stress | *vocabulary* — mutation vs warp-taint, derangement vs the Whisperings |
+| **Tracks** | Taint, Trauma, Fate, Resolve, Stress | *vocabulary* — transformation vs warp-taint, affliction vs the Whisperings |
 | **Session** | beats, Rally, Fellowship phases, party tension | — |
 | **Campaign** | Threats, threads, elapsed time, succession | — |
 | **Careers** | the *shape* — exits, advance triggers | the entire career graph |
@@ -21,9 +21,9 @@ eventually both may be live at the same time.
 The mechanical engine is genuinely setting-agnostic. What changes is **data and register**,
 which is why the layering in [`02-architecture.md`](02-architecture.md) holds.
 
-**The the science-fiction line setting is not a reskin, though.** Corruption is the same mechanic with a different
-theology; the long defeat is *more* pronounced, not less; and the voice is a different
-language — the world's dry municipal grimness against the the science-fiction setting's liturgical
+**The the science-fiction line setting is not a reskin, though.** Taint is the same mechanic with a different
+theology; a losing struggle is *more* pronounced, not less; and the voice is a different
+language — one line's dry municipal register against another's liturgical
 brutality. the science-fiction setting's `voice.md` is the hardest file in that directory, not the
 easiest.
 

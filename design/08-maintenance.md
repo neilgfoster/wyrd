@@ -60,11 +60,11 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 
 - schema validation of every file
 - **invariants** from [`06-state.md`](06-state.md): `career_skill` is the lowest career
-  skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Beset iff
-  `hope <= corruption and corruption > 0`; `tension` in 0..6; mutations vs `doom_clock`
+  skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Spent iff
+  `resolve <= taint and taint > 0`; `tension` in 0..6; transformations vs `hidden_threshold`
 - **referential integrity**: every thread hook, threat connection, party member and codex
   cross-link resolves to something that exists
-- **status contradictions**: an NPC marked `dead` who is also `with-party`; a `damned` PC
+- **status contradictions**: an NPC marked `dead` who is also `with-party`; a `lost` PC
   still holding Fortune; a resolved thread still hot
 - **calendar sanity**: no event dated before the chronicle began; no Threat activation in
   the future

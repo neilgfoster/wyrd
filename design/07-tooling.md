@@ -29,16 +29,16 @@ Ask, in order:
 |---|---|
 | Dice rolls, and reading doubles / Wyrd die | What the result *means* here |
 | Damage, armour dice, stamina, criticals | Describing the wound |
-| Corruption, Insanity, Stress, Hope arithmetic | How the taint surfaces in this scene |
+| Taint, Trauma, Stress, Resolve arithmetic | How the taint surfaces in this scene |
 | Threshold and invariant checks | Whether to call for a roll at all |
-| The secret doom clock | — |
+| The secret hidden threshold | — |
 | Threat activation (`d12 <= imminence`) | How the Threat manifests here, now |
 | Elapsed-time expected-value events | What the peddler says about them |
 | Thread heat decay | Which thread is worth pulling on |
 | Advance eligibility against career triggers | NPC voice, motive, and choice |
 | Calendar, the ill moon cycle, festivals | Scenario adaptation and pacing |
 | Save read/write, schema validation, commit | Party tension events and their shape |
-| Aftermath / critical / mutation table lookups | Companion behaviour |
+| Aftermath / critical / transformation table lookups | Companion behaviour |
 | Reputation test, recognition roll | The consequence of being recognised |
 
 **The dice roller in particular is non-negotiable.** It is the only defence against
@@ -58,7 +58,7 @@ Following the `msgraph-stdlib` house pattern: **stdlib-only, zero-dependency,
 zero-backend.** No packages, no server process, no install step, no supply-chain surface.
 
 - Python 3.11+, standard library only
-- No daemon, no database — the chronicle is files on disk
+- No otherworldly power, no database — the chronicle is files on disk
 - Readable top to bottom; a person can audit the whole thing
 - The constraint is the differentiator: portable, auditable, and it will still run in five
   years, which matters for something meant to last a decade
@@ -81,7 +81,7 @@ engine/wyrd/
 ├─ client.py      # entry point; argparse dispatch built FROM the catalog
 ├─ verbs.py       # the operations
 ├─ rules.py       # resolution, damage, tracks, thresholds — pure functions
-├─ tables.py      # criticals, aftermath, mutations, oracles — pure data
+├─ tables.py      # criticals, aftermath, transformations, oracles — pure data
 ├─ state.py       # load/save/validate, atomic writes, invariants
 ├─ calendar.py    # dates, the ill moon, elapsed time
 ├─ campaign.py    # threats, threads, activation, decay
@@ -116,13 +116,13 @@ returns the whole structured result, not a sentence:
 ```json
 {
   "verb": "roll",
-  "skill": "stealth", "skill_value": 4, "difficulty": 0,
+  "skill": "stealth", "skill_value": 4, "diffisecty": 0,
   "dice": [5, 5, 2], "wyrd_die": 5, "total": 12,
   "target": 20, "modified_total": 16,
   "success": false,
   "doubles": true, "doubles_value": 5,
   "side_effect": "boon",
-  "chaos_star_range": [1],
+  "ill_omen_range": [1],
   "state_written": true
 }
 ```

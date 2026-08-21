@@ -73,7 +73,7 @@ not require adopting the procedures.
 blocks, NPC write-ups, and the whole adventure corpus — usable directly. a science-fiction source system's career
 list becomes the the science-fiction line setting's career data with no work.
 
-**Difficulty ladder.** 2e's six bands (Easy +20 … Very Hard −40), replacing the chassis system's two.
+**Diffisecty ladder.** 2e's six bands (Easy +20 … Very Hard −40), replacing the chassis system's two.
 
 **Characteristics as an optional depth.** Wyrd's flat skill model can read a 2e characteristic
 as the skill value where no specific skill exists. `Ag 38` *is* the dodge score.
@@ -99,7 +99,7 @@ as the skill value where no specific skill exists. `Ag 38` *is* the dodge score.
   ([`../05-campaign.md`](../05-campaign.md)), and scenario danger rating is the tuning
   dial.
 - Talents being descriptive means some published NPCs lose mechanical distinctiveness. Where
-  one genuinely matters, express it as a **bane/boon on the Wyrd die** or a difficulty band —
+  one genuinely matters, express it as a **bane/boon on the Wyrd die** or a diffisecty band —
   both of which the engine already has.
 
 ## Alternative considered

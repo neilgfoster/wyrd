@@ -15,8 +15,8 @@ would.
 
 | Class | Examples | Rendered as |
 |---|---|---|
-| **Never shown** | doom clock, thread heat, party tension, bond values, NPC stats, difficulty numbers, Threat imminence | nothing — these are engine state |
-| **Diegetic only** | stamina, skills, corruption, insanity, stress, reputation, wounds, inventory | prose, from the character's own perspective |
+| **Never shown** | hidden threshold, thread heat, party tension, bond values, NPC stats, diffisecty numbers, Threat imminence | nothing — these are engine state |
+| **Diegetic only** | stamina, skills, taint, trauma, stress, reputation, wounds, inventory | prose, from the character's own perspective |
 | **Countable** | Fate, Fortune, Luck | prose that is still *countable*, because the player must decide whether to spend them |
 
 The countable class is the only compromise, and it is forced: a resource you must choose to
@@ -61,9 +61,9 @@ Fractions, not absolutes, so it holds as max stamina grows.
 So the PC "has held a book of prayer since he was fourteen" (Incantation 6) but "has swung a
 mace exactly twice, both times badly" (Blunt 5).
 
-### Corruption — felt as wrongness, never as a score
+### Taint — felt as wrongness, never as a score
 
-| Corruption | The character knows |
+| Taint | The character knows |
 |---|---|
 | 0 | nothing |
 | 1-2 | a thought that wasn't yours, once, and it hasn't fully left |
@@ -71,19 +71,19 @@ mace exactly twice, both times badly" (Blunt 5).
 | 6-8 | it is company now. It has opinions |
 | 9+ | you are no longer the only one deciding |
 
-**The doom clock is never rendered at all**, in any form. Not even as dread. The player finds
+**The hidden threshold is never rendered at all**, in any form. Not even as unease. The player finds
 out where it was when it runs out.
 
-### Insanity and Stress
+### Trauma and Stress
 
-Stress is *today* — "your hands won't settle", "you keep checking the door". Insanity is
+Stress is *today* — "your hands won't settle", "you keep checking the door". Trauma is
 *permanent* and shows as accumulated tells the character has stopped noticing, which other
-people notice for them. A derangement is never described as a derangement; it is described
+people notice for them. A affliction is never described as a affliction; it is described
 as behaviour.
 
-### Hope and being Beset
+### Resolve and being Spent
 
-Hope is rendered as capacity to keep going, not as a bar. Beset — Hope fallen to Corruption
+Resolve is rendered as capacity to keep going, not as a bar. Spent — Resolve fallen to Taint
 — is the one state that *should* be unmistakable, because it changes what the character is
 willing to do: "you cannot make yourself care what happens next."
 

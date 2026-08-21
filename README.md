@@ -5,7 +5,7 @@ across years.
 
 Wyrd is **setting-agnostic**. It is its own system — percentile resolution descended from
 the base source system, simplified for narrative play — plus the machinery a solo campaign actually needs:
-a world that moves while you are away, companions the GM plays as people, corruption you
+a world that moves while you are away, companions the GM plays as people, taint you
 choose, consequences that outlive characters, and a chronicle that stays correct for a
 decade.
 
@@ -56,7 +56,7 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 | [02-architecture](design/02-architecture.md) | Engine / settings / scenarios / chronicles; code vs prose |
 | [03-rules](design/03-rules.md) | The ruleset |
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the NPC party |
-| [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, the long defeat |
+| [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, a losing struggle |
 | [06-state](design/06-state.md) | The save schema |
 | [07-tooling](design/07-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
 | [08-maintenance](design/08-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
@@ -78,7 +78,7 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 the source line's register is that you are a labourer, not a chosen one. Wyrd enforces that
 mechanically: power stays flat while danger scales, victory is usually mitigation, the world
 darkens whether or not you attend, and the things that break are the people beside you.
-Corruption is a bargain you may choose to make. Death is deferred and usually survivable at
+Taint is a bargain you may choose to make. Death is deferred and usually survivable at
 a price. What accumulates over years is not strength but knowledge, reputation, obligations,
 and loss.
 
@@ -87,8 +87,8 @@ and loss.
 1. **Skeleton** — save schema (including `engine_version`, `migrations[]` and provenance
    stamping from the first commit — see [09-evolution](design/09-evolution.md)), atomic
    writes, validation, and the `wyrd` CLI's dice and track verbs. Prove one fight and one
-   corruption gain round-trip through a save, then freeze it as the first golden chronicle.
-2. **Ruleset** — combat, criticals, the Aftermath table, Corruption/Insanity/Fate/Fear.
+   taint gain round-trip through a save, then freeze it as the first golden chronicle.
+2. **Ruleset** — combat, criticals, the Aftermath table, Taint/Trauma/Fate/Fear.
 3. **the setting** — one setting, because you know instantly whether the voice is right.
 4. **One scenario, three sessions.** Play it. This is the real test.
 5. **Memory tiers and compaction** — driven by what actually broke in step 4.

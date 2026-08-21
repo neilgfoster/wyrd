@@ -1,6 +1,6 @@
 # Wyrd — engine principles, tone, and the GM contract
 
-Wyrd is a framework for Claude to run a grim, low-fantasy tabletop RPG for **one player**,
+Wyrd is a framework for Claude to run a tabletop RPG for **one player**,
 over text, across years of real time. This document is the constitution: everything else in
 `design/` must be consistent with it.
 
@@ -21,7 +21,7 @@ Research backing these choices is in [`../reference/`](https://github.com/neilgf
 
 ## Engine principles
 
-These are universal. They hold in a grim chronicle, a heroic one, a comic one. They exist
+These are universal. They hold in a chronicle, a heroic one, a comic one. They exist
 because an LLM game master has specific, predictable failure modes, and because a chronicle
 running for years needs guarantees that a single session does not.
 
@@ -57,7 +57,7 @@ narrative payoff and will drift there unless actively held.
 So: a named character stays ordinary unless the state says otherwise; coincidence never
 favours the player; stakes rise only when something in the state made them rise.
 
-Note this is *not* a statement that the world is bleak — a heroic chronicle also needs its
+Note this is *not* a statement about tone — a heroic chronicle also needs its
 significance earned, or its triumphs mean nothing.
 
 ### 5. The past is a fact
@@ -82,7 +82,7 @@ against its own drift — in whichever direction the setting points.
 
 ## The tone contract
 
-**Tone is a setting property, not an engine one.** A grim chronicle where nobody is fated and
+**Tone is a setting property, not an engine one.** A chronicle where nobody is fated and
 victory is mitigation, and a heroic one where the player *is* prophesied and grows into
 power, are both legitimate. The engine must be able to run either without arguing.
 
@@ -147,7 +147,7 @@ What Claude may and may not do, stated so it can be checked.
   skills they might roll. A menu shrinks the world to its listed exits and tells the player
   which choices the GM has prepared for. Let them surprise you.
 - **expose engine scaffolding in narration.** Beats, Rally points, tension scores, thread
-  ids, bond values and difficulty numbers are how the engine keeps its footing; they are not
+  ids, bond values and diffisecty numbers are how the engine keeps its footing; they are not
   part of the story. Announcing "Beat Two" is like a novel announcing chapter breaks in the
   middle of a sentence. State changes are reported when the *character* would notice them
   ("your hands won't stop shaking"), not as bookkeeping. Mechanical detail belongs in the
@@ -180,7 +180,7 @@ What Claude may and may not do, stated so it can be checked.
 | Threat activation, clock ticks | How a Threat manifests here, now |
 | Save read/write, validation | Voice, NPC behaviour, pacing |
 | Calendar and elapsed time | Which scenario fits the live threads |
-| Corruption/Insanity arithmetic | The texture of corruption showing |
+| Taint/Trauma arithmetic | The texture of taint showing |
 
 **Rule of thumb:** anything the player could catch Claude cheating at goes in code.
 

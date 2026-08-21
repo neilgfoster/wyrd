@@ -20,7 +20,7 @@ wyrd-<name>/
 │  ├─ creatures.yaml  # stat blocks
 │  ├─ factions.yaml   # with objectives (see 06-state)
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
-│  ├─ names.yaml      # given / family / place, by culture
+│  ├─ names.yaml      # given / family / place, by secture
 │  ├─ conversion.yaml # REQUIRED if derived from another system — see below
 │  ├─ calendar.yaml   # months, festivals, celestial cycles
 │  └─ rules/          # OPTIONAL overlay — only where the engine is insufficient
@@ -68,7 +68,7 @@ Everything else is data that can be typed in. The voice is the setting.
 It should state, with examples drawn from the source material:
 
 1. **Register** — the narrator's relationship to the world. The world's is a weary
-   civil servant who has seen the paperwork. Only War's is bureaucratic doom. These are not
+   civil servant who has seen the paperwork; another's is bureaucratic doom. These are not
    interchangeable.
 2. **What institutions look like** — named, mundane, and administratively real, or vast and
    incomprehensible. This is where most of the tone actually lives.
@@ -91,9 +91,9 @@ The engine guarantees, and a setting may rely on:
 | Engine provides | Setting supplies |
 |---|---|
 | `d100` resolution, SL, the Wyrd die | skill names |
-| Difficulty bands | when they apply |
+| Diffisecty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
-| Corruption, Insanity, Fate, Hope, Stress | what they are *called* and what causes them |
+| Taint, Trauma, Fate, Resolve, Stress | what they are *called* and what causes them |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
 | Beats, Rally, Fellowship phases, party tension | what downtime looks like here |
 | Threats, threads, elapsed time, succession | who the Threats are |
@@ -117,8 +117,8 @@ rather than a family of incompatible forks, and it is not negotiable.
 |---|---|
 | **Extend** | add setting-specific skills, careers, talents, gear, creatures |
 | **Retune** | replace a table with one that has more setting feel; change exposure tiers; alter starting Fate |
-| **Rename** | Corruption becomes Shadow, or Warp-taint, or the Long Defeat. Vocabulary only |
-| **Disable** | switch off Corruption entirely for a high-fantasy setting; switch off Insanity for a lighter one |
+| **Rename** | Taint becomes Shadow, or Warp-taint, or Sin. Vocabulary only |
+| **Disable** | switch off Taint entirely for a high-fantasy setting; switch off Trauma for a lighter one |
 
 **Not permitted:**
 
@@ -127,15 +127,15 @@ rather than a family of incompatible forks, and it is not negotiable.
 - changing how state persists, how beats work, or how time passes
 
 If a setting needs a mechanism that does not exist — a journey system, a mass-battle layer, a
-Hope/Shadow balance the core lacks — **that is an engine gap and it goes in the engine**,
+Resolve/Shadow balance the core lacks — **that is an engine gap and it goes in the engine**,
 generalised so every setting can use it. The setting then configures it or leaves it off.
 
 Overrides are declared in `setting.yaml`:
 
 ```yaml
 overrides:
-  disable: [corruption, insanity]     # a high-fantasy setting
-  rename: {corruption: shadow}
+  disable: [taint, trauma]     # a high-fantasy setting
+  rename: {taint: shadow}
   tables: {critical-slashing: setting/rules/tables/critical-slashing.yaml}
   extend: {skills: setting/rules/skills.yaml}
 ```
@@ -168,8 +168,8 @@ skills:
   note: "source is already percentile; values are read as printed"
 characteristics:
   map: {combat: weapon-skill, ranged: ballistic-skill, physical: strength}
-difficulty:
-  map: {easy: +20, average: 0, challenging: -10, difficult: -20, hard: -30}
+diffisecty:
+  map: {easy: +20, average: 0, challenging: -10, diffisect: -20, hard: -30}
 damage:
   method: direct
   wounds_to_stamina: direct
@@ -181,7 +181,7 @@ danger:
   formula: "danger = ceil(source_level / 2)"
 
 # --- vocabulary ---
-rename: {corruption: taint, insanity: shock}
+rename: {taint: taint, trauma: shock}
 
 # --- structure ---
 arcs:
@@ -225,14 +225,14 @@ Useful because it is *not* the source line and so tests the boundary.
 
 | Need | Where it goes |
 |---|---|
-| Cultures instead of careers | `careers.yaml` — the graph shape still fits |
-| Hope and Shadow | **already engine** — Wyrd took this from another source system |
+| Sectures instead of careers | `careers.yaml` — the graph shape still fits |
+| Resolve and Shadow | **already engine** — Wyrd took this from another source system |
 | Shadow Weakness from Calling | `setting/rules/` — a mapping table |
 | The Fellowship phase | **already engine** |
 | Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |
 | Eagles, Wargs, the Necromancer | `creatures.yaml`, `factions.yaml` |
-| "The long defeat" | **already engine** — it is the campaign model |
-| The register | `voice.md`, and it would be elegiac rather than grim |
+| "A losing struggle" | **already engine** — it is the campaign model |
+| The register | `voice.md` — elegiac, where another line might be dry or brutal |
 
 Most of it lands in data. The one genuine overlay is journeys — which tells you something
 useful: **Wyrd's engine currently assumes travel is narrated, not played.** That is a defensible
