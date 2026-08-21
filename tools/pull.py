@@ -1,48 +1,48 @@
 #!/usr/bin/env python3
-"""Pull a file from OneDrive by path, via Graph. Refreshes the rclone token as needed."""
-import json, re, sys, os, time, fcntl, urllib.request, urllib.parse, configparser
+"""Pull a file from OneDrive by path, via Microsoft Graph.
+
+Why this exists: Debian's rclone 1.60.1 cannot DOWNLOAD from personal OneDrive
+(`unauthenticated`), though listing works fine. So rclone owns auth and we own transfer.
+
+Auth: rclone's OneDrive app is a *confidential* client with a baked-in secret, so we cannot
+refresh the token ourselves (AADSTS70002). Instead we let rclone refresh by making it do a
+trivial listing, then read the refreshed access token out of rclone.conf. Serialised behind
+an flock so concurrent callers don't stampede.
+"""
+import json, sys, os, time, fcntl, subprocess, urllib.request, urllib.parse, configparser
 
 CONF = os.path.expanduser('~/.config/rclone/rclone.conf')
-CLIENT_ID = 'b15665d9-eda6-4092-8539-0eec376afd59'
-ROOT = 'Games/Tabletop'
-
-def load_token():
-    cp = configparser.ConfigParser(); cp.read(CONF)
-    return json.loads(cp['onedrive']['token']), cp
-
-def save_token(tok):
-    cp = configparser.ConfigParser(); cp.read(CONF)
-    cp['onedrive']['token'] = json.dumps(tok)
-    with open(CONF, 'w') as f: cp.write(f)
-
 LOCK = os.path.expanduser('~/.config/rclone/.token.lock')
+REMOTE = 'onedrive'
+ROOT = 'Games/Tabletop'
+SKEW = 300  # refresh if it expires within 5 minutes
+
+
+def _read_token():
+    cp = configparser.ConfigParser(); cp.read(CONF)
+    return json.loads(cp[REMOTE]['token'])
+
+
+def _expiring(tok):
+    exp = tok.get('expiry', '')
+    if not exp:
+        return True
+    t = time.strptime(exp[:19], '%Y-%m-%dT%H:%M:%S')
+    return t <= time.gmtime(time.time() + SKEW)
+
 
 def access_token():
-    """Serialised across processes: refresh tokens are single-use, so a concurrent
-    refresh invalidates its siblings. Hold an exclusive lock across check-and-refresh."""
     with open(LOCK, 'w') as lk:
         fcntl.flock(lk, fcntl.LOCK_EX)
-        return _access_token_locked()
-
-def _access_token_locked():
-    tok, _ = load_token()
-    exp = tok.get('expiry', '')
-    fresh = exp and time.strptime(exp[:19], '%Y-%m-%dT%H:%M:%S') > time.gmtime(time.time() + 120)
-    if fresh:
+        tok = _read_token()
+        if _expiring(tok):
+            # Make rclone do the refresh; it holds the client secret we don't.
+            subprocess.run(['rclone', 'lsf', f'{REMOTE}:{ROOT}', '--max-depth', '1',
+                            '--contimeout', '20s', '--timeout', '40s'],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
+            tok = _read_token()
         return tok['access_token']
-    data = urllib.parse.urlencode({
-        'client_id': CLIENT_ID, 'grant_type': 'refresh_token',
-        'refresh_token': tok['refresh_token'],
-    }).encode()
-    r = urllib.request.urlopen(
-        'https://login.microsoftonline.com/common/oauth2/v2.0/token', data, timeout=60)
-    new = json.load(r)
-    tok['access_token'] = new['access_token']
-    tok['refresh_token'] = new.get('refresh_token', tok['refresh_token'])
-    tok['expiry'] = time.strftime('%Y-%m-%dT%H:%M:%SZ',
-                                  time.gmtime(time.time() + new.get('expires_in', 3600)))
-    save_token(tok)
-    return tok['access_token']
+
 
 def pull(relpath, dest):
     at = access_token()
@@ -50,12 +50,15 @@ def pull(relpath, dest):
     req = urllib.request.Request(
         f'https://graph.microsoft.com/v1.0/me/drive/root:/{enc}',
         headers={'Authorization': f'Bearer {at}'})
-    meta = json.load(urllib.request.urlopen(req, timeout=60))
+    meta = json.load(urllib.request.urlopen(req, timeout=90))
     url = meta.get('@microsoft.graph.downloadUrl') or meta['@content.downloadUrl']
-    with urllib.request.urlopen(url, timeout=600) as r, open(dest, 'wb') as f:
+    tmp = dest + '.part'
+    with urllib.request.urlopen(url, timeout=1800) as r, open(tmp, 'wb') as f:
         while chunk := r.read(1 << 20):
             f.write(chunk)
+    os.replace(tmp, dest)
     return meta['size'], os.path.getsize(dest)
+
 
 if __name__ == '__main__':
     rel = sys.argv[1]
