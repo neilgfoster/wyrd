@@ -2,7 +2,7 @@
 
 The library is 3,841 PDFs; the extracted text corpus will be tens of millions of words.
 Most of it is consulted **rarely and unpredictably** — one a periodical adventure about a
-corrupt miller, once, three years in.
+corrupt official, once, three years in.
 
 Reading it is not the problem. **Knowing where to look is.**
 
@@ -116,7 +116,7 @@ shape: "a slow poisoning the village already half-knows about"
 # --- graph ---
 requires_threads: [rural, water, sickness]
 emits_threads:
-  - {tag: patron-escaped, if: "the patron is not caught"}
+  - {tag: financier-escaped, if: "they are not caught"}
   - {tag: village-owes-you, if: "the well is cleansed"}
 consequences: ["the village is materially worse off either way"]
 chain: null                           # or {campaign: enemy-within, part: 3}
@@ -144,9 +144,9 @@ size*, not what this table will face. The engine computes the latter.
 Field names match the beat schema in [`15-arcs-and-beats.md`](15-arcs-and-beats.md) exactly;
 the index is a projection of the entities, not a parallel vocabulary.
 
-**Access and capability are inputs too, not walls.** A labourer can be hired by someone
+**Access and capability are inputs too, not walls.** A low-status character can be hired by someone
 with court access, or smuggled in — and *getting the in is often the better scenario*.
-A companion can read the grimoire the player character cannot. So:
+A companion can read what the player character cannot. So:
 
 | Field | Effect |
 |---|---|
@@ -155,7 +155,7 @@ A companion can read the grimoire the player character cannot. So:
 | `helped_by` | flags only — easier with it, and more desperate and interesting without |
 
 `helped_by` is the one that repays attention. A scenario easier with literacy is a *better*
-scenario for an Initiate and a *harder, more frightening* one for a labourer. That is a
+scenario for a literate character and a *harder, more frightening* one for a labourer. That is a
 reason to choose it.
 
 The genuine exclusions are few: wrong setting, or an `adaptation: rewrite` cost that is not

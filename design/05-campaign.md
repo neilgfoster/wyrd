@@ -169,11 +169,11 @@ A **thread** is an open loop: a debt, an enemy who escaped, a promise, a name yo
 know, a companion's unresolved arc.
 
 ```yaml
-- id: the-escaped-patron
-  opened: 2512-Nachexen
-  summary: "the man who paid the zealots walked away; you saw his ring"
-  hooks: [nobility, altdorf, jewellery, the-rot-beneath-the-town]
-  heat: 2        # 0-5. rises when touched, decays slowly when ignored
+- id: the-one-who-paid
+  opened: {year: 0, month: null}
+  summary: "whoever funded it walked away, and you would know them again"
+  hooks: [money, influence, the-thing-they-funded]
+  heat: 2        # 0-5; rises when touched, decays slowly when ignored
 ```
 
 Every scenario **consumes** threads (it needs hooks that match live ones) and **emits** new
@@ -202,12 +202,12 @@ At the start of an arc, or when a scenario closes, the GM picks the next by:
 5. Recording `source:` — what it was adapted from and what changed
 
 **Sourcing is by theme, not system.** An investigation written for another world and a *a periodical*
-six-pager about a corrupt miller are equally valid inputs. See
+six-pager about a corrupt official are equally valid inputs. See
 [scenarios.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/scenarios.md) and
 [library-triage.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md).
 
 **Prefer short-form.** The magazine and fanzine archives are the richest seam precisely
-because a six-page adventure about a corrupt miller has no ambition to be a finale.
+because a six-page adventure about a corrupt official has no ambition to be a finale.
 
 ---
 
@@ -245,20 +245,26 @@ An arc that ends with nothing altered was a sequence of beats, not an arc.
 
 ## Holdings
 
-Over years the player accumulates something — a cottage, a boat, a workshop, a
-name in a guild, a family. It is recorded in the chronicle and it is **leverage**:
+Over years a character accumulates **things that can be taken**: a dwelling, a boat, a
+workshop, a standing in some organisation, a household, a debt owed to them.
 
-> "If Spiders attack a Woodman village, that's a tragedy for the heroes to avenge — but if
-> the village includes a farm that is part of a hero's holding, then it's personal."
+A holding is recorded as an entity like anything else, and its purpose is mechanical rather
+than decorative: **it converts accumulated investment into stakes.** A threat to a settlement
+is a problem; a threat to a settlement where the character owns the mill is *personal*, and
+requires no invention on the GM's part to make it so.
 
-And it manufactures the dilemma that a long campaign needs: remain on the quest, or go home
-and defend your own.
+It also manufactures the dilemma a long chronicle needs: **stay with what you were doing, or
+go back and defend your own.** That choice is only available to a character who has something
+to lose, which is why holdings accrue quietly for years before they matter.
+
+Holdings are distinct from **allegiances**. An allegiance is standing within an organisation;
+a holding is a thing that can be burned, seized, occupied or ruined.
 
 ## Succession
 
 A chronicle running years may outlast the character who began it. When the player's
-character dies, is lost, or retires, the default is **succession, not replacement** — but succession is inherited
-**through the thread, not the bloodline**.
+character dies, is lost, or retires, the default is **succession, not replacement** — and
+succession passes **through the thread, not the bloodline**.
 
 "Your son takes up the sword" is the weakest available version. It is sentimental, it
 assumes an inheritance most settings do not grant, and it makes the chronicle about a family
@@ -267,24 +273,24 @@ when it should be about **the situation that outlives everyone who touches it**.
 ### The successor is already in the chronicle
 
 The successor is someone **already in the chronicle** — a name that has appeared, however
-briefly. The engine selects from the chronicle's `character` entities by *entanglement*, not affection. Strong
-candidates, roughly in order of how well they carry a story:
+briefly. The engine selects from the chronicle's `character` entities by *entanglement*, not
+affection. Strong candidates, roughly in order of how well they carry a story:
 
 - **Someone the predecessor wronged.** The debt they never repaid; the family they failed to
   warn; the witness they left in the cellar. They inherit the consequences and the grudge.
-- **Someone who was investigating them.** A witch hunter, a bailiff's clerk, a rival
-  agitator who had a file on you and now has to finish what you started, hating it.
-- **A bystander whose life the predecessor's actions changed.** The miller's daughter, after the
-  mill. She never chose this.
+- **Someone who was investigating them.** An official, an inquisitor, a rival who kept a
+  file — and now has to finish what the predecessor started, hating it.
+- **A bystander whose life the predecessor's actions changed.** Someone who was simply
+  present, and is now the only one who knows. They never chose this.
 - **A rival.** Someone who wanted what you had and now has your enemies as well.
 - **Whoever found what you left behind.** The ledger, the body, the thing in the cellar.
   Possession of the evidence is itself an inheritance.
 - **A companion** — still permitted, but the *least* interesting option, because the bond is
   already established and nothing has to be re-earned.
 
-The successor need not have liked the predecessor. They may have been hunting them. A witch
-hunter who took the case, and now carries the taint they were sent to burn out, is a
-better second act than any heir.
+The successor need not have liked the predecessor. They may have been hunting them. An
+investigator who took the case and now carries the thing they were sent to end is a better
+second act than any heir.
 
 ### What is actually inherited
 
@@ -296,11 +302,11 @@ better second act than any heir.
 | The **enemies** the predecessor made | Stamina, Luck, Fate |
 | Active **Threats** and their Imminence | Reputation *(a new label starts, possibly hostile)* |
 | What the world **believes** about the predecessor | Taint, transformations, afflictions |
-| The **rot** itself, still growing | Any assumption of goodwill |
+| The **unresolved situation** itself | Any assumption of goodwill |
 
-**Holdings are not automatically passed on.** A cottage may be seized for debt, burned,
-occupied by squatters, or fall to someone else entirely. If it does reach the successor it
-should arrive encumbered — with the debt, the obligation, or the thing living under it.
+**Holdings are not automatically passed on.** A dwelling may be seized for debt, burned,
+occupied, or fall to someone else entirely. If one does reach the successor it should arrive
+encumbered — with the debt, the obligation, or whatever made it worth taking.
 Losing the holding is often the better story, and it is a legitimate outcome of the predecessor's
 death rather than a punishment.
 
@@ -315,13 +321,11 @@ them. If they **died**, what they did persists in the entity store as fact and i
 rumour, and the two need not match. If they **retired**, they are somewhere, and can be
 found, and may not want to be.
 
-This is the mechanism that makes an era boundary meaningful: the chronicle continues, the
-protagonist does not, and the thing they were fighting is still there — larger, and now
-partly their fault.
+This is what can make an era boundary meaningful: the chronicle continues, the protagonist
+does not, and what they were contending with is still there — now partly their doing.
 
 ### At the table
 
 Succession is offered, never imposed. On a character's end the GM proposes **two or three
-candidates from the chronicle's characters** with a line each on how they are entangled, and the player
-chooses — or declines and starts clean. Declining is legitimate; the threads simply stay
+candidates** with a line each on how they are entangled, and the player chooses — or declines and starts clean. Declining is legitimate; the threads simply stay
 open and go cold in their own time.

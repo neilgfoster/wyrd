@@ -142,7 +142,7 @@ entry:
   requires_state: []
   hooks: ["the player asks about the ledger"]
 exit:
-  emits_threads: [{tag: patron-escaped, if: "the patron is not caught"}]
+  emits_threads: [{tag: financier-escaped, if: "they are not caught"}]
   changes: ["the gap in the ledger is public knowledge"]
   leads_to: [[the-tavern]]     # suggestion, never a rail
 place: [[the-river-city]]
