@@ -101,7 +101,7 @@ The engine guarantees, and a setting may rely on:
 
 | Engine provides | Setting supplies |
 |---|---|
-| `d100` resolution, SL, the Wyrd die | skill names |
+| `d100` resolution, degrees of success, the Wyrd die | skill names |
 | Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called* and what causes them |

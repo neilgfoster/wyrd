@@ -14,7 +14,7 @@ you rolled cannot produce them.
 ## Decision
 
 > **Roll `d100`, succeed at or under `skill%`.**
-> **Success Levels** (tens digit of skill minus tens digit of roll) give magnitude.
+> **Degrees of success** (tens digit of skill minus tens digit of roll) give magnitude.
 > **The units digit of the natural roll** is the Wyrd die.
 
 One roll, three axes, no extra dice.

@@ -9,7 +9,7 @@ more than one chronicle may be live at a time.
 
 | Layer | Shared | Per setting |
 |---|---|---|
-| **Resolution** | `d100`, the Wyrd die, SL, difficulty bands | — |
+| **Resolution** | `d100`, the Wyrd die, degrees of success, difficulty bands | — |
 | **Combat** | stamina, armour dice, criticals, Aftermath | flavour of the critical tables |
 | **Tracks** | Taint, Trauma, Strain, Resolve, Fate | their *names*, and whether they exist at all |
 | **Session** | beats, Rally, downtime, party tension | what downtime looks like here |

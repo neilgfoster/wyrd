@@ -29,7 +29,8 @@ particular book, it belongs in that setting's `rename:` block, not here.
 ## 1. Resolution
 
 > **Roll `d100`. Succeed at or under your `skill%`.**
-> - **Success Levels (SL)** — tens digit of the skill minus tens digit of the roll — give magnitude.
+> - **Degrees of success** — tens digit of the skill minus tens digit of the roll — give
+>   magnitude.
 > - **The units digit of the natural roll** is the **Wyrd die**: what else happened.
 
 One roll, three independent axes, no extra dice. Rationale and rejected alternatives are in
@@ -41,7 +42,7 @@ One roll, three independent axes, no extra dice. Rationale and rejected alternat
 |---|---|---|---|---|---|
 | +20 | +0 | −10 | −20 | −30 | −40 |
 
-**Opposed tests:** both roll; higher SL wins; ties to the defender. The acting side reads the
+**Opposed tests:** both roll; the higher degree of success wins; ties to the defender. The acting side reads the
 Wyrd die.
 
 **Only roll when it is dramatic** — when failure is interesting and the outcome is in doubt.
@@ -109,7 +110,7 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
   A minimum of 1 always gets through.
-- **Telling blow:** win by 3+ SL and the damage doubles.
+- **Telling blow:** win by 3 or more degrees and the damage doubles.
 - **Critical** when damage takes a combatant **below 0 Stamina**. Roll `1d6 + points below
   zero` on the table for the damage type. High results are lethal.
 - Weapons are **casual** or **martial**. Martial weapons mark the bearer and are illegal in

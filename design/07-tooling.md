@@ -123,7 +123,7 @@ returns the whole structured result, not a sentence:
   "roll": 23,
   "units": 3,
   "success": true,
-  "sl": 1,
+  "degrees": 1,
   "wyrd": "none",
   "ill_omen_range": [0],
   "natural_roll": 23,
