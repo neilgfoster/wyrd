@@ -13,6 +13,11 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
    See [design/11-corpus-index.md](design/11-corpus-index.md). All four are single passes,
    no model.
 
+   Then the `scenarios` index, which is the big one: selection filters checkable against
+   `pc.yaml`, plus `requires_threads`/`emits_threads` so the meta-campaign tree emerges from
+   thread matching rather than being authored. Library-wide, not just WFRP. Haiku-tier,
+   lazy, cached.
+
 3. **Extract 2e engine data.** All four sources are digital with text layers — no OCR
    needed, the cost is parser tuning:
    - **Careers** — *Career Compendium*, 258pp. Parser proven: 230 clean records with

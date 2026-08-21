@@ -78,19 +78,89 @@ preceding heading as a caption guess.
 Deterministic. This turns "I need a d100 mutation table" from a search into a lookup, and it
 harvests the tables Wyrd's own `engine/tables/` should be seeded from.
 
-### 5. `scenarios.json` — thematic
+### 5. `scenarios.json` — thematic, selectable, and a campaign graph
 
-The only index needing a model, and the only one where that is justified: **there is no
-literal term for "a village with something under it."**
+The largest index and the only one needing a model, justified because **there is no literal
+term for "a village with something under it."**
 
-Per adventure, generated **once** and cached: hooks, themes, tone, approximate length in
-sessions, cast size, whether it needs a map, the shape of the situation, and what threads it
-would emit. This is the record [`05-campaign.md`](05-campaign.md)'s scenario selection
-matches against.
+It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
+scenarios *chain* into a meta-campaign.
 
-**Haiku-tier** per [`07-tooling.md`](07-tooling.md) — bulk structured extraction against
-existing text, with a right answer. Roughly 400 adventures across the library, one pass
-each, cached forever. Regenerated only when the schema changes.
+Scope is **the whole library, not the WFRP shelf** — a Deadlands investigation, a Maelstrom
+village horror and a *White Dwarf* six-pager are equally valid inputs, judged on theme
+([`../reference/library-triage.md`](../reference/library-triage.md)). `adaptation` records
+what conversion costs.
+
+```yaml
+id: the-drowning-well
+source: {system: "White Dwarf", ref: "WD 98", pages: "34-39"}
+adaptation: reskin                    # none | reskin | rewrite
+settings: [reikland, imperium]
+
+# --- selection filters: deterministic, checked against pc.yaml ---
+scale: village                        # village|town|city|wilderness|underground|waterway|road|ship|fortress
+region: any
+threat: 3                             # T — scales content (see 03-rules)
+length: 2                             # sessions
+season: any                           # or winter | harvest | festival
+party: {min: 1, ideal: 3}             # min 1 == playable by PC + companions
+access_required: []                   # court|guild|temple|criminal|military
+capabilities_required: []             # literacy|magic|boat|horse|coin|standing
+capabilities_helpful: [literacy]
+
+# --- thematic: model-generated once, cached ---
+tone: [investigation, folk-horror]
+themes: [corruption-of-water, a-debt-unpaid, complicity]
+shape: "a slow poisoning the village already half-knows about"
+
+# --- graph ---
+requires_threads: [rural, water, sickness]
+emits_threads:
+  - {tag: patron-escaped, if: "the patron is not caught"}
+  - {tag: village-owes-you, if: "the well is cleansed"}
+consequences: ["the village is materially worse off either way"]
+chain: null                           # or {campaign: enemy-within, part: 3}
+```
+
+#### Why filters matter as much as themes
+
+A scenario can be perfectly on-theme and still be **wrong for this character**. A rat-catcher
+has no business in a courtly intrigue without an in, and a scenario written for four
+adventurers may be unplayable by one plus companions.
+
+`access_required`, `capabilities_required` and `party.min` are **deterministic predicates
+checkable against `pc.yaml`** — so unsuitable scenarios are filtered out in code before any
+judgment is applied. That is the tooling rule ([`07-tooling.md`](07-tooling.md)) applied to
+selection: the *filter* is code, the *fit* is judgment.
+
+`capabilities_helpful` is the interesting one — it does not exclude, it *flags*. A scenario
+that is easier with literacy is a better scenario for an Initiate, and a harder, more
+desperate one for a rat-catcher. That is a reason to choose it, not to skip it.
+
+#### Two kinds of chaining
+
+**Careers form a closed, named graph** — Boatman leads to Smuggler and nothing else, because
+one author designed the whole web. Scenarios cannot work that way: they come from 112
+systems and **no author wrote them to chain with each other.**
+
+So scenarios use an **open, tag-matched graph**:
+
+- `emits_threads` — what is left open afterwards, *conditional on outcome*
+- `requires_threads` — what must already be live for this to be reachable
+
+Selection is then: find scenarios whose `requires_threads` match currently hot threads
+([`05-campaign.md`](05-campaign.md)), that pass the deterministic filters, and scale them to
+current `T`. The meta-campaign tree is **emergent** rather than authored — which is the only
+way it can span a library this heterogeneous, and it avoids the railroad that a fixed tree
+would impose.
+
+Where a real chain exists — *The Enemy Within*'s eight parts, *Paths of the Damned* — it is
+recorded in `chain`. Published campaigns keep their sequence; everything else earns its place
+by matching threads.
+
+**Haiku-tier** per [`07-tooling.md`](07-tooling.md): structured extraction against text that
+already exists. Roughly 400 adventures library-wide, one pass each, cached forever.
+Regenerated only when the schema changes.
 
 ---
 
