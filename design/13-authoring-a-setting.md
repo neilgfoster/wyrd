@@ -21,6 +21,7 @@ wyrd-<name>/
 │  ├─ factions.yaml   # with objectives (see 06-state)
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
 │  ├─ names.yaml      # given / family / place, by culture
+│  ├─ conversion.yaml # REQUIRED if derived from another system — see below
 │  ├─ calendar.yaml   # months, festivals, celestial cycles
 │  └─ rules/          # OPTIONAL overlay — only where the engine is insufficient
 ├─ scenarios/
@@ -131,6 +132,78 @@ Overlays are declared in `setting.yaml` and loaded after engine defaults, exactl
 `houserules.yaml` for a chronicle.
 
 ---
+
+## Conversion rules — required for any derived setting
+
+A setting derived from an existing system **must** carry `setting/conversion.yaml`.
+
+Without it, on-demand conversion ([`15-arcs-and-beats.md`](15-arcs-and-beats.md)) is
+improvised each time, and the same source converted twice produces different numbers. That is
+non-determinism entering through the back door — precisely what
+[`07-tooling.md`](07-tooling.md) exists to prevent. A conversion table makes the process
+mechanical, repeatable and auditable.
+
+```yaml
+# setting/conversion.yaml
+from: {system: "<source system>", edition: "<edition>"}
+version: 1                      # bump on any change; converted content records which it used
+
+# --- numbers ---
+skills:
+  method: direct                # direct | scale | table
+  note: "source is already percentile; values are read as printed"
+characteristics:
+  map: {combat: weapon-skill, ranged: ballistic-skill, physical: strength}
+difficulty:
+  map: {easy: +20, average: 0, challenging: -10, difficult: -20, hard: -30}
+damage:
+  method: direct
+  wounds_to_stamina: direct
+armour:
+  method: table
+  map: {1: light, 2: light, 3: modest, 4: modest, 5: heavy}
+danger:
+  derive_from: "the source's stated party level or recommended party"
+  formula: "danger = ceil(source_level / 2)"
+
+# --- vocabulary ---
+rename: {corruption: taint, insanity: shock}
+
+# --- structure ---
+arcs:
+  chapter: arc(scale=adventure)
+  encounter: beat
+  read_aloud: "narrative seed — never reproduced verbatim"
+
+# --- deliberately dropped ---
+drop: [talents, hit-locations, vehicles, initiative-order, facing]
+drop_note: >
+  Dropped mechanics are recorded on the converted entity as prose, not lost silently.
+  A creature with a Frenzy talent is described as frenzied.
+
+# --- cannot be converted automatically ---
+manual: [setting-specific-subsystems, published-maps]
+```
+
+### Conversion is versioned
+
+Every converted entity records the conversion version that produced it:
+
+```yaml
+converted: {rules: 1, on: 2026-08-21}
+```
+
+So when a conversion rule changes, `wyrd doctor` reports which entities predate it and offers
+re-conversion — a **structural** change under [`09-evolution.md`](09-evolution.md), never one
+that rewrites what happened in play.
+
+### The three things conversion must never do
+
+1. **Reproduce prose verbatim.** Read-aloud text becomes a narrative seed. A converted beat is
+   a situation, not a transcription — the same reason beats are never scripts.
+2. **Invent numbers it cannot derive.** Where the source gives nothing, the field stays null
+   and the entity stays `status: stub`. A guessed stat is worse than an absent one.
+3. **Lose provenance.** Every converted entity records the source work and pages.
 
 ## A worked example: what a One Ring setting would need
 

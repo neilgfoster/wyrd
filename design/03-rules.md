@@ -247,24 +247,88 @@ inside". The mad are feared, not pitied.
 
 ---
 
-## 6. Advancement
+## 6. Experience and advancement
 
-the chassis system's, because it is already the flat curve the setting requires.
+The governing constraint is principle 6 ([`01-principles.md`](01-principles.md)):
+**power stays flat; what grows is knowledge and position.** A veteran and a novice die to the
+same crossbow bolt. Advancement must therefore be mostly *lateral* — and over a decade, the
+things that actually accumulate are not on the character sheet at all.
 
-- 1–3 advances per session.
-- An advance raises **one skill in the current career only**, to that career's cap.
-- **Career skill** = the *lowest* skill in the career, so it creeps.
-- **Max Stamina +1** only when the career skill rises. This is the *only* durability growth.
-- Real progression is **changing careers** — different access and standing, not more power.
+### Advances are the currency
 
-**Advance triggers** (the chassis system Compendium 2) rather than XP: one for learning something new,
-one for **following your Passion even when it cost you**, and one per career-specific
-condition ("mark an advance when you stir people up against authority"). Checkable, so
-Claude cannot be generous by accident.
+**1–3 advances per session**, awarded against **triggers**, never an XP total. Triggers are
+checkable, so the engine can verify an award rather than the GM being generous by accident
+([`07-tooling.md`](07-tooling.md)).
 
-**Reputation** is a score with a *label* that changes with recent deeds — `reputation 7
-(swindler)`. Claude rolls it when the character meets someone; passing means recognised,
-"which may or may not be beneficial". Notoriety is a threat vector, not a reward.
+| Trigger | Awarded when |
+|---|---|
+| **Learned** | you discovered something true about the world you did not know |
+| **Drove** | you acted on a drive or passion **even though it cost you** |
+| **Practised** | you met your career's own condition (each career declares one or two) |
+| **Endured** | you survived something that should have finished you |
+
+At most one of each per session, so a session caps at four and typically pays two.
+
+### Spending them
+
+| Cost | Buys |
+|---|---|
+| 1 | **+5%** to a skill your current career grants, up to that career's cap |
+| 1 | **open** a new skill your career grants, at 25% |
+| 1 | **change career**, to any legal exit, given a fictional reason |
+
+That is the entire economy. No talent trees, no feats, no purchasable abilities — those are
+the drift risk identified in [ADR 0002](adr/0002-source-system-compatibility.md), and their
+absence is deliberate.
+
+### Careers, and why changing them is the real progression
+
+Careers form a **directed graph**: each declares its `entries` and `exits`
+([`14-entities.md`](14-entities.md)). You may only move to a legal exit, so your career
+history is a biography rather than a shopping list — and the engine cannot hand out a career
+that your actual past does not permit.
+
+Changing career is cheap (1 advance) but requires a **fictional reason**: something must have
+happened that makes it make sense. The graph constrains *what* you can become; the fiction
+constrains *when*.
+
+**Completing a career** — bringing every skill it grants to its cap — is the only thing that
+makes you durably tougher:
+
+- **+1 maximum Stamina**, permanently
+- a **Mark**: one small, lasting benefit that persists across every later career
+
+Marks are the reward for depth over breadth, and they are the only permanent mechanical
+accumulation in the game. Three completed careers across ten years is +3 Stamina and three
+Marks. That is the whole power curve.
+
+### What actually grows
+
+Over a long chronicle these dominate, and none of them improve a die roll:
+
+| | |
+|---|---|
+| **Reputation** | a score with a *label* that changes with recent deeds. The engine rolls it when you meet someone; passing means **recognised**, which may or may not help. Notoriety is a threat vector, not a reward. |
+| **Allegiances** | which organisations claim you, and at what depth |
+| **Holdings** | what you own, and therefore what can be taken |
+| **Knowledge** | threads closed, entities discovered, connections mapped |
+| **Bonds** | who trusts you, and who will not be in a room with you |
+
+This is the mechanical expression of *"what accumulates is what you know and what it cost."*
+A character ten years in is not harder to kill. They are harder to *replace*.
+
+### Companions
+
+Companions advance rarely and simply: at a Fellowship phase, one companion may gain a single
+competence or lose a limitation. They have no career graph and no Marks — consistent with
+their deliberately thin mechanical layer ([`04-session.md`](04-session.md)).
+
+### Succession
+
+A successor inherits **none** of the competence and **all** of the position — reputation,
+allegiances, holdings, open threads, and enemies ([`05-campaign.md`](05-campaign.md)).
+They start with their own advances at zero. The chronicle keeps its weight; the character
+does not.
 
 ---
 
