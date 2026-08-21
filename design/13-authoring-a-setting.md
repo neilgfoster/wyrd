@@ -248,16 +248,27 @@ Useful because it is unlike the settings already built, so it tests the boundary
 |---|---|
 | Cultures instead of careers | `careers.yaml` — the graph shape still fits |
 | A hope/despair balance | **already engine** — Taint and Resolve |
-| Shadow Weakness from Calling | `setting/rules/` — a mapping table |
+| Fault Line derived from a culture rather than a Drive | **retune** — a mapping table; the mechanism already exists |
 | A downtime phase | **already engine** |
-| Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |
+| Journeys as a played mechanic | **an engine gap** — see below |
 | Beasts and named powers | `bestiary.yaml`, and `organisation` entities |
-| "A losing struggle" | **already engine** — it is the campaign model |
+| A world in decline | **the tone contract** — `victory`, `scale_drift`, `power_curve` |
 | The register | `voice.md` — elegiac, where another line might be dry or brutal |
 
-Most of it lands in data. The one genuine overlay is journeys — which tells you something
-useful: **Wyrd's engine currently assumes travel is narrated, not played.** That is a defensible
-choice for text play, and a setting that disagrees can add it.
+Most of it lands in data, which is the point — the exercise is meant to find what does not.
+
+**And it found one.** A setting built around travel needs journeys *played* rather than
+narrated, and Wyrd has no travel subsystem: the engine assumes travel is summarised
+([`04-session.md`](04-session.md)).
+
+That is a **new mechanism**, so by the hard rule above the setting may not add it. It is an
+engine gap, and the correct response is to build a travel subsystem **in the core**,
+generalised — which every setting may then configure or leave off. A setting that quietly
+implemented its own would fork the engine, and the next setting wanting journeys would find
+nothing to reuse.
+
+This is the worked example doing its job: the value of running an unfamiliar setting through
+the contract is not confirming that it fits, but discovering precisely where it does not.
 
 ---
 
