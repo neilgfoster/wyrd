@@ -43,7 +43,7 @@ intent:                      # from the bootstrap interview; read every session
   avoid: []
   session_length: 20
   lethality: standard
-  world_moves_when_away: true
+  world_acts_offstage: true
 pending: null                # set if a session stopped mid-beat
 ```
 

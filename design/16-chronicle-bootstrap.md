@@ -42,8 +42,10 @@ skipped by tooling:
   tool at once.
 - **How long is a typical session?** Sets the default beat pacing.
 - **How lethal?** Sets starting Fate and whether the Aftermath table is used as written.
-- **Do you want the world to move while you are away?** Sets whether elapsed-time Threat
-  activation runs ([`05-campaign.md`](05-campaign.md)).
+- **Should the world act when you are not looking?** Sets whether threats activate during
+  spans of *game* time the character did not witness ([`05-campaign.md`](05-campaign.md)).
+  This is nothing to do with real-world time between sessions, which never advances the
+  world.
 
 Answers are written to `chronicle.yaml` as `intent:` and are read every session. They are the
 closest thing Wyrd has to a session-zero conversation, and they are revisable.

@@ -70,7 +70,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 
 ```
 1. LOAD      chronicle.yaml, the PC, present companions, hot threads, recap, contract
-2. ELAPSE    wyrd advance-time — the world moved since last session (see 05-campaign)
+2. ORIENT    where and when the character is; the clock has not moved since you stopped
 3. RECAP     three sentences. Where you are, what is unresolved, what has changed.
 4. BEAT      situation → player choice → roll → narrate → persist → Rally
 5. REPEAT    until the player stops

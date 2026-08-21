@@ -106,21 +106,56 @@ for the region.
 
 ---
 
-## Elapsed time — the rule that makes this practical
+## Elapsed time — game time, never real time
 
-Real sessions are weeks apart. Wyrd does **not** simulate every intervening week.
+**Game time advances only when the fiction advances it.** Real-world gaps between sessions
+are irrelevant to the world clock.
 
-**Abstract it.** Take the **expected value** over the
-elapsed period. A Threat at Imminence 4 activates roughly once per three weeks — so a
-five-week gap produces about two activations. Roll those, apply them, and generate the
-resulting world-state.
+This matters more than it sounds. If a beat ends with the character standing in a cellar with
+a blade drawn, and the player returns three weeks later, **no game time has passed at all**.
+They are still in the cellar, and the blade is still drawn. A world clock tied to the wall
+clock would have aged the world three weeks between two consecutive heartbeats.
 
-`wyrd advance-time <days>` does this deterministically and writes the results. It runs at
-the **start** of every session, before the recap, so the first thing the player learns is
-what changed while they were gone.
+The inverse holds too: two beats played back to back in one sitting may sit a season apart in
+the fiction, if a downtime phase separates them.
 
-This is what makes "dip in and out over years" actually work. The world moved; it did not
-wait; and computing that costs one command.
+### What advances the clock
+
+| Source | Typical span |
+|---|---|
+| A summarised beat covering a span | hours to days |
+| Narrated travel | days to weeks |
+| An explicit wait — until morning, until the boat, until the fever breaks | as stated |
+| **Downtime** ([`04-session.md`](04-session.md)) | weeks to a season |
+| The gap between arcs, where the fiction implies one | as stated |
+
+Nothing else. In particular, **closing the session advances nothing.**
+
+### Advancing it
+
+When the clock does move, the world moves with it — and Wyrd does not simulate every
+intervening week.
+
+**Take the expected value over the span.** A threat at imminence 4 activates roughly once
+per three weeks, so a five-week jump produces about two activations. Roll those, apply them,
+and generate the resulting state.
+
+```
+wyrd advance-time <game-days>
+```
+
+Deterministic, and it writes its results. It is called **when the fiction says time passed**
+— most often at the end of a downtime phase — not at the start of a session.
+
+### Returning after a long absence
+
+A real-world gap changes nothing about the world. It changes what the **recap** has to do:
+re-establish where the character is, what was unresolved, and what was about to happen
+([`06-state.md`](06-state.md)). If the session stopped mid-beat, the `pending:` marker
+restores the exact moment.
+
+That distinction is what makes "dip in and out over years" work. The player's absence is a
+fact about the player, not about the world.
 
 ---
 
