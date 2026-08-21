@@ -69,7 +69,7 @@ interfering.
 | [09-evolution](design/09-evolution.md) | How the engine changes without rewriting history |
 | [10-diegesis](design/10-diegesis.md) | Knowing your character without reading their statistics |
 | [11-corpus-index](design/11-corpus-index.md) | Finding the right passage in a large library |
-| [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Separation, and running chronicles side by side |
+| [12-parallel-chronicles](design/12-parallel-chronicles.md) | Running more than one chronicle at once |
 | [13-authoring-a-setting](design/13-authoring-a-setting.md) | Everything needed to build a setting |
 | [14-entities](design/14-entities.md) | The world mesh — ten types, two relations, overlays |
 | [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, recombination, lazy conversion |

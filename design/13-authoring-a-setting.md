@@ -104,15 +104,22 @@ The engine guarantees, and a setting may rely on:
 | `d100` resolution, degrees of success, the Wyrd die | skill names |
 | Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
-| Taint, Trauma, Fate, Resolve, Strain | what they are *called* and what causes them |
+| Taint, Trauma, Fate, Resolve, Strain | what they are *called*, what causes them, and **whether they exist at all** |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
 | Beats, Rally, downtime, party tension | what downtime looks like here |
 | Threats, threads, elapsed time, succession | who the Threats are |
 | Diegetic bands ([`10-diegesis.md`](10-diegesis.md)) | the idiom they are spoken in |
+| *(nothing)* | **the tone contract** ([`01-principles.md`](01-principles.md)) |
+| *(nothing)* | **the voice** |
 
 **A setting must not need to change engine code.** If it does, that is an engine gap and
 should be fixed in the engine — the whole point of the layering
 ([`02-architecture.md`](02-architecture.md)).
+
+**A second setting in the same genre is not a reskin of the first.** Two worlds may share a
+mechanic and mean entirely different things by it — one calls it damnation, another calls it
+fatigue of the soul — and the register carrying that difference is the hardest file to write,
+not the easiest.
 
 ### Rules overrides — the hard rule
 

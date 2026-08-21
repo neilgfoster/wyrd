@@ -71,7 +71,7 @@ exists to preserve.
 
 No fact, name, character or invention crosses from one chronicle into another, in either
 direction. The failure is invisible to the player, which is what makes it serious
-([`12-settings-and-parallel-play.md`](12-settings-and-parallel-play.md)).
+([`12-parallel-chronicles.md`](12-parallel-chronicles.md)).
 
 ### 7. Honour the declared tone
 

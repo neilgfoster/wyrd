@@ -19,7 +19,7 @@ references a chronicle.
 
 This is what makes parallel play safe: two chronicles never share a repository, so two live
 sessions cannot race on a commit
-([`12-settings-and-parallel-play.md`](12-settings-and-parallel-play.md)). It also means many
+([`12-parallel-chronicles.md`](12-parallel-chronicles.md)). It also means many
 chronicles and many characters can coexist — several in the same setting, at different points
 in its history, without interfering.
 
