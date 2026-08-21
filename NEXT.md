@@ -12,8 +12,9 @@
 **Complete and parked. Deliberately not taken further** — the plan is to review this output
 and build a setting from it *after* the engine exists.
 
-Output is at `wyrd-corpus-cache/` (not a repo; moved off `/tmp`, which is tmpfs and would
-have lost it on reboot). 443 documents, 80.5 M characters. Two known gaps recorded in its
+Output is committed to the private research repo under `corpus/` — it lives there rather
+than in a setting repo because 209 of the 443 documents are a magazine run spanning several
+settings ([design/02-architecture.md](design/02-architecture.md)). 443 documents, 80.5 M characters. Two known gaps recorded in its
 README: 10 failures, and **57 files skipped by a slug-collision bug** in the pipeline's
 resumability check.
 

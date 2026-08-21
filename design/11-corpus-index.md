@@ -193,10 +193,14 @@ Regenerated only when the schema changes.
 
 ## Indexes are scoped to a setting
 
-Source material is extracted once but **indexed per setting**, because the same work adapted
-for two worlds produces two different adaptations. Every index record names its setting, so a
-query made in one chronicle never returns another's material — which is also part of how
-chronicles stay isolated ([`12-parallel-chronicles.md`](12-parallel-chronicles.md)).
+Source material is extracted **once** and stored once
+([`02-architecture.md`](02-architecture.md)); the indexes over it are **per setting**, because
+the same work adapted for two worlds produces two different adaptations.
+
+Index records reference documents **by id**, so a setting indexes shared source material
+without holding a copy. Every record names its setting, so a query made in one chronicle
+never returns another's material — which is also part of how chronicles stay isolated
+([`12-parallel-chronicles.md`](12-parallel-chronicles.md)).
 
 Tagging beats duplicating; scoping beats sharing.
 

@@ -35,18 +35,24 @@ It also keeps the engine genuinely setting-agnostic rather than
 setting-agnostic-in-principle. **If a rule cannot be written without naming a god, it is not
 an engine rule.**
 
-### The corpus lives with its setting
+### Where the corpus lives
 
-Extracted text from source material is committed to the setting repo it belongs to, alongside
-the indexes over it ([`11-corpus-index.md`](11-corpus-index.md)). Setting repos are **private
-where their sources are copyrighted**.
+Extracted source text lives **once**, in a private research repository — not in setting
+repos. Sources do not divide cleanly by setting: a single magazine issue may carry material
+for several different worlds, and duplicating it per setting would be absurd while
+apportioning it would be wrong.
 
-The engine repo holds **no corpus, no source text and no source digests**, because it is
-intended to become public and nothing unpublishable may enter it. Research notes live
-separately and privately.
+| | Lives in |
+|---|---|
+| Extracted source text | the private research repo, once |
+| Per-setting indexes over it | the setting repo ([`11-corpus-index.md`](11-corpus-index.md)) |
+| Entities converted from it | the setting repo, carrying `sources:` back to the document |
 
-A source usable by two settings is indexed **in both**, because the same adventure adapted for
-two different worlds produces two different adaptations, not one shared record.
+Indexes reference documents **by id**, so a setting index can point into shared source
+material without holding a copy of it.
+
+The engine repo holds none of it, because it is intended to become public and nothing
+unpublishable may enter it.
 
 ## Inside each repository
 
@@ -63,8 +69,7 @@ wyrd-<setting>/
 │  └─ rules/                   # overrides only
 ├─ entities/                   # character · place · organisation · arc · beat ·
 │                              # creature · item · tracker · thread · lore
-├─ index/                      # documents · nouns · terms · tables · arcs
-└─ corpus/                     # extracted source text
+└─ index/                      # documents · nouns · terms · tables · arcs
 
 wyrd-chronicle-<name>/
 ├─ chronicle.yaml              # pins engine and setting versions; calendar; intent
