@@ -65,8 +65,11 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 - **referential integrity**: every thread hook, threat connection, parent and link resolves to something that exists
 - **status contradictions**: a character marked `dead` who is also `with-party`; a `lost` PC
   still holding Fortune; a resolved thread still hot
-- **calendar sanity**: no event dated before the chronicle began; no Threat activation in
+- **calendar sanity**: no event dated before the chronicle began; no threat activation in
   the future
+- **version sanity**: every file carries a `schema_version` the engine understands; no entity
+  claims a version newer than the engine; `migrations` is ordered and unbroken; every derived
+  entity names conversion rules that exist ([`06-state.md`](06-state.md))
 
 Everything here is Repair-tier except status contradictions, which are reported and
 proposed.
