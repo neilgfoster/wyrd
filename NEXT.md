@@ -7,12 +7,22 @@
 - Four transient corpus download failures to retry; five source PDFs appear genuinely
   corrupt in the collection.
 
-## After the corpus run completes
+## Corpus — extraction finished 2026-08-21
 
-Nothing below should start while extraction is running — two heavy jobs competing for the
-machine is what caused the OCR thrashing on 2026-08-20.
+**Complete and parked. Deliberately not taken further** — the plan is to review this output
+and build a setting from it *after* the engine exists.
 
-1. **Clean the corpus.** `clean.py` is written and tested; run it over the extracted text to
+Output is at `wyrd-corpus-cache/` (not a repo; moved off `/tmp`, which is tmpfs and would
+have lost it on reboot). 443 documents, 80.5 M characters. Two known gaps recorded in its
+README: 10 failures, and **57 files skipped by a slug-collision bug** in the pipeline's
+resumability check.
+
+When picked up:
+
+1. **Fix the slug collision** — hash the full path into the output name — and re-run for the
+   missing 57. The pipeline is resumable, so only those are fetched.
+2. **Retry the 5 transient download failures.**
+3. **Clean the corpus.** `clean.py` is written and tested; run it over the extracted text to
    strip OCR noise from full-page art.
 
 2. **Build the deterministic indexes** — `documents`, `nouns`, `terms`, `tables`
