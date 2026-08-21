@@ -78,7 +78,7 @@ Not every session is an adventure. Four legitimate shapes:
 |---|---|---|
 | **Beat** | 10-20 min | One goal in an ongoing scenario. The default. |
 | **Interlude** | 10 min | Pure character. A conversation, a meal, a companion's problem. No dice, or one. |
-| **Downtime** | 15 min | A Fellowship phase (below). Advances the calendar. |
+| **Downtime** | 15 min | A downtime phase (below). Advances the calendar. |
 | **Long session** | 45+ min | A whole arc, or its climax. Rare. |
 
 The Interlude is important and easy to neglect. Constraint 7 says most sessions are small;
@@ -89,7 +89,7 @@ Note that shape is the GM's internal read of what the session is likely to be, u
 pacing. It is not announced either — the player does not get told they are in an Interlude,
 they get told the beer is bad.
 
-## The Fellowship phase
+## Downtime
 
 From , where downtime is a phase with its own rules rather than a skip.
 
@@ -109,7 +109,7 @@ holding), **Learn** (open a new career), **Ask** (gather information on a Threat
 The constraint is that you choose **one**. Recovering from taint means *not* pursuing
 the thing that corrupted you. That trade is the whole point.
 
-A Fellowship phase **advances the calendar** — typically weeks to a season — which means
+Downtime **advances the calendar** — typically weeks to a season — which means
 Threats activate. Downtime is when the world gets ahead of you.
 
 ## The party
@@ -154,7 +154,7 @@ At **3**, friction is visible — sniping, reluctance, a companion holding somet
 At **6**, something breaks: a departure, a betrayal, a confession, a refusal at the worst
 moment. **Then Tension resets to 0.**
 
-It falls by 1 at a Fellowship phase, and by 1 when the player spends a beat on a companion's
+It falls by 1 during downtime, and by 1 when the player spends a beat on a companion's
 problem rather than their own.
 
 This gives the GM a principled, visible, self-resetting licence to generate inter-party

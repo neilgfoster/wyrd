@@ -106,7 +106,7 @@ The engine guarantees, and a setting may rely on:
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called* and what causes them |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
-| Beats, Rally, Fellowship phases, party tension | what downtime looks like here |
+| Beats, Rally, downtime, party tension | what downtime looks like here |
 | Threats, threads, elapsed time, succession | who the Threats are |
 | Diegetic bands ([`10-diegesis.md`](10-diegesis.md)) | the idiom they are spoken in |
 
@@ -239,7 +239,7 @@ Useful because it is unlike the settings already built, so it tests the boundary
 | Cultures instead of careers | `careers.yaml` — the graph shape still fits |
 | A hope/despair balance | **already engine** — Taint and Resolve |
 | Shadow Weakness from Calling | `setting/rules/` — a mapping table |
-| The Fellowship phase | **already engine** |
+| A downtime phase | **already engine** |
 | Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |
 | Beasts and named powers | `bestiary.yaml`, and `organisation` entities |
 | "A losing struggle" | **already engine** — it is the campaign model |

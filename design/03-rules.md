@@ -19,6 +19,13 @@ Every label here is a **default**. A setting renames or disables what it likes
 
 ---
 
+**Naming rule.** An engine label must be *descriptive English*, not a term borrowed from a
+source system. "Downtime" rather than a named phase from one game; "Ill Omen" rather than a
+named die face from another. If a label only makes sense to someone who has read a
+particular book, it belongs in that setting's `rename:` block, not here.
+
+---
+
 ## 1. Resolution
 
 > **Roll `d100`. Succeed at or under your `skill%`.**
@@ -251,7 +258,7 @@ A character ten years in is not harder to kill. They are harder to replace.
 ### Companions and succession
 
 Companions advance rarely and simply — one competence gained or limitation lost at a
-Fellowship phase. No career graph, no Marks.
+downtime. No career graph, no Marks.
 
 A successor inherits none of the competence and all of the position
 ([`05-campaign.md`](05-campaign.md)).
