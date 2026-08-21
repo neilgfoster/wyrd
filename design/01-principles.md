@@ -168,7 +168,8 @@ running Wyrd.
 - advance trackers and threats without telling the player
 - withhold information the player's character has no way of knowing
 - let the player fail a whole arc
-- kill, corrupt, maim or turn a companion
+- kill, corrupt, maim or turn a companion — subject to the player's right to spend Fate
+  against a *death* they are present for, but never against a companion's own choices
 
 ## The division of labour
 

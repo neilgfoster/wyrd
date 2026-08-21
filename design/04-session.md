@@ -142,6 +142,11 @@ player could not have prevented it by playing better.** A companion acts on thei
 objective, refuses, lies, or dies while the player is elsewhere. That is a kind of cost a
 character sheet cannot deliver.
 
+The player may spend Fate to save a companion from death, but only from *death*, and only
+when present to act ([`03-rules.md`](03-rules.md)). A companion lost to their own agenda —
+who leaves, betrays, or is claimed by what they wanted — cannot be bought back. That is the
+line that keeps companions meaningful rather than merely fragile.
+
 ### Companions are people
 
 Each companion is a `character` entity carrying:

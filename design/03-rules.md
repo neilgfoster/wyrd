@@ -138,6 +138,32 @@ everything goes black; they wake later — tended by companions, or imprisoned, 
 left in a ditch. The GM chooses where they wake, which makes Fate the chronicle's
 course-correction tool as well as its anti-frustration valve.
 
+### Spending Fate for someone else
+
+A Fate point may be spent to save a **companion** from death, on the same terms as saving
+yourself: they survive, and they are not better off.
+
+Two conditions:
+
+- **The character must be present and able to act.** Fate is not spent at a distance. If a
+  companion dies while the player is elsewhere, that death stands.
+- **Fate buys against dice, never against agendas.** A companion killed by a critical can be
+  saved. A companion who walks out because Tension broke, who betrays the player, or who is
+  claimed by their own objective, cannot — those are not accidents, and Fate does not argue
+  with them ([`04-session.md`](04-session.md)).
+
+That boundary is what keeps both designs intact. Fate remains a **death valve**, not a plot
+valve; and companions remain the engine's reliable source of loss, because the losses that
+matter most are the ones no resource can prevent.
+
+It also puts the player's scarcest resource into a genuine dilemma. Two Fate left, a
+companion bleeding out, and a long road still ahead is a better decision than any the
+character sheet can pose alone — and **choosing not to spend is itself a decision the
+chronicle should remember**, and record.
+
+Companions have no Fate of their own; their mechanical layer is deliberately thin. They
+rely on the player's, which is precisely what makes it cost something.
+
 `mortality` in the setting's tone contract sets starting Fate.
 
 ---
