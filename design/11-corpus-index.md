@@ -97,16 +97,16 @@ source: {system: "White Dwarf", ref: "WD 98", pages: "34-39"}
 adaptation: reskin                    # none | reskin | rewrite
 settings: [reikland, imperium]
 
-# --- selection filters: deterministic, checked against pc.yaml ---
+# --- selection inputs: deterministic, evaluated against pc.yaml ---
 scale: village                        # village|town|city|wilderness|underground|waterway|road|ship|fortress
 region: any
-threat: 3                             # T — scales content (see 03-rules)
+threat: 3                             # T as written, for party_written_for (see 03-rules)
+party_written_for: 4                  # SCALING INPUT, never a gate
 length: 2                             # sessions
 season: any                           # or winter | harvest | festival
-party: {min: 1, ideal: 3}             # min 1 == playable by PC + companions
-access_required: []                   # court|guild|temple|criminal|military
-capabilities_required: []             # literacy|magic|boat|horse|coin|standing
-capabilities_helpful: [literacy]
+needs_access: [temple]                # an in is required — obtaining it may itself be play
+needs_capability: [literacy]          # a companion may supply it
+helped_by: [medicine]                 # easier with; harder and better without
 
 # --- thematic: model-generated once, cached ---
 tone: [investigation, folk-horror]
@@ -122,20 +122,43 @@ consequences: ["the village is materially worse off either way"]
 chain: null                           # or {campaign: enemy-within, part: 3}
 ```
 
-#### Why filters matter as much as themes
+#### Almost nothing gates. Most things modulate.
 
-A scenario can be perfectly on-theme and still be **wrong for this character**. A rat-catcher
-has no business in a courtly intrigue without an in, and a scenario written for four
-adventurers may be unplayable by one plus companions.
+The library is far too valuable to filter aggressively, and the obvious filters are traps.
 
-`access_required`, `capabilities_required` and `party.min` are **deterministic predicates
-checkable against `pc.yaml`** — so unsuitable scenarios are filtered out in code before any
-judgment is applied. That is the tooling rule ([`07-tooling.md`](07-tooling.md)) applied to
-selection: the *filter* is code, the *fit* is judgment.
+**Party size is a scaling input, never a gate.** Nearly every published adventure is written
+for four to six adventurers; gating on party size would exclude the entire corpus we went to
+the trouble of building. Instead `party_written_for` feeds the threat calculation:
 
-`capabilities_helpful` is the interesting one — it does not exclude, it *flags*. A scenario
-that is easier with literacy is a better scenario for an Initiate, and a harder, more
-desperate one for a rat-catcher. That is a reason to choose it, not to skip it.
+> `T_effective = T × (party_effective / party_written_for)`
+
+where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
+are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
+plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
+that already scales content ([`03-rules.md`](03-rules.md)). Scarlet Heroes' Fray die does the
+rest of the work in combat.
+
+`threat` in the record is therefore *intrinsic danger as written for its stated party size*,
+not the danger this table will face. The engine computes the latter.
+
+**Access and capability are inputs too, not walls.** A rat-catcher can be hired by someone
+with court access, or smuggled in — and *getting the in is often the better scenario*.
+A companion can read the grimoire the PC cannot. So:
+
+| Field | Effect |
+|---|---|
+| `needs_access` | an in is required; obtaining it may itself become play |
+| `needs_capability` | must be supplied by the PC, a companion, or hired help |
+| `helped_by` | flags only — easier with it, and more desperate and interesting without |
+
+`helped_by` is the one that repays attention. A scenario easier with literacy is a *better*
+scenario for an Initiate and a *harder, more frightening* one for a rat-catcher. That is a
+reason to choose it.
+
+The genuine exclusions are few: wrong setting, or an `adaptation: rewrite` cost that is not
+worth paying today. Everything else is a dial. That is the tooling rule
+([`07-tooling.md`](07-tooling.md)) applied to selection — the arithmetic is code, the fit is
+judgment, and the judgment should almost always be *yes, scaled*.
 
 #### Two kinds of chaining
 
