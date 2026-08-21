@@ -36,7 +36,7 @@ location, toughness subtraction, then a location-specific critical table. That t
 five-exchange fight into an entire twenty-minute session. Session length is the one
 requirement Wyrd cannot negotiate away.
 
-**NPC cost.** Wyrd commits to asymmetric characters — only the player's carries full state
+**Character cost.** Wyrd commits to asymmetric characters — only the player's carries full state
 ([`../06-state.md`](../06-state.md)). Adopting a source system wholesale would multiply
 bookkeeping for characters the player does not control.
 

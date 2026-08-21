@@ -126,7 +126,7 @@ mechanical state:
 
 ```yaml
 ---
-id: <pc-id>
+id: <player-character-id>
 type: character
 role: player
 career: <career-id>

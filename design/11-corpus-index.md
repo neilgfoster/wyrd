@@ -133,7 +133,8 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 > `danger_effective = danger × (party_effective / written_for)`
 
 where `party_effective` counts the player character as 1 and each companion at a fraction, since companions
-are GM-run and less capable. A danger-3 arc written for four, run by a PC and two companions,
+are GM-run and less capable. A danger-3 arc written for four, run by one character and two
+companions,
 plays at roughly danger 2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
 that already scales content ([`03-rules.md`](03-rules.md)); mob clearing does the
 rest of the work in combat.
