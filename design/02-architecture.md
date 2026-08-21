@@ -9,8 +9,15 @@ wyrd/
 ├─ engine/          # ruleset + GM contract. Setting- and scenario-agnostic.
 ├─ settings/        # reikland/ , imperium/ — tone, factions, careers, gear, names
 ├─ scenarios/       # situations and arcs. Threat Packs, one-shots.
-└─ chronicles/      # the saves. One directory per campaign.
+└─ corpus/          # extracted text and indexes over the source library
+
+chronicles/
+├─ reikland-01/     # each its own git repo — see 12-settings-and-parallel-play.md
+└─ imperium-01/
 ```
+
+**Chronicles live outside the engine repo.** They are data with a different lifecycle, and
+separate repos are what make two live chronicles safe to run in parallel.
 
 Keeping these separable is the whole design: any scenario × any compatible setting × one
 engine. A **chronicle** pins all three plus accumulated state.
@@ -62,7 +69,7 @@ scenarios/the-drowning-well/
 Every scenario declares `source:` — where it came from and what was changed. Partly honesty,
 partly so adapted material is distinguishable from original three years in.
 
-### chronicles/
+### chronicles/ *(separate repos)*
 
 ```
 chronicles/<name>/

@@ -27,6 +27,7 @@ Fate, Fear.
 | [09-evolution](design/09-evolution.md) | How the engine changes without rewriting history |
 | [10-diegesis](design/10-diegesis.md) | Knowing your character without reading their statistics |
 | [11-corpus-index](design/11-corpus-index.md) | Finding the right passage in a library of 3,841 PDFs |
+| [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Fantasy and 40k, and running two chronicles at once |
 | [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
 
 **Reference** — where it came from:
