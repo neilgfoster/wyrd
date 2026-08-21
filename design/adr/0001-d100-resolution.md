@@ -65,6 +65,30 @@ granularity too — the Chaos Star range widens from `0` to `0–1` to `0–2` a
 It reads cleanly in text: *"Stealth 35, rolled 37 — failure by 0 degrees, and the 7 means
 nothing else went wrong."*
 
+#### Invariant: the Wyrd read is always the natural roll
+
+**The units digit is read from the dice as they first fell — never modified, never rerolled.**
+
+Two reasons, and the second matters more.
+
+*It makes the independence a guarantee rather than a coincidence.* The units digit is clean
+today only because modifiers land on the threshold rather than on the roll. Stating this as
+an invariant means the property survives any future rule that might otherwise adjust a roll.
+(It does not remove the residual ≤2-point conditional skew — that comes from one roll doing
+two jobs against a threshold that is not a multiple of 10, and only a separate die would
+fix it. Negligible, and not worth a die.)
+
+*It fixes reroll laundering.* If a reroll produced a fresh Wyrd read, Fortune and Dark Deals
+would let a player buy their way out of consequences entirely. Under this invariant:
+
+- **Fortune** buys the *result*, never the world's reaction to the first attempt. Reroll the
+  failure into a success and the Chaos Star you already rolled still lands.
+- **The Dark Deal** gains real teeth. It stops being a clean trade ("pay corruption, try
+  again") and becomes "pay corruption, try again, and live with what the first attempt set in
+  motion" — which is the correct shape for a Faustian bargain.
+
+> You can change what happened. You cannot change what it cost.
+
 ### Rejected: reversing the digits
 
 Tempting — a roll of 37 reversed is 73, so it looks like a free second value. It is not
