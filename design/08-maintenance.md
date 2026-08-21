@@ -23,7 +23,7 @@ Two tiers, and the boundary is strict:
 | Tier | May run unattended | Examples |
 |---|---|---|
 | **Repair** | yes | recompute `career_skill`, rebuild indexes, fix conditions, rotate logs, decay thread heat, GC orphans |
-| **Revision** | **no — proposes only** | merge two NPCs, close a thread as never-answered, demote a codex entry, resolve a continuity contradiction |
+| **Revision** | **no — proposes only** | merge two characters, close a thread as never-answered, demote an entity, resolve a continuity contradiction |
 
 Anything that changes what *happened* is a proposal the player accepts or rejects. A
 maintenance pass that silently rewrote history would be the worst possible failure mode for
@@ -62,8 +62,7 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 - **invariants** from [`06-state.md`](06-state.md): `career_skill` is the lowest career
   skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Spent iff
   `resolve <= taint and taint > 0`; `tension` in 0..6; transformations vs `hidden_threshold`
-- **referential integrity**: every thread hook, threat connection, party member and codex
-  cross-link resolves to something that exists
+- **referential integrity**: every thread hook, threat connection, parent and link resolves to something that exists
 - **status contradictions**: an NPC marked `dead` who is also `with-party`; a `lost` PC
   still holding Fortune; a resolved thread still hot
 - **calendar sanity**: no event dated before the chronicle began; no Threat activation in
