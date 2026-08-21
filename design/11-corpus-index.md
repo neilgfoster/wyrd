@@ -154,9 +154,9 @@ A companion can read what the player character cannot. So:
 | `needs_capability` | must be supplied by the player character, a companion, or hired help |
 | `helped_by` | flags only — easier with it, and more desperate and interesting without |
 
-`helped_by` is the one that repays attention. A scenario easier with literacy is a *better*
-scenario for a literate character and a *harder, more frightening* one for a labourer. That is a
-reason to choose it.
+`helped_by` is the one that repays attention. An arc easier with literacy is a *better* arc
+for a character who can read and a *harder, more frightening* one for a character who cannot.
+That is a reason to choose it, not to skip it.
 
 The genuine exclusions are few: wrong setting, or an `adaptation: rewrite` cost that is not
 worth paying today. Everything else is a dial. That is the tooling rule
