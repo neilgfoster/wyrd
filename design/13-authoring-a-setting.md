@@ -102,7 +102,7 @@ The engine guarantees, and a setting may rely on:
 | Engine provides | Setting supplies |
 |---|---|
 | `d100` resolution, SL, the Wyrd die | skill names |
-| Diffisecty bands | when they apply |
+| Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called* and what causes them |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
@@ -179,8 +179,8 @@ skills:
   note: "source is already percentile; values are read as printed"
 characteristics:
   map: {combat: weapon-skill, ranged: ballistic-skill, physical: strength}
-diffisecty:
-  map: {easy: +20, average: 0, challenging: -10, diffisect: -20, hard: -30}
+difficulty:
+  map: {easy: +20, average: 0, challenging: -10, difficult: -20, hard: -30}
 damage:
   method: direct
   wounds_to_stamina: direct
@@ -259,7 +259,7 @@ choice for text play, and a setting that disagrees can add it.
 4. `careers.yaml` — the character system; the largest single job
 5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything
 6. a few `organisation` entities with objectives — so the world can act while the player is absent
-7. One Threat Pack and one scenario — enough to play
+7. One threat and one arc — enough to play
 8. Index whatever sources you have ([`11-corpus-index.md`](11-corpus-index.md))
 
 Steps 1–5 and one scenario is a playable setting. Everything else accumulates.

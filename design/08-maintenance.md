@@ -63,7 +63,7 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
   skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Spent iff
   `resolve <= taint and taint > 0`; `tension` in 0..6; transformations vs `hidden_threshold`
 - **referential integrity**: every thread hook, threat connection, parent and link resolves to something that exists
-- **status contradictions**: an NPC marked `dead` who is also `with-party`; a `lost` PC
+- **status contradictions**: a character marked `dead` who is also `with-party`; a `lost` PC
   still holding Fortune; a resolved thread still hot
 - **calendar sanity**: no event dated before the chronicle began; no Threat activation in
   the future
@@ -92,8 +92,7 @@ Always safe. Always automatic.
 - **orphans**: entities never referenced by any thread, threat, log or party member —
   reported, proposed for demotion into a `minor/` bucket rather than deletion
 - **stubs**: entries with a name and nothing else — flagged for enrichment at next mention
-- **duplicates**: near-identical entries (Hallam Weissbruck / Hallem Weisbruck / "the
-  ledger man"). Detection is deterministic (normalised name distance, shared threads,
+- **duplicates**: near-identical entries — the same person under two spellings and a nickname. Detection is deterministic (normalised name distance, shared threads,
   overlapping `last_seen`); **merging is a proposal**, because two similar names may be two
   real people, and the engine cannot know.
 
@@ -133,7 +132,7 @@ archive, and **emits proposals only**:
  "candidates": ["the entity is wrong", "log is a different Otto", "he survived"]}
 ```
 
-It never picks. The player does, or Claude does with the player watching.
+It never picks. The player does, or the GM does with the player watching.
 
 ---
 

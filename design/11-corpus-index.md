@@ -1,7 +1,7 @@
 # Wyrd — indexing the corpus
 
 The library is 3,841 PDFs; the extracted text corpus will be tens of millions of words.
-Most of it is consulted **rarely and unpredictably** — one White Dwarf adventure about a
+Most of it is consulted **rarely and unpredictably** — one a periodical adventure about a
 corrupt miller, once, three years in.
 
 Reading it is not the problem. **Knowing where to look is.**
@@ -17,9 +17,9 @@ shapes:
 |---|---|---|
 | "A scenario about a village with something under it" | thematic — no literal term to match | `scenarios` |
 | "What are the Fear rules?" | mechanical — known vocabulary | `terms` |
-| "Who was Hallam Weissbruck?" | proper noun — literal but unguessable | `nouns` |
+| "Who was the ledger-keeper?" | proper noun — literal but unguessable | `nouns` |
 | "A d100 transformation table" | structural — a *kind* of content | `tables` |
-| "What's in White Dwarf 98?" | bibliographic | `documents` |
+| "What is in issue 98 of that magazine?" | bibliographic | `documents` |
 
 A single full-text search serves the middle three badly and the first not at all, because
 the thing you are looking for is never named in the text you are looking for.
@@ -49,12 +49,12 @@ Every proper noun in the corpus mapped to where it appears: `name -> [{doc, coun
 Deterministic: capitalised tokens not sentence-initial, frequency-filtered, stop-listed
 against common words and OCR noise.
 
-This is the index that makes a long chronicle work. Three years in, "Weissbruck" appears in
+This is the index that makes a long chronicle work. Three years in, "the ledger-keeper" appears in
 the player's notes, in an entity, and in an adventure nobody has read since 2026. Proper
 nouns are perfectly greppable **once you know they exist** — the concordance is what tells
 you they exist, and where the *canonical* mention is rather than the fortieth passing one.
 
-It also catches the reverse case, which is more valuable: Claude invents a name, the
+It also catches the reverse case, which is more valuable: the GM invents a name, the
 concordance says it already belongs to somebody, and a collision is avoided.
 
 ### 3. `terms.json` — mechanical vocabulary
@@ -86,14 +86,14 @@ term for "a village with something under it."**
 It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
 scenarios *chain* into a meta-campaign.
 
-Scope is **the whole library, not one shelf of it** — a Deadlands investigation, a Maelstrom
+Scope is **the whole library, not one shelf of it** — an investigation written for another world, a Maelstrom
 village haunting and a magazine six-pager are equally valid inputs, judged on theme
 ([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
 
 ```yaml
 id: the-drowning-well
-source: {system: "White Dwarf", ref: "WD 98", pages: "34-39"}
+source: {system: "a periodical", ref: "WD 98", pages: "34-39"}
 adaptation: reskin                    # none | reskin | rewrite
 settings: [<setting-id>]
 
@@ -135,10 +135,10 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
 are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
 plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
-that already scales content ([`03-rules.md`](03-rules.md)). ' Fray die does the
+that already scales content ([`03-rules.md`](03-rules.md)); mob clearing does the
 rest of the work in combat.
 
-`danger` in the record is therefore *intrinsic diffisecty as written for its stated party
+`danger` in the record is therefore *intrinsic difficulty as written for its stated party
 size*, not what this table will face. The engine computes the latter.
 
 Field names match the beat schema in [`15-arcs-and-beats.md`](15-arcs-and-beats.md) exactly;
@@ -193,11 +193,11 @@ Regenerated only when the schema changes.
 ## Retrieval
 
 ```
-wyrd find noun "Weissbruck"
+wyrd find noun "<a name>"
 wyrd find rule "fear test"
 wyrd find table --dice d100 --about transformation
 wyrd find scenario --hook conspiracy --tone investigation --length short
-wyrd find doc --system "White Dwarf" --issue 98
+wyrd find doc --work "<periodical>" --issue 98
 ```
 
 **Plain `grep` is the fallback and is usually fast enough** — a few tens of MB of text is

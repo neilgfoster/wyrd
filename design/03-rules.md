@@ -176,7 +176,7 @@ On the **first** Transformation the engine **secretly rolls the hidden threshold
 this character can endure. **The player never sees it.** Written to state once, so later
 Transformations are narrated against a real countdown.
 
-When it runs out the character is **lost**, and becomes an NPC the GM controls. They do not
+When it runs out the character is **lost**, and becomes a character the GM controls. They do not
 leave the chronicle; they join the opposition.
 
 Transformations carry **Dread** — Taint's cost is social as well as mechanical. The

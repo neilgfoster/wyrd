@@ -35,7 +35,7 @@ Ask, in order:
 | Threat activation (`d12 <= imminence`) | How the Threat manifests here, now |
 | Elapsed-time expected-value events | What the peddler says about them |
 | Thread heat decay | Which thread is worth pulling on |
-| Advance eligibility against career triggers | NPC voice, motive, and choice |
+| Advance eligibility against career triggers | Character voice, motive and choice |
 | Calendar, the ill moon cycle, festivals | Scenario adaptation and pacing |
 | Save read/write, schema validation, commit | Party tension events and their shape |
 | Aftermath / critical / transformation table lookups | Companion behaviour |
@@ -46,7 +46,7 @@ principle 1 in [`01-principles.md`](01-principles.md) eroding quietly.
 
 ### The model must not recompute
 
-When the CLI returns a result, Claude **narrates from it** and never recalculates it.
+When the CLI returns a result, the GM **narrates from it** and never recalculates it.
 If `wyrd roll` says failure, the model does not re-add the dice. If the tool and the prose
 disagree, the tool is right and the prose is a bug.
 
@@ -116,7 +116,7 @@ returns the whole structured result, not a sentence:
 ```json
 {
   "verb": "roll",
-  "skill": "stealth", "skill_value": 4, "diffisecty": 0,
+  "skill": "stealth", "skill_value": 4, "difficulty": 0,
   "dice": [5, 5, 2], "wyrd_die": 5, "total": 12,
   "target": 20, "modified_total": 16,
   "success": false,
@@ -127,7 +127,7 @@ returns the whole structured result, not a sentence:
 }
 ```
 
-Claude narrates from that object. It does not need to know how any of it was derived.
+The GM narrates from that object. It does not need to know how any of it was derived.
 
 ### Modular and extensible
 
@@ -146,13 +146,13 @@ Use the smallest model that can do the job correctly.
 |---|---|
 | **No model** | Anything in the left column of §1. Dice, arithmetic, state, activation, validation, table lookups. |
 | **Haiku** | Mechanical language work with a right answer: extracting entity updates from a session log, regenerating `recap.md` from state, matching scenario hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
-| **Sonnet / Opus** | The GM itself. Narration, NPC voice and motive, scenario adaptation, party tension events, judgment about what a result means and when to call for a roll. |
+| **Sonnet / Opus** | The GM itself. Narration, character voice and motive, scenario adaptation, party tension events, judgment about what a result means and when to call for a roll. |
 
 Mechanical steps are delegated to a **Haiku subagent** — an agent definition in
 `.claude/agents/` with `model: haiku` frontmatter — rather than being done inline by the
 session model. Session-close compaction is the clearest case: it is bulk structured
 extraction against files that already exist, it has a right answer, and it does not need
-the GM's context.
+The GM's context.
 
 The GM session itself stays on the capable model. Wyrd's whole value is the quality of the
 fiction; that is the one place not to economise.

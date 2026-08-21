@@ -68,7 +68,7 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 | [14-entities](design/14-entities.md) | The world mesh — entities, overlays, Obsidian |
 | [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, the campaign matrix, lazy conversion |
 | [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
-| [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
+| [adr/](design/adr/) | Decision records — resolution, source compatibility |
 
 **Research** — the source mining that informed it — lives in the private
 `wyrd-research` repo, because it quotes copyrighted RPG material directly.

@@ -1,7 +1,7 @@
 # Wyrd — the meta-campaign
 
 The layer that makes a chronicle run for years: how the world moves while you are away, how
-scenarios are selected rather than scripted, and how a losing struggle is shaped.
+arcs are selected rather than scripted, and how a losing struggle is shaped.
 
 Provenance for the ideas here is recorded in the private research repo.
 
@@ -9,34 +9,37 @@ Provenance for the ideas here is recorded in the private research repo.
 
 ## Threats
 
-A **Threat** is a campaign-length antagonist that acts on its own schedule whether or not
-the player is present. Format:
+A **threat** is a campaign-length antagonist that acts on its own schedule whether or not the
+player is present.
+
+It is **not an entity type**. It is an *aspect* attached to a `character`, `organisation` or
+`place` ([`14-entities.md`](14-entities.md)), because such an antagonist may be a person, a
+conspiracy or a poisoned valley — and forcing a choice between them loses information.
 
 ```yaml
-name: The Rot Beneath Grenzstadt
-imminence: 3
-clues:                    # the ordered discovery path
-  - the miller's cough
-  - the well that tastes of iron
-  - the Weissbruck ledger
-  - what the physician buried
-  - the cellar under the shrine
-  - the thing that is still growing
-effects:                  # rolled when the Threat activates
-  1: "grows stronger — imminence +1"
-  2: "the tainted district permanently worsens"
-  3-6: "spreads to an adjacent location"
-  7: "a named NPC is taken or turned"
-  8: "an open, public calamity — the settlement knows"
-ambient:                  # true while inside its reach
-  - "taint exposure: minor, weekly"
-  - "no restful sleep"
-denizens: [...]
-counters:                 # how it can actually be fought
-  - "the ledger names the patron"
-  - "the shrine cellar can be flooded"
-weakness: "it cannot cross running water"
+# in the frontmatter of whichever entity carries it
+threat:
+  imminence: 3
+  clues:                      # the ordered discovery path
+    - <the first thing anyone notices>
+    - <what that leads to>
+    - <the thing at the centre>
+  effects:                    # rolled when it activates
+    1: "grows stronger — imminence +1"
+    2: "its reach permanently worsens"
+    3-6: "spreads to an adjacent place"
+    7: "a named character is taken or turned"
+    8: "an open, public calamity — everyone knows"
+  ambient:                    # true while within its reach
+    - "<a standing cost of being here>"
+  counters:                   # how it can actually be fought
+    - "<the thing that would undo it>"
+  weakness: "<its limit>"
+  connection: "why this touches the player"
+  known_to_player: none       # none | rumoured | partial | understood
 ```
+
+The active set is a query — entities with a `threat` block and `imminence > 0` — not a file.
 
 ### Imminence
 
@@ -52,12 +55,11 @@ weakness: "it cannot cross running water"
 At the start of each in-game week, roll **d12 per Threat**. If the result is **≤ Imminence**,
 that Threat activates: roll on its effects table.
 
-Claude chooses *when in the week* it lands — while the player is present (a scene) or while
+The GM chooses *when in the week* it lands — while the player is present (a scene) or while
 they are elsewhere (they hear about it later, late and partially).
 
 **If a Threat acts and the player was not there, they must still find out.** A peddler
-brings word; a companion's family writes; the market is talking. This is *News from
-Afar* — and information should arrive **late, incomplete, and sometimes wrong**.
+brings word; a companion's family writes; the market is talking. Information should arrive **late, incomplete, and sometimes wrong**.
 
 ### Threats are personal
 
@@ -98,7 +100,7 @@ know, a companion's unresolved arc.
 - id: the-escaped-patron
   opened: 2512-Nachexen
   summary: "the man who paid the zealots walked away; you saw his ring"
-  hooks: [nobility, altdorf, jewellery, the-rot-beneath-grenzstadt]
+  hooks: [nobility, altdorf, jewellery, the-rot-beneath-the-town]
   heat: 2        # 0-5. rises when touched, decays slowly when ignored
 ```
 
@@ -119,7 +121,7 @@ answer.
 
 ## Scenario selection
 
-At the start of an arc, or when a scenario closes, Claude picks the next by:
+At the start of an arc, or when a scenario closes, the GM picks the next by:
 
 1. Reading live threads by heat
 2. Matching against `scenarios/*/scenario.yaml` hooks, filtered by setting
@@ -127,7 +129,7 @@ At the start of an arc, or when a scenario closes, Claude picks the next by:
 4. Rewriting names, places and faction to fit the chronicle
 5. Recording `source:` — what it was adapted from and what changed
 
-**Sourcing is by theme, not system.** A Deadlands investigation and a *White Dwarf*
+**Sourcing is by theme, not system.** An investigation written for another world and a *a periodical*
 six-pager about a corrupt miller are equally valid inputs. See
 [scenarios.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/scenarios.md) and
 [library-triage.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md).
@@ -224,13 +226,13 @@ should arrive encumbered — with the debt, the obligation, or the thing living 
 Losing the holding is often the better story, and it is a legitimate outcome of the old PC's
 death rather than a punishment.
 
-Reputation is the sharpest inheritance. `reputation 6 (the Grenzstadt murders)` does not
+Reputation is the sharpest inheritance. `reputation 6 (a notorious killing)` does not
 die with the person it described. The successor may spend years being mistaken for what
 their predecessor was, or condemned for it.
 
 ### The old PC does not leave
 
-If they were **lost**, they became an NPC Claude controls — and the successor may meet
+If they were **lost**, they became a character the GM controls — and the successor may meet
 them. If they **died**, what they did persists in the entity store as fact and in the world as
 rumour, and the two need not match. If they **retired**, they are somewhere, and can be
 found, and may not want to be.
@@ -241,7 +243,7 @@ partly their fault.
 
 ### At the table
 
-Succession is offered, never imposed. On a character's end Claude proposes **two or three
+Succession is offered, never imposed. On a character's end the GM proposes **two or three
 candidates from the chronicle's characters** with a line each on how they are entangled, and the player
 chooses — or declines and starts clean. Declining is legitimate; the threads simply stay
 open and go cold in their own time.

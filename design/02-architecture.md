@@ -8,13 +8,14 @@ Wyrd is four kinds of thing with four different lifecycles, so it is four reposi
 
 | Repo | Holds | Changes |
 |---|---|---|
-| **`wyrd`** | the engine — rules, CLI, GM contract, design, mechanics research | when the game changes |
-| **`wyrd-<setting>`** | the setting, fantasy scenarios, fantasy corpus indexes | when content is added |
-| **`wyrd-<sf-setting>`** | the science-fiction setting setting, the science-fiction line scenarios, the science-fiction line corpus indexes | when content is added |
-| **`wyrd-chronicle-*`** | one per chronicle — its state, entities and threads | every beat |
+| **`wyrd`** | the engine — rules, CLI, GM contract, design | when a rule changes |
+| **`wyrd-<setting>`** | one setting: world, content, indexes, corpus | when content is added |
+| **`wyrd-chronicle-template`** | cloned to start a chronicle | rarely |
+| **`wyrd-chronicle-<name>`** | one per chronicle — its state and entities | every beat |
 
-A chronicle **references** an engine version and a setting version; a setting references a
-minimum engine version. Nothing references a chronicle.
+There is one setting repository **per setting**, not per genre. A chronicle **references** an
+engine version and a setting version; a setting declares a minimum engine version. Nothing
+references a chronicle.
 
 This is what makes parallel play safe: two chronicles never share a repository, so two live
 sessions cannot race on a commit
@@ -22,118 +23,91 @@ sessions cannot race on a commit
 chronicles and many characters can coexist — several in the same setting, at different points
 in its history, without interfering.
 
-### Why the settings are separate from the engine
+### Why settings are separate from the engine
 
 Because they change for different reasons and at different rates. The engine changes when a
 rule changes — rarely, deliberately, with a migration
-([`09-evolution.md`](09-evolution.md)). A setting accumulates: another scenario indexed,
-another faction written up, another career added. Mixing them makes both histories
+([`09-evolution.md`](09-evolution.md)). A setting only accumulates: another arc indexed,
+another organisation written up, another career added. Mixing them makes both histories
 unreadable, and makes it impossible to say which version of *what* a chronicle is pinned to.
 
-It also keeps the engine repository genuinely setting-agnostic rather than
-setting-agnostic-in-principle. If a rule cannot be written without naming a god, it is not
-an engine rule.
+It also keeps the engine genuinely setting-agnostic rather than
+setting-agnostic-in-principle. **If a rule cannot be written without naming a god, it is not
+an engine rule.**
 
-### The source corpus lives in the setting repos
+### The corpus lives with its setting
 
-Extracted text from the PDF library is committed to the relevant setting repo, alongside the
-indexes over it. Setting repos are **private and must stay private** — the corpus is derived
-from copyrighted books.
+Extracted text from source material is committed to the setting repo it belongs to, alongside
+the indexes over it ([`11-corpus-index.md`](11-corpus-index.md)). Setting repos are **private
+where their sources are copyrighted**.
 
-This is the reason the engine repo holds no corpus and no source digests: it is intended to
-become **public**, so nothing that cannot be published may enter it. Research notes live in
-the private `wyrd-research`.
+The engine repo holds **no corpus, no source text and no source digests**, because it is
+intended to become public and nothing unpublishable may enter it. Research notes live
+separately and privately.
 
-Also committed, per setting, are the **indexes** —
-[`11-corpus-index.md`](11-corpus-index.md) — which are small, are metadata rather than
-content, and are the part with real value. The master catalogue of source material
-([`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)) stays in the engine repo, since it maps
-the raw material both settings draw from.
-
-Cross-setting sources are indexed **in both** settings, because a Deadlands adventure adapted
-for the starting region and the same adventure adapted for a hive world are two different
-adaptations, not one shared record.
+A source usable by two settings is indexed **in both**, because the same adventure adapted for
+two different worlds produces two different adaptations, not one shared record.
 
 ## Inside each repository
 
 ```
-wyrd/
-├─ engine/          # ruleset + GM contract. Setting- and scenario-agnostic.
-├─ design/          # how and why
-├─ reference/       # mechanics research across systems
+wyrd/                          # the engine
+├─ engine/                     # rules, tables, the CLI
+├─ design/                     # how and why
+├─ settings.yaml               # the catalogue of known settings
 └─ tools/
 
 wyrd-<setting>/
-├─ setting/         # voice, careers, gear, factions, deities, names, calendar
-├─ scenarios/       # situations and Threat Packs
-└─ index/           # documents, nouns, terms, tables, scenarios
+├─ setting.yaml                # identity, engine compatibility, tone, overrides
+├─ setting/                    # lookup tables: voice, careers, gear, names, calendar
+│  └─ rules/                   # overrides only
+├─ entities/                   # character · place · organisation · arc · beat ·
+│                              # creature · item · tracker · thread · lore
+├─ index/                      # documents · nouns · terms · tables · arcs
+└─ corpus/                     # extracted source text
 
 wyrd-chronicle-<name>/
-├─ chronicle.yaml   # pins engine_version AND setting_version
-├─ entities/         # what this chronicle created
-├─ entities/
+├─ chronicle.yaml              # pins engine and setting versions; calendar; intent
+├─ engine/                     # copied at bootstrap. Read-only.
+├─ setting/                    # copied at bootstrap. Read-only.
+├─ overlay/                    # deltas to setting entities
+├─ entities/                   # entities this chronicle created, including the PC
 ├─ log/
 └─ recap.md
 ```
 
-### wyrd — the engine
+Which files are tables and which are entities is decided by one test
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)): *would anything link to it, or
+would a chronicle change it?*
 
-- `rules/` — resolution, combat, taint, trauma, fate, fear, advancement
-- `tables/` — criticals, injuries, transformations, miscasts, oracles
+### What the engine holds
+
+- `rules/` — resolution, combat, the tracks, fate, fear, advancement
+- `tables/` — criticals, aftermath, transformations, afflictions, oracles
 - `contract.md` — the GM contract from [`01-principles.md`](01-principles.md), in the form
   loaded every session
+- `settings.yaml` — the catalogue of known settings
 
-Setting-neutral. A rule that names a god belongs in `settings/`, not here.
+Setting-neutral throughout. **A rule that names a god belongs in a setting, not here.**
 
-### wyrd-<setting> — a setting
+### What a setting holds
 
-A setting is **data plus a voice document**.
+Content, in the two forms distinguished in
+[`13-authoring-a-setting.md`](13-authoring-a-setting.md):
 
-```
-wyrd-<setting>/setting/
-├─ voice.md          # register, vocabulary, what a critical failure looks like here
-├─ careers.yaml      # the career tree (the base system careers, the setting-named)
-├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
-├─ deities.yaml
-├─ names.yaml        # given/family/place name tables
-└─ calendar.yaml     # months, festivals, the ill moon cycle
-```
+- **Lookup tables** (`setting/*.yaml`) — voice, careers, gear, names, calendar, bestiary.
+  Rows queried by key.
+- **Entities** (`entities/**/*.md`) — every named thing, in the ten types
+  ([`14-entities.md`](14-entities.md)). Arcs and beats live here, so scenarios and campaigns
+  are entities like everything else.
+- **Overrides** (`setting/rules/`) — extend, retune, rename or disable. Never a new mechanism.
+- **Index and corpus** — [`11-corpus-index.md`](11-corpus-index.md).
 
-The the science-fiction line setting is the same shape with different data and one extra rules overlay
-(psychic powers reskinned from magic; see [`03-rules.md`](03-rules.md)).
+### What a chronicle holds
 
-### scenarios — inside each setting repo
-
-Two kinds, and the distinction matters:
-
-- **Threat** — a campaign-length antagonist with an Imminence rating that acts on its own
-  schedule. Format taken from . See [`05-campaign.md`](05-campaign.md).
-- **Situation** — a one-shot to three-session scenario. A place, people with agendas, a
-  clock, and a cost. **Never a script.**
-
-```
-scenarios/the-drowning-well/
-├─ scenario.yaml     # metadata: threat rating T, settings it fits, hooks, threads emitted
-├─ situation.md      # what is true, who wants what, what happens if nobody intervenes
-├─ cast.yaml         # NPCs with agendas
-└─ clock.yaml        # what advances, and what fires at each step
-```
-
-Every scenario declares `source:` — where it came from and what was changed. Partly honesty,
-partly so adapted material is distinguishable from original three years in.
-
-### wyrd-chronicle-<name>
-
-```
-chronicles/<name>/
-├─ chronicle.yaml    # setting, engine version, calendar date, era
-├─ overlay/          # deltas to setting entities
-├─ entities/         # entities this chronicle created — including the PC
-├─ log/              # session transcripts, archival
-└─ recap.md          # regenerated at each session end; the always-loaded summary
-```
-
-Git-committed after every session. That gives free undo and a free campaign history.
+Its pinned copies of engine and setting, an `overlay/` of what it has changed about that
+setting, the entities it has created itself, its log, and its recap
+([`06-state.md`](06-state.md)).
 
 ## Memory tiers
 
@@ -141,7 +115,7 @@ By session 40 the log is far larger than any context window. Three tiers:
 
 1. **Always loaded** — `chronicle.yaml`, the player character, present companions, hot
    threads, `recap.md`, plus the engine contract. Chosen by **query, not manifest**. Target: a few thousand tokens.
-2. **On demand** — any other entity, fetched by id or name when a scene needs them. Claude greps.
+2. **On demand** — any other entity, fetched by id or name when a scene needs them.
 3. **Archival** — `log/`. Rarely read; exists so the history is recoverable and auditable.
 
 **Compaction** runs at session end: what mattered is promoted into the entity store and the recap
@@ -150,15 +124,15 @@ mechanical, not optional.
 
 ## Code versus prose
 
-**A small deterministic CLI** (`wyrd`) does the things Claude must not be trusted to do
+**A small deterministic CLI** (`wyrd`) does the things the GM must not be trusted to do
 freehand:
 
 ```
-wyrd roll <skill> [--diffisecty N]     # 3d6 + Wyrd die, returns full structured result
+wyrd roll <skill> [--difficulty N]     # d100 + Wyrd die; full structured result
 wyrd damage <target> <expr>            # applies damage, stamina, criticals
-wyrd track <pc> taint +1          # mutates tracks, fires thresholds
-wyrd advance-time <days>               # calendar, Threat activation, expected-value events
-wyrd threat-check                      # weekly d12 per Threat
+wyrd track <id> taint +1               # mutates a track, fires thresholds
+wyrd advance-time <days>               # calendar, threat activation, expected-value events
+wyrd threat-check                      # per-threat activation roll
 wyrd save / wyrd load / wyrd validate  # atomic writes, schema validation
 wyrd recap                             # regenerate recap.md from state
 wyrd doctor [--repair|--propose]       # chronicle health: integrity, decay, budget
@@ -168,18 +142,18 @@ wyrd optimise                          # reindex, recompact, canonicalise
 Maintenance is a first-class engine function, not a chore — see
 [`08-maintenance.md`](08-maintenance.md).
 
-Everything else is **skills** — prompt-level instructions Claude follows:
+Everything else is **skills** — prompt-level instructions the GM follows:
 
 ```
 /wyrd-play              # resume the chronicle and run a beat
-/wyrd-new-chronicle     # setting choice, character creation, opening situation
+/wyrd-bootstrap         # complete a cloned template: character, intent, opening situation
 /wyrd-character         # inspect or advance the PC
-/wyrd-fellowship        # run a downtime phase (see 04-session.md)
+/wyrd-downtime          # run a downtime phase (see 04-session.md)
 /wyrd-end-session       # compaction, recap regeneration, commit
 ```
 
 The dice roller being external code is not pedantry. It is the thing that makes the world
-feel indifferent to the player, and it is the only defence against constraint 1 eroding
+feel indifferent to the player, and it is the only defence against principle 1 eroding
 quietly over a long campaign.
 
 Engineering ground rules for all of this — deterministic-over-inference, stdlib-only Python,
@@ -187,8 +161,9 @@ the MCP-shaped tool catalog, and model tiering — are in [`07-tooling.md`](07-t
 
 ## Deployment
 
-Runs on the lab server, reached from a phone via remote control. The chronicle is a git
-repo; the library is read on demand from OneDrive (see
-[`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)).
+Wyrd runs wherever Claude Code runs — a laptop, or an always-on machine reached from a phone.
+A chronicle is a git repository and needs no service, no database and no network at play
+time; source material is fetched only when converting content
+([`15-arcs-and-beats.md`](15-arcs-and-beats.md)).
 
-Sessions are stateless with respect to Claude: everything needed to resume is on disk.
+Sessions are stateless with respect to the model: everything needed to resume is on disk.

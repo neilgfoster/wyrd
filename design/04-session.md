@@ -1,7 +1,7 @@
 # Wyrd — session structure
 
 How twenty minutes on a train becomes a legitimate unit of play, and how the party works
-when every companion is an NPC.
+when every companion is played by the GM.
 
 Structure adapted from prior art; provenance is recorded in the private research repo.
 
@@ -31,15 +31,13 @@ compact — the equivalent of a page break, not a plot point. See the GM contrac
 
 ## The two modes
 
-From 3e:
-
 - **Story mode** — zoomed out, narrated broadly. Travel, a week of work, a search that has
   no real opposition. Used when order and detail don't matter.
 - **Scene mode** — zoomed in. Opposed actions, sequence matters, the player wants to speak
   in character.
 
-Claude switches explicitly and says so. One session can cover a fortnight of travel in two
-paragraphs and then spend fifteen minutes in a cellar.
+The GM switches by *changing how it narrates*, not by announcing a mode — one session can
+cover a fortnight of travel in two paragraphs and then spend fifteen minutes in a cellar.
 
 ## The Rally — the save point
 
@@ -47,15 +45,14 @@ Between beats comes a **Rally**: a short pause with mechanical weight.
 
 On a Rally:
 - recover **1 Strain**
-- posture drifts one step toward neutral
-- Claude assesses the beat and may award an advance
+- The GM assesses the beat and may award an advance
 - **state is written and the chronicle is committed**
 
 This is the answer to "I have to get off the train." Every Rally is a clean stopping point
-with fiction attached for why you caught your breath. Claude should offer one whenever a
+with fiction attached for why you caught your breath. The GM should offer one whenever a
 beat closes and always accept `stop` there.
 
-**No session ever ends mid-beat.** If the player must stop mid-beat, Claude persists state
+**No session ever ends mid-beat.** If the player must stop mid-beat, the GM persists state
 and writes a `pending:` marker naming the unresolved action, so resumption is exact.
 
 ## The session loop
@@ -70,7 +67,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 ```
 
 Step 2 matters more than it looks. The elapsed-time pass runs *before* the recap so that the
-recap can say "you have been three weeks in a town; word came that the mill at Grenzstadt
+recap can say "you have been three weeks in a town; word came that the mill at the town
 burned" — the world having moved is the first thing the player learns.
 
 ## Session shapes
@@ -82,13 +79,13 @@ Not every session is an adventure. Four legitimate shapes:
 | **Beat** | 10-20 min | One goal in an ongoing scenario. The default. |
 | **Interlude** | 10 min | Pure character. A conversation, a meal, a companion's problem. No dice, or one. |
 | **Downtime** | 15 min | A Fellowship phase (below). Advances the calendar. |
-| **Long session** | 45+ min | A whole episode, or a scenario's climax. Rare. |
+| **Long session** | 45+ min | A whole arc, or its climax. Rare. |
 
 The Interlude is important and easy to neglect. Constraint 7 says most sessions are small;
 a session that is *only* a companion telling you something over bad beer is a good session
 and the engine should say so.
 
-Note that shape is Claude's internal read of what the session is likely to be, used for
+Note that shape is the GM's internal read of what the session is likely to be, used for
 pacing. It is not announced either — the player does not get told they are in an Interlude,
 they get told the beer is bad.
 
@@ -117,7 +114,7 @@ Threats activate. Downtime is when the world gets ahead of you.
 
 ## The party
 
-The player runs one character. Claude runs everyone else. Companions are the primary
+The player runs one character. The GM runs everyone else. Companions are the primary
 mechanism for pacing, exposition and cost — because Wyrd cannot meaningfully threaten the
 player's character without consent, but it can absolutely break a companion.
 
@@ -137,13 +134,13 @@ Each companion is a `character` entity carrying:
   arc: "will have to choose between the debt and the party"
 ```
 
-**Claude never asks the player to decide for a companion.** Companions act on their agendas,
+**the GM never asks the player to decide for a companion.** Companions act on their agendas,
 including against the player's interest, and may refuse, leave, lie, or act while the player
 sleeps.
 
 ### Party Tension
 
-From 3e — the mechanism that makes an NPC party feel alive on a schedule rather than
+The mechanism that makes a GM-played party feel alive on a schedule rather than
 arbitrarily.
 
 A single **Tension** track, 0-6. It rises when:
@@ -160,7 +157,7 @@ moment. **Then Tension resets to 0.**
 It falls by 1 at a Fellowship phase, and by 1 when the player spends a beat on a companion's
 problem rather than their own.
 
-This gives Claude a principled, visible, self-resetting licence to generate inter-party
+This gives the GM a principled, visible, self-resetting licence to generate inter-party
 drama driven by what actually happened — and it makes the Interlude session mechanically
 worthwhile.
 

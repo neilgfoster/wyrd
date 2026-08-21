@@ -39,7 +39,7 @@ and `arc`. They behave identically; only their contents differ.
 
 | Type | Recursive | What it is |
 |---|---|---|
-| `character` | — | a person: NPC, nemesis, companion, or the PC |
+| `character` | — | a person: the player, a companion, a nemesis, a bystander |
 | `place` | **yes** | anywhere with a name, at any scale |
 | `organisation` | **yes** | any body of people, at any scale |
 | `arc` | **yes** | any unit of story larger than a beat |
@@ -120,7 +120,7 @@ type: organisation
 scale: cell                    # institution | order | chapter | cell
 parent: [[the-northern-order]]
 objective: {...}               # organisations act — see below
-members: [[hallam]], [[brida]]
+members: [[hallam]], [[the-caretaker]]
 reach: district
 ```
 
@@ -146,7 +146,7 @@ exit:
   changes: ["the gap in the ledger is public knowledge"]
   leads_to: [[the-tavern]]     # suggestion, never a rail
 place: [[the-river-city]]
-cast: [[brida]]
+cast: [[the-caretaker]]
 ```
 
 `scale` is a **human-readable label, not a structural constraint**. An arc contains arcs

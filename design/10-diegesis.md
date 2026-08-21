@@ -15,7 +15,7 @@ would.
 
 | Class | Examples | Rendered as |
 |---|---|---|
-| **Never shown** | hidden threshold, thread heat, party tension, bond values, NPC stats, diffisecty numbers, Threat imminence | nothing — these are engine state |
+| **Never shown** | hidden threshold, thread heat, party tension, bond values, character stats, difficulty numbers, Threat imminence | nothing — these are engine state |
 | **Diegetic only** | stamina, skills, taint, trauma, strain, reputation, wounds, inventory | prose, from the character's own perspective |
 | **Countable** | Fate, Fortune, Luck | prose that is still *countable*, because the player must decide whether to spend them |
 
@@ -31,7 +31,7 @@ stamina?" gets the number. The default is prose; the raw sheet is a query, not a
 
 ## Bands
 
-Defined so the engine renders them consistently rather than Claude improvising a new
+Defined so the engine renders them consistently rather than the GM improvising a new
 vocabulary every session.
 
 ### Stamina — as a fraction of max

@@ -9,7 +9,7 @@ eventually both may be live at the same time.
 
 | Layer | Shared | Per setting |
 |---|---|---|
-| **Resolution** | d100, Wyrd die, SL, diffisecty bands | — |
+| **Resolution** | d100, Wyrd die, SL, difficulty bands | — |
 | **Combat** | stamina, armour dice, criticals, Aftermath | flavour of the critical tables |
 | **Tracks** | Taint, Trauma, Fate, Resolve, Strain | *vocabulary* — transformation vs warp-taint, affliction vs the Whisperings |
 | **Session** | beats, Rally, Fellowship phases, party tension | — |
@@ -34,7 +34,7 @@ One library, one extraction, one set of indexes. Every scenario record already c
 ([`11-corpus-index.md`](11-corpus-index.md)), so the same index serves both and a
 `wyrd find scenario` in an the science-fiction setting chronicle simply never sees the setting-only material.
 
-This is deliberate. A Deadlands investigation may suit either; a *White Dwarf* hive-gang
+This is deliberate. An investigation written for one world may suit either; a *a periodical* hive-gang
 piece suits one. Tagging beats duplicating.
 
 ## Four repositories
@@ -66,7 +66,7 @@ the science-fiction setting one runs 0.5, which is exactly what you want when a 
 **One chronicle per session. Always. No exceptions.**
 
 This belongs in the GM contract, because the failure is subtle and serious: knowledge
-bleeding between chronicles. If a name, an NPC, a Threat or a plot turn from the starting region
+bleeding between chronicles. If a name, a character, a threat or a plot turn from the starting region
 chronicle surfaces in the the science-fiction setting one, the second chronicle stops being its own world —
 and the player has no way to detect it happening.
 
@@ -80,7 +80,7 @@ So:
 - `wyrd` verbs take an explicit chronicle path; there is no "current chronicle" global, so
   the wrong one cannot be edited by accident
 
-**MUST NOT (GM contract):** carry any fact, name, NPC, event or invention from one chronicle
+**MUST NOT (GM contract):** carry any fact, name, character, event or invention from one chronicle
 into another, in either direction, for any reason.
 
 ## Practical parallel play
