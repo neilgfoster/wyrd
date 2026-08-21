@@ -34,7 +34,7 @@ One record per extracted file: id, source path, system, edition, document type
 (rules / setting / adventure / magazine / fanzine), page count, whether it came from a text
 layer or OCR, and an OCR-confidence estimate.
 
-Deterministic. Built at ingest. This is [`../reference/library.md`](../reference/library.md)
+Deterministic. Built at ingest. This is [`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)
 made machine-queryable and extended with what extraction learned.
 
 **OCR confidence matters** and is cheap to compute — dictionary-word ratio per document. A
@@ -88,7 +88,7 @@ scenarios *chain* into a meta-campaign.
 
 Scope is **the whole library, not the WFRP shelf** — a Deadlands investigation, a Maelstrom
 village horror and a *White Dwarf* six-pager are equally valid inputs, judged on theme
-([`../reference/library-triage.md`](../reference/library-triage.md)). `adaptation` records
+([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
 
 ```yaml

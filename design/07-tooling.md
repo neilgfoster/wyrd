@@ -168,7 +168,7 @@ fiction; that is the one place not to economise.
 
 - `rules.py` and `tables.py` are pure — unit tests, no fixtures
 - Dice distributions are asserted statistically (the tables in
-  [`../reference/dice-design.md`](../reference/dice-design.md) are the expected values)
+  [`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) are the expected values)
 - State invariants from [`06-state.md`](06-state.md) are enforced on **every** write and
   tested directly
 - Golden chronicles: a saved state plus a scripted sequence of verbs, asserting the

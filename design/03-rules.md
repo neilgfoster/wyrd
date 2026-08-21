@@ -2,12 +2,12 @@
 
 Warlock! as the chassis, with the four Warhammer subsystems fitted, an AGE-derived dice
 read, and TOR's Hope/Shadow balance. Sources:
-[warlock-rules](../reference/warlock-rules.md) ·
-[wfrp-mechanics](../reference/wfrp-mechanics.md) ·
-[wfrp3-concepts](../reference/wfrp3-concepts.md) ·
-[tor-concepts](../reference/tor-concepts.md) ·
-[dice-design](../reference/dice-design.md) ·
-[systems-mined](../reference/systems-mined.md)
+[warlock-rules](https://github.com/neilgfoster/wyrd-research/blob/main/reference/warlock-rules.md) ·
+[wfrp-mechanics](https://github.com/neilgfoster/wyrd-research/blob/main/reference/wfrp-mechanics.md) ·
+[wfrp3-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/wfrp3-concepts.md) ·
+[tor-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/tor-concepts.md) ·
+[dice-design](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) ·
+[systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md)
 
 ---
 

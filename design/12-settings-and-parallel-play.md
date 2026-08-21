@@ -43,8 +43,8 @@ See [`02-architecture.md`](02-architecture.md) for the full layout:
 
 ```
 wyrd/                        # engine only
-wyrd-fantasy/                # Reikland setting, scenarios, indexes
-wyrd-futuristic/             # Imperium setting, scenarios, indexes
+wyrd-wfrp/                # Reikland setting, scenarios, indexes
+wyrd-40k/             # Imperium setting, scenarios, indexes
 wyrd-chronicle-hemmelfurt/   # one per chronicle
 ```
 

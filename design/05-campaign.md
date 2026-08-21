@@ -4,8 +4,8 @@ The layer that makes a chronicle run for years: how the world moves while you ar
 scenarios are selected rather than scripted, and how a long defeat is shaped.
 
 Sources: Beyond the Wall's Threat Packs, The One Ring's Tale of Years, WFRP 3e's Progress
-Tracker. See [systems-mined](../reference/systems-mined.md) and
-[tor-concepts](../reference/tor-concepts.md).
+Tracker. See [systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md) and
+[tor-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/tor-concepts.md).
 
 ---
 
@@ -131,8 +131,8 @@ At the start of an arc, or when a scenario closes, Claude picks the next by:
 
 **Sourcing is by theme, not system.** A Deadlands investigation and a *White Dwarf*
 six-pager about a corrupt miller are equally valid inputs. See
-[scenarios.md](../reference/scenarios.md) and
-[library-triage.md](../reference/library-triage.md).
+[scenarios.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/scenarios.md) and
+[library-triage.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md).
 
 **Prefer short-form.** The magazine and fanzine archives are the richest seam precisely
 because a six-page adventure about a corrupt miller has no ambition to be a finale.

@@ -9,8 +9,8 @@ Wyrd is four kinds of thing with four different lifecycles, so it is four reposi
 | Repo | Holds | Changes |
 |---|---|---|
 | **`wyrd`** | the engine — rules, CLI, GM contract, design, mechanics research | when the game changes |
-| **`wyrd-fantasy`** | Reikland setting, fantasy scenarios, fantasy corpus indexes | when content is added |
-| **`wyrd-futuristic`** | Imperium setting, 40k scenarios, 40k corpus indexes | when content is added |
+| **`wyrd-wfrp`** | Reikland setting, fantasy scenarios, fantasy corpus indexes | when content is added |
+| **`wyrd-40k`** | Imperium setting, 40k scenarios, 40k corpus indexes | when content is added |
 | **`wyrd-chronicle-*`** | one per chronicle — the save, its codex, its threads | every beat |
 
 A chronicle **references** an engine version and a setting version; a setting references a
@@ -34,15 +34,20 @@ It also keeps the engine repository genuinely setting-agnostic rather than
 setting-agnostic-in-principle. If a rule cannot be written without naming Sigmar, it is not
 an engine rule.
 
-### The source corpus is not in any repository
+### The source corpus lives in the setting repos
 
-Extracted text from the PDF library is **large and derived from copyrighted books**. It stays
-local and regenerable (`scratchpad/corpus/`), never committed.
+Extracted text from the PDF library is committed to the relevant setting repo, alongside the
+indexes over it. Setting repos are **private and must stay private** — the corpus is derived
+from copyrighted books.
 
-What *is* committed, per setting, is the **indexes** —
+This is the reason the engine repo holds no corpus and no source digests: it is intended to
+become **public**, so nothing that cannot be published may enter it. Research notes live in
+the private `wyrd-research`.
+
+Also committed, per setting, are the **indexes** —
 [`11-corpus-index.md`](11-corpus-index.md) — which are small, are metadata rather than
 content, and are the part with real value. The master catalogue of source material
-([`../reference/library.md`](../reference/library.md)) stays in the engine repo, since it maps
+([`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)) stays in the engine repo, since it maps
 the raw material both settings draw from.
 
 Cross-setting sources are indexed **in both** settings, because a Deadlands adventure adapted
@@ -58,7 +63,7 @@ wyrd/
 ├─ reference/       # mechanics research across systems
 └─ tools/
 
-wyrd-fantasy/
+wyrd-wfrp/
 ├─ setting/         # voice, careers, gear, factions, deities, names, calendar
 ├─ scenarios/       # situations and Threat Packs
 └─ index/           # documents, nouns, terms, tables, scenarios
@@ -80,12 +85,12 @@ wyrd-chronicle-<name>/
 
 Setting-neutral. A rule that names Sigmar belongs in `settings/`, not here.
 
-### wyrd-fantasy / wyrd-futuristic — the settings
+### wyrd-wfrp / wyrd-40k — the settings
 
 A setting is **data plus a voice document**.
 
 ```
-wyrd-fantasy/setting/
+wyrd-wfrp/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
 ├─ careers.yaml      # the career tree (Warlock careers, Reikland-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
@@ -188,6 +193,6 @@ the MCP-shaped tool catalog, and model tiering — are in [`07-tooling.md`](07-t
 
 Runs on the lab server, reached from a phone via remote control. The chronicle is a git
 repo; the library is read on demand from OneDrive (see
-[`../reference/library.md`](../reference/library.md)).
+[`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)).
 
 Sessions are stateless with respect to Claude: everything needed to resume is on disk.

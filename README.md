@@ -18,8 +18,10 @@ Wyrd is four kinds of thing with four lifecycles, so it is four repos
 | Repo | Holds |
 |---|---|
 | **wyrd** *(here)* | the engine — rules, CLI, GM contract, design, mechanics research |
-| **wyrd-fantasy** | Reikland setting, scenarios, fantasy corpus indexes |
-| **wyrd-futuristic** | Imperium setting, scenarios, 40k corpus indexes |
+| **wyrd-wfrp** | Reikland setting, scenarios, corpus |
+| **wyrd-40k** | Imperium setting, scenarios, corpus |
+| **wyrd-40k** | Imperium setting, scenarios, corpus |
+| **wyrd-research** | source mining notes *(must stay private)* |
 | **wyrd-chronicle-\*** | one per chronicle — the save, its codex, its threads |
 
 A chronicle pins an engine version *and* a setting version. Two chronicles never share a
@@ -43,22 +45,12 @@ setting at different points in its history.
 | [09-evolution](design/09-evolution.md) | How the engine changes without rewriting history |
 | [10-diegesis](design/10-diegesis.md) | Knowing your character without reading their statistics |
 | [11-corpus-index](design/11-corpus-index.md) | Finding the right passage in a library of 3,841 PDFs |
-| [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Fantasy and 40k, and running two chronicles at once |
+| [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Two settings, and running two chronicles at once |
+| [13-authoring-a-setting](design/13-authoring-a-setting.md) | Everything needed to build a new setting |
 | [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
 
-**Reference** — where it came from:
-
-| Doc | |
-|---|---|
-| [library](reference/library.md) | The source collection: 112 systems, 3,841 PDFs |
-| [library-triage](reference/library-triage.md) | Which of them are worth reading |
-| [warlock-rules](reference/warlock-rules.md) | The base system |
-| [wfrp-mechanics](reference/wfrp-mechanics.md) | Fate, Insanity, Corruption, Fear |
-| [wfrp3-concepts](reference/wfrp3-concepts.md) | Session structure, party tension |
-| [tor-concepts](reference/tor-concepts.md) | Hope/Shadow, the year cycle, the long defeat |
-| [dice-design](reference/dice-design.md) | The resolution mechanic and why |
-| [systems-mined](reference/systems-mined.md) | Threat Packs, injuries, scaling |
-| [scenarios](reference/scenarios.md) | Runnable material, biased to short-form |
+**Research** — the source mining that informed it — lives in the private
+`wyrd-research` repo, because it quotes copyrighted RPG material directly.
 
 ## The core idea in one paragraph
 

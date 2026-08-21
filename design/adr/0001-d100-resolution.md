@@ -7,7 +7,7 @@
 
 Wyrd currently resolves as `d20 + skill vs 20` (Warlock's mechanic) with a separate `2d6`
 pair — the Wyrd dice — carrying the side-effect axis. Two earlier schemes were rejected in
-[`../../reference/dice-design.md`](../../reference/dice-design.md).
+[`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md).
 
 The question raised: what would move to **d100 roll-under** cost, and could the
 multi-dimensional outcome survive it?

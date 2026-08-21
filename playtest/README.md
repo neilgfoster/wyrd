@@ -26,7 +26,7 @@ The chronicles themselves live in their own private repositories
 **Resolution (settled 2026-08-21):** `d100` roll-under, with the **units digit of the natural
 roll** as the Wyrd die — one roll, three independent axes, no extra dice. The `d20 + 2d6`
 scheme above was itself superseded within the day. See
-[`../reference/dice-design.md`](../reference/dice-design.md) and
+[`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) and
 [ADR 0001](../design/adr/0001-d100-resolution.md).
 
 **What worked.** The independent side-effect axis earned its place immediately. On roll 2

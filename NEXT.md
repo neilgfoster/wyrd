@@ -34,7 +34,7 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
    tables.
 
 5. **Apply the two 40k findings**, if approved — see
-   [reference/40k-engine-impact.md](reference/40k-engine-impact.md):
+   [reference/40k-engine-impact.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/40k-engine-impact.md):
    - split companions into a rich narrative layer and a deliberately thin mechanical one
    - give the party track a positive direction (Cohesion), and corruption a direction as
      well as a magnitude
