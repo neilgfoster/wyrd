@@ -1,194 +1,188 @@
-# Wyrd — state schema
+# Wyrd — chronicle state
 
-What is written to disk. The contract between the deterministic CLI and Claude.
+**State is entities.** There is no second storage model: the character, their companions,
+the threads, the trackers and the world are all entity files with YAML frontmatter, exactly
+as defined in [`14-entities.md`](14-entities.md).
 
-Principle: **if the player could catch Claude cheating at it, it lives here.**
+What differs is not *format* but **where a file lives** and **when it is loaded**.
 
 ---
 
+## Where things live
+
+```
+chronicle/
+├─ chronicle.yaml     # the only non-entity file: pins, calendar, era, intent
+├─ engine/            # copied at bootstrap. Read-only.
+├─ setting/           # copied at bootstrap. Read-only.
+├─ overlay/           # deltas to setting entities — what this chronicle changed
+├─ entities/          # entities this chronicle created
+├─ log/
+└─ recap.md           # regenerated at session close
+```
+
+An **effective entity** is `setting/<id>` + `overlay/<id>`, or `entities/<id>` if the
+chronicle invented it. Nothing else needs resolving.
+
 ## `chronicle.yaml`
 
+The one file that is not an entity, because it describes the chronicle rather than anything
+in the world.
+
 ```yaml
-name: the-drowning-well
-setting: <setting-id>
-engine_version: 0.1.0
-created: 2026-08-20
-calendar:
-  year: 2512
-  month: Nachexen
-  day: 14
-era: "The Quiet Years"
-danger_rating: 2          # scenario scaling T (see 03-rules)
-sessions: 7
-last_played: 2026-08-19
+name: <chronicle-id>
+engine:  {repo: wyrd, version: 0.4.0}
+setting: {repo: <setting-repo>, version: 0.3.1}
+calendar: {year: 0, month: null, day: 0}
+era: null
+sessions: 0
+danger_rating: 2
+migrations: []
+intent:                      # from the bootstrap interview; read every session
+  about: null
+  avoid: []
+  session_length: 20
+  lethality: standard
+  world_moves_when_away: true
+pending: null                # set if a session stopped mid-beat
 ```
 
-## `pc.yaml`
+## The player's character
+
+A `character` entity like any other, with `role: player`. Its frontmatter carries the live
+mechanical state:
 
 ```yaml
-name: Anselm Vogt
-career: labourer
-career_history: [labourer]
-skills:
-  brawling: 3
-  stealth: 4
-  perception: 3
-  animal-care: 2
-career_skill: 2           # = lowest skill in current career
-stamina: {current: 9, max: 9}
-luck: {current: 5, max: 5}
-fate: {current: 2, max: 2}         # permanent; spent to avoid death
-fortune: {current: 2}              # renewable daily, = fate max
-resolve: {current: 4, max: 5}
-taint: 1
-fault_line: "will do anything to keep his sister fed"
-hidden_threshold: null                   # SECRET. 1d10+toughness, set at first transformation.
+---
+id: <pc-id>
+type: character
+role: player
+career: <career-id>
+career_history: []
+skills: {}                   # name -> percentage
+stamina: {current: 0, max: 0}
+luck: {current: 0, max: 0}
+fate: {current: 0, max: 0}
+fortune: {current: 0}
+resolve: {current: 0, max: 0}
+taint: 0
 trauma: 0
 strain: 0
-afflictions: []
+hidden_threshold: null       # SECRET — set at first Transformation, never rendered
+fault_line: null
 transformations: []
-fear_points: 0
-reputation: {score: 1, label: "the man who found the child"}
-drives:
-  - {type: fear, object: "deep water"}
-  - {type: loyalty, object: "his sister Grete"}
-misfortune: "You have seen things — as a child he saw what came out of the well"
-wounds: []                         # lasting marks from the Aftermath table
+afflictions: []
+dread: 0
+reputation: {score: 0, label: null}
+drives: []
+misfortune: null
+wounds: []
 holdings: []
-advances_unspent: 1
-conditions: []                     # beset, weary, etc — derived, cached
+allegiances: []
+marks: []
+advances_unspent: 0
+---
 ```
 
-`hidden_threshold` is written once, on first transformation, and **never shown to the player**. Any
-render of `pc.yaml` for the player must strip it.
+`hidden_threshold` is written once and **never shown to the player**. Any render for the
+player must strip it ([`10-diegesis.md`](10-diegesis.md)).
 
-## `party.yaml`
+## Companions
+
+`character` entities with `role: companion` and a `status`. There is no `party.yaml` — the
+party is *a query*: characters with `role: companion` and `status: with-party`.
+
+Their mechanical layer is deliberately thin ([`04-session.md`](04-session.md)) — presence,
+bond, and a competence or two. No hidden threshold, no Fate, no career graph.
 
 ```yaml
-companions:
-  - name: Grete Vollen
-    career: labourer
-    agenda: "get her brother out of the debt he owes the Meisters"
-    flaw: "cannot leave a wrong alone"
-    bond: 3                        # -3..+3, to the PC
-    taint: 1
-    strain: 0
-    secret: "she already knows what happened to the brother"
-    arc: "will have to choose between the debt and the party"
-    status: with-party             # with-party | away | dead | lost | departed
-    skills: {brawling: 2, stealth: 3}
-    stamina: {current: 7, max: 7}
-tension: 2                         # 0-6 party tension (see 04-session)
+role: companion
+status: with-party           # with-party | away | dead | lost | departed
+bond: 0                      # -3..+3, toward the player
 ```
 
-Companions are **cheaper to model than the PC** — no fate, no fortune, no hidden threshold. Only
-the player carries the full state.
+Party tension is a `tracker`.
 
-## `threats.yaml`
+## Threads
+
+A `thread` is an entity — an open loop the chronicle is carrying.
 
 ```yaml
-threats:
-  - id: the-rot-beneath-grenzstadt
-    imminence: 3
-    clues_found: [the-millers-cough, the-well-that-tastes-of-iron]
-    activations: 4
-    last_activated: {year: 2512, month: Nachexen, day: 2}
-    connection: "Anselm's sister lives in Grenzstadt"
-    known_to_player: partial       # none | rumoured | partial | understood
+---
+id: <thread-id>
+type: thread
+status: open                 # open | resolved | cold | never-answered
+heat: 3                      # 0-5; rises when touched, decays when ignored
+hooks: []                    # matched against arc and beat entry conditions
+opened: {year: 0, month: null}
+links: []
+---
 ```
 
-## Objectives — what the world is doing
+Threads are the substrate campaign selection runs on
+([`05-campaign.md`](05-campaign.md)). There is no `threads.yaml`; the live set is a query on
+`status: open` ordered by heat.
 
-Simulation needs the world's intentions in state, not in Claude's head, or they drift.
-Every NPC and faction that matters carries a live objective with a *current step*:
+## Threats
+
+**A threat is not a type.** It is an aspect attached to a `character`, `organisation` or
+`place`, because a campaign-length antagonist may be a person, a conspiracy or a poisoned
+valley ([`14-entities.md`](14-entities.md)).
 
 ```yaml
-# in codex/npc/*.md front matter, or factions.yaml
-objective:
-  wants: "the debt written off before the Overseer sees the ledger"
-  because: "her brother signed it and she witnessed it"
-  next_step: "find out whether the PC remembers the tavern"
-  blocked_by: "cannot be seen taking an interest in the record house"
-  will_escalate_to: "burn the shrine's outbuilding as a distraction"
-  timeline: "before Marktag"
+threat:
+  imminence: 3
+  clues_found: []
+  activations: 0
+  connection: "why this touches the player"
+  known_to_player: none      # none | rumoured | partial | understood
+  effects: {}                # what happens when it activates
 ```
 
-`next_step` advances whether or not the player is present, and is what Claude consults
-before deciding how an NPC reacts. This is the difference between an NPC who responds
-plausibly and one who responds *predictably*.
-
-## `threads.yaml`
-
-```yaml
-threads:
-  - id: the-escaped-patron
-    opened: {year: 2512, month: Jahrdrung}
-    summary: "the man who paid the zealots walked away; you saw his ring"
-    hooks: [nobility, altdorf, jewellery, the-rot-beneath-grenzstadt]
-    heat: 2                        # 0-5; rises when touched, decays when ignored
-    status: open                   # open | resolved | cold | never-answered
-```
-
-## `codex/`
-
-One file per entity, loaded on demand. Claude greps by name.
-
-```
-codex/npc/hallam-weissbruck.md
-codex/location/grenzstadt.md
-codex/faction/the-meisters.md
-```
-
-Each carries a one-line summary at the top for cheap matching, then detail, then a
-`last_seen:` and `knows:` block recording what the *player* has learned — distinct from what
-is true.
-
-NPC entries also carry an **entanglement** block, which is what makes thread-based
-succession possible (see [`05-campaign.md`](05-campaign.md)):
-
-```yaml
-entanglement:
-  threads: [the-escaped-patron, the-rot-beneath-grenzstadt]
-  owed: "the PC left her brother in the cellar"
-  disposition: hostile        # ally | wary | hostile | hunting | unaware
-  viable_successor: true
-```
-
-`viable_successor` is set by Claude when an NPC becomes sufficiently entangled to carry a
-chronicle on their own. On the PC's death these are the candidates offered.
+The active set is a query: entities with a `threat` block and `imminence > 0`.
 
 ## `recap.md`
 
-Regenerated at every session close. Always loaded. Target ~200 words:
+Regenerated at every session close, always loaded, ~200 words: where and when you are, the
+three hottest threads, what changed while you were away, the state of your body and mind in
+one sentence, and who is with you.
 
-- where you are and when
-- what is unresolved (top 3 threads by heat)
-- what changed while you were away
-- the state of your body and soul in one sentence
-- who is with you and how they are
+## Load policy
 
-## Invariants the CLI enforces
+Formats are identical; only *when* differs
+([`02-architecture.md`](02-architecture.md)).
 
-- `career_skill` == lowest skill in the current career
-- `stamina.max` only rises when `career_skill` rises
-- `fortune.current` <= `fate.max`
-- character is **Spent** iff `resolve.current <= taint` and `taint > 0`
-- `trauma >= 6` triggers a Willpower test on every further gain
-- transformations count > `hidden_threshold` → status becomes `lost`
-- `tension` in 0..6; reaching 6 fires an event and resets to 0
-- every write is atomic; every write is followed by a schema validation
+| Tier | What | How chosen |
+|---|---|---|
+| **Always** | `chronicle.yaml`, the player character, companions with `status: with-party`, threads with `heat ≥ 3`, `recap.md`, the GM contract | query, not a manifest |
+| **On demand** | every other entity | fetched by id or by grep |
+| **Archival** | `log/` | rarely read; the audit trail that makes compaction safe |
+
+Choosing by query rather than a manifest means the tier can never drift out of date.
+
+## Invariants
+
+Enforced on every write, and tested directly:
+
+- an entity's `id` is unique and stable; `parent` never forms a cycle
+- every `[[link]]`, `parent` and `overlay_of` resolves
+- `fortune.current ≤ fate.max`
+- a character is **Spent** iff `resolve.current ≤ taint` and `taint > 0`
+- `trauma ≥ 6` triggers a test on every further gain
+- `transformations` count > `hidden_threshold` → `status: lost`
+- a tracker's `value` stays within `0..max`; reaching `max` fires and resets
 - **no write may be skipped because narration already happened** — persist precedes narrate
 
-## Session-interrupt marker
+## Interrupted sessions
 
 If a session stops mid-beat:
 
 ```yaml
 pending:
-  beat: "searching the physician's cellar"
-  awaiting: "player choice: force the door, or fetch Grete first"
+  beat: <beat-id>
+  awaiting: "what the player was about to decide"
   rolled: null
 ```
 
-Cleared at the next Rally. Its presence means the next session resumes exactly, rather than
+Cleared at the next Rally. Its presence means the next session resumes exactly rather than
 recapping vaguely.

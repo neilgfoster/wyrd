@@ -184,10 +184,10 @@ retires, the default is **succession, not replacement** — but succession is in
 not how the world works, and it makes the chronicle about a family when it should be
 about a rot that outlives everyone who touches it.
 
-### The successor comes from the codex
+### The successor is already in the chronicle
 
 The next PC is someone **already in the chronicle** — a name that has appeared, however
-briefly. Claude selects from `codex/npc/` by *entanglement*, not affection. Strong
+briefly. The engine selects from the chronicle's `character` entities by *entanglement*, not affection. Strong
 candidates, roughly in order of how well they carry a story:
 
 - **Someone the old PC wronged.** The debt they never repaid; the family they failed to
@@ -231,7 +231,7 @@ their predecessor was, or condemned for it.
 ### The old PC does not leave
 
 If they were **lost**, they became an NPC Claude controls — and the successor may meet
-them. If they **died**, what they did persists in the codex as fact and in the world as
+them. If they **died**, what they did persists in the entity store as fact and in the world as
 rumour, and the two need not match. If they **retired**, they are somewhere, and can be
 found, and may not want to be.
 
@@ -242,6 +242,6 @@ partly their fault.
 ### At the table
 
 Succession is offered, never imposed. On a character's end Claude proposes **two or three
-candidates from the codex** with a line each on how they are entangled, and the player
+candidates from the chronicle's characters** with a line each on how they are entangled, and the player
 chooses — or declines and starts clean. Declining is legitimate; the threads simply stay
 open and go cold in their own time.

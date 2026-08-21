@@ -35,7 +35,7 @@ enforces the first and reports oddities in the second
 Any entity may use either. Three types are **recursive containers**: `place`, `organisation`
 and `arc`. They behave identically; only their contents differ.
 
-## The nine types
+## The ten types
 
 | Type | Recursive | What it is |
 |---|---|---|
@@ -47,9 +47,13 @@ and `arc`. They behave identically; only their contents differ.
 | `creature` | — | a stat block — a kind of thing, not an individual |
 | `item` | — | a thing that matters |
 | `tracker` | — | a named clock, meter or state |
+| `thread` | — | an open loop the chronicle is carrying |
 | `lore` | — | background with no other home |
 
 Nothing else. **A new type is an engine change, never a setting one.**
+
+Entity *files* are the only storage; there is no second model for chronicle state
+([`06-state.md`](06-state.md)).
 
 Note what is *not* a type. A **nemesis** is a `character` with `role: nemesis`. A **threat**
 is an aspect attached to a character, organisation or place — because a campaign-length

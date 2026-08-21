@@ -1,7 +1,7 @@
 # Wyrd — chronicle maintenance
 
 A chronicle is a growing, mostly-append store that must stay correct and cheap to load for
-years. Left alone it rots in predictable ways: the codex accumulates one-line NPCs, threads
+years. Left alone it rots in predictable ways: the entity store accumulates one-line characters, threads
 pile up unresolved, the same person appears under three spellings, derived fields drift from
 their sources, and the always-loaded tier quietly outgrows its budget until session start
 becomes expensive.
@@ -47,8 +47,8 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 
 ```json
 {"code": "ORPHAN_THREAD_REF", "severity": "repair",
- "path": "threads.yaml#the-escaped-patron",
- "detail": "hook references codex/npc/hallam-weissbruck which does not exist",
+ "path": "entities/thread/<id>.md",
+ "detail": "hook references a character entity that does not exist",
  "fix": "drop hook | create stub"}
 ```
 
@@ -76,7 +76,7 @@ proposed.
 
 Derived fields are cached for cheap loading and must be rebuilt, not trusted:
 `career_skill`, `conditions`, `fear_points`, `fortune.max`, thread `heat` after decay,
-codex summary index, `viable_successor` flags.
+entity summary index, `viable_successor` flags.
 
 Always safe. Always automatic.
 
@@ -86,11 +86,11 @@ Always safe. Always automatic.
 - **cold threads** older than a further year are *proposed* for closure as
   `never-answered` — which is true to the setting, and is why it is a proposal not a repair
 - **resolved threats** are archived out of the hot file
-- **departed companions** move from `party.yaml` to the codex, keeping their arc
+- **departed companions** change `status`, keeping their entity and their arc
 
-### 4. `codex` — keep the entity store clean
+### 4. `entities` — keep the entity store clean
 
-- **orphans**: codex entries never referenced by any thread, threat, log or party member —
+- **orphans**: entities never referenced by any thread, threat, log or party member —
   reported, proposed for demotion into a `minor/` bucket rather than deletion
 - **stubs**: entries with a name and nothing else — flagged for enrichment at next mention
 - **duplicates**: near-identical entries (Hallam Weissbruck / Hallem Weisbruck / "the
@@ -100,14 +100,13 @@ Always safe. Always automatic.
 
 ### 5. `budget` — the always-loaded tier stays small
 
-Session start loads `chronicle.yaml`, `pc.yaml`, `party.yaml`, `recap.md`, `threads.yaml`
-and the contract. That tier has a **budget**, and `doctor` reports against it:
+Session start loads the always-tier ([`06-state.md`](06-state.md)). That tier has a **budget**, and `doctor` reports against it:
 
 | File | Target |
 |---|---|
 | `recap.md` | ≤ 300 words |
-| `threads.yaml` | ≤ 12 open threads |
-| `party.yaml` | ≤ 6 companions |
+| open threads | ≤ 12 |
+| present companions | ≤ 6 |
 | whole tier | ≤ ~6k tokens |
 
 Over budget is not an error, it is a signal that decay and compaction are overdue. The
@@ -121,7 +120,7 @@ everything else safe to compact.
 
 ### 7. `continuity` — the one that needs a model
 
-The only genuinely hard check: does the codex contradict the log? An NPC who died in session
+The only genuinely hard check: does the entity store contradict the log? An NPC who died in session
 4 and speaks in session 9. A location described as burned and later intact. A thread marked
 resolved whose resolution never appears.
 
@@ -131,8 +130,8 @@ archive, and **emits proposals only**:
 
 ```json
 {"code": "CONTINUITY_CONTRADICTION", "severity": "revision",
- "detail": "codex/npc/otto-vahl marked dead 2512-Jahrdrung; speaks in log 2512-Pflugzeit",
- "candidates": ["codex is wrong", "log is a different Otto", "he survived"]}
+ "detail": "a character marked dead speaks in a later log entry",
+ "candidates": ["the entity is wrong", "log is a different Otto", "he survived"]}
 ```
 
 It never picks. The player does, or Claude does with the player watching.
@@ -143,8 +142,8 @@ It never picks. The player does, or Claude does with the player watching.
 
 Separate from `doctor`, because it is about cost rather than correctness.
 
-- **reindex** the codex summary index used for on-demand matching
-- **recompact**: re-run promotion from archive to codex with current heuristics, useful
+- **reindex** the entity summary index used for on-demand matching
+- **recompact**: re-run promotion from archive to entities with current heuristics, useful
   after the compaction rules change
 - **prune generated artefacts**: regenerable caches, never source
 - **vacuum**: rewrite state files canonically (stable key order, consistent formatting) so
@@ -160,7 +159,7 @@ Optimise is always Repair-tier: it may not change any fact.
 |---|---|
 | Every session close | `derived`, `budget` report, log rotation, compaction |
 | Every session start | `integrity` (fast path); refuse to play on exit code 3 |
-| End of a scenario | `decay`, `codex` orphan report |
+| End of an arc | `decay`, orphan report |
 | End of an era | full `doctor --propose`, `optimise`, git tag |
 | Monthly (cron) | full `doctor --propose` + `continuity`; report to the player, apply nothing |
 

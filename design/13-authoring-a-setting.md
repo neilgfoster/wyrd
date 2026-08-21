@@ -17,8 +17,7 @@ wyrd-<name>/
 │  ├─ voice.md        # THE most important file. See below.
 │  ├─ careers.yaml    # the career graph — nodes with entries and exits
 │  ├─ gear.yaml       # weapons, armour, prices, what is legal to carry where
-│  ├─ creatures.yaml  # stat blocks
-│  ├─ factions.yaml   # with objectives (see 06-state)
+│  ├─ bestiary.yaml   # creature stat blocks (a lookup table)
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
 │  ├─ names.yaml      # given / family / place, by culture
 │  ├─ conversion.yaml # REQUIRED if derived from another system — see below
@@ -60,6 +59,18 @@ therefore safe, but a career being removed or renamed is structural and needs a 
 like any other.
 
 ---
+
+### Tables versus entities
+
+Two kinds of content, and the distinction is simple:
+
+| | Stored as | Because |
+|---|---|---|
+| **Lookup tables** — careers, gear, names, calendar, bestiary | `setting/*.yaml` | hundreds of rows, queried by key, never linked to individually |
+| **Named things** — characters, places, organisations, arcs, beats, threads | `entities/<type>/*.md` | each is referenced, linked and can carry a chronicle overlay |
+
+The test: *would anything ever link to it, or would a chronicle ever change it?* If yes it is
+an entity. A career is a row; the guild that grants it is an entity.
 
 ## `voice.md` is the hard part
 
@@ -230,7 +241,7 @@ Useful because it is *not* the source line and so tests the boundary.
 | Shadow Weakness from Calling | `setting/rules/` — a mapping table |
 | The Fellowship phase | **already engine** |
 | Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |
-| Eagles, Wargs, the Necromancer | `creatures.yaml`, `factions.yaml` |
+| Beasts and named powers | `bestiary.yaml`, and `organisation` entities |
 | "A losing struggle" | **already engine** — it is the campaign model |
 | The register | `voice.md` — elegiac, where another line might be dry or brutal |
 
@@ -246,8 +257,8 @@ choice for text play, and a setting that disagrees can add it.
 2. `voice.md` — write this **first**, before any data. It will change what you put in the data.
 3. `names.yaml` and `calendar.yaml` — cheap, and immediately make the world feel inhabited
 4. `careers.yaml` — the character system; the largest single job
-5. `gear.yaml`, `creatures.yaml` — enough to run one scenario, not everything
-6. `factions.yaml` with objectives — so the world can act while the player is absent
+5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything
+6. a few `organisation` entities with objectives — so the world can act while the player is absent
 7. One Threat Pack and one scenario — enough to play
 8. Index whatever sources you have ([`11-corpus-index.md`](11-corpus-index.md))
 

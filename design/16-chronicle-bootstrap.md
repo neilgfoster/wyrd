@@ -26,7 +26,7 @@ The bootstrap:
 5. **Seeds the world.** Picks an opening situation matching the answers, sets the calendar,
    selects the Threats that will run in the background, and connects at least one of them to
    the character ([`05-campaign.md`](05-campaign.md)).
-6. **Writes and commits** `chronicle.yaml`, `pc.yaml`, `party.yaml`, `threads.yaml`,
+6. **Writes and commits** `chronicle.yaml`, the player character, the opening threads,
    `overlay/`, and the first `recap.md`.
 
 After bootstrap the repo is self-sufficient. `/wyrd-play` needs nothing else.
@@ -79,14 +79,11 @@ my-chronicle/
 ├─ engine/             # copied. Do not edit.
 ├─ setting/            # copied. Do not edit — write overlays instead.
 ├─ overlay/            # what this chronicle has changed about the world
-├─ pc.yaml
-├─ party.yaml
-├─ threats.yaml
-├─ threads.yaml
-├─ codex/              # entities this chronicle created
+├─ entities/           # entities this chronicle created, including the PC
+├─ overlay/            # deltas to setting entities
 ├─ log/
 └─ recap.md
 ```
 
-The whole thing is an Obsidian vault. `setting/` and `overlay/` and `codex/` are all entity
+The whole thing is an Obsidian vault. `setting/`, `overlay/` and `entities/` are all entity
 files, so the graph view shows the world *and* what the player has done to it.

@@ -50,7 +50,7 @@ Deterministic: capitalised tokens not sentence-initial, frequency-filtered, stop
 against common words and OCR noise.
 
 This is the index that makes a long chronicle work. Three years in, "Weissbruck" appears in
-the player's notes, in a codex entry, and in an adventure nobody has read since 2026. Proper
+the player's notes, in an entity, and in an adventure nobody has read since 2026. Proper
 nouns are perfectly greppable **once you know they exist** — the concordance is what tells
 you they exist, and where the *canonical* mention is rather than the fortieth passing one.
 
@@ -97,7 +97,7 @@ source: {system: "White Dwarf", ref: "WD 98", pages: "34-39"}
 adaptation: reskin                    # none | reskin | rewrite
 settings: [<setting-id>]
 
-# --- selection inputs: deterministic, evaluated against pc.yaml ---
+# --- selection inputs: deterministic, evaluated against the player character ---
 scale: village                        # village|town|city|wilderness|underground|waterway|road|ship|fortress
 region: any
 danger: 3                             # as written, for written_for (see 03-rules)

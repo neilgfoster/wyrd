@@ -11,7 +11,7 @@ Wyrd is four kinds of thing with four different lifecycles, so it is four reposi
 | **`wyrd`** | the engine — rules, CLI, GM contract, design, mechanics research | when the game changes |
 | **`wyrd-<setting>`** | the setting, fantasy scenarios, fantasy corpus indexes | when content is added |
 | **`wyrd-<sf-setting>`** | the science-fiction setting setting, the science-fiction line scenarios, the science-fiction line corpus indexes | when content is added |
-| **`wyrd-chronicle-*`** | one per chronicle — the save, its codex, its threads | every beat |
+| **`wyrd-chronicle-*`** | one per chronicle — its state, entities and threads | every beat |
 
 A chronicle **references** an engine version and a setting version; a setting references a
 minimum engine version. Nothing references a chronicle.
@@ -70,8 +70,8 @@ wyrd-<setting>/
 
 wyrd-chronicle-<name>/
 ├─ chronicle.yaml   # pins engine_version AND setting_version
-├─ pc.yaml, party.yaml, threats.yaml, threads.yaml
-├─ codex/
+├─ entities/         # what this chronicle created
+├─ entities/
 ├─ log/
 └─ recap.md
 ```
@@ -94,7 +94,6 @@ wyrd-<setting>/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
 ├─ careers.yaml      # the career tree (the base system careers, the setting-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
-├─ factions.yaml     # orders, guilds, watch, nobility — with agendas
 ├─ deities.yaml
 ├─ names.yaml        # given/family/place name tables
 └─ calendar.yaml     # months, festivals, the ill moon cycle
@@ -128,11 +127,8 @@ partly so adapted material is distinguishable from original three years in.
 ```
 chronicles/<name>/
 ├─ chronicle.yaml    # setting, engine version, calendar date, era
-├─ pc.yaml           # the player's character — full state
-├─ party.yaml        # companions
-├─ threats.yaml      # active Threats and their Imminence
-├─ threads.yaml      # open threads (see 05-campaign.md)
-├─ codex/            # one file per NPC, location, faction — loaded on demand
+├─ overlay/          # deltas to setting entities
+├─ entities/         # entities this chronicle created — including the PC
 ├─ log/              # session transcripts, archival
 └─ recap.md          # regenerated at each session end; the always-loaded summary
 ```
@@ -143,12 +139,12 @@ Git-committed after every session. That gives free undo and a free campaign hist
 
 By session 40 the log is far larger than any context window. Three tiers:
 
-1. **Always loaded** — `chronicle.yaml`, `pc.yaml`, `party.yaml`, `recap.md`, active
-   `threads.yaml`, plus the engine contract. Target: a few thousand tokens.
-2. **On demand** — `codex/` entries, fetched by name when a scene needs them. Claude greps.
+1. **Always loaded** — `chronicle.yaml`, the player character, present companions, hot
+   threads, `recap.md`, plus the engine contract. Chosen by **query, not manifest**. Target: a few thousand tokens.
+2. **On demand** — any other entity, fetched by id or name when a scene needs them. Claude greps.
 3. **Archival** — `log/`. Rarely read; exists so the history is recoverable and auditable.
 
-**Compaction** runs at session end: what mattered is promoted into the codex and the recap
+**Compaction** runs at session end: what mattered is promoted into the entity store and the recap
 is regenerated. This is the step that makes multi-year play possible, and it must be
 mechanical, not optional.
 

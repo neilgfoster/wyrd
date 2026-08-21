@@ -145,7 +145,7 @@ Use the smallest model that can do the job correctly.
 | Tier | Used for |
 |---|---|
 | **No model** | Anything in the left column of §1. Dice, arithmetic, state, activation, validation, table lookups. |
-| **Haiku** | Mechanical language work with a right answer: extracting codex updates from a session log, regenerating `recap.md` from state, matching scenario hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
+| **Haiku** | Mechanical language work with a right answer: extracting entity updates from a session log, regenerating `recap.md` from state, matching scenario hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
 | **Sonnet / Opus** | The GM itself. Narration, NPC voice and motive, scenario adaptation, party tension events, judgment about what a result means and when to call for a roll. |
 
 Mechanical steps are delegated to a **Haiku subagent** — an agent definition in

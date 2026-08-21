@@ -61,7 +61,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 ## The session loop
 
 ```
-1. LOAD      chronicle.yaml, pc.yaml, party.yaml, recap.md, threads.yaml, contract
+1. LOAD      chronicle.yaml, the PC, present companions, hot threads, recap, contract
 2. ELAPSE    wyrd advance-time — the world moved since last session (see 05-campaign)
 3. RECAP     three sentences. Where you are, what is unresolved, what has changed.
 4. BEAT      situation → player choice → roll → narrate → persist → Rally
@@ -123,7 +123,7 @@ player's character without consent, but it can absolutely break a companion.
 
 ### Companions are people
 
-Each companion in `party.yaml` carries:
+Each companion is a `character` entity carrying:
 
 ```yaml
 - name: Grete Vollen
