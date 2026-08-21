@@ -1,5 +1,14 @@
 # Queued work
 
+## Housekeeping
+
+- **`wyrd-40k` needs deleting** — superseded by wyrd-darkheresy / wyrd-onlywar /
+  wyrd-roguetrader. `gh` lacks the `delete_repo` scope here:
+  `gh auth refresh -h github.com -s delete_repo`
+- Four transient corpus PULLFAILs to retry; five White Dwarf PDFs (#005, #034, #077, #079,
+  #080) appear genuinely corrupt in the source collection.
+
+
 ## After the corpus run completes
 
 The OCR/extraction pipeline is processing 510 files (v1 line + White Dwarf) into
@@ -47,3 +56,12 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
 - Resume the Hemmelfurt playtest — day 1 of 4, four leads open, and Wendel still needs to
   know who he resembles. Chronicle now lives at `neilgfoster/wyrd-chronicle-hemmelfurt`
   (private).
+
+## Now that Wyrd is a generic engine
+
+- Corpus text commits into the relevant **setting** repo (private), with indexes beside it.
+- Beat conversion is **on demand** — when a campaign needs a stub, convert it and commit back.
+- Character/location/faction stubs still to be seeded from the corpus concordance once the
+  indexes exist.
+- The engine has no journey subsystem; `wyrd-tor` will need one, and per the hard rule it
+  goes in the **core**, generalised, not in the setting.

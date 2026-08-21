@@ -1,32 +1,50 @@
 # Wyrd
 
-Claude Code as a tabletop RPG games master, for grim low-fantasy solo play.
+**A solo tabletop RPG engine for Claude Code.** One player, one character, played over text
+across years.
 
-**One player, one character.** Claude runs the world, the story, and the entire rest of the
-party as NPCs. Text only — no maps, no grids. Sessions of twenty minutes from a phone,
-across a chronicle meant to run years.
+Wyrd is **setting-agnostic**. It is its own system — percentile resolution descended from
+WFRP 2e, simplified for narrative play — plus the machinery a solo campaign actually needs:
+a world that moves while you are away, companions the GM plays as people, corruption you
+choose, consequences that outlive characters, and a chronicle that stays correct for a
+decade.
 
-Setting is Warhammer Fantasy first (the Reikland), 40k later on the same engine. The
-ruleset is *Warlock!* as a chassis with the Warhammer dials fitted: Corruption, Insanity,
-Fate, Fear.
+Settings live in their own repositories and are overlaid onto a chronicle. Warhammer Fantasy
+and 40k exist; The One Ring is a stub; anything else can be authored
+([13-authoring-a-setting](design/13-authoring-a-setting.md)).
+
+## Start a chronicle
+
+```bash
+gh repo create my-chronicle --private --template neilgfoster/wyrd-chronicle-template
+cd my-chronicle && ./bootstrap
+```
+
+Then `/wyrd-play` in Claude Code.
 
 ## The repositories
 
-Wyrd is four kinds of thing with four lifecycles, so it is four repos
-(see [02-architecture](design/02-architecture.md)):
+| Repo | Holds | Public |
+|---|---|---|
+| **wyrd** *(here)* | the engine — rules, CLI, GM contract, design | intended |
+| **wyrd-\<setting\>** | a setting: world, adventures, overrides, corpus | private where copyrighted |
+| **wyrd-chronicle-template** | clone this to start playing | yes |
+| **wyrd-chronicle-\<name\>** | one per chronicle | yours |
+| **wyrd-research** | source mining notes | never |
 
-| Repo | Holds |
-|---|---|
-| **wyrd** *(here)* | the engine — rules, CLI, GM contract, design, mechanics research |
-| **wyrd-wfrp** | Reikland setting, scenarios, corpus |
-| **wyrd-40k** | Imperium setting, scenarios, corpus |
-| **wyrd-40k** | Imperium setting, scenarios, corpus |
-| **wyrd-research** | source mining notes *(must stay private)* |
-| **wyrd-chronicle-\*** | one per chronicle — the save, its codex, its threads |
+Settings are catalogued in [settings.yaml](settings.yaml). A chronicle pins **an engine
+version and a setting version**, both copied in, so nothing breaks when upstream moves.
 
-A chronicle pins an engine version *and* a setting version. Two chronicles never share a
-repo, so parallel sessions cannot race — and many characters can coexist in the same
-setting at different points in its history.
+## What makes it different
+
+- **The dice bind the GM.** Rolls happen in code, before narration, and the result stands.
+- **Power stays flat.** What grows over years is what you know and what it cost.
+- **The world does not wait.** Threats advance on their own calendar; you hear late.
+- **Adventures are beats**, not scripts — recombinable into campaigns their authors never
+  wrote ([15-adventures-as-beats](design/15-adventures-as-beats.md)).
+- **Settings and chronicles are Obsidian vaults.** The graph view is the world.
+- **The past is a fact.** Rules change forward; history is never recomputed
+  ([09-evolution](design/09-evolution.md)).
 
 ## Read in this order
 
@@ -47,6 +65,9 @@ setting at different points in its history.
 | [11-corpus-index](design/11-corpus-index.md) | Finding the right passage in a library of 3,841 PDFs |
 | [12-settings-and-parallel-play](design/12-settings-and-parallel-play.md) | Two settings, and running two chronicles at once |
 | [13-authoring-a-setting](design/13-authoring-a-setting.md) | Everything needed to build a new setting |
+| [14-entities-and-schema](design/14-entities-and-schema.md) | The world mesh — entities, overlays, Obsidian |
+| [15-adventures-as-beats](design/15-adventures-as-beats.md) | Beats, the campaign matrix, lazy conversion |
+| [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
 | [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
 
 **Research** — the source mining that informed it — lives in the private
