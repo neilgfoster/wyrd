@@ -45,4 +45,5 @@ competing for the box is what caused the OCR thrashing on 2026-08-20.
   validation, and `roll` / `damage` / `track`. Freeze the first golden chronicle immediately
   (see [design/09-evolution.md](design/09-evolution.md)).
 - Resume the Hemmelfurt playtest — day 1 of 4, four leads open, and Wendel still needs to
-  know who he resembles.
+  know who he resembles. Chronicle now lives at `neilgfoster/wyrd-chronicle-hemmelfurt`
+  (private).

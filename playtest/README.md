@@ -1,9 +1,14 @@
-# Playtest — Hemmelfurt
+# Playtest findings
 
-A hand-run playtest of the Wyrd ruleset with **no engine**: dice rolled by script, arithmetic
+Hand-run playtests of the Wyrd ruleset with **no engine**: dice rolled by script, arithmetic
 by hand, state maintained manually against the schema in
 [`../design/06-state.md`](../design/06-state.md). The point is to find out whether Wyrd is
 enjoyable to play over text before building tooling for it.
+
+The chronicles themselves live in their own private repositories
+(see [`../design/12-settings-and-parallel-play.md`](../design/12-settings-and-parallel-play.md)):
+
+- **Hemmelfurt** (Reikland) — `neilgfoster/wyrd-chronicle-hemmelfurt`
 
 ## Findings so far
 
@@ -18,8 +23,11 @@ enjoyable to play over text before building tooling for it.
    Warlock's 35%. A bell curve compresses both tails: playable novices *or* fallible
    veterans, not both.
 
-**Resolution:** `d20 + skill vs 20` for success, with a separate `2d6` pair — the Wyrd dice —
-that never touch the total. See [`../reference/dice-design.md`](../reference/dice-design.md).
+**Resolution (settled 2026-08-21):** `d100` roll-under, with the **units digit of the natural
+roll** as the Wyrd die — one roll, three independent axes, no extra dice. The `d20 + 2d6`
+scheme above was itself superseded within the day. See
+[`../reference/dice-design.md`](../reference/dice-design.md) and
+[ADR 0001](../design/adr/0001-d100-resolution.md).
 
 **What worked.** The independent side-effect axis earned its place immediately. On roll 2
 the failure and the bane were separate facts: Brida didn't merely disbelieve him, she took a
