@@ -125,27 +125,43 @@ Threats activate. Downtime is when the world gets ahead of you.
 
 ## The party
 
-The player runs one character. The GM runs everyone else. Companions are the primary
-mechanism for pacing, exposition and cost — because Wyrd cannot meaningfully threaten the
-player's character without consent, but it can absolutely break a companion.
+The player runs one character. The GM runs everyone else.
+
+**The player's character can be threatened, and the engine is built to do it.** Criticals are
+lethal, death is deferred to the Aftermath table rather than softened, Fate points are few
+and permanent, and a chronicle that outlives its protagonist has succession rules waiting
+([`05-campaign.md`](05-campaign.md)). Any setting can raise or lower that with `mortality`.
+
+What differs is **rationing**. Threat to the player's character is real but expensive — it
+costs a Fate point, or it ends a character the chronicle has been building for years.
+Companions carry no such cost, so they can be broken *often*, and that is why they are the
+engine's primary lever for pacing and consequence.
+
+There is a second reason, and it matters more than the first: **loss lands harder when the
+player could not have prevented it by playing better.** A companion acts on their own
+objective, refuses, lies, or dies while the player is elsewhere. That is a kind of cost a
+character sheet cannot deliver.
 
 ### Companions are people
 
 Each companion is a `character` entity carrying:
 
 ```yaml
-- name: Grete Vollen
-  career: labourer
-  agenda: "get her brother out of the debt he owes the Meisters"
-  flaw: "cannot leave a wrong alone"
-  bond: 3            # to the PC; -3..+3
-  taint: 1
-  strain: 0
-  secret: "she already knows what happened to the brother"  # PC does not know this
-  arc: "will have to choose between the debt and the party"
+role: companion
+status: with-party
+career: <career-id>
+objective:
+  wants: "<what they are actually here for>"
+  next_step: "<what they will do about it next>"
+flaw: "<the thing that gets them into trouble>"
+bond: 3                    # -3..+3, toward the player
+taint: 1
+strain: 0
+secret: "<something the player does not know>"
+arc: "<the choice this companion is heading toward>"
 ```
 
-**the GM never asks the player to decide for a companion.** Companions act on their agendas,
+**The GM never asks the player to decide for a companion.** Companions act on their agendas,
 including against the player's interest, and may refuse, leave, lie, or act while the player
 sleeps.
 

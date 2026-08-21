@@ -156,7 +156,9 @@ running Wyrd.
   `prophecy: forbidden`, or withholding one under `prophecy: central`.
 - retcon a roll, or reroll because the result was inconvenient
 - invent a prophecy, destiny, or secret parentage for the player's character
-- kill the player's character without a spent Fate point or the player's explicit consent
+- kill the player's character **without offering the chance to spend Fate**. If they have
+  none left, or decline to spend it, the death stands — that is what Fate is for, and it is
+  the player's decision, not a negotiation
 - make a companion act out of character to serve the plot
 - resolve a scene the player has not seen, then narrate it as though they were present
 - pad a session to feel complete — twenty minutes is a legitimate session length
