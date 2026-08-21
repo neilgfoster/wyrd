@@ -13,88 +13,90 @@ read, and TOR's Hope/Shadow balance. Sources:
 
 ## 1. Resolution
 
-> **Roll `d20 + skill vs 20`** for success — Warlock, unchanged.
-> **Roll `2d6` alongside — the Wyrd dice — which never touch the total.**
-> **If they match, something else happened; the matched value says what.**
+> **Roll `d100` and succeed if the result is at or under your `skill%`.**
+> - **Success Levels (SL)** — tens digit of the skill minus tens digit of the roll — give
+>   magnitude.
+> - **The units digit of the natural roll** is the **Wyrd die**: what else happened.
 
-Warlock's numbers carry over exactly: 25% at skill 4, 65% at a career cap of 12. Novices can
-act and veterans stay fallible, which a bell curve cannot deliver at both ends. Every
-Warlock book is usable as printed.
+One roll, three independent axes, no extra dice. See
+[ADR 0001](adr/0001-d100-resolution.md).
 
-**Difficulty:** a penalty of **2** (difficult) or **4** (very difficult) to skill.
+### Skill percentages
 
-### Declaration — how you say it changes the odds
+Warlock's ladder converts with **no probability drift at all**: `skill% = (skill + 1) × 5`.
 
-The same action declared well is a different action. Wyrd rewards this mechanically, using
-the same 2/4 steps as difficulty but in the player's favour:
-
-| Declaration | Effect |
+| Warlock skill | Wyrd |
 |---|---|
-| So well-judged it removes the risk | **No roll.** It works. |
-| Specific and in character — names the thing, uses what the character knows or carries | **+2** |
-| Specific *and* leverages something established — a prior fact, a relationship, a piece of gear, an open thread | **+4** |
-| Brief or unelaborated | no bonus, **no penalty** |
-| Against the character's established nature | GM may invoke a Passion for **−5** |
+| 4 *(untrained)* | 25% |
+| 6 *(starting career)* | 35% |
+| 10 *(career cap)* | 55% |
+| 12 *(career cap)* | 65% |
 
-Two guard rails that matter more than the table:
+WFRP 2e and Dark Heresy stat blocks are read **as printed** — `WS 41` *is* 41%. See
+[ADR 0002](adr/0002-wfrp2-compatibility.md).
 
-**Never reward length.** A terse declaration that is specific and in character earns the
-bonus; a paragraph of atmosphere that could apply to anyone does not. "I show her the key
-and ask her to check the lock herself" is worth +2 in six words.
+### Difficulty
 
-**Never penalise brevity.** Sessions happen on a phone in twenty minutes. "I search the
-ledger" must remain a completely viable way to play — it simply forfeits the bonus. The
-mechanic is an upside for engagement, never a tax on being busy.
+2e's six bands, replacing Warlock's two:
 
-**Prefer no roll to a big bonus.** Warlock only calls for a roll when the action is
-"difficult, dangerous, or has a large risk of failure". A plan good enough to remove the
-risk should just succeed. Saying yes is stronger than granting +4, and it is the correct
-reward for a player who has actually solved the problem.
+| Band | Modifier |
+|---|---|
+| Easy | +20 |
+| Average | +0 |
+| Challenging | −10 |
+| Difficult | −20 |
+| Hard | −30 |
+| Very Hard | −40 |
 
-Passion invocation (+5, once per session) stacks with this.
+**Modifiers apply to the skill, never to the roll.** This is what keeps the Wyrd die clean.
 
-**Opposed:** both roll `d20 + skill`; higher wins; ties to the defender. Wyrd dice are rolled
-by the acting side.
+### Opposed tests
+
+Both roll; **higher SL wins**. Both failing means both fail. Ties go to the defender.
 
 ### The Wyrd die
 
-Read **only when doubles are rolled** (44.4% of rolls):
+Read from the **units digit of the natural roll**:
 
-| Wyrd dice | Chance | Result |
-|---|---|---|
-| 1,1 | 2.8% | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
-| 2,2 | 2.8% | **Bane** — a complication |
-| 3,3 / 4,4 | 5.6% | **Twist** — a detail, no mechanical weight |
-| 5,5 | 2.8% | **Boon** — an advantage |
-| 6,6 | 2.8% | **Comet** — a significant break in the player's favour |
-| no match | 83.3% | nothing |
+| Units | Result |
+|---|---|
+| 0 | **Chaos Star** — something goes wrong in a Chaos-flavoured way |
+| 9 | **Comet** — a significant break in the player's favour |
+| 1–8 | nothing |
 
-Because the Wyrd dice contribute nothing to the total, the axes are **statistically
-independent**: a success carrying a Chaos Star and a failure carrying a Comet are equally
-possible at every difficulty. This is what margin-based systems get wrong.
+20% frequency. Widen to `0–1` / `8–9` (adding Bane and Boon at 40%) via `houserules.yaml` if
+play proves it too sparse.
 
-Banes and boons should draw from a costed menu (the AGE stunt model) rather than being
-invented freely — see `engine/tables/`.
+The units digit is uniform within both the success and the failure set — exactly uniform at
+any skill that is a multiple of 10, never more than 2 points off otherwise. That is better
+independence than any scheme with separate dice achieved.
+
+#### The natural roll rule
+
+**The Wyrd die is read from the dice as they first fell. Never modified. Never rerolled.**
+
+- **Fortune** buys the *result*, never the world's reaction to the first attempt. Reroll a
+  failure into a success and the Chaos Star you already rolled still lands.
+- **The Dark Deal** is therefore not a clean trade: pay corruption, try again, and live with
+  what the first attempt set in motion.
+
+> You can change what happened. You cannot change what it cost.
 
 ### Corruption bends the die
 
-Following TOR's Eye-of-Sauron rule, the threat is **gated by state**, not by the roll:
-
-| Corruption | Chaos Star on |
+| Corruption | Chaos Star on units |
 |---|---|
-| 0–2 | 1 |
-| 3–5 | 1–2 |
-| 6+ | 1–3 |
+| 0–2 | 0 |
+| 3–5 | 0–1 |
+| 6+ | 0–2 |
 
-The world goes wrong around you more often as you rot, and your competence is untouched.
+The world goes wrong around you more often as you rot; your competence is untouched.
 
 ### Luck
 
-Warlock's Luck, unchanged: a score the player *may choose* to test to dodge a misfortune or
-break a tie. **Testing Luck costs 1 Luck for the rest of the adventure, pass or fail.**
-Always the player's choice.
-
----
+Warlock's Luck, unchanged in function: a percentage the player *may choose* to test to dodge
+a misfortune or break a tie. **Testing Luck costs 1 Luck for the rest of the adventure, pass
+or fail.** Always the player's choice.
 
 ## 2. Combat
 

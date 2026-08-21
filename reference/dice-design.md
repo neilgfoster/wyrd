@@ -36,7 +36,32 @@ On a hard task a success *cannot* carry a bane: if the total cleared a high targ
 coloured die cannot have been a 1. **Rejected** — the awkward quadrants vanish precisely
 when they would be most dramatic.
 
-## Resolution: d20 for the total, 2d6 alongside it *(settled by playtest)*
+## ACCEPTED: d100 roll-under, units digit as the Wyrd die
+
+**Settled 2026-08-21** — see [ADR 0001](../design/adr/0001-d100-resolution.md) and
+[ADR 0002](../design/adr/0002-wfrp2-compatibility.md).
+
+> **Roll `d100`, succeed at or under `skill%`.** Success Levels give magnitude; the **units
+> digit of the natural roll** is the Wyrd die.
+
+One roll, three independent axes, no extra dice. `skill% = (skill + 1) × 5` converts
+Warlock's ladder with zero probability drift, and WFRP 2e / Dark Heresy stat blocks are read
+as printed.
+
+The units digit is uniform within both the success and failure sets — exactly so at any
+skill that is a multiple of 10, never more than 2 points off otherwise. Better independence
+than any separate-dice scheme achieved here.
+
+**The natural roll rule:** the Wyrd die is read from the dice as they first fell, never
+modified and never rerolled. Fortune buys the result, not the world's reaction to the first
+attempt. *You can change what happened; you cannot change what it cost.*
+
+The history below is retained because the rejections are the reasoning, and because two of
+them were only found by playing.
+
+---
+
+## Superseded: d20 for the total, 2d6 alongside it
 
 Two earlier attempts failed, and both failures were instructive.
 

@@ -1,6 +1,6 @@
 # ADR 0002 — 2e/Dark Heresy compatibility without adopting the system
 
-**Status:** proposed
+**Status:** accepted 2026-08-21
 **Date:** 2026-08-21
 **Depends on:** [0001](0001-d100-resolution.md)
 

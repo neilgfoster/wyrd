@@ -18,7 +18,7 @@ what was on that page.
 
 **The Overseer comes on the Marktag boat in four days for the quarter's reckoning.**
 
-**State:** Stamina 16/16 · Luck 8 · Fate 2 · Hope 5 · Corruption 0 · Stress 0
+**State:** Stamina 16/16 · Luck 45% · Fate 2 · Hope 5 · Corruption 0 · Stress 0
 **Brida:** bond −2 · **Party tension:** 1
 
 **Stopped at:** start of Beat Two, morning of day 1. Four leads open — the cut page itself,

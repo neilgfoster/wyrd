@@ -26,6 +26,7 @@ Fate, Fear.
 | [08-maintenance](design/08-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
 | [09-evolution](design/09-evolution.md) | How the engine changes without rewriting history |
 | [10-diegesis](design/10-diegesis.md) | Knowing your character without reading their statistics |
+| [adr/](design/adr/) | Decision records — resolution mechanic, 2e compatibility |
 
 **Reference** — where it came from:
 

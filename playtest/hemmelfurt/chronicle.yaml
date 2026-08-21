@@ -2,7 +2,7 @@
 # Hand-maintained: no engine exists yet. Schema per design/06-state.md.
 name: hemmelfurt
 setting: reikland
-engine_version: 0.0.3          # dice mechanic revised twice during session 1
+engine_version: 0.1.0          # percentile resolution accepted (ADR 0001/0002)
 created_under: 0.0.1
 calendar: {year: 2512, month: Pflugzeit, day: 1}
 era: "The Quiet Years"
@@ -14,3 +14,7 @@ migrations:
   - {from: 0.0.2, to: 0.0.3, class: behavioural,
      note: "3d6 replaced by d20 + separate 2d6 Wyrd dice; 3d6@17 made skill-14 infallible.
             Forward-only: both session-1 failures stand (they fail under d20 too)."}
+  - {from: 0.0.3, to: 0.1.0, class: structural,
+     note: "d20+skill -> d100 roll-under; skill% = (skill+1)*5, exact, no probability drift.
+            2d6 Wyrd dice retired: the units digit of the natural roll replaces them.
+            Session-1 outcomes unchanged — both failures still fail at the same odds."}
