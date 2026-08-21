@@ -151,7 +151,10 @@ overrides:
   extend: {skills: setting/rules/skills.yaml}
 ```
 
-Loaded after engine defaults, exactly like a chronicle's `houserules.yaml`.
+Loaded after engine defaults, exactly like a chronicle's `houserules.yaml`. What is
+overridable is a **closed set published by the engine** — an override naming anything else is
+a load error, and renames are presentation-only, never reaching state. See
+[`07-tooling.md`](07-tooling.md).
 
 Overlays are declared in `setting.yaml` and loaded after engine defaults, exactly like
 `houserules.yaml` for a chronicle.

@@ -142,7 +142,90 @@ The GM narrates from that object. It does not need to know how any of it was der
 
 ---
 
-## 4. Model tiering
+## 4. How settings adjust the tooling
+
+A setting may extend, retune, rename or disable what the engine provides, and may never add a
+mechanism ([`13-authoring-a-setting.md`](13-authoring-a-setting.md)). The tooling has to
+honour that **without settings ever shipping code.**
+
+### Declarative only
+
+There is no plugin system, no hook registry, no setting-supplied Python. A setting provides
+**data and declarations**; the engine decides what they mean. This is what keeps the engine
+auditable and what makes "a setting cannot add a mechanism" enforceable rather than merely
+requested.
+
+### The engine declares what is overridable
+
+Overridability is a **closed set published by the engine**, not whatever a setting happens to
+name. `describe` reports it, the same way it reports verbs:
+
+```bash
+python3 -m wyrd.client describe --overridable
+```
+
+An override naming something outside that set is a **load error**, not a warning. Otherwise a
+setting could quietly disable an invariant.
+
+### Load order
+
+```
+engine defaults  →  setting overrides  →  chronicle houserules
+```
+
+Last wins, and each layer may only narrow what the previous allowed. The resolved
+configuration is written into the chronicle at bootstrap and versioned with everything else
+([`06-state.md`](06-state.md)), so a chronicle never depends on re-resolving it later.
+
+### The four kinds, and what each costs
+
+| Kind | Mechanism | Cost to the tooling |
+|---|---|---|
+| **Extend** | a data file appended to a list — skills, careers, gear, creatures | none; these were always data |
+| **Retune** | a table path replaced | none; tables are loaded by name |
+| **Rename** | a presentation-layer lookup | **none in code — see below** |
+| **Disable** | a mechanism switched off | verbs and checks must react |
+
+### Renames are presentation-only
+
+**Internal identifiers never change.** If a setting renames Taint to Shadow, the state field
+is still `taint`, the verb is still `wyrd track <id> taint +1`, and the migration that
+touches it still names `taint`.
+
+Only *rendered output* uses the setting's word. This is not a detail — it is what allows
+migrations, golden chronicles, doctor checks and cross-setting tooling to be written once. A
+rename that reached the state would fork the engine per setting.
+
+### Disabling is first-class
+
+A disabled mechanism must not merely be hidden:
+
+- its verbs are **absent from `describe`**, so the model never offers them
+- calling one anyway is a structured error, not a silent no-op
+- `wyrd doctor` does not flag its fields as missing
+- rules that depend on it are skipped, and rules that *require* it make the setting invalid
+  at load — declaring `disable: [taint]` while retaining a table that fires on a Taint
+  threshold is a contradiction the engine should refuse
+
+That last check is why the overridable set is closed: the engine knows the dependency graph
+between its own mechanisms, and a setting does not.
+
+### `describe` reflects the active setting
+
+Because the `TOOLS` catalog drives dispatch, filtering it by the resolved configuration means
+the model **only ever sees verbs that apply here**. A setting without Taint has no
+`track taint`, so the GM cannot reach for it by accident — the same discipline as the closed
+overridable set, applied to the model's own view.
+
+### Validation and versioning
+
+Setting overrides are validated at load and carry a version like any other content. A change
+to them is a **structural** change for chronicles that pinned the old version
+([`09-evolution.md`](09-evolution.md)) — the representation moves, the history does not.
+
+---
+
+## 5. Model tiering
 
 Use the smallest model that can do the job correctly.
 
@@ -168,7 +251,7 @@ fiction; that is the one place not to economise.
 
 ---
 
-## 5. Testing
+## 6. Testing
 
 - `rules.py` and `tables.py` are pure — unit tests, no fixtures
 - Dice distributions are asserted statistically, with the expected values stated in the

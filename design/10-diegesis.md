@@ -128,4 +128,5 @@ table, only the sentence is written. This is the tooling rule in
 band.
 
 Bands are per-setting where the idiom differs — a farmhand and a void-sailor describe
-exhaustion differently. **The thresholds are the same; only the words change.**
+exhaustion differently. **The thresholds are the same; only the words change**, which is the
+same rule renames follow everywhere ([`07-tooling.md`](07-tooling.md)).
