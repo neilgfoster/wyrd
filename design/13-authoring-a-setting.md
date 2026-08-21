@@ -88,19 +88,44 @@ The engine guarantees, and a setting may rely on:
 should be fixed in the engine — the whole point of the layering
 ([`02-architecture.md`](02-architecture.md)).
 
-### Rules overlays
+### Rules overrides — the hard rule
 
-`setting/rules/` exists for the cases where a world genuinely works differently, and it is
-deliberately narrow. Legitimate uses:
+> **A setting may extend, retune or disable what the engine provides.
+> It may never add a mechanism the engine does not have.**
 
-- **Renaming a track** — Corruption becomes Shadow, or Warp-taint. Vocabulary only.
-- **Retuning a table** — different exposure tiers, a different mutation table.
-- **Adding a setting-specific subsystem** the engine does not know about — psychic phenomena,
-  or a Hope/Shadow balance if the base engine lacks one.
+New mechanisms go in the core, for everyone. This is the rule that keeps Wyrd a single system
+rather than a family of incompatible forks, and it is not negotiable.
 
-Not legitimate: changing resolution, changing what the Wyrd die means, changing how state
-persists. Those are engine concerns, and a setting that needs them is telling you the engine
-is wrong.
+**Permitted:**
+
+| Override | Example |
+|---|---|
+| **Extend** | add setting-specific skills, careers, talents, gear, creatures |
+| **Retune** | replace a table with one that has more setting feel; change exposure tiers; alter starting Fate |
+| **Rename** | Corruption becomes Shadow, or Warp-taint, or the Long Defeat. Vocabulary only |
+| **Disable** | switch off Corruption entirely for a high-fantasy setting; switch off Insanity for a lighter one |
+
+**Not permitted:**
+
+- adding a subsystem the engine does not know about
+- changing resolution, or what the Wyrd die means
+- changing how state persists, how beats work, or how time passes
+
+If a setting needs a mechanism that does not exist — a journey system, a mass-battle layer, a
+Hope/Shadow balance the core lacks — **that is an engine gap and it goes in the engine**,
+generalised so every setting can use it. The setting then configures it or leaves it off.
+
+Overrides are declared in `setting.yaml`:
+
+```yaml
+overrides:
+  disable: [corruption, insanity]     # a high-fantasy setting
+  rename: {corruption: shadow}
+  tables: {critical-slashing: setting/rules/tables/critical-slashing.yaml}
+  extend: {skills: setting/rules/skills.yaml}
+```
+
+Loaded after engine defaults, exactly like a chronicle's `houserules.yaml`.
 
 Overlays are declared in `setting.yaml` and loaded after engine defaults, exactly like
 `houserules.yaml` for a chronicle.

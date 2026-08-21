@@ -1,0 +1,65 @@
+# The Wyrd settings catalogue.
+#
+# Wyrd is setting-agnostic. Each setting lives in its own repository and is overlaid onto a
+# chronicle at bootstrap (design/16-chronicle-bootstrap.md).
+#
+# Settings whose content derives from copyrighted books are PRIVATE and are listed here for
+# the owner's benefit only — they are not distributable. Settings marked `open` carry no
+# encumbered material and may be shared.
+
+settings:
+  - id: wfrp1e
+    title: "Warhammer Fantasy Roleplay, 1st edition"
+    repo: wyrd-wfrp1e
+    visibility: private
+    status: stub
+    note: "The original. Dry, bureaucratic, provincial — the register target."
+
+  - id: wfrp2e
+    title: "Warhammer Fantasy Roleplay, 2nd edition"
+    repo: wyrd-wfrp2e
+    visibility: private
+    status: active
+    note: "The mechanical baseline Wyrd's d100 derives from. 201 careers extracted."
+
+  - id: wfrp3e
+    title: "Warhammer Fantasy Roleplay, 3rd edition"
+    repo: wyrd-wfrp3e
+    visibility: private
+    status: stub
+    note: "Structural donor — episodes, party tension, progress trackers, nemeses."
+
+  - id: wfrp4e
+    title: "Warhammer Fantasy Roleplay, 4th edition"
+    repo: wyrd-wfrp4e
+    visibility: private
+    status: stub
+    note: "Dark Deals and the cleanest corruption model."
+
+  - id: darkheresy
+    title: "Dark Heresy — the Calixis Sector"
+    repo: wyrd-darkheresy
+    visibility: private
+    status: stub
+
+  - id: onlywar
+    title: "Only War — the Spinward Front"
+    repo: wyrd-onlywar
+    visibility: private
+    status: stub
+    note: "Comrades: the companion model the engine took."
+
+  - id: roguetrader
+    title: "Rogue Trader — the Koronus Expanse"
+    repo: wyrd-roguetrader
+    visibility: private
+    status: stub
+
+  - id: tor
+    title: "The One Ring — Wilderland"
+    repo: wyrd-tor
+    visibility: private
+    status: stub
+    note: "Tests the engine boundary: needs a journey overlay the core lacks."
+
+# Candidates, unstarted: D6 Star Wars, Maelstrom, Mordheim, Stars Without Number.
