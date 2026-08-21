@@ -1,7 +1,8 @@
 # Wyrd — the meta-campaign
 
 The layer that makes a chronicle run for years: how the world acts when the character is not
-looking, how arcs are selected rather than scripted, and how a long story is shaped.
+looking, how arcs are selected rather than scripted, and what happens when a chronicle outlives its
+character.
 
 Provenance for the ideas here is recorded in the private research repo.
 
@@ -210,31 +211,37 @@ because a six-page adventure about a corrupt miller has no ambition to be a fina
 
 ---
 
-## Arcs and eras
+## Eras
 
-An **arc** is 5-10 scenarios around one Threat, ending with a real change to the world —
-usually not a victory.
+A chronicle is divided into named **eras**: periods with their own ambient register, marking
+where the world's condition changed.
 
-A chronicle is divided into named **eras** that state the shape of the decline, as in *The
-Darkening of Mirkwood*:
+An era does four jobs, all of them structural:
 
-> The Quiet Years → The First Signs → The Bad Winter → What Came After
+- it **names a period**, so the chronicle's history is navigable years later
+- it **sets the ambient register**, which the GM reads as context for every beat inside it
+- it is a **natural seam for rules changes**, since "the world works differently now" is
+  absorbed far more gracefully between eras than mid-arc
+  ([`09-evolution.md`](09-evolution.md))
+- it is **git-tagged**, giving a decade of play navigable checkpoints
 
-> A losing struggle is a legitimate shape for a chronicle, and settings that declare one
-> should say so in their tone contract. The engine's part is only to hold the line the
-> setting draws — see [`01-principles.md`](01-principles.md).
+**The direction is the setting's business, not the engine's.** A sequence of eras may
+describe a decline, a recovery, a cycle of seasons, or simply a succession of different
+problems. What the engine requires is only that eras are *named in advance* and that
+crossing one is *recorded*.
 
+Under a tone contract with `scale_drift: suppressed`, eras change the *character* of the
+world rather than its scale — what is at stake stays local, but what it costs to live there
+changes ([`01-principles.md`](01-principles.md)).
 
-And:
+### Top-level arcs
 
-> Where a setting declares a losing struggle, the emphasis belongs on personal stakes: the
-> region may be lost, but can this character save the people in front of them?
+Arcs recurse ([`14-entities.md`](14-entities.md)), so there is no fixed number of anything.
+But the arcs directly under a chronicle have a job the deeper ones do not: **each should end
+with a real change to the world**, recorded in the overlay, and that change is what an era
+boundary is eventually drawn around.
 
-So: **the world's darkness escalates; the player's power does not.** Scope stays personal
-while stakes rise around it. Victory is holding the line one more year, and saving
-something specific and small.
-
-This is the mechanical answer to constraint 5 and constraint 6 together.
+An arc that ends with nothing altered was a sequence of beats, not an arc.
 
 ## Holdings
 
@@ -249,25 +256,25 @@ and defend your own.
 
 ## Succession
 
-A chronicle running years may outlast one labourer. When the PC dies, is lost, or
-retires, the default is **succession, not replacement** — but succession is inherited
+A chronicle running years may outlast the character who began it. When the player's
+character dies, is lost, or retires, the default is **succession, not replacement** — but succession is inherited
 **through the thread, not the bloodline**.
 
-"Your son takes up the sword" is the weakest available version. It is sentimental, it is
-not how the world works, and it makes the chronicle about a family when it should be
-about a rot that outlives everyone who touches it.
+"Your son takes up the sword" is the weakest available version. It is sentimental, it
+assumes an inheritance most settings do not grant, and it makes the chronicle about a family
+when it should be about **the situation that outlives everyone who touches it**.
 
 ### The successor is already in the chronicle
 
-The next PC is someone **already in the chronicle** — a name that has appeared, however
+The successor is someone **already in the chronicle** — a name that has appeared, however
 briefly. The engine selects from the chronicle's `character` entities by *entanglement*, not affection. Strong
 candidates, roughly in order of how well they carry a story:
 
-- **Someone the old PC wronged.** The debt they never repaid; the family they failed to
+- **Someone the predecessor wronged.** The debt they never repaid; the family they failed to
   warn; the witness they left in the cellar. They inherit the consequences and the grudge.
 - **Someone who was investigating them.** A witch hunter, a bailiff's clerk, a rival
   agitator who had a file on you and now has to finish what you started, hating it.
-- **A bystander whose life the old PC's actions changed.** The miller's daughter, after the
+- **A bystander whose life the predecessor's actions changed.** The miller's daughter, after the
   mill. She never chose this.
 - **A rival.** Someone who wanted what you had and now has your enemies as well.
 - **Whoever found what you left behind.** The ledger, the body, the thing in the cellar.
@@ -275,7 +282,7 @@ candidates, roughly in order of how well they carry a story:
 - **A companion** — still permitted, but the *least* interesting option, because the bond is
   already established and nothing has to be re-earned.
 
-The successor need not have liked the old PC. They may have been hunting them. A witch
+The successor need not have liked the predecessor. They may have been hunting them. A witch
 hunter who took the case, and now carries the taint they were sent to burn out, is a
 better second act than any heir.
 
@@ -286,22 +293,22 @@ better second act than any heir.
 | Inherited | Not inherited |
 |---|---|
 | Open **threads**, at their current heat | Skills, careers, advances |
-| The **enemies** the old PC made | Stamina, Luck, Fate |
+| The **enemies** the predecessor made | Stamina, Luck, Fate |
 | Active **Threats** and their Imminence | Reputation *(a new label starts, possibly hostile)* |
-| What the world **believes** about the old PC | Taint, transformations, afflictions |
+| What the world **believes** about the predecessor | Taint, transformations, afflictions |
 | The **rot** itself, still growing | Any assumption of goodwill |
 
 **Holdings are not automatically passed on.** A cottage may be seized for debt, burned,
 occupied by squatters, or fall to someone else entirely. If it does reach the successor it
 should arrive encumbered — with the debt, the obligation, or the thing living under it.
-Losing the holding is often the better story, and it is a legitimate outcome of the old PC's
+Losing the holding is often the better story, and it is a legitimate outcome of the predecessor's
 death rather than a punishment.
 
 Reputation is the sharpest inheritance. `reputation 6 (a notorious killing)` does not
 die with the person it described. The successor may spend years being mistaken for what
 their predecessor was, or condemned for it.
 
-### The old PC does not leave
+### The predecessor does not leave
 
 If they were **lost**, they became a character the GM controls — and the successor may meet
 them. If they **died**, what they did persists in the entity store as fact and in the world as

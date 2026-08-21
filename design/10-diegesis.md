@@ -1,6 +1,6 @@
 # Wyrd — the character sheet you never see
 
-The player must be able to know their character without reading their statistics. the PC
+The player must be able to know their character without reading their statistics. the player character
 does not know he has 2 stamina left; he knows he is not going to win another fight today. He
 does not know he is Blunt 5; he knows a mace feels honest in his hand in a way a sword never
 has.

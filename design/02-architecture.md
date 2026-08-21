@@ -71,7 +71,7 @@ wyrd-chronicle-<name>/
 ├─ engine/                     # copied at bootstrap. Read-only.
 ├─ setting/                    # copied at bootstrap. Read-only.
 ├─ overlay/                    # deltas to setting entities
-├─ entities/                   # entities this chronicle created, including the PC
+├─ entities/                   # entities this chronicle created, including the player character
 ├─ log/
 └─ recap.md
 ```
@@ -147,7 +147,7 @@ Everything else is **skills** — prompt-level instructions the GM follows:
 ```
 /wyrd-play              # resume the chronicle and run a beat
 /wyrd-bootstrap         # complete a cloned template: character, intent, opening situation
-/wyrd-character         # inspect or advance the PC
+/wyrd-character         # inspect or advance the player character
 /wyrd-downtime          # run a downtime phase (see 04-session.md)
 /wyrd-end-session       # compaction, recap regeneration, commit
 ```

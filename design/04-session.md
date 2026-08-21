@@ -69,7 +69,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 ## The session loop
 
 ```
-1. LOAD      chronicle.yaml, the PC, present companions, hot threads, recap, contract
+1. LOAD      chronicle.yaml, the player character, present companions, hot threads, recap, contract
 2. ORIENT    where and when the character is; the clock has not moved since you stopped
 3. RECAP     three sentences. Where you are, what is unresolved, what has changed.
 4. BEAT      situation → player choice → roll → narrate → persist → Rally
@@ -195,7 +195,7 @@ worthwhile.
 
 ### Bonds
 
-Each companion's `bond` (-3..+3) to the PC modifies Tension gain, whether they follow into
+Each companion's `bond` (-3..+3) to the player character modifies Tension gain, whether they follow into
 danger, and whether they tell you the truth. It moves slowly and it is the closest thing
 Wyrd has to a relationship score.
 

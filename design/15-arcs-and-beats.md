@@ -27,7 +27,7 @@ entry:
   requires_state: []
   hooks: ["the player asks about the ledger"]
 exit:
-  emits_threads: [{tag: the-hinge, if: "the PC recalls the door"}]
+  emits_threads: [{tag: the-hinge, if: "the player character recalls the door"}]
   changes: ["the gap is public knowledge"]
   leads_to: [[the-tavern]]           # suggestion, never a rail
 

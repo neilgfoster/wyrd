@@ -169,7 +169,7 @@ type: tracker
 kind: clock                    # clock | meter | state
 value: 3
 max: 8
-advances_on: ["a week passes", "the PC is seen at the shrine"]
+advances_on: ["a week passes", "the player character is seen at the shrine"]
 fires: {4: "word is sent ahead", 8: "it happens without you"}
 ```
 
@@ -188,7 +188,7 @@ based_at: [[the-old-quarter]]
 objective:
   wants: "the debt written off before the reckoning"
   because: "her brother signed it and she witnessed it"
-  next_step: "find out whether the PC remembers that night"
+  next_step: "find out whether the player character remembers that night"
   blocked_by: "cannot be seen taking an interest"
   escalates_to: "arson, as a distraction"
   timeline: "before the boat arrives"

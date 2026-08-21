@@ -132,7 +132,7 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 
 > `danger_effective = danger × (party_effective / written_for)`
 
-where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
+where `party_effective` counts the player character as 1 and each companion at a fraction, since companions
 are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
 plays at roughly danger 2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
 that already scales content ([`03-rules.md`](03-rules.md)); mob clearing does the
@@ -146,12 +146,12 @@ the index is a projection of the entities, not a parallel vocabulary.
 
 **Access and capability are inputs too, not walls.** A labourer can be hired by someone
 with court access, or smuggled in — and *getting the in is often the better scenario*.
-A companion can read the grimoire the PC cannot. So:
+A companion can read the grimoire the player character cannot. So:
 
 | Field | Effect |
 |---|---|
 | `needs_access` | an in is required; obtaining it may itself become play |
-| `needs_capability` | must be supplied by the PC, a companion, or hired help |
+| `needs_capability` | must be supplied by the player character, a companion, or hired help |
 | `helped_by` | flags only — easier with it, and more desperate and interesting without |
 
 `helped_by` is the one that repays attention. A scenario easier with literacy is a *better*

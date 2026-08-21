@@ -82,7 +82,7 @@ my-chronicle/
 ├─ engine/             # copied. Do not edit.
 ├─ setting/            # copied. Do not edit — write overlays instead.
 ├─ overlay/            # what this chronicle has changed about the world
-├─ entities/           # entities this chronicle created, including the PC
+├─ entities/           # entities this chronicle created, including the player character
 ├─ overlay/            # deltas to setting entities
 ├─ log/
 └─ recap.md
