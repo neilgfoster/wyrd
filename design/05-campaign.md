@@ -52,8 +52,9 @@ The active set is a query — entities with a `threat` block and `imminence > 0`
 
 ### Activation
 
-At the start of each in-game week, roll **d12 per Threat**. If the result is **≤ Imminence**,
-that Threat activates: roll on its effects table.
+At the start of each in-game week, roll **`d100` per threat**. If the result is
+**≤ imminence × 10**, it activates: roll on its effects table. Imminence is therefore a
+chance-per-week in tens of percent, which keeps the whole engine percentile.
 
 The GM chooses *when in the week* it lands — while the player is present (a scene) or while
 they are elsewhere (they hear about it later, late and partially).
@@ -156,8 +157,8 @@ Darkening of Mirkwood*:
 
 And:
 
-> "The emphasis should be on personal tragedy. The forest may be lost, but can the heroes
-> save their own families and friends?"
+> Where a setting declares a losing struggle, the emphasis belongs on personal stakes: the
+> region may be lost, but can this character save the people in front of them?
 
 So: **the world's darkness escalates; the player's power does not.** Scope stays personal
 while stakes rise around it. Victory is holding the line one more year, and saving

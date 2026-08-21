@@ -1,7 +1,7 @@
-# Wyrd — settings, and running two chronicles at once
+# Wyrd — setting separation, and chronicles side by side
 
-Fantasy and the science-fiction line share an engine and a library. They must not share anything else — and
-eventually both may be live at the same time.
+Settings share an engine and may share source material. They must share nothing else — and
+more than one chronicle may be live at a time.
 
 ---
 
@@ -9,101 +9,90 @@ eventually both may be live at the same time.
 
 | Layer | Shared | Per setting |
 |---|---|---|
-| **Resolution** | d100, Wyrd die, SL, difficulty bands | — |
+| **Resolution** | `d100`, the Wyrd die, SL, difficulty bands | — |
 | **Combat** | stamina, armour dice, criticals, Aftermath | flavour of the critical tables |
-| **Tracks** | Taint, Trauma, Fate, Resolve, Strain | *vocabulary* — transformation vs warp-taint, affliction vs the Whisperings |
-| **Session** | beats, Rally, Fellowship phases, party tension | — |
-| **Campaign** | Threats, threads, elapsed time, succession | — |
-| **Careers** | the *shape* — exits, advance triggers | the entire career graph |
-| **Content** | — | gear, creatures, deities, calendar, names, factions |
+| **Tracks** | Taint, Trauma, Strain, Resolve, Fate | their *names*, and whether they exist at all |
+| **Session** | beats, Rally, downtime, party tension | what downtime looks like here |
+| **Campaign** | threats, threads, elapsed time, succession | who the threats are |
+| **Careers** | the graph — entries, exits, advance triggers | the graph's contents |
+| **Content** | — | gear, creatures, calendar, names, organisations |
+| **Tone** | — | **the whole contract** ([`01-principles.md`](01-principles.md)) |
 | **Voice** | — | **everything** |
 
-The mechanical engine is genuinely setting-agnostic. What changes is **data and register**,
-which is why the layering in [`02-architecture.md`](02-architecture.md) holds.
+The engine is genuinely setting-agnostic: what changes is data and register.
 
-**The the science-fiction line setting is not a reskin, though.** Taint is the same mechanic with a different
-theology; a losing struggle is *more* pronounced, not less; and the voice is a different
-language — one line's dry municipal register against another's liturgical
-brutality. the science-fiction setting's `voice.md` is the hardest file in that directory, not the
-easiest.
+**A second setting in the same genre is not a reskin of the first.** Two worlds may share a
+mechanic and mean entirely different things by it — one calls it damnation and one calls it
+fatigue of the soul — and the register that carries that difference is the hardest file to
+write, not the easiest.
 
-## The corpus is shared; the indexes are tagged
+## The corpus is shared; the indexes are per setting
 
-One library, one extraction, one set of indexes. Every scenario record already carries
-`settings: [...]` and an `adaptation` cost
-([`11-corpus-index.md`](11-corpus-index.md)), so the same index serves both and a
-`wyrd find scenario` in an the science-fiction setting chronicle simply never sees the setting-only material.
+Source material is extracted once, but **indexed per setting**, because the same adventure
+adapted for two worlds produces two different adaptations
+([`11-corpus-index.md`](11-corpus-index.md)). Every index record is scoped to its setting,
+so a query in one chronicle never returns another's material.
 
-This is deliberate. An investigation written for one world may suit either; a *a periodical* hive-gang
-piece suits one. Tagging beats duplicating.
+Tagging beats duplicating; scoping beats sharing.
 
-## Four repositories
-
-See [`02-architecture.md`](02-architecture.md) for the full layout:
+## One repository per chronicle
 
 ```
-wyrd/                        # engine only
-wyrd-<setting>/                # the setting, scenarios, indexes
-wyrd-<sf-setting>/             # the science-fiction setting setting, scenarios, indexes
-wyrd-chronicle-<name>/   # one per chronicle
+wyrd/                        # engine
+wyrd-<setting-a>/            # setting
+wyrd-<setting-b>/            # another setting
+wyrd-chronicle-<name>/       # one per chronicle
 ```
 
 Reasons, in order of weight:
 
-1. **Concurrency.** Two live sessions committing to one repo on every beat will race. Two
-   repos never do. This is the reason that actually matters once parallel play is real.
-2. **A chronicle is data with a different lifecycle to code.** The engine gets refactored;
-   a chronicle only ever accumulates. Mixing them makes both histories harder to read.
-3. **Portability.** A chronicle can be archived, backed up or moved on its own.
+1. **Concurrency.** Two live sessions committing on every beat will race. Two repositories
+   never do. This is the reason that matters once parallel play is real.
+2. **Lifecycle.** A chronicle only accumulates; an engine gets refactored. Mixed histories
+   are unreadable.
+3. **Portability.** A chronicle can be archived or moved on its own.
 4. **Blast radius.** `wyrd doctor --repair` touches one chronicle and cannot disturb another.
 
-Each chronicle pins `engine_version` and migrates on its own schedule
-([`09-evolution.md`](09-evolution.md)) — so the starting region chronicle can sit on 0.4 while the
-the science-fiction setting one runs 0.5, which is exactly what you want when a rules change is being tried out.
+Each chronicle pins its own engine and setting versions
+([`09-evolution.md`](09-evolution.md)), so one can trial a rules change while another stays
+put — which is the cheapest way to test a change that only shows up in play.
 
 ## Session isolation
 
-**One chronicle per session. Always. No exceptions.**
+**One chronicle per session. Always.**
 
-This belongs in the GM contract, because the failure is subtle and serious: knowledge
-bleeding between chronicles. If a name, a character, a threat or a plot turn from the starting region
-chronicle surfaces in the the science-fiction setting one, the second chronicle stops being its own world —
-and the player has no way to detect it happening.
+This is a GM contract **MUST NOT** because the failure is subtle and serious: knowledge
+bleeding between chronicles. If a name, a character, a threat or a plot turn crosses over,
+the second chronicle stops being its own world — **and the player has no way to detect it
+happening.**
 
 So:
 
-- a session loads exactly one `chronicle.yaml` and one setting, and states which at the top
-  of the recap
+- a session loads exactly one chronicle and one setting, and says which in the recap
 - the corpus is queried **with the setting as a filter**, never unfiltered
-- the concordance ([`11-corpus-index.md`](11-corpus-index.md)) is checked per-chronicle for
-  name collisions, not globally — the same innkeeper's name may legitimately exist in both
-- `wyrd` verbs take an explicit chronicle path; there is no "current chronicle" global, so
-  the wrong one cannot be edited by accident
+- name collisions are checked *per chronicle*, not globally — the same innkeeper's name may
+  legitimately exist in both
+- every verb takes an explicit chronicle path; there is no "current chronicle" global, so the
+  wrong one cannot be edited by accident
 
-**MUST NOT (GM contract):** carry any fact, name, character, event or invention from one chronicle
-into another, in either direction, for any reason.
+## In practice
 
-## Practical parallel play
+Two chronicles, two terminals — or one on a desktop and one from a phone. Because the
+repositories are separate and every verb names its target, there is no contention and no
+locking to design.
 
-Two chronicles, two sessions, two terminals — or one on the lab box and one from the phone.
-Because the repos are separate and every verb is explicit about its target, there is no
-contention and no locking to design.
+The realistic pattern is not simultaneous play but **alternating** — one on Tuesday, another
+on Thursday. That makes resumption matter more, not less: `recap.md`, elapsed-time
+computation and thread heat all have to carry *which world is this and what was happening*
+after a fortnight away.
 
-The realistic pattern is not simultaneous play but **alternating** — a the setting session on
-Tuesday, an the science-fiction setting one on Thursday. That makes the resumption machinery matter more, not
-less: `recap.md`, elapsed-time computation and thread heat all have to carry the weight of
-"which world is this and what was happening" after a fortnight away.
-
-Both chronicles' Threats advance on their own calendars, independently, and neither knows the
+Both chronicles' threats advance on their own calendars, independently, and neither knows the
 other exists.
 
-## Cross-setting scenarios
+## The same arc in two chronicles
 
-A scenario tagged for both settings is stored **once** and adapted at selection time, with
-`adaptation` recording the cost and the chronicle's `source:` field recording what was
-changed ([`05-campaign.md`](05-campaign.md)).
+Allowed, and it will not feel repetitive: different characters, different threads, different
+companions, and the same situation means something different in a different world.
 
-The interesting case is the same scenario run in both chronicles. That is allowed, and it
-will not feel repetitive — different characters, different threads, different companions, and
-a corrupt miller in the town is not a corrupt tithe-clerk on a forge world. But
-`source:` makes it visible, so the reuse is a choice rather than an accident.
+`source:` on the converted entity makes the reuse visible, so it stays a choice rather than an
+accident.

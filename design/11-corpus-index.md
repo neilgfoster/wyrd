@@ -60,7 +60,7 @@ concordance says it already belongs to somebody, and a collision is avoided.
 ### 3. `terms.json` — mechanical vocabulary
 
 A **curated** vocabulary of mechanical terms — Fear, Terror, taint, transformation, critical,
-career exit, trauma, Fate, miscast, tainted matter — mapped to postings, ranked by whether the
+career exit, trauma, Fate, transformation — mapped to postings, ranked by whether the
 hit looks like a *definition* (near a heading, near a table) or a passing mention.
 
 Curated rather than derived, because the vocabulary is small, stable, and known in advance.
@@ -134,7 +134,7 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 
 where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
 are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
-plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
+plays at roughly danger 2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
 that already scales content ([`03-rules.md`](03-rules.md)); mob clearing does the
 rest of the work in combat.
 

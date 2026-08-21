@@ -47,19 +47,20 @@ vocabulary every session.
 
 Fractions, not absolutes, so it holds as max stamina grows.
 
-### Skills — the base system's ladder
+### Skills
 
-| Level | The character knows |
+Read as a percentage, per [`03-rules.md`](03-rules.md):
+
+| Skill | The character knows |
 |---|---|
-| 4 | never really done this; you'd be guessing |
-| 5 | you've tried it; it didn't go well |
-| 6 | trained. You know the shape of it |
-| 7-8 | practised. It feels natural now |
-| 9-10 | expert. People ask you about this |
-| 11-12 | it is part of who you are |
+| ≤25% | never really done this; you would be guessing |
+| 30–40% | trained. You know the shape of it |
+| 45–55% | practised. It feels natural now |
+| 60–70% | expert. People ask you about this |
+| 75%+ | it is part of who you are |
 
-So the PC "has held a book of prayer since he was fourteen" (Incantation 6) but "has swung a
-mace exactly twice, both times badly" (Blunt 5).
+So a character at 35% "has done this since he was fourteen", and the same character at 25%
+in another skill "has tried it exactly twice, both times badly".
 
 ### Taint — felt as wrongness, never as a score
 
@@ -78,8 +79,7 @@ out where it was when it runs out.
 
 Strain is *today* — "your hands won't settle", "you keep checking the door". Trauma is
 *permanent* and shows as accumulated tells the character has stopped noticing, which other
-people notice for them. A affliction is never described as a affliction; it is described
-as behaviour.
+people notice for them. An Affliction is never described as an Affliction; it is described as behaviour.
 
 ### Resolve and being Spent
 
@@ -92,9 +92,8 @@ willing to do: "you cannot make yourself care what happens next."
 No encumbrance table. No item list unless asked. The character recalls what they are
 carrying the way a person does — the things that matter, in the order they matter:
 
-> Your robes, still stinking of last night. The mace on your belt, which you have never
-> used on anything that could hit back. The shield of the faith, in the vestry where it
-> always is. The book of prayer. And the key, which is the problem.
+> The coat, still wet. The knife on your belt, which you have never used on anything that
+> could hit back. The lamp, out of oil. And the key, which is the problem.
 
 The character also knows what is **missing** without being told, because people do.
 
@@ -102,11 +101,11 @@ The character also knows what is **missing** without being told, because people 
 
 ## The character as a knowledge source
 
-The character knows things the player does not. the PC knows the town — who drinks where,
-which magistrate is bribable, what the liturgy says about a damaged record. The
-player does not, and should not have to.
+The character knows things the player does not: who drinks where, which official is
+bribable, what the local law says about a damaged record. The player does not, and should
+not have to.
 
-So the player can ask **in character** — *"what do I know about the Overseer?"* — and get an
+So the player can ask **in character** — *"what do I know about this place?"* — and get an
 answer scaled to the character's competence, not the player's. That is a legitimate move, it
 costs nothing, and it usually does not need a roll: it is recall, not research.
 
@@ -128,5 +127,5 @@ table, only the sentence is written. This is the tooling rule in
 [`07-tooling.md`](07-tooling.md) applied to prose: the model chooses the words, never the
 band.
 
-Bands are per-setting where the idiom differs. A the setting labourer and an Imperial Guard
-trooper describe exhaustion differently; the thresholds are the same.
+Bands are per-setting where the idiom differs — a farmhand and a void-sailor describe
+exhaustion differently. **The thresholds are the same; only the words change.**

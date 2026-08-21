@@ -27,16 +27,16 @@ Ask, in order:
 
 | Script — no model involved | Model |
 |---|---|
-| Dice rolls, and reading doubles / Wyrd die | What the result *means* here |
+| Dice rolls, and reading the Wyrd die | What the result *means* here |
 | Damage, armour dice, stamina, criticals | Describing the wound |
 | Taint, Trauma, Strain, Resolve arithmetic | How the taint surfaces in this scene |
 | Threshold and invariant checks | Whether to call for a roll at all |
 | The secret hidden threshold | — |
-| Threat activation (`d12 <= imminence`) | How the Threat manifests here, now |
+| Threat activation (`d100 <= imminence × 10`) | How the Threat manifests here, now |
 | Elapsed-time expected-value events | What the peddler says about them |
 | Thread heat decay | Which thread is worth pulling on |
 | Advance eligibility against career triggers | Character voice, motive and choice |
-| Calendar, the ill moon cycle, festivals | Scenario adaptation and pacing |
+| Calendar, lunar cycles, festivals | Scenario adaptation and pacing |
 | Save read/write, schema validation, commit | Party tension events and their shape |
 | Aftermath / critical / transformation table lookups | Companion behaviour |
 | Reputation test, recognition roll | The consequence of being recognised |
@@ -54,17 +54,17 @@ disagree, the tool is right and the prose is a bug.
 
 ## 2. Python, stdlib only
 
-Following the `msgraph-stdlib` house pattern: **stdlib-only, zero-dependency,
-zero-backend.** No packages, no server process, no install step, no supply-chain surface.
+**Stdlib-only, zero-dependency, zero-backend.** No packages, no server process, no install step, no supply-chain surface.
 
 - Python 3.11+, standard library only
-- No otherworldly power, no database — the chronicle is files on disk
+- No daemon process, no database — the chronicle is files on disk
 - Readable top to bottom; a person can audit the whole thing
 - The constraint is the differentiator: portable, auditable, and it will still run in five
   years, which matters for something meant to last a decade
 
-State is YAML-shaped but parsed with a small internal reader, or stored as JSON with a YAML
-*view* for human editing — decided at implementation. **No third-party YAML dependency.**
+State is YAML with `[[wikilink]]` frontmatter, parsed by a **small internal reader** for the
+restricted subset Wyrd uses. Hand-editability matters more than parser generality: at three
+years deep you will want to fix a file by hand. **No third-party YAML dependency.**
 
 ---
 
@@ -83,7 +83,7 @@ engine/wyrd/
 ├─ rules.py       # resolution, damage, tracks, thresholds — pure functions
 ├─ tables.py      # criticals, aftermath, transformations, oracles — pure data
 ├─ state.py       # load/save/validate, atomic writes, invariants
-├─ calendar.py    # dates, the ill moon, elapsed time
+├─ calendar.py    # dates, lunar cycles, elapsed time
 ├─ campaign.py    # threats, threads, activation, decay
 └─ render.py      # output formatting (json | text)
 ```
@@ -116,13 +116,17 @@ returns the whole structured result, not a sentence:
 ```json
 {
   "verb": "roll",
-  "skill": "stealth", "skill_value": 4, "difficulty": 0,
-  "dice": [5, 5, 2], "wyrd_die": 5, "total": 12,
-  "target": 20, "modified_total": 16,
-  "success": false,
-  "doubles": true, "doubles_value": 5,
-  "side_effect": "boon",
-  "ill_omen_range": [1],
+  "skill": "stealth",
+  "skill_pct": 45,
+  "difficulty": -10,
+  "effective_pct": 35,
+  "roll": 23,
+  "units": 3,
+  "success": true,
+  "sl": 1,
+  "wyrd": "none",
+  "ill_omen_range": [0],
+  "natural_roll": 23,
   "state_written": true
 }
 ```
@@ -132,7 +136,7 @@ The GM narrates from that object. It does not need to know how any of it was der
 ### Modular and extensible
 
 - `rules.py` and `tables.py` are **pure** — no I/O, no state, trivially testable
-- Settings supply data, never code: a the science-fiction line weapon table is a data file, not a new module
+- Settings supply data, never code: a setting's weapon table is a data file, not a new module
 - Adding a verb means adding a catalog entry and a function; nothing else changes
 - Errors are structured (`{"error": {...}}`) and actionable, never bare tracebacks
 
@@ -145,14 +149,14 @@ Use the smallest model that can do the job correctly.
 | Tier | Used for |
 |---|---|
 | **No model** | Anything in the left column of §1. Dice, arithmetic, state, activation, validation, table lookups. |
-| **Haiku** | Mechanical language work with a right answer: extracting entity updates from a session log, regenerating `recap.md` from state, matching scenario hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
-| **Sonnet / Opus** | The GM itself. Narration, character voice and motive, scenario adaptation, party tension events, judgment about what a result means and when to call for a roll. |
+| **Haiku** | Mechanical language work with a right answer: extracting entity updates from a session log, regenerating `recap.md` from state, matching arc hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
+| **Sonnet / Opus** | The GM itself. Narration, character voice and motive, arc adaptation, party tension events, judgement about what a result means and when to call for a roll. |
 
 Mechanical steps are delegated to a **Haiku subagent** — an agent definition in
 `.claude/agents/` with `model: haiku` frontmatter — rather than being done inline by the
 session model. Session-close compaction is the clearest case: it is bulk structured
 extraction against files that already exist, it has a right answer, and it does not need
-The GM's context.
+the GM's context.
 
 The GM session itself stays on the capable model. Wyrd's whole value is the quality of the
 fiction; that is the one place not to economise.
@@ -167,8 +171,8 @@ fiction; that is the one place not to economise.
 ## 5. Testing
 
 - `rules.py` and `tables.py` are pure — unit tests, no fixtures
-- Dice distributions are asserted statistically (the tables in
-  [`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) are the expected values)
+- Dice distributions are asserted statistically, with the expected values stated in the
+  tests themselves rather than referenced elsewhere
 - State invariants from [`06-state.md`](06-state.md) are enforced on **every** write and
   tested directly
 - Golden chronicles: a saved state plus a scripted sequence of verbs, asserting the

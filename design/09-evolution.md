@@ -33,14 +33,14 @@ Every engine change is classified. The class determines what happens to live chr
 
 | Class | Meaning | Live chronicles |
 |---|---|---|
-| **Additive** | New content that cannot alter existing outcomes — a new career, extra table entries, another scenario, a new setting | Adopt automatically |
+| **Additive** | New content that cannot alter existing outcomes — a new career, extra table entries, another arc, a new setting | Adopt automatically |
 | **Tuning** | Numbers change: thresholds, probabilities, costs, decay rates | Forward-only, on confirmation |
 | **Structural** | The save schema changes — new field, renamed key, moved file | Requires a migration; state rewritten, facts preserved |
 | **Behavioural** | A subsystem works differently — a track is replaced, resolution changes | Requires a migration **and** an explicit decision about in-flight state |
 | **Corrective** | A bug produced results the rules never intended | Forward-only by default; retroactive repair only with explicit consent |
 
 Additive is the class to aim for. Most Wyrd growth — more scenarios, more careers, more
-table entries, the whole the science-fiction line setting — is additive by construction, which is a direct
+table entries, an entire new setting — is additive by construction, which is a direct
 benefit of the layering in [`02-architecture.md`](02-architecture.md).
 
 ---
@@ -101,7 +101,7 @@ exists. Every Behavioural migration answers this explicitly, and the honest defa
 Where a change is large enough to feel different at the table, apply it at an **era
 boundary** ([`05-campaign.md`](05-campaign.md)). Eras already exist, already carry a tonal
 shift, and are already git-tagged. "The world works differently now" is absorbed far more
-gracefully between eras than mid-scenario — and it costs nothing to wait.
+gracefully between eras than mid-arc — and it costs nothing to wait.
 
 ---
 

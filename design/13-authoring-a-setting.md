@@ -31,7 +31,7 @@ wyrd-<name>/
 
 ```yaml
 name: <setting-id>
-title: The the setting
+title: <Setting Title>
 line: fantasy
 requires_engine: ">=0.1.0"
 version: 0.3.0
@@ -232,7 +232,7 @@ that rewrites what happened in play.
 
 ## A worked example: a mythic-fantasy setting
 
-Useful because it is *not* the source line and so tests the boundary.
+Useful because it is unlike the settings already built, so it tests the boundary.
 
 | Need | Where it goes |
 |---|---|
