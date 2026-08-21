@@ -87,7 +87,7 @@ as the skill value where no specific skill exists. `Ag 38` *is* the dodge score.
 - **Separate parry/dodge rolls** — Warlock's single opposed roll stands.
 - **Toughness Bonus subtraction** — armour dice already do this job.
 - **Advance schemes as gates** — Wyrd keeps Warlock's advance triggers and 1e's career exits
-  ([`../../reference/wfrp1-voice.md`](../../reference/wfrp1-voice.md)), which are better
+  (`wyrd-fantasy/setting/voice-sources.md`), which are better
   suited to a chronicle than a percentage ladder.
 
 ## Consequences

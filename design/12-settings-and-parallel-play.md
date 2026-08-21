@@ -37,15 +37,15 @@ One library, one extraction, one set of indexes. Every scenario record already c
 This is deliberate. A Deadlands investigation may suit either; a *White Dwarf* hive-gang
 piece suits one. Tagging beats duplicating.
 
-## Chronicles are independent repositories
+## Four repositories
 
-**Correction to [`02-architecture.md`](02-architecture.md):** chronicles should live *outside*
-the engine repo, not in `wyrd/chronicles/`.
+See [`02-architecture.md`](02-architecture.md) for the full layout:
 
 ```
-wyrd/                     # engine, settings, scenarios, corpus indexes — code and shared content
-chronicles/reikland-01/   # its own git repo
-chronicles/imperium-01/   # its own git repo
+wyrd/                        # engine only
+wyrd-fantasy/                # Reikland setting, scenarios, indexes
+wyrd-futuristic/             # Imperium setting, scenarios, indexes
+wyrd-chronicle-hemmelfurt/   # one per chronicle
 ```
 
 Reasons, in order of weight:

@@ -2,27 +2,76 @@
 
 How the pieces separate, and what is code versus prose.
 
-## The four layers
+## Four repositories
+
+Wyrd is four kinds of thing with four different lifecycles, so it is four repositories.
+
+| Repo | Holds | Changes |
+|---|---|---|
+| **`wyrd`** | the engine — rules, CLI, GM contract, design, mechanics research | when the game changes |
+| **`wyrd-fantasy`** | Reikland setting, fantasy scenarios, fantasy corpus indexes | when content is added |
+| **`wyrd-futuristic`** | Imperium setting, 40k scenarios, 40k corpus indexes | when content is added |
+| **`wyrd-chronicle-*`** | one per chronicle — the save, its codex, its threads | every beat |
+
+A chronicle **references** an engine version and a setting version; a setting references a
+minimum engine version. Nothing references a chronicle.
+
+This is what makes parallel play safe: two chronicles never share a repository, so two live
+sessions cannot race on a commit
+([`12-settings-and-parallel-play.md`](12-settings-and-parallel-play.md)). It also means many
+chronicles and many characters can coexist — several in the same setting, at different points
+in its history, without interfering.
+
+### Why the settings are separate from the engine
+
+Because they change for different reasons and at different rates. The engine changes when a
+rule changes — rarely, deliberately, with a migration
+([`09-evolution.md`](09-evolution.md)). A setting accumulates: another scenario indexed,
+another faction written up, another career added. Mixing them makes both histories
+unreadable, and makes it impossible to say which version of *what* a chronicle is pinned to.
+
+It also keeps the engine repository genuinely setting-agnostic rather than
+setting-agnostic-in-principle. If a rule cannot be written without naming Sigmar, it is not
+an engine rule.
+
+### The source corpus is not in any repository
+
+Extracted text from the PDF library is **large and derived from copyrighted books**. It stays
+local and regenerable (`scratchpad/corpus/`), never committed.
+
+What *is* committed, per setting, is the **indexes** —
+[`11-corpus-index.md`](11-corpus-index.md) — which are small, are metadata rather than
+content, and are the part with real value. The master catalogue of source material
+([`../reference/library.md`](../reference/library.md)) stays in the engine repo, since it maps
+the raw material both settings draw from.
+
+Cross-setting sources are indexed **in both** settings, because a Deadlands adventure adapted
+for the Reikland and the same adventure adapted for a hive world are two different
+adaptations, not one shared record.
+
+## Inside each repository
 
 ```
 wyrd/
 ├─ engine/          # ruleset + GM contract. Setting- and scenario-agnostic.
-├─ settings/        # reikland/ , imperium/ — tone, factions, careers, gear, names
-├─ scenarios/       # situations and arcs. Threat Packs, one-shots.
-└─ corpus/          # extracted text and indexes over the source library
+├─ design/          # how and why
+├─ reference/       # mechanics research across systems
+└─ tools/
 
-chronicles/
-├─ reikland-01/     # each its own git repo — see 12-settings-and-parallel-play.md
-└─ imperium-01/
+wyrd-fantasy/
+├─ setting/         # voice, careers, gear, factions, deities, names, calendar
+├─ scenarios/       # situations and Threat Packs
+└─ index/           # documents, nouns, terms, tables, scenarios
+
+wyrd-chronicle-<name>/
+├─ chronicle.yaml   # pins engine_version AND setting_version
+├─ pc.yaml, party.yaml, threats.yaml, threads.yaml
+├─ codex/
+├─ log/
+└─ recap.md
 ```
 
-**Chronicles live outside the engine repo.** They are data with a different lifecycle, and
-separate repos are what make two live chronicles safe to run in parallel.
-
-Keeping these separable is the whole design: any scenario × any compatible setting × one
-engine. A **chronicle** pins all three plus accumulated state.
-
-### engine/
+### wyrd — the engine
 
 - `rules/` — resolution, combat, corruption, insanity, fate, fear, advancement
 - `tables/` — criticals, injuries, mutations, miscasts, oracles
@@ -31,12 +80,12 @@ engine. A **chronicle** pins all three plus accumulated state.
 
 Setting-neutral. A rule that names Sigmar belongs in `settings/`, not here.
 
-### settings/
+### wyrd-fantasy / wyrd-futuristic — the settings
 
 A setting is **data plus a voice document**.
 
 ```
-settings/reikland/
+wyrd-fantasy/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
 ├─ careers.yaml      # the career tree (Warlock careers, Reikland-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
@@ -49,7 +98,7 @@ settings/reikland/
 The 40k setting is the same shape with different data and one extra rules overlay
 (psychic powers reskinned from magic; see [`03-rules.md`](03-rules.md)).
 
-### scenarios/
+### scenarios — inside each setting repo
 
 Two kinds, and the distinction matters:
 
@@ -69,7 +118,7 @@ scenarios/the-drowning-well/
 Every scenario declares `source:` — where it came from and what was changed. Partly honesty,
 partly so adapted material is distinguishable from original three years in.
 
-### chronicles/ *(separate repos)*
+### wyrd-chronicle-<name>
 
 ```
 chronicles/<name>/

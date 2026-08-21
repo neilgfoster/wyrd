@@ -10,6 +10,22 @@ Setting is Warhammer Fantasy first (the Reikland), 40k later on the same engine.
 ruleset is *Warlock!* as a chassis with the Warhammer dials fitted: Corruption, Insanity,
 Fate, Fear.
 
+## The repositories
+
+Wyrd is four kinds of thing with four lifecycles, so it is four repos
+(see [02-architecture](design/02-architecture.md)):
+
+| Repo | Holds |
+|---|---|
+| **wyrd** *(here)* | the engine — rules, CLI, GM contract, design, mechanics research |
+| **wyrd-fantasy** | Reikland setting, scenarios, fantasy corpus indexes |
+| **wyrd-futuristic** | Imperium setting, scenarios, 40k corpus indexes |
+| **wyrd-chronicle-\*** | one per chronicle — the save, its codex, its threads |
+
+A chronicle pins an engine version *and* a setting version. Two chronicles never share a
+repo, so parallel sessions cannot race — and many characters can coexist in the same
+setting at different points in its history.
+
 ## Read in this order
 
 **Design** — what Wyrd is:
