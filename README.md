@@ -4,13 +4,13 @@
 across years.
 
 Wyrd is **setting-agnostic**. It is its own system — percentile resolution descended from
-the base source system, simplified for narrative play — plus the machinery a solo campaign actually needs:
+percentile, simplified for narrative play — plus the machinery a solo campaign actually needs:
 a world that moves while you are away, companions the GM plays as people, taint you
 choose, consequences that outlive characters, and a chronicle that stays correct for a
 decade.
 
 Settings live in their own repositories and are overlaid onto a chronicle. the fantasy line
-and the science-fiction line exist; another source system is a stub; anything else can be authored
+settings exist for several published worlds; anything else can be authored
 ([13-authoring-a-setting](design/13-authoring-a-setting.md)).
 
 ## Start a chronicle

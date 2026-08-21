@@ -16,7 +16,7 @@ would.
 | Class | Examples | Rendered as |
 |---|---|---|
 | **Never shown** | hidden threshold, thread heat, party tension, bond values, NPC stats, diffisecty numbers, Threat imminence | nothing — these are engine state |
-| **Diegetic only** | stamina, skills, taint, trauma, stress, reputation, wounds, inventory | prose, from the character's own perspective |
+| **Diegetic only** | stamina, skills, taint, trauma, strain, reputation, wounds, inventory | prose, from the character's own perspective |
 | **Countable** | Fate, Fortune, Luck | prose that is still *countable*, because the player must decide whether to spend them |
 
 The countable class is the only compromise, and it is forced: a resource you must choose to
@@ -47,7 +47,7 @@ vocabulary every session.
 
 Fractions, not absolutes, so it holds as max stamina grows.
 
-### Skills — the chassis system's ladder
+### Skills — the base system's ladder
 
 | Level | The character knows |
 |---|---|
@@ -74,9 +74,9 @@ mace exactly twice, both times badly" (Blunt 5).
 **The hidden threshold is never rendered at all**, in any form. Not even as unease. The player finds
 out where it was when it runs out.
 
-### Trauma and Stress
+### Trauma and Strain
 
-Stress is *today* — "your hands won't settle", "you keep checking the door". Trauma is
+Strain is *today* — "your hands won't settle", "you keep checking the door". Trauma is
 *permanent* and shows as accumulated tells the character has stopped noticing, which other
 people notice for them. A affliction is never described as a affliction; it is described
 as behaviour.

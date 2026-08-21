@@ -3,16 +3,14 @@
 The layer that makes a chronicle run for years: how the world moves while you are away, how
 scenarios are selected rather than scripted, and how a losing struggle is shaped.
 
-Sources: a sandbox source system's Threat Packs, another source system's Tale of Years, one source system's Progress
-Tracker. See [systems-mined](https://github.com/neilgfoster/wyrd-research/blob/main/reference/systems-mined.md) and
-[tor-concepts](https://github.com/neilgfoster/wyrd-research/blob/main/reference/tor-concepts.md).
+Provenance for the ideas here is recorded in the private research repo.
 
 ---
 
 ## Threats
 
 A **Threat** is a campaign-length antagonist that acts on its own schedule whether or not
-the player is present. Format from a sandbox source system, which had the best one found.
+the player is present. Format:
 
 ```yaml
 name: The Rot Beneath Grenzstadt
@@ -58,14 +56,14 @@ Claude chooses *when in the week* it lands — while the player is present (a sc
 they are elsewhere (they hear about it later, late and partially).
 
 **If a Threat acts and the player was not there, they must still find out.** A peddler
-brings word; a companion's family writes; the market is talking. This is another source system's *News from
+brings word; a companion's family writes; the market is talking. This is *News from
 Afar* — and information should arrive **late, incomplete, and sometimes wrong**.
 
 ### Threats are personal
 
 Every active Threat must have **at least one connection to the player or a companion** —
 a birthplace, a debt, a relative, an old employer. Derived at chronicle creation from the
-PC's Passion and Cruel Misfortune. The thing threatening the world is already the thing that
+PC's Drive and Misfortune. The thing threatening the world is already the thing that
 marked you.
 
 ---
@@ -74,7 +72,7 @@ marked you.
 
 Real sessions are weeks apart. Wyrd does **not** simulate every intervening week.
 
-From a sandbox source system's *Abstracting Weekly Threat*: take the **expected value** over the
+**Abstract it.** Take the **expected value** over the
 elapsed period. A Threat at Imminence 4 activates roughly once per three weeks — so a
 five-week gap produces about two activations. Roll those, apply them, and generate the
 resulting world-state.
@@ -108,10 +106,10 @@ Every scenario **consumes** threads (it needs hooks that match live ones) and **
 ones. Selecting the next scenario means finding one whose hooks match threads that are
 currently hot.
 
-**This is Wyrd's genuinely original piece.** another source system's Tale of Years is authored — year 2953 has
-a fixed adventure. a sandbox source system's Threats are procedural but not sequenced. Wyrd must
-*select and sequence*, which is exactly the judgment an LLM is good at, provided the state
-is written down.
+**This is the piece Wyrd cannot borrow.** An authored year-by-year campaign fixes what
+happens when; a procedural threat generator never sequences at all. Wyrd must *select and
+sequence*, which is exactly the judgment an LLM is good at — provided the state is written
+down.
 
 Threads decay. A thread untouched for a year of game time drops in heat and eventually
 closes as "never resolved" — which is itself true to the setting. Not everything gets an
@@ -167,7 +165,7 @@ This is the mechanical answer to constraint 5 and constraint 6 together.
 
 ## Holdings
 
-From another source system. Over years the player accumulates something — a cottage, a boat, a workshop, a
+Over years the player accumulates something — a cottage, a boat, a workshop, a
 name in a guild, a family. It is recorded in the chronicle and it is **leverage**:
 
 > "If Spiders attack a Woodman village, that's a tragedy for the heroes to avenge — but if

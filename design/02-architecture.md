@@ -92,9 +92,9 @@ A setting is **data plus a voice document**.
 ```
 wyrd-<setting>/setting/
 ├─ voice.md          # register, vocabulary, what a critical failure looks like here
-├─ careers.yaml      # the career tree (the chassis system careers, the setting-named)
+├─ careers.yaml      # the career tree (the base system careers, the setting-named)
 ├─ gear.yaml         # weapons, armour, prices, what is legal to carry where
-├─ factions.yaml     # sects, guilds, watch, nobility — with agendas
+├─ factions.yaml     # orders, guilds, watch, nobility — with agendas
 ├─ deities.yaml
 ├─ names.yaml        # given/family/place name tables
 └─ calendar.yaml     # months, festivals, the ill moon cycle
@@ -108,7 +108,7 @@ The the science-fiction line setting is the same shape with different data and o
 Two kinds, and the distinction matters:
 
 - **Threat** — a campaign-length antagonist with an Imminence rating that acts on its own
-  schedule. Format taken from a sandbox source system. See [`05-campaign.md`](05-campaign.md).
+  schedule. Format taken from . See [`05-campaign.md`](05-campaign.md).
 - **Situation** — a one-shot to three-session scenario. A place, people with agendas, a
   clock, and a cost. **Never a script.**
 

@@ -4,7 +4,7 @@ Everything needed to build a new setting for Wyrd, without reading the existing 
 
 A "setting" in Wyrd is closer to a **game module** than a backdrop: it supplies the world,
 its content, its voice — and, where it needs to, a rules overlay. The the setting and the
-the science-fiction setting are two; another source system's Wilderland would be a third and would look quite different.
+a science-fiction setting are two; a mythic-fantasy one would be a third and would look quite different.
 
 ---
 
@@ -20,7 +20,7 @@ wyrd-<name>/
 │  ├─ creatures.yaml  # stat blocks
 │  ├─ factions.yaml   # with objectives (see 06-state)
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
-│  ├─ names.yaml      # given / family / place, by secture
+│  ├─ names.yaml      # given / family / place, by culture
 │  ├─ conversion.yaml # REQUIRED if derived from another system — see below
 │  ├─ calendar.yaml   # months, festivals, celestial cycles
 │  └─ rules/          # OPTIONAL overlay — only where the engine is insufficient
@@ -93,7 +93,7 @@ The engine guarantees, and a setting may rely on:
 | `d100` resolution, SL, the Wyrd die | skill names |
 | Diffisecty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
-| Taint, Trauma, Fate, Resolve, Stress | what they are *called* and what causes them |
+| Taint, Trauma, Fate, Resolve, Strain | what they are *called* and what causes them |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
 | Beats, Rally, Fellowship phases, party tension | what downtime looks like here |
 | Threats, threads, elapsed time, succession | who the Threats are |
@@ -219,14 +219,14 @@ that rewrites what happened in play.
    and the entity stays `status: stub`. A guessed stat is worse than an absent one.
 3. **Lose provenance.** Every converted entity records the source work and pages.
 
-## A worked example: what a One Ring setting would need
+## A worked example: a mythic-fantasy setting
 
 Useful because it is *not* the source line and so tests the boundary.
 
 | Need | Where it goes |
 |---|---|
-| Sectures instead of careers | `careers.yaml` — the graph shape still fits |
-| Resolve and Shadow | **already engine** — Wyrd took this from another source system |
+| Cultures instead of careers | `careers.yaml` — the graph shape still fits |
+| A hope/despair balance | **already engine** — Taint and Resolve |
 | Shadow Weakness from Calling | `setting/rules/` — a mapping table |
 | The Fellowship phase | **already engine** |
 | Journeys as a mechanic | `setting/rules/` — a real overlay, since Wyrd has no travel subsystem |

@@ -188,7 +188,7 @@ objective:
   blocked_by: "cannot be seen taking an interest"
   escalates_to: "arson, as a distraction"
   timeline: "before the boat arrives"
-stats: {}                      # native to the source system where one exists
+stats: {}                      # as printed by the source, where one exists
 ```
 
 **Objectives are what make the world act while the player is absent.** `next_step` advances

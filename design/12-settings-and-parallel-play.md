@@ -11,7 +11,7 @@ eventually both may be live at the same time.
 |---|---|---|
 | **Resolution** | d100, Wyrd die, SL, diffisecty bands | — |
 | **Combat** | stamina, armour dice, criticals, Aftermath | flavour of the critical tables |
-| **Tracks** | Taint, Trauma, Fate, Resolve, Stress | *vocabulary* — transformation vs warp-taint, affliction vs the Whisperings |
+| **Tracks** | Taint, Trauma, Fate, Resolve, Strain | *vocabulary* — transformation vs warp-taint, affliction vs the Whisperings |
 | **Session** | beats, Rally, Fellowship phases, party tension | — |
 | **Campaign** | Threats, threads, elapsed time, succession | — |
 | **Careers** | the *shape* — exits, advance triggers | the entire career graph |

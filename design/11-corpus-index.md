@@ -86,7 +86,7 @@ term for "a village with something under it."**
 It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
 scenarios *chain* into a meta-campaign.
 
-Scope is **the whole library, not the the source system shelf** — a Deadlands investigation, a Maelstrom
+Scope is **the whole library, not one shelf of it** — a Deadlands investigation, a Maelstrom
 village haunting and a magazine six-pager are equally valid inputs, judged on theme
 ([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
@@ -135,7 +135,7 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 where `party_effective` counts the PC as 1 and each companion at a fraction, since companions
 are GM-run and less capable. A T3 scenario written for four, run by a PC and two companions,
 plays at roughly T2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
-that already scales content ([`03-rules.md`](03-rules.md)). a solo source system' Fray die does the
+that already scales content ([`03-rules.md`](03-rules.md)). ' Fray die does the
 rest of the work in combat.
 
 `danger` in the record is therefore *intrinsic diffisecty as written for its stated party
@@ -196,7 +196,7 @@ Regenerated only when the schema changes.
 wyrd find noun "Weissbruck"
 wyrd find rule "fear test"
 wyrd find table --dice d100 --about transformation
-wyrd find scenario --hook sect --tone investigation --length short
+wyrd find scenario --hook conspiracy --tone investigation --length short
 wyrd find doc --system "White Dwarf" --issue 98
 ```
 
@@ -231,7 +231,7 @@ against the corpus.
 
 ## What is not indexed
 
-Prose setting material — regional gazetteers, sect descriptions, histories. It is read on
+Prose setting material — regional gazetteers, organisation write-ups, histories. It is read on
 demand and its value is in the reading. The concordance already makes it findable by name,
 which is how it is actually reached in play: not "tell me about Ostland" but "what is this
 place the player just mentioned?"

@@ -1,192 +1,63 @@
-# ADR 0001 — Percentile resolution
+# ADR 0001 — Percentile resolution, with the units digit as the Wyrd die
 
 **Status:** accepted 2026-08-21
-**Date:** 2026-08-21
 
 ## Context
 
-Wyrd currently resolves as `d20 + skill vs 20` (the chassis system's mechanic) with a separate `2d6`
-pair — the Wyrd dice — carrying the side-effect axis. Two earlier schemes were rejected in
-[`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md).
+Wyrd needs outcomes with **two independent axes**: did you succeed, and *what else happened*.
+A bane must be able to land on a success and a boon on a failure — those are the two most
+valuable results and the hardest to produce.
 
-The question raised: what would move to **d100 roll-under** cost, and could the
-multi-dimensional outcome survive it?
-
-## The short answer on multi-dimensionality
-
-**It survives, and gets cheaper and cleaner.** The `2d6` Wyrd dice contribute
-nothing to the success calculation — that was the whole point of the third design. They do
-not know or care what resolves success. Swapping `d20 + skill vs 20` for `d100 roll-under`
-changes nothing about them: same 16.7% trigger, same five outcomes, same taint gating.
-
-That decoupling was adopted to fix an independence bug. It turns out to have made the
-success mechanic **swappable**, which is a stronger property than it was designed for and is
-worth noting as a general principle: keeping the axes separate keeps them replaceable.
-
-### Better: the units digit *is* the Wyrd die
-
-Under d100 the `2d6` become unnecessary. **The units digit of the roll is already an
-independent d10.**
-
-Success is decided by the whole value against the threshold. The units digit is uniform
-*within* both the success set and the failure set — **exactly uniform at any skill that is a
-multiple of 10**, and never more than 2 percentage points off otherwise:
-
-| Skill | units 0–9 among successes | among failures |
-|---|---|---|
-| 30% | 10 10 10 10 10 10 10 10 10 10 | 10 10 10 10 10 10 10 10 10 10 |
-| 45% | 11 11 11 11 11 9 9 9 9 9 | 9 9 9 9 9 11 11 11 11 11 |
-| 75% | 11 11 11 11 11 9 9 9 9 9 | 8 8 8 8 8 12 12 12 12 12 |
-
-That is *better independence than the `2d6` scheme achieves* — the 2d6 design still carried
-residual skew (a hard-won success took a bane 0.5% of the time against a failure's 6.9%).
-Here the worst case is a 2-point deviation.
-
-So one roll yields three axes with no extra dice at all:
-
-| Axis | Read from |
-|---|---|
-| Success / failure | the whole roll vs `skill%` |
-| Magnitude | Success Levels — tens digit of skill minus tens digit of roll |
-| What else happened | **the units digit** |
-
-Proposed bands, with the natural 10% granularity:
-
-| Units | Result |
-|---|---|
-| 0 | **Ill Omen** |
-| 9 | **Fair Omen** |
-| 1–8 | nothing |
-
-20% frequency, close to the `2d6` scheme's 16.7%, and **widening is a one-line house rule**:
-`0–1` / `8–9` gives 40% with banes and boons added. Taint gating gets natural
-granularity too — the Ill Omen range widens from `0` to `0–1` to `0–2` as taint rises.
-
-It reads cleanly in text: *"Stealth 35, rolled 37 — failure by 0 degrees, and the 7 means
-nothing else went wrong."*
-
-#### Invariant: the Wyrd read is always the natural roll
-
-**The units digit is read from the dice as they first fell — never modified, never rerolled.**
-
-Two reasons, and the second matters more.
-
-*It makes the independence a guarantee rather than a coincidence.* The units digit is clean
-today only because modifiers land on the threshold rather than on the roll. Stating this as
-an invariant means the property survives any future rule that might otherwise adjust a roll.
-(It does not remove the residual ≤2-point conditional skew — that comes from one roll doing
-two jobs against a threshold that is not a multiple of 10, and only a separate die would
-fix it. Negligible, and not worth a die.)
-
-*It fixes reroll laundering.* If a reroll produced a fresh Wyrd read, Fortune and Dark Deals
-would let a player buy their way out of consequences entirely. Under this invariant:
-
-- **Fortune** buys the *result*, never the world's reaction to the first attempt. Reroll the
-  failure into a success and the Ill Omen you already rolled still lands.
-- **The Dark Deal** gains real teeth. It stops being a clean trade ("pay taint, try
-  again") and becomes "pay taint, try again, and live with what the first attempt set in
-  motion" — which is the correct shape for a Faustian bargain.
-
-> You can change what happened. You cannot change what it cost.
-
-### Rejected: reversing the digits
-
-Tempting — a roll of 37 reversed is 73, so it looks like a free second value. It is not
-independent. `reversed ≤ 04` requires units 0 and a low tens, so the original is in
-{00,10,20,30,40} — all low, all successes. `reversed ≥ 95` requires units 9 and a high tens,
-so the original is in {59,69,79,89,99} — all failures. Measured:
-
-| | Ill Omen | Fair Omen |
-|---|---|---|
-| on a success | 7–12% | **0–3%** |
-| on a failure | 0–3% | 7–12% |
-
-Systematically **anti-correlated**, and at skill 45+ a success cannot produce a Fair Omen at all.
-The extremes of the reversed value map straight back onto the extremes of the original —
-the same class of bug as reading the side effect from the margin.
-
-(Worth noting the reversed d100 *does* have a real use in the source system: it is how 4e determines hit
-location. Wyrd has no hit locations — criticals are by damage type — so the digit is free.)
-
-### Also rejected: the d100's own doubles
-
-A d100 shows doubles (11, 22, … 00) at 10%. On roll-under, a low double is a *good* roll and
-a high double a *bad* one, so reading direction from the doubled value is anti-correlated in
-the same way. a later source system and Zweihander use exactly this (doubles = critical on a success,
-fumble on a failure), which is right for a crit mechanic and wrong for an independent axis.
-
-## Migration is exact
-
-the chassis system's skill ladder maps to percentages with **no probability drift at all**:
-
-> **`skill% = (skill + 1) × 5`**
-
-| Skill | `d20 + skill vs 20` | `skill%` |
-|---|---|---|
-| 4 | 25% | 25% |
-| 6 | 35% | 35% |
-| 10 | 55% | 55% |
-| 12 *(career cap)* | 65% | 65% |
-| 14 | 75% | 75% |
-
-Diffisecty maps as cleanly: the chassis system's −2 / −4 become **−10 / −20**, which lands exactly on
-the source system's own diffisecty ladder (Easy +20, Average +0, Challenging −10, Diffisect −20, Hard
-−30, Very Hard −40). We inherit a tested six-band ladder in place of the chassis system's two.
-
-## What d100 adds
-
-**1. The library.** This is the decisive argument. Every the source system edition (1e–4e), Zweihander,
-and the entire the science-fiction line line — a science-fiction source system, Rogue Trader, Deathwatch, Black Crusade, Only War —
-is d100. That is roughly 700 PDFs of careers, NPCs, stat blocks, creatures, gear and
-adventures that become **directly usable rather than requiring conversion**. The corpus
-currently being OCR'd is d100 material. Under the chassis system's scale, every one of those stat
-blocks needs translating by hand or by model; under d100 they are read as printed.
-
-For the the science-fiction line setting this is close to decisive on its own: a science-fiction source system's careers and gear are
-the obvious source and they are percentile-native.
-
-**2. A magnitude axis for free.** `d100` yields **Success Levels** naturally — the tens digit
-of the skill minus the tens digit of the roll. That is a genuine third dimension (did you
-succeed · by how much · what else happened) at no dice cost, where `d20` gives nothing
-comparable. Useful for opposed tests, for scaling damage, and for the "succeed at a cost"
-texture Wyrd wants.
-
-**3. Granularity that suits a decade.** Advancement in 1–5% steps gives a long chronicle
-somewhere to go without the numbers inflating. the chassis system's 4–12 ladder has nine rungs total.
-
-**4. It reads well in text.** "Stealth 35, rolled 28 — success, 1 degree" is at least as
-legible as `d20 + skill vs 20`, and roll-under needs no addition at all.
-
-## What it costs
-
-- **the chassis system's own material needs converting** — careers, skill caps, tables. One book, and
-  the mapping above is mechanical. Everything else in the library gets *easier*.
-- **Opposed tests change shape** — from "higher total wins" to comparing Success Levels.
-  This is a genuine behavioural change, not a representation change.
-- **Some of the chassis system's charm is its lightness.** `d100` is marginally more system. Though
-  roll-under is arguably simpler than add-and-compare.
-- Career caps of 10–12 become 55–65%, which is squarely the source system-shaped and probably correct for
-  a game where veterans stay fallible.
+Independence is the requirement. Any scheme where the side effect is derived from *how well*
+you rolled cannot produce them.
 
 ## Decision
 
-**Proposed: adopt d100 roll-under**, and **retire the `2d6` Wyrd dice** — the units digit of
-the roll replaces them, with better independence and no extra dice.
+> **Roll `d100`, succeed at or under `skill%`.**
+> **Success Levels** (tens digit of skill minus tens digit of roll) give magnitude.
+> **The units digit of the natural roll** is the Wyrd die.
 
-Classification per [`../09-evolution.md`](../09-evolution.md): **Structural** for basic
-tests (representation changes, outcomes identical), **Behavioural** for opposed tests
-(they genuinely resolve differently). Both require confirmation.
+One roll, three axes, no extra dice.
 
-**Decide before implementation, not after.** No engine exists yet, so this costs nothing
-today and a migration tomorrow. The playtest chronicle would need converting — four skill
-values and a stamina track — which is minutes of work now.
+The units digit is uniform *within* both the success set and the failure set — exactly so at
+any skill that is a multiple of ten, never more than two points off otherwise. That is
+better independence than any scheme using separate dice achieved.
 
-## Open
+**The natural roll rule:** the Wyrd die is read from the dice as they first fell, never
+modified and never rerolled. Modifiers apply to the skill, never the roll, which is what
+keeps this true as the rest of the system evolves. It also prevents reroll laundering —
+Fortune buys the result, never the world's reaction to the first attempt.
 
-- Do we adopt the source system's **characteristics + skill advances** model wholesale, or keep the chassis system's
-  flat single-value skills expressed as percentages? The latter is simpler and preserves
-  Wyrd's lightness; the former buys even closer library compatibility. **Leaning flat**, on
-  the grounds that stat blocks are read for their numbers, not their derivation.
-- Does Success Level replace or supplement the Wyrd dice for "how well"? They answer
-  different questions — SL is magnitude, the Wyrd die is *what else* — so probably
-  supplement, but this wants playtesting rather than argument.
+## Rejected
+
+**Margin.** Reading the side effect from degree of success collapses both axes into one: a
+large success can never carry a bane.
+
+**A summed side die.** `3d6` with one die a different colour, all three summed. Still
+correlated, and worst exactly where it matters — on a hard task a success *cannot* carry a
+bane, because if the total cleared a high target the coloured die cannot have been low.
+
+**A bell curve at all.** `3d6 + skill` was tried at two target numbers. At 20 a starting
+character succeeded 16% of the time where a flat die gave 35%; at 17 the top broke instead —
+at high skill a character literally could not fail. A bell curve compresses both tails, so it
+delivers playable novices *or* fallible veterans, never both. Percentile is flat and does
+both.
+
+**Digit reversal.** A roll of 37 reversed is 73 — tempting as a free second value, but
+systematically anti-correlated. `reversed ≤ 04` requires a low tens and units 0, so the
+original is always low and therefore a success. Measured, a Fair Omen fell on 0–3% of
+successes against 7–12% of failures.
+
+**The d100's own doubles.** 11, 22, … 00 at 10%. On roll-under a low double is a good roll
+and a high double a bad one, so reading direction from the doubled value is anti-correlated
+in the same way.
+
+## Consequences
+
+- Skill values are percentages; difficulty is a flat modifier to skill.
+- Source material that is already percentile can be read as printed
+  ([ADR 0002](0002-source-system-compatibility.md)).
+- Side-effect frequency is 20% at the default band, widening to 40% via house rules if play
+  proves it sparse. The safer direction to be wrong in.
+- The success mechanic is now swappable without touching the side-effect axis, since the two
+  share no dice. Worth preserving.

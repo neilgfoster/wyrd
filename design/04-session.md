@@ -46,7 +46,7 @@ paragraphs and then spend fifteen minutes in a cellar.
 Between beats comes a **Rally**: a short pause with mechanical weight.
 
 On a Rally:
-- recover **1 Stress** and **1 Fatigue**
+- recover **1 Strain**
 - posture drifts one step toward neutral
 - Claude assesses the beat and may award an advance
 - **state is written and the chronicle is committed**
@@ -94,7 +94,7 @@ they get told the beer is bad.
 
 ## The Fellowship phase
 
-From another source system, where downtime is a phase with its own rules rather than a skip.
+From , where downtime is a phase with its own rules rather than a skip.
 
 Triggered at the end of a scenario or arc, or when the player asks. Structure:
 
@@ -105,8 +105,8 @@ Triggered at the end of a scenario or arc, or when the player asks. Structure:
 | **Advances** | Spend earned advances (see [`03-rules.md`](03-rules.md)). |
 | **Undertaking** | Choose **one** activity for the period. |
 
-Undertakings include: **Recover** (reduce Taint or Stress), **Mend** (treat a lasting
-wound), **Pursue** (advance a personal thread), **Sectivate** (build a relationship or a
+Undertakings include: **Recover** (reduce Taint or Strain), **Mend** (treat a lasting
+wound), **Pursue** (advance a personal thread), **Cultivate** (build a relationship or a
 holding), **Learn** (open a new career), **Ask** (gather information on a Threat).
 
 The constraint is that you choose **one**. Recovering from taint means *not* pursuing
@@ -132,7 +132,7 @@ Each companion in `party.yaml` carries:
   flaw: "cannot leave a wrong alone"
   bond: 3            # to the PC; -3..+3
   taint: 1
-  stress: 0
+  strain: 0
   secret: "she already knows what happened to the brother"  # PC does not know this
   arc: "will have to choose between the debt and the party"
 ```

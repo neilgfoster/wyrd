@@ -18,7 +18,7 @@ calendar:
   month: Nachexen
   day: 14
 era: "The Quiet Years"
-threat_rating: 2          # scenario scaling T (see 03-rules)
+danger_rating: 2          # scenario scaling T (see 03-rules)
 sessions: 7
 last_played: 2026-08-19
 ```
@@ -44,15 +44,15 @@ taint: 1
 fault_line: "will do anything to keep his sister fed"
 hidden_threshold: null                   # SECRET. 1d10+toughness, set at first transformation.
 trauma: 0
-stress: 0
+strain: 0
 afflictions: []
 transformations: []
 fear_points: 0
 reputation: {score: 1, label: "the man who found the child"}
-passions:
+drives:
   - {type: fear, object: "deep water"}
   - {type: loyalty, object: "his sister Grete"}
-cruel_misfortune: "You have seen things — as a child he saw what came out of the well"
+misfortune: "You have seen things — as a child he saw what came out of the well"
 wounds: []                         # lasting marks from the Aftermath table
 holdings: []
 advances_unspent: 1
@@ -72,7 +72,7 @@ companions:
     flaw: "cannot leave a wrong alone"
     bond: 3                        # -3..+3, to the PC
     taint: 1
-    stress: 0
+    strain: 0
     secret: "she already knows what happened to the brother"
     arc: "will have to choose between the debt and the party"
     status: with-party             # with-party | away | dead | lost | departed

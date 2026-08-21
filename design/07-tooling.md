@@ -29,7 +29,7 @@ Ask, in order:
 |---|---|
 | Dice rolls, and reading doubles / Wyrd die | What the result *means* here |
 | Damage, armour dice, stamina, criticals | Describing the wound |
-| Taint, Trauma, Stress, Resolve arithmetic | How the taint surfaces in this scene |
+| Taint, Trauma, Strain, Resolve arithmetic | How the taint surfaces in this scene |
 | Threshold and invariant checks | Whether to call for a roll at all |
 | The secret hidden threshold | — |
 | Threat activation (`d12 <= imminence`) | How the Threat manifests here, now |

@@ -179,7 +179,7 @@ The first few are already implicit in the existing docs and should be extracted:
 
 - the dice mechanic, and why margin and a summed side-die were rejected
 - deferred death via an Aftermath table rather than in-combat resolution
-- Resolve/Shadow as a balance rather than the source system's one-way ratchet
+- Resolve/Shadow as a balance rather than one-way ratchet
 - succession through the thread rather than the bloodline
 - deterministic-over-inference
 

@@ -1,110 +1,52 @@
-# ADR 0002 — Read source-system stat blocks natively
+# ADR 0002 — Read source material natively; do not adopt a source system
 
 **Status:** accepted 2026-08-21
-**Date:** 2026-08-21
 **Depends on:** [0001](0001-d100-resolution.md)
 
 ## Context
 
-If Wyrd goes percentile ([ADR 0001](0001-d100-resolution.md)), the obvious next step is to
-adopt the base source system (and a science-fiction source system, its the science-fiction line sibling) wholesale and tweak. The library argument
-that justified d100 seems to argue for this too: ~700 PDFs of native material.
+Wyrd's settings are largely derived from published games
+([`../13-authoring-a-setting.md`](../13-authoring-a-setting.md)). Since Wyrd is percentile
+([ADR 0001](0001-d100-resolution.md)), it could simply adopt a percentile source system
+wholesale and tweak it — inheriting a vast body of directly usable material.
 
-Should we?
+Should it?
 
 ## Decision
 
-**No. Adopt 2e's *numbers and content*; keep the chassis system's *procedures*.**
+**No. Take the numbers and the content; keep Wyrd's own procedures.**
 
-> **2e-compatible, the chassis system-paced.**
+A source stat block is read **as printed** — a skill of 41 is 41%. Careers, gear, creatures,
+prices and adventures are usable without a conversion pass. Resolution, combat, tracks and
+session structure remain Wyrd's.
 
-Wyrd reads a 2e or a science-fiction source system stat block natively, and resolves it with the chassis system's loop.
+## Why not adopt wholesale
 
-## Why not full 2e
+**Talents are the drift risk.** Detailed source systems carry a hundred or more special-case
+abilities, each a conditional that must fire at the right moment. State is not the problem —
+the CLI holds a hundred talents trivially. *Applying* them is, because noticing that a
+narrated action is the one a given talent modifies is judgment rather than lookup. A hundred
+such judgments per session, across years, is exactly the drift
+[`../07-tooling.md`](../07-tooling.md) exists to prevent. An LLM will forget them
+*inconsistently*, which is worse than not having them.
 
-### 1. Talents are the real weight, and they are the drift risk
+**Combat depth.** A detailed source resolves an exchange in roughly twice the events and
+three extra lookups — attack, separate defence roll, damage, hit location, armour by
+location, toughness subtraction, then a location-specific critical table. That turns a
+five-exchange fight into an entire twenty-minute session. Session length is the one
+requirement Wyrd cannot negotiate away.
 
-2e has ~100 talents; a science-fiction source system more. Each is a conditional that must fire at the right
-moment — *Strike Mighty Blow* here, *Sure Shot* there, *Lightning Reflexes* only in that
-circumstance.
-
-State is not the problem: the CLI can hold a hundred talents trivially. **Applying** them is
-the problem, because noticing that a narrated action is the one a given talent modifies is a
-judgment call, not a lookup. A hundred such judgments per session, across years, is exactly
-the drift that [`../07-tooling.md`](../07-tooling.md) exists to prevent. An LLM GM will
-forget talents *inconsistently*, which is worse than not having them.
-
-the chassis system has no talent layer at all. That is a feature here.
-
-### 2. Combat depth per exchange
-
-| | the chassis system / Wyrd | the base source system |
-|---|---|---|
-| Attack | opposed roll | attack roll |
-| Defence | (same roll) | separate dodge/parry roll |
-| Damage | 1 roll | 1 roll |
-| Location | — | reversed digits |
-| Armour | subtract dice | look up by location |
-| Toughness | — | subtract TB |
-| Wounds | stamina | wounds |
-| Critical | if below 0, one table by damage type | critical table **by location**, per point over |
-
-Roughly double the events and three extra lookups per swing. In a twenty-minute session on a
-phone, a five-exchange fight is the whole session under 2e and one beat of it under the chassis system.
-
-The founding brief was explicit: narrative-focused, simple, no detailed maps. Full 2e
-contradicts it.
-
-### 3. NPC modelling cost
-
-[`../06-state.md`](../06-state.md) already commits to **asymmetric NPCs** — companions and
-enemies are cheap to model, only the PC carries full state. Adopting 2e wholesale would
-mean a party of five NPC companions each carrying nine characteristics, thirty skills and a
-talent list. That is a 5× bookkeeping increase for characters the player does not control.
-
-## What we take instead
-
-**Numbers, read as printed.** A 2e stat block gives `WS 41, BS 32, T 35, W 12`. Wyrd uses
-`WS 41` directly as the weapon skill percentage, `T` for soak, `W` as stamina. No
-conversion, no translation pass. This is the entire benefit that motivated d100 and it does
-not require adopting the procedures.
-
-**Content.** Careers and their advance schemes, skill lists, gear and prices, creature stat
-blocks, NPC write-ups, and the whole adventure corpus — usable directly. a science-fiction source system's career
-list becomes the the science-fiction line setting's career data with no work.
-
-**Diffisecty ladder.** 2e's six bands (Easy +20 … Very Hard −40), replacing the chassis system's two.
-
-**Characteristics as an optional depth.** Wyrd's flat skill model can read a 2e characteristic
-as the skill value where no specific skill exists. `Ag 38` *is* the dodge score.
-
-## What we leave
-
-- **Talents** — treated as descriptive notes on a stat block, not mechanics. A creature with
-  *Frenzy* is described as frenzied; the GM does not track a talent.
-- **Hit locations** — the chassis system's damage-type critical tables are better for text anyway, since
-  they describe an injury rather than a coordinate.
-- **Separate parry/dodge rolls** — the chassis system's single opposed roll stands.
-- **Toughness Bonus subtraction** — armour dice already do this job.
-- **Advance schemes as gates** — Wyrd keeps the chassis system's advance triggers and 1e's career exits
-  (`wyrd-fantasy/setting/voice-sources.md`), which are better
-  suited to a chronicle than a percentage ladder.
+**NPC cost.** Wyrd commits to asymmetric characters — only the player's carries full state
+([`../06-state.md`](../06-state.md)). Adopting a source system wholesale would multiply
+bookkeeping for characters the player does not control.
 
 ## Consequences
 
-- The library is readable without a conversion layer, which was the point.
-- Combat stays fast enough for a twenty-minute session.
-- There is a **fidelity gap**: a 2e adventure's tuned encounter will play differently under
-  the chassis system's combat maths. Accepted — Wyrd adapts scenarios anyway
-  ([`../05-campaign.md`](../05-campaign.md)), and scenario danger rating is the tuning
-  dial.
-- Talents being descriptive means some published NPCs lose mechanical distinctiveness. Where
-  one genuinely matters, express it as a **bane/boon on the Wyrd die** or a diffisecty band —
-  both of which the engine already has.
-
-## Alternative considered
-
-**Adopt 2e fully and lean on the CLI to carry the weight.** Rejected: the CLI can carry
-state but not judgment, and talents are judgment. It would also break the session-length
-constraint, which is the one requirement Wyrd cannot negotiate away — a system that needs
-forty minutes per fight cannot be played on a train.
+- Settings must declare **conversion rules** so conversion is repeatable rather than
+  improvised ([`../13-authoring-a-setting.md`](../13-authoring-a-setting.md)).
+- Dropped mechanics survive as prose on the converted entity: a creature with a rage ability
+  is *described* as enraged rather than tracked.
+- Where one genuinely matters, express it as a Wyrd-die outcome or a difficulty band — the
+  two mechanisms the engine reliably applies.
+- There is a **fidelity gap**: a source encounter tuned for its own combat maths will play
+  differently here. Accepted; the danger rating is the tuning dial.

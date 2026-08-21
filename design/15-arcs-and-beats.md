@@ -94,7 +94,7 @@ type: arc
 scale: adventure
 status: stub
 sources: [{work: "...", pages: "all", licence: copyright, path: "..."}]
-tags: [town, investigation, sect]
+tags: [town, investigation, conspiracy]
 ---
 Stub. Not yet decomposed.
 ```
