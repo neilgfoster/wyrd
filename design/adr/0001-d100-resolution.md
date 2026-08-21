@@ -14,7 +14,7 @@ multi-dimensional outcome survive it?
 
 ## The short answer on multi-dimensionality
 
-**It survives untouched, because it is already decoupled.** The `2d6` Wyrd dice contribute
+**It survives, and gets cheaper and cleaner.** The `2d6` Wyrd dice contribute
 nothing to the success calculation — that was the whole point of the third design. They do
 not know or care what resolves success. Swapping `d20 + skill vs 20` for `d100 roll-under`
 changes nothing about them: same 16.7% trigger, same five outcomes, same corruption gating.
@@ -23,13 +23,73 @@ That decoupling was adopted to fix an independence bug. It turns out to have mad
 success mechanic **swappable**, which is a stronger property than it was designed for and is
 worth noting as a general principle: keeping the axes separate keeps them replaceable.
 
-An alternative worth recording and rejecting: a d100 is two d10s, so **doubles are already
-visible** (11, 22, … 00) at 10%. Tempting to use them as the trigger and drop the `2d6`.
-Rejected because on a roll-under system a low double is a *good* roll and a high double a
-*bad* one, so reading direction from the doubled value makes the side effect systematically
-anti-correlated with success — the same class of bug as reading it from the margin. WFRP 4e
-and Zweihander do exactly this (doubles = critical on a success, fumble on a failure), which
-is fine for a crit mechanic and wrong for an independent axis.
+### Better: the units digit *is* the Wyrd die
+
+Under d100 the `2d6` become unnecessary. **The units digit of the roll is already an
+independent d10.**
+
+Success is decided by the whole value against the threshold. The units digit is uniform
+*within* both the success set and the failure set — **exactly uniform at any skill that is a
+multiple of 10**, and never more than 2 percentage points off otherwise:
+
+| Skill | units 0–9 among successes | among failures |
+|---|---|---|
+| 30% | 10 10 10 10 10 10 10 10 10 10 | 10 10 10 10 10 10 10 10 10 10 |
+| 45% | 11 11 11 11 11 9 9 9 9 9 | 9 9 9 9 9 11 11 11 11 11 |
+| 75% | 11 11 11 11 11 9 9 9 9 9 | 8 8 8 8 8 12 12 12 12 12 |
+
+That is *better independence than the `2d6` scheme achieves* — the 2d6 design still carried
+residual skew (a hard-won success took a bane 0.5% of the time against a failure's 6.9%).
+Here the worst case is a 2-point deviation.
+
+So one roll yields three axes with no extra dice at all:
+
+| Axis | Read from |
+|---|---|
+| Success / failure | the whole roll vs `skill%` |
+| Magnitude | Success Levels — tens digit of skill minus tens digit of roll |
+| What else happened | **the units digit** |
+
+Proposed bands, with the natural 10% granularity:
+
+| Units | Result |
+|---|---|
+| 0 | **Chaos Star** |
+| 9 | **Comet** |
+| 1–8 | nothing |
+
+20% frequency, close to the `2d6` scheme's 16.7%, and **widening is a one-line house rule**:
+`0–1` / `8–9` gives 40% with banes and boons added. Corruption gating gets natural
+granularity too — the Chaos Star range widens from `0` to `0–1` to `0–2` as corruption rises.
+
+It reads cleanly in text: *"Stealth 35, rolled 37 — failure by 0 degrees, and the 7 means
+nothing else went wrong."*
+
+### Rejected: reversing the digits
+
+Tempting — a roll of 37 reversed is 73, so it looks like a free second value. It is not
+independent. `reversed ≤ 04` requires units 0 and a low tens, so the original is in
+{00,10,20,30,40} — all low, all successes. `reversed ≥ 95` requires units 9 and a high tens,
+so the original is in {59,69,79,89,99} — all failures. Measured:
+
+| | Chaos Star | Comet |
+|---|---|---|
+| on a success | 7–12% | **0–3%** |
+| on a failure | 0–3% | 7–12% |
+
+Systematically **anti-correlated**, and at skill 45+ a success cannot produce a Comet at all.
+The extremes of the reversed value map straight back onto the extremes of the original —
+the same class of bug as reading the side effect from the margin.
+
+(Worth noting the reversed d100 *does* have a real use in WFRP: it is how 4e determines hit
+location. Wyrd has no hit locations — criticals are by damage type — so the digit is free.)
+
+### Also rejected: the d100's own doubles
+
+A d100 shows doubles (11, 22, … 00) at 10%. On roll-under, a low double is a *good* roll and
+a high double a *bad* one, so reading direction from the doubled value is anti-correlated in
+the same way. WFRP 4e and Zweihander use exactly this (doubles = critical on a success,
+fumble on a failure), which is right for a crit mechanic and wrong for an independent axis.
 
 ## Migration is exact
 
@@ -86,7 +146,8 @@ legible as `d20 + skill vs 20`, and roll-under needs no addition at all.
 
 ## Decision
 
-**Proposed: adopt d100 roll-under**, keeping the `2d6` Wyrd dice exactly as they are.
+**Proposed: adopt d100 roll-under**, and **retire the `2d6` Wyrd dice** — the units digit of
+the roll replaces them, with better independence and no extra dice.
 
 Classification per [`../09-evolution.md`](../09-evolution.md): **Structural** for basic
 tests (representation changes, outcomes identical), **Behavioural** for opposed tests
