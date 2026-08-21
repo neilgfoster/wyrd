@@ -1,7 +1,7 @@
 # Wyrd — the meta-campaign
 
-The layer that makes a chronicle run for years: how the world moves while you are away, how
-arcs are selected rather than scripted, and how a losing struggle is shaped.
+The layer that makes a chronicle run for years: how the world acts when the character is not
+looking, how arcs are selected rather than scripted, and how a long story is shaped.
 
 Provenance for the ideas here is recorded in the private research repo.
 
