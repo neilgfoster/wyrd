@@ -24,8 +24,9 @@ The bootstrap:
    calendar — and, separately, the *campaign* questions: what kind of chronicle do you want,
    what do you want it to be about, what would you like to avoid, how long are your sessions.
 5. **Seeds the world.** Picks an opening situation matching the answers, sets the calendar,
-   selects the Threats that will run in the background, and connects at least one of them to
-   the character ([`05-campaign.md`](05-campaign.md)).
+   selects the threats that will run in the background at the start, and connects at least
+   one to the character. Most threats in a long chronicle are not seeded here — they are
+   provoked or made in play ([`05-campaign.md`](05-campaign.md)).
 6. **Writes and commits** `chronicle.yaml`, the player character, the opening threads,
    `overlay/`, and the first `recap.md`.
 

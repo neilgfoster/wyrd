@@ -216,15 +216,23 @@ An overlay carries only the delta:
 
 ```yaml
 ---
-id: hallam
+id: <entity-id>
 overlay_of: <setting-id>
 ---
 disposition: hunting           # was: unaware
-knows_pc: "believes the PC cut the page"
+knows_pc: "what they now believe about the player"
 memories:
-  - {when: "...", what: "saw the PC leaving at night"}
+  - {when: "<date>", what: "<what they witnessed>"}
 state: alive
+role: nemesis                  # was: bystander
+threat:                        # acquired in play — see 05-campaign.md
+  imminence: 2
+  connection: "the player left them for dead"
 ```
+
+An overlay is also how an entity is **promoted**: a bystander the player wronged becomes a
+nemesis with a `threat` block, without the setting ever changing. The setting keeps the
+person it described; this chronicle records what they became.
 
 Resolution at load is `setting entity + overlay = effective entity`. The overlay alone
 answers *"what has this player done to this world?"* — and it is why one setting can host

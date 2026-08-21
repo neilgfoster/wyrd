@@ -62,12 +62,47 @@ they are elsewhere (they hear about it later, late and partially).
 **If a Threat acts and the player was not there, they must still find out.** A peddler
 brings word; a companion's family writes; the market is talking. Information should arrive **late, incomplete, and sometimes wrong**.
 
+### Where threats come from
+
+A threat is an **aspect**, not a type ([`14-entities.md`](14-entities.md)) — so **any entity
+may acquire one at any time**, and most of the interesting ones are not there at the start.
+
+| Origin | How it arises |
+|---|---|
+| **Seeded** | written at chronicle creation from the character's Drives and Misfortune |
+| **Inherited** | already active in the setting; the character simply walks into it |
+| **Provoked** | the character intervened, and something that had no interest in them now has one |
+| **Made** | someone the character wronged, abandoned or failed acquires an objective about it |
+
+The last two are the ones that make a chronicle feel like consequence rather than content.
+A conspiracy the player disrupted does not shrug; it acquires a `threat` block, an imminence,
+and an objective naming *them*. A companion left for dead becomes a `character` whose role
+changes to nemesis, whose archetype is **fallen-ally** — the one that knows you — and whose
+connection is not a birthplace or a debt but the thing that actually happened.
+
+**Promotion is the mechanism.** Nothing is created: an existing entity gains a `threat`
+block, and its objective is rewritten to point at the player. That is why the archetypes are
+behavioural rather than thematic — they say how something acts once it has decided to act
+against you.
+
+Threats also **fade**. An imminence may fall when the player addresses a cause, and a threat
+whose objective is satisfied or foreclosed stops being one, keeping its entity and its
+history.
+
 ### Threats are personal
 
-Every active Threat must have **at least one connection to the player or a companion** —
-a birthplace, a debt, a relative, an old employer. Derived at chronicle creation from the
-PC's Drive and Misfortune. The thing threatening the world is already the thing that
-marked you.
+Every active threat must have **at least one connection to the player or a companion** —
+a birthplace, a debt, a relative, an old employer, or an event. A threat with no connection
+is scenery, and belongs in the setting rather than in a chronicle's active set.
+
+For seeded and inherited threats that connection is written. For provoked and made ones it
+*is* the history, which is the strongest kind — the thing threatening the world is the thing
+the player did.
+
+Note that a provoked threat escalating is **scale drift**, which some settings suppress
+([`01-principles.md`](01-principles.md)). Under `scale_drift: suppressed` a provoked threat
+grows more *personal* rather than more powerful: it comes for you specifically, rather than
+for the region.
 
 ---
 
