@@ -33,7 +33,7 @@ exit:
 
 place: [[the-shrine]]
 cast: [[the-caretaker]]
-mode: scene                          # scene | story
+mode: played                         # played | summarised
 danger: 2
 written_for: 4                       # party size — a scaling input, never a gate
 length: one-beat
@@ -74,7 +74,7 @@ is twelve stories; four hundred beats is not.
 
 Because arcs contain arcs ([`14-entities.md`](14-entities.md)), entry and exit conditions
 exist at **every** level, not just the leaves. The engine can therefore match threads against
-a whole campaign, an adventure inside it, or a single scene — and insert any of them into any
+a whole campaign, an adventure inside it, or a single situation — and insert any of them into any
 other, since they are the same shape.
 
 A useful consequence: an arc that has never been decomposed can still be *selected*, because

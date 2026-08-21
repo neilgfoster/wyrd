@@ -12,15 +12,21 @@ Structure adapted from prior art; provenance is recorded in the private research
 ```
 Chronicle          years of play
  └ arc             recursive, to whatever depth the material warrants
-   └ arc           (campaign · adventure · scenario · scene are labels, not levels)
+   └ arc           (campaign · adventure · scenario · situation — labels, not levels)
      └ beat        one goal. THE ATOMIC UNIT.
 ```
 
-Arcs nest freely ([`14-entities.md`](14-entities.md)); only the beat is structurally special.
+Arcs nest freely ([`14-entities.md`](14-entities.md)). The distinction that matters is not
+depth but kind:
 
-A **beat** is the smallest complete thing: a single goal, attempted, resolved, persisted.
-Searching the crypt is a beat. Fighting what was in it is a second. Getting out with the
-ledger is a third.
+> **Arcs organise. Beats are played.**
+
+An arc is a container — it has entry and exit conditions, and children. A **beat** is where
+play actually happens: a single goal, attempted, resolved, persisted. Searching the crypt is
+a beat. Fighting what was in it is a second. Getting out with the ledger is a third.
+
+That is why a beat is not simply "an arc with no children". An arc of one beat is still an
+arc, and a beat is never a container.
 
 **A session is one or more beats.** Two beats is a real session. One beat is a real session.
 
@@ -31,13 +37,18 @@ compact — the equivalent of a page break, not a plot point. See the GM contrac
 
 ## The two modes
 
-- **Story mode** — zoomed out, narrated broadly. Travel, a week of work, a search that has
-  no real opposition. Used when order and detail don't matter.
-- **Scene mode** — zoomed in. Opposed actions, sequence matters, the player wants to speak
-  in character.
+A beat is either **played** or **summarised**.
 
-The GM switches by *changing how it narrates*, not by announcing a mode — one session can
+- **Summarised** — zoomed out. Travel, a week of work, a search with no real opposition.
+  Used when order and detail do not matter.
+- **Played** — zoomed in. Opposed actions, sequence matters, the player wants to speak in
+  character.
+
+The GM switches by *changing how it narrates*, never by announcing a mode — one session can
 cover a fortnight of travel in two paragraphs and then spend fifteen minutes in a cellar.
+
+The choice is the GM's and it is not a property of the content: the same beat may be played
+in one chronicle and summarised in another.
 
 ## The Rally — the save point
 
@@ -67,8 +78,7 @@ and writes a `pending:` marker naming the unresolved action, so resumption is ex
 ```
 
 Step 2 matters more than it looks. The elapsed-time pass runs *before* the recap so that the
-recap can say "you have been three weeks in a town; word came that the mill at the town
-burned" — the world having moved is the first thing the player learns.
+recap can say "you have been three weeks away; word came that a mill burned" — the world having moved is the first thing the player learns.
 
 ## Session shapes
 
@@ -76,14 +86,15 @@ Not every session is an adventure. Four legitimate shapes:
 
 | Shape | Length | What it is |
 |---|---|---|
-| **Beat** | 10-20 min | One goal in an ongoing scenario. The default. |
+| **Single beat** | 10-20 min | One goal in an ongoing arc. The default. |
 | **Interlude** | 10 min | Pure character. A conversation, a meal, a companion's problem. No dice, or one. |
 | **Downtime** | 15 min | A downtime phase (below). Advances the calendar. |
-| **Long session** | 45+ min | A whole arc, or its climax. Rare. |
+| **Extended** | 45+ min | Several beats, or an arc's climax. Rare. |
 
-The Interlude is important and easy to neglect. Constraint 7 says most sessions are small;
-a session that is *only* a companion telling you something over bad beer is a good session
-and the engine should say so.
+The Interlude is important and easy to neglect. Where a setting declares a personal scope
+([`01-principles.md`](01-principles.md)), most sessions *should* be small — and a session
+that is only a companion telling you something over bad beer is a real one. The engine
+should say so rather than padding it into an adventure.
 
 Note that shape is the GM's internal read of what the session is likely to be, used for
 pacing. It is not announced either — the player does not get told they are in an Interlude,
@@ -91,7 +102,7 @@ they get told the beer is bad.
 
 ## Downtime
 
-From , where downtime is a phase with its own rules rather than a skip.
+Downtime is a phase with its own rules, not a skip between adventures.
 
 Triggered at the end of a scenario or arc, or when the player asks. Structure:
 

@@ -18,14 +18,14 @@ different things.
 ```
 region → city → district → building → room
 order  → chapter → cell
-campaign → adventure → scene
+campaign → adventure → situation
 ```
 
 **Connection — a graph.** A thing *leads to* another thing, under conditions.
 
 ```
 the great road → the city gate
-the ledger scene → the tavern scene
+the ledger room → the tavern
 ```
 
 Containment is strict and acyclic. Connection is free and may loop. A `wyrd doctor` check
@@ -135,7 +135,7 @@ did not survive contact with real material.
 
 ```yaml
 type: arc
-scale: adventure               # LABEL ONLY: campaign | adventure | scenario | scene
+scale: adventure               # LABEL ONLY: campaign | adventure | scenario | situation
 parent: [[the-long-winter]]
 entry:
   requires_threads: [rural, records]
@@ -151,13 +151,13 @@ cast: [[the-caretaker]]
 
 `scale` is a **human-readable label, not a structural constraint**. An arc contains arcs
 and beats to whatever depth the material warrants. Published material does not fit a fixed
-ladder: some "adventures" are a single scene, some campaigns nest three deep, some scenarios
+ladder: some "adventures" are a single situation, some campaigns nest three deep, some scenarios
 contain sub-scenarios. Recursion means never having to decide whether something is an
 adventure or a scenario — it is an arc, at some scale.
 
 The payoff is recombination: **any arc can be inserted into any arc**, because they are the
 same shape. Entry and exit conditions exist at every level, so thread-matching works at any
-granularity — pull in a whole campaign, or one scene out of it.
+granularity — pull in a whole campaign, or one situation out of it.
 
 ## Trackers
 
