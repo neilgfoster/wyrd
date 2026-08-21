@@ -47,22 +47,17 @@ benefit of the layering in [`02-architecture.md`](02-architecture.md).
 
 ## Version pinning
 
-`chronicle.yaml` already carries `engine_version`. It becomes load-bearing:
-
-```yaml
-engine_version: 0.1.0        # the version this chronicle currently runs under
-created_under: 0.1.0
-migrations:                  # append-only history
-  - {from: 0.1.0, to: 0.2.0, applied: 2026-11-03, class: tuning,
-     note: "taint exposure tiers rebalanced; forward-only"}
-```
+`chronicle.yaml` carries the versions and the migration history, in the shape defined in
+[`06-state.md`](06-state.md) — engine and setting each with a `version` and a
+`created_under`, plus an append-only `migrations` list. Entities carry their own
+`schema_version`, and derived entities the `converted:` rules that produced them.
 
 On load, the engine compares its own version with the chronicle's:
 
 - **equal** → play
 - **chronicle older, only additive changes between** → play, silently adopt
 - **chronicle older, migration required** → refuse to play; report what is needed
-- **chronicle newer than the engine** → refuse to play (never downgrade a chronicle)
+- **chronicle newer than the engine** → refuse to play; never downgrade a chronicle
 
 Refusing to play is correct. Playing a session under half-migrated rules produces exactly
 the kind of quiet inconsistency that is unrecoverable a year later.
@@ -189,8 +184,10 @@ The first few are already implicit in the existing docs and should be extracted:
 
 Three things move earlier than they otherwise would:
 
-1. `engine_version` and `migrations[]` in the schema **from the first commit** — retrofitting
-   provenance is impossible, because the history you want to describe has already happened.
+1. **Version pinning and `migrations[]` in the schema from the first commit** — engine,
+   setting, state format and conversion rules, per [`06-state.md`](06-state.md).
+   Retrofitting provenance is impossible, because the history you would describe has already
+   happened.
 2. Provenance stamping on log entries **from the first beat**, for the same reason.
 3. The first golden chronicle created as soon as `roll`, `damage` and `track` exist — before
    there is any pressure to change them.

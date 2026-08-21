@@ -24,28 +24,100 @@ chronicle/
 An **effective entity** is `setting/<id>` + `overlay/<id>`, or `entities/<id>` if the
 chronicle invented it. Nothing else needs resolving.
 
+## Versioning
+
+Four things evolve independently across a chronicle's life, so four things carry versions
+([`09-evolution.md`](09-evolution.md)):
+
+| What | Where | Why |
+|---|---|---|
+| **The engine** | `chronicle.yaml` | rules change |
+| **The setting** | `chronicle.yaml` | content accumulates |
+| **The state format** | `schema_version`, on every file | fields are added, renamed or moved |
+| **The conversion rules** | `converted:`, on derived entities | a source is re-read differently |
+
+And one thing carries provenance rather than a version: **every recorded outcome states which
+engine produced it**, so an apparent inconsistency years later can be identified as drift or
+as an intended change.
+
+None of this can be retrofitted — the history you would want to describe has already
+happened — so all of it exists from the first commit.
+
 ## `chronicle.yaml`
 
 The one file that is not an entity, because it describes the chronicle rather than anything
 in the world.
 
 ```yaml
+schema_version: 1                 # the state format this chronicle is written in
 name: <chronicle-id>
-engine:  {repo: wyrd, version: 0.4.0}
-setting: {repo: <setting-repo>, version: 0.3.1}
+
+engine:
+  repo: wyrd
+  version: 0.4.0                  # what it runs under now
+  created_under: 0.1.0            # what it began under
+setting:
+  repo: <setting-repo>
+  version: 0.3.1
+  created_under: 0.2.0
+
 calendar: {year: 0, month: null, day: 0}
 era: null
 sessions: 0
 danger_rating: 2
-migrations: []
-intent:                      # from the bootstrap interview; read every session
+
+migrations:                       # append-only; never edited, never reordered
+  - from:    {engine: 0.1.0}
+    to:      {engine: 0.2.0}
+    class:   tuning               # additive | tuning | structural | behavioural | corrective
+    applied: <date>
+    note:    "what changed, and that it applied forward only"
+
+intent:                           # from the bootstrap interview; read every session
   about: null
   avoid: []
   session_length: 20
   lethality: standard
   world_acts_offstage: true
-pending: null                # set if a session stopped mid-beat
+
+pending: null                     # set if a session stopped mid-beat
 ```
+
+`created_under` matters as much as `version`: it is how a reader years later can tell whether
+an early oddity was a bug or simply the rules of the time.
+
+## Entity versioning
+
+Every entity carries the state-format version it was written in, and derived entities also
+carry the conversion rules that produced them:
+
+```yaml
+---
+id: <entity-id>
+type: character
+schema_version: 1
+converted: {rules: 2, on: <date>}   # only on entities derived from source material
+---
+```
+
+This is what lets `wyrd doctor` report **which entities predate a change** and offer
+re-conversion, rather than the engine silently reading old files under new assumptions
+([`08-maintenance.md`](08-maintenance.md)). Re-conversion is a *structural* change: the
+representation moves, the history does not.
+
+An entity with no `schema_version` is treated as version 1 and flagged, not rejected.
+
+## Log provenance
+
+Every logged outcome stamps what produced it:
+
+```json
+{"beat": 412, "verb": "roll", "engine": "0.3.1", "setting": "0.2.0",
+ "roll": 23, "success": true, "degrees": 1, "wyrd": "none"}
+```
+
+Cheap to write, and it is what makes a decade of log falsifiable. Without it, an
+inconsistency between session 40 and session 400 is unattributable.
 
 ## The player's character
 
