@@ -1,8 +1,8 @@
 # Wyrd — chronicle maintenance
 
 A chronicle is a growing, mostly-append store that must stay correct and cheap to load for
-years. Left alone it rots in predictable ways: the entity store accumulates one-line characters, threads
-pile up unresolved, the same person appears under three spellings, derived fields drift from
+years. Left alone it rots in predictable ways: the entity store accumulates one-line
+characters, threads pile up unresolved, the same person appears under three spellings, derived fields drift from
 their sources, and the always-loaded tier quietly outgrows its budget until session start
 becomes expensive.
 
@@ -62,9 +62,9 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 - **invariants** from [`06-state.md`](06-state.md): `career_skill` is the lowest career
   skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Spent iff
   `resolve <= taint and taint > 0`; `tension` in 0..6; transformations vs `hidden_threshold`
-- **referential integrity**: every thread hook, threat connection, parent and link resolves to something that exists
-- **status contradictions**: a character marked `dead` who is also `with-party`; a `lost` PC
-  still holding Fortune; a resolved thread still hot
+- **referential integrity**: every thread hook, threat connection, `parent` and `[[link]]`
+  resolves to something that exists
+- **status contradictions**: a character marked `dead` who is also `with-party`; a `lost` character still holding Fortune; a resolved thread still hot
 - **calendar sanity**: no event dated before the chronicle began; no threat activation in
   the future
 - **version sanity**: every file carries a `schema_version` the engine understands; no entity
@@ -77,7 +77,7 @@ proposed.
 ### 2. `derived` — recompute what is computed
 
 Derived fields are cached for cheap loading and must be rebuilt, not trusted:
-`career_skill`, `conditions`, `fear_points`, `fortune.max`, thread `heat` after decay,
+`career_skill`, `conditions`, `dread`, `fortune.max`, thread `heat` after decay,
 entity summary index, `viable_successor` flags.
 
 Always safe. Always automatic.
@@ -95,13 +95,15 @@ Always safe. Always automatic.
 - **orphans**: entities never referenced by any thread, threat, log or party member —
   reported, proposed for demotion into a `minor/` bucket rather than deletion
 - **stubs**: entries with a name and nothing else — flagged for enrichment at next mention
-- **duplicates**: near-identical entries — the same person under two spellings and a nickname. Detection is deterministic (normalised name distance, shared threads,
+- **duplicates**: near-identical entries — the same person under two spellings and a
+  nickname. Detection is deterministic (normalised name distance, shared threads,
   overlapping `last_seen`); **merging is a proposal**, because two similar names may be two
   real people, and the engine cannot know.
 
 ### 5. `budget` — the always-loaded tier stays small
 
-Session start loads the always-tier ([`06-state.md`](06-state.md)). That tier has a **budget**, and `doctor` reports against it:
+Session start loads the always-tier ([`06-state.md`](06-state.md)). That tier has a
+**budget**, and `doctor` reports against it:
 
 | File | Target |
 |---|---|
@@ -115,14 +117,13 @@ report names the specific offender rather than saying "too big".
 
 ### 6. `logs` — rotation and archive
 
-Session logs rotate into per-era archives (`log/archive/the-quiet-years.jsonl`), compressed
+Session logs rotate into per-era archives (`log/archive/<era>.jsonl`), compressed
 with stdlib `gzip`. Nothing is ever deleted; the raw record is the audit trail that makes
 everything else safe to compact.
 
 ### 7. `continuity` — the one that needs a model
 
-The only genuinely hard check: does the entity store contradict the log? An NPC who died in session
-4 and speaks in session 9. A location described as burned and later intact. A thread marked
+The only genuinely hard check: does the entity store contradict the log? A character who died in one session and speaks in a later one. A location described as burned and later intact. A thread marked
 resolved whose resolution never appears.
 
 This is bulk structured comparison against files that already exist, with a right answer —
@@ -132,7 +133,7 @@ archive, and **emits proposals only**:
 ```json
 {"code": "CONTINUITY_CONTRADICTION", "severity": "revision",
  "detail": "a character marked dead speaks in a later log entry",
- "candidates": ["the entity is wrong", "log is a different Otto", "he survived"]}
+ "candidates": ["the entity is wrong", "the log means someone else", "they survived"]}
 ```
 
 It never picks. The player does, or the GM does with the player watching.
@@ -164,7 +165,7 @@ Optimise is always Repair-tier: it may not change any fact.
 | End of an era | full `doctor --propose`, `optimise`, git tag |
 | Monthly (cron) | full `doctor --propose` + `continuity`; report to the player, apply nothing |
 
-The monthly pass is the one that suits a lab server: it can run unattended precisely
+The monthly pass is the one that suits an always-on machine: it can run unattended precisely
 *because* Revision-tier changes only ever propose. The player comes back to a list, not a
 rewritten history.
 
