@@ -7,8 +7,8 @@
 ## Summary
 
 Create `design/03a-tables.md`: the engine's table index and the shared conventions every table
-family must satisfy. It settles five structural questions once — the roll, the out-of-range
-behaviour, the row schema, the override contract, and versioning — so that issue #15's four sibling
+family must satisfy. It settles five structural questions once — the roll, why no total can fall
+off either end, the row schema, the override contract, and versioning — so that issue #15's four sibling
 children produce one coherent system rather than four independently-reasonable ones.
 
 The approach, from [research.md](./research.md): the engine fixes the **row schema and the lookup
@@ -57,9 +57,9 @@ correction, one new ADR, one index row.
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-`.specify/memory/constitution.md` is an **unfilled Spec Kit template** — every principle is still a
-`[PRINCIPLE_N_NAME]` placeholder. It carries no governance. The effective constitution for this
-repository is `CLAUDE.md` plus the accepted ADRs, and the gate is evaluated against those.
+`.specify/memory/constitution.md` holds no principles of its own: it points at `CLAUDE.md` and the
+accepted ADRs, which are where this repository's governance actually lives. The gate below is
+evaluated against those.
 
 | Gate | Source | Status |
 |---|---|---|
@@ -77,9 +77,10 @@ repository is `CLAUDE.md` plus the accepted ADRs, and the gate is evaluated agai
 what Phase 0 settled; the one genuine addition — the `table` key on a recorded outcome — extends the
 provenance shape `design/09-evolution.md:105` already defines rather than creating a new one.
 
-**Note on the constitution file itself**: filling it in is real work but is not this feature's
-scope, and inventing principles here would be exactly the "stale but plausible specification" fault
-`CLAUDE.md` warns about. Flagged for the operator rather than silently done.
+**Note on the constitution file**: it was an unfilled Spec Kit template when this plan was first
+written. On the operator's decision it became a pointer to `CLAUDE.md` and the ADRs rather than a
+filled-in third list of principles — a third would have drifted from both, and neither copy would
+have read as wrong.
 
 ## Project Structure
 
