@@ -51,11 +51,33 @@ not append changelogs or leave "previously we…" notes in them. Git holds the h
   setting draws. Never bake a register into a mechanic's description.
 - Mechanic names are **defaults**; settings rename them, and renames are presentation-only.
 
-## Backlog
+## Work is tracked as GitHub issues, via kord
 
-Open work lives in [`BACKLOG.md`](BACKLOG.md) with stable identifiers — `G` gaps, `B` build,
-`D` defects, `S` settings, `R` research, `H` housekeeping. Reference them in commits.
-Identifiers are permanent; closed items move to the bottom rather than being deleted.
+There is **no backlog file**. Open work lives on the board, because two lists of the same work
+drift — which is the fault class most of this design has been corrected for.
+
+- **Board:** the `wyrd` GitHub Project (v2). It is not repo-scoped, so it spans the engine,
+  the settings and the research repo.
+- **Epics** are `kord-epic`-labelled issues **in this repo**, which is the meta repo. An epic may
+  have children in any `wyrd-*` repository.
+- **Features** are `kord-feature`-labelled issues raised **in the repo that owns the work**.
+- Epics **nest recursively** — a child is either a further epic or a feature-sized issue. There is
+  no level above an epic.
+
+| To | Use |
+|---|---|
+| log a requirement bigger than one feature | `kord-epic-create` |
+| break one down into children | `kord-epic-decompose` |
+| find one again | `kord-epic-list` |
+| log feature-sized work | `kord-feature-create` |
+| take a feature from spec to open PR | `kord-loop-feature` |
+| see what is actually actionable now | `kord-board-help` |
+
+`kord-install --target github-issues` has been run here; it owns the three `kord-*` labels and the
+issue templates. Do not hand-edit those.
+
+**Reference the issue number in commits**, and let the issue carry the reasoning that does not
+belong in a design document.
 
 ## Deterministic over inference
 

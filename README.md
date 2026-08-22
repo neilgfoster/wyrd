@@ -59,6 +59,9 @@ interfering.
 Ground rules are in [CLAUDE.md](CLAUDE.md) — decision records, the setting-agnostic rule,
 and what may not enter this repository.
 
+Open work is tracked as GitHub issues rather than in a file. Epics live in this repo and may
+have children in any `wyrd-*` repository; the board spans them all.
+
 ## Read in this order
 
 | Doc | |

@@ -3,3 +3,8 @@
 *.txt.gz
 cookies*.txt
 .obsidian/workspace*
+# --- kord: GitHub Issue Tracking substrate ---
+.kord/
+.github/ISSUE_TEMPLATE/kord-epic.md
+.github/ISSUE_TEMPLATE/kord-feature.md
+# --- end kord: GitHub Issue Tracking substrate ---
