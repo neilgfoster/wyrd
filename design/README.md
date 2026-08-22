@@ -42,3 +42,4 @@ records that exist mark the places where the obvious answer was wrong.
 | [0005](adr/0005-deterministic-over-inference.md) | Anything with a correct answer is computed, not inferred |
 | [0006](adr/0006-state-is-entities.md) | State is entities; there is no second storage model |
 | [0007](adr/0007-game-time.md) | Game time is independent of real time |
+| [0008](adr/0008-tables-declare-their-own-roll.md) | The engine fixes the row schema; each table family declares its own roll |

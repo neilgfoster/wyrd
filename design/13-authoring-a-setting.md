@@ -163,6 +163,9 @@ overridable is a **closed set published by the engine** — an override naming a
 a load error, and renames are presentation-only, never reaching state. See
 [`07-tooling.md`](07-tooling.md).
 
+What a replacement table may and may not change, and what it must satisfy to load, is in
+[`03a-tables.md`](03a-tables.md).
+
 Overlays are declared in `setting.yaml` and loaded after engine defaults, exactly like
 `houserules.yaml` for a chronicle.
 

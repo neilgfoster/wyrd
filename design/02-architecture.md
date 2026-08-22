@@ -88,7 +88,8 @@ would a chronicle change it?*
 ### What the engine holds
 
 - `rules/` — resolution, combat, the tracks, fate, fear, advancement
-- `tables/` — criticals, aftermath, transformations, afflictions, oracles
+- `tables/` — criticals, aftermath, transformations, afflictions, oracles, to the conventions in
+  [`03a-tables.md`](03a-tables.md)
 - `contract.md` — the GM contract from [`01-principles.md`](01-principles.md), in the form
   loaded every session
 - `settings.yaml` — the catalogue of known settings

@@ -112,7 +112,8 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
   A minimum of 1 always gets through.
 - **Telling blow:** win by 3 or more degrees and the damage doubles.
 - **Critical** when damage takes a combatant **below 0 Stamina**. Roll `1d6 + points below
-  zero` on the table for the damage type. High results are lethal.
+  zero` on the table for the damage type ([`03a-tables.md`](03a-tables.md)). High results are
+  lethal.
 - Weapons are **casual** or **martial**. Martial weapons mark the bearer and are illegal in
   most civilised places — a social constraint that does real work.
 
@@ -120,7 +121,8 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 character plus companions can face a crowd without a roll per body.
 
 **Death is deferred.** Nothing resolves during the fight; a combatant who drops is *out of
-action*. Afterwards, roll on the **Aftermath** table. Most results are a lasting mark rather
+action*. Afterwards, roll on the **Aftermath** table ([`03a-tables.md`](03a-tables.md)). Most
+results are a lasting mark rather
 than death — a permanent wound, a new enemy, capture, a disfigurement that frightens people,
 a wound that recurs before every future fight. Deferred resolution is how a single-character
 chronicle survives lethal combat.
@@ -202,9 +204,9 @@ their Drives and Misfortune. It names *how* they fall — the direction, not onl
 
 ### Thresholds and the hidden count
 
-Crossing a Taint threshold forces a **Transformation** (body) or an **Affliction** (mind).
-The result consumes Taint equal to its severity, dropping the character back below the
-threshold; if still over, roll again.
+Crossing a Taint threshold forces a **Transformation** (body) or an **Affliction** (mind),
+rolled on the tables for each ([`03a-tables.md`](03a-tables.md)). The result consumes Taint equal
+to its severity, dropping the character back below the threshold; if still over, roll again.
 
 On the **first** Transformation the engine **secretly rolls the hidden threshold** — how many
 this character can endure. **The player never sees it.** Written to state once, so later
@@ -226,7 +228,8 @@ Three tiers of mental harm, distinguished by how long they last.
 - **Trauma** — long-term and sticky. **1 per critical taken**, 1 per failed Terror test, more
   at the GM's discretion for genuinely terrible events.
 - **Afflictions** — permanent. At **6+ Trauma**, test on every further point; on a failure
-  take an Affliction and **lose 6 Trauma**. The track sawtooths, so a character can break
+  take an Affliction ([`03a-tables.md`](03a-tables.md)) and **lose 6 Trauma**. The track
+  sawtooths, so a character can break
   many times across years.
 
 **Fear** prevents pressing an attack; **Terror** routs, and costs a Trauma point on a failure.
