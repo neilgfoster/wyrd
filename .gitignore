@@ -15,3 +15,7 @@ cookies*.txt
 .specify/
 .claude/skills/speckit-*/
 # --- end kord: GitHub Spec Kit substrate ---
+
+# Python bytecode from running the verification scripts in specs/.
+__pycache__/
+*.py[cod]

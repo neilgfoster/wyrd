@@ -29,12 +29,21 @@ perfectly well and was wrong in two ways (see [research.md](./research.md) D2).
 The script holds the rows separately from the prose, so they can drift. Confirm they agree:
 
 ```bash
-grep -oE '^\| [0-9]+([–-][0-9]+)?\+? \|' design/03a-2-aftermath.md
-grep -nE '^\s+\([0-9]+,' specs/002-aftermath-table/check_aftermath.py
+# The document's ranges. They are bold, so the pattern must expect that.
+grep -oE '^\| \*\*[0-9]+(–[0-9]+|\+)\*\*' design/03a-2-aftermath.md | tr -d '|* '
+
+# The script's ranges.
+grep -oE '^    \([0-9]+, (None|[0-9]+)' specs/002-aftermath-table/check_aftermath.py \
+  | sed -E 's/^    \(//; s/, None/+/; s/, /–/'
 ```
 
-Every range in the document must appear in `ROWS`, and vice versa. A row present in one and not the
-other is exactly the staleness `CLAUDE.md` says tables breed.
+The two lists must be identical, in order. A row present in one and not the other is exactly the
+staleness `CLAUDE.md` says tables breed.
+
+> An earlier version of this step matched an unbolded pattern. It found none of the eight ranges,
+> matched five numbers from the *Dropped by* column of the distribution table instead, and reported
+> a clean pass either way — a drift guard that could not detect drift. Check that a check fails when
+> it should: edit one range in the document and confirm this step notices.
 
 ## 3. Every promised outcome shape has a row
 
@@ -44,9 +53,17 @@ other is exactly the staleness `CLAUDE.md` says tables breed.
 for key in out-of-action lasting-wound left-for-dead new-enemy taken \
            disfigured recurring-wound death; do
   printf '%-18s ' "$key"
-  grep -qF "$key" design/03a-2-aftermath.md && echo present || echo "MISSING"
+  if grep -qF "$key" design/03a-2-aftermath.md \
+  && grep -qF "$key" specs/002-aftermath-table/check_aftermath.py; then
+    echo present
+  else
+    echo "MISSING"
+  fi
 done
 ```
+
+Each key must appear in **both** the document's table and the script's `ROWS` — a key in one alone
+is the same drift step 2 checks for, from the other direction.
 
 ## 4. Every mechanic named is one the engine already publishes
 

@@ -82,16 +82,20 @@ A critical describes the wound as it lands. Aftermath describes what the charact
 
 ## The table
 
-| Range | Effect | Description |
-|---|---|---|
-| **6–30** | nothing lasting | You wake when it is over. |
-| **31–52** | one wound record | Something did not mend. |
-| **53–66** | one wound record; the character wakes elsewhere, without what they carried | You wake somewhere else, and your belongings are gone. |
-| **67–78** | one wound record; a `character` entity with `role: nemesis` | Someone made a point of you. |
-| **79–88** | captured; a `thread` entity opens | You wake held. |
-| **89–98** | one wound record, effect `dread: +1` | Your face is not what it was. |
-| **99–110** | one wound record with `recurring: true`, effect `skill: -10` | It wakes before every fight after this one. |
-| **111+** | death | You do not get up. |
+| Range | Key | Effect | Description |
+|---|---|---|---|
+| **6–30** | `out-of-action` | nothing lasting | You wake when it is over. |
+| **31–52** | `lasting-wound` | one wound record | Something did not mend. |
+| **53–66** | `left-for-dead` | one wound record; the character wakes elsewhere, without what they carried | You wake somewhere else, and your belongings are gone. |
+| **67–78** | `new-enemy` | one wound record; a `character` entity with `role: nemesis` | Someone made a point of you. |
+| **79–88** | `taken` | captured; a `thread` entity opens | You wake held. |
+| **89–98** | `disfigured` | one wound record, effect `dread: +1` | Your face is not what it was. |
+| **99–110** | `recurring-wound` | one wound record with `recurring: true`, effect `skill: -10` | It wakes before every fight after this one. |
+| **111+** | `death` | death | You do not get up. |
+
+The **key** is what a recorded outcome names, so a reader years later can resolve a log line to a
+row. It is engine vocabulary and never rendered to the player; the description is what is said at
+the table.
 
 Descriptions are the engine's defaults and say only what happened. What it *feels* like is the
 setting's ([`13-authoring-a-setting.md`](13-authoring-a-setting.md)) — a setting may rewrite every
