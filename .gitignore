@@ -1,0 +1,5 @@
+# Nothing derived from source material, and nothing transient, belongs here.
+*.pdf
+*.txt.gz
+cookies*.txt
+.obsidian/workspace*

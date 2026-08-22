@@ -1,55 +1,62 @@
-# Queued work
+# Roadmap
 
-## Housekeeping
+Design is complete; nothing is implemented. This is the order to build in.
 
-- `wyrd-40k` is superseded by the per-line setting repos and needs deleting.
-  `gh` lacks the scope here: `gh auth refresh -h github.com -s delete_repo`
-- Four transient corpus download failures to retry; five source PDFs appear genuinely
-  corrupt in the collection.
+## 1. Skeleton
 
-## Corpus — extraction finished 2026-08-21
+The `TOOLS` catalog and `describe`, the state layer with atomic writes and invariant
+validation, and three verbs: `roll`, `damage`, `track`.
 
-**Complete and parked. Deliberately not taken further** — the plan is to review this output
-and build a setting from it *after* the engine exists.
+Version pinning, `migrations[]` and provenance stamping exist **from the first commit** —
+they cannot be retrofitted, because the history they would describe has already happened
+([`design/09-evolution.md`](design/09-evolution.md)).
 
-Output is committed to the private research repo under `corpus/` — it lives there rather
-than in a setting repo because 209 of the 443 documents are a magazine run spanning several
-settings ([design/02-architecture.md](design/02-architecture.md)). 443 documents, 80.5 M characters. Two known gaps recorded in its
-README: 10 failures, and **57 files skipped by a slug-collision bug** in the pipeline's
-resumability check.
+Prove one fight and one track threshold round-trip through a save, then freeze it as the
+**first golden chronicle**.
 
-When picked up:
+## 2. Ruleset
 
-1. **Fix the slug collision** — hash the full path into the output name — and re-run for the
-   missing 57. The pipeline is resumable, so only those are fetched.
-2. **Retry the 5 transient download failures.**
-3. **Clean the corpus.** `clean.py` is written and tested; run it over the extracted text to
-   strip OCR noise from full-page art.
+Combat, criticals, Aftermath, the tracks, Fate, Fear. Pure functions in `rules.py`, pure data
+in `tables.py`, tested without fixtures ([`design/07-tooling.md`](design/07-tooling.md)).
 
-2. **Build the deterministic indexes** — `documents`, `nouns`, `terms`, `tables`
-   ([design/11-corpus-index.md](design/11-corpus-index.md)). Four single passes, no model.
+## 3. One setting, minimally
 
-   Then the `arcs` index, which is the large one: selection inputs checkable against the
-   player character, plus `requires_threads` / `emits_threads` so the campaign tree emerges
-   from thread matching rather than being authored. Library-wide. Haiku-tier, lazy, cached.
+Enough to run a single arc — voice, a career graph, some gear, a handful of entities. Not a
+complete world ([`design/13-authoring-a-setting.md`](design/13-authoring-a-setting.md)).
 
-3. **Extract setting data.** All sources are digital with text layers — no OCR needed, the
-   cost is parser tuning:
-   - **Careers** — done for one setting (201 records). Known gaps recorded in the file.
-   - **Gear and prices**, **creatures**, **transformation and taint tables** — same shape.
+## 4. Play it
 
-4. **Mine the older adventure lines** for rules that never made their core books, and fold
-   what is generalisable into the engine rather than a setting.
+One arc, three sessions. **This is the real test**, and the first playtest already showed why:
+it corrected the resolution mechanic three times inside two rolls, none of which was visible
+on paper.
 
-5. **Decide the two open engine questions**, both raised by reading the 40k line:
-   - split companions into a rich narrative layer and a deliberately thin mechanical one
-   - give the party track a positive direction, and Taint a direction as well as a magnitude
+## 5. Memory tiers and compaction
 
-## Then
+Driven by what actually broke in step 4, not by what was predicted in step 1.
 
-- **Engine skeleton** — the `TOOLS` catalog, `describe`, the state layer with atomic writes
-  and invariant validation, and `roll` / `damage` / `track`. Freeze the first golden
-  chronicle immediately ([design/09-evolution.md](design/09-evolution.md)).
-- **A journey subsystem.** One planned setting needs travel played rather than narrated. Per
-  the hard rule, that goes in the **core**, generalised — not in the setting.
-- **Resume the playtest.** Its chronicle lives in its own repository.
+## 6. Campaign layer
+
+Threats, threads, elapsed time, arc selection against live threads.
+
+## 7. A second setting
+
+In a different genre, to prove the layer boundary holds rather than assuming it.
+
+---
+
+## Known engine gaps
+
+Recorded so they are not rediscovered:
+
+- **No journey subsystem.** A setting whose story is travel needs journeys *played* rather
+  than summarised. Per the hard rule this belongs in the core, generalised, and never in a
+  setting ([`design/13-authoring-a-setting.md`](design/13-authoring-a-setting.md)).
+- **Companions may want two layers** — a rich narrative one and a deliberately thin
+  mechanical one — rather than the single layer described today
+  ([`design/04-session.md`](design/04-session.md)).
+- **The party track runs one way.** Tension rises toward a break; there is no positive
+  counterpart a functioning party can spend.
+- **Taint has magnitude but only a nominal direction.** Fault Line names the path; nothing
+  yet makes the direction mechanically distinct.
+
+Each is a change to the engine, and each wants deciding rather than assuming.
