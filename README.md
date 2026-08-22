@@ -54,6 +54,11 @@ version and a setting version**, both copied in, so nothing breaks when upstream
 two chronicles never share a repository, so they can be played in parallel without
 interfering.
 
+## Contributing
+
+Ground rules are in [CLAUDE.md](CLAUDE.md) — decision records, the setting-agnostic rule,
+and what may not enter this repository.
+
 ## Read in this order
 
 | Doc | |
