@@ -4,11 +4,12 @@
 
 ## Context
 
-[`../03-rules.md`](../03-rules.md) names five kinds of table — criticals, aftermath,
-transformations, afflictions, oracles — and defines none of them. [`../02-architecture.md`](../02-architecture.md)
-and [`../07-tooling.md`](../07-tooling.md) both promise them as pure, setting-neutral, overridable
-data. Nothing stated the shape of a row, how a result was looked up, or what a setting was allowed
-to replace.
+[`../02-architecture.md`](../02-architecture.md) and [`../07-tooling.md`](../07-tooling.md) both
+commit the engine to five families of table — criticals, aftermath, transformations, afflictions,
+oracles — as pure, setting-neutral, overridable data. Four of them are rolled by rules in
+[`../03-rules.md`](../03-rules.md); oracles have no rule that rolls them yet. None of the five was
+defined. Nothing stated the shape of a row, how a result was looked up, or what a setting was
+allowed to replace.
 
 Five families were about to be written by five separate pieces of work. Without a structural answer
 first, they would have produced five dialects — each internally coherent, which is the kind of
@@ -19,8 +20,8 @@ So the question was not *what should the tables contain*. It was: **how much doe
 ## Decision
 
 The engine fixes **the row schema and the lookup rule**. Every row in every family carries a range,
-an effect and a description; every lookup rolls, applies a modifier, finds the containing row, and
-clamps at both ends.
+an effect and a description; every lookup rolls, applies a modifier, and finds the containing row —
+of which there is always exactly one, because coverage is required at load.
 
 The engine does **not** fix the die. Each family declares its own roll, its own modifier source, and
 whether its results repeat or are unique to a character. Those declarations live in the family's own

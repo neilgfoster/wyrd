@@ -65,7 +65,7 @@ Getting this wrong makes every later task index the wrong thing.
 **Goal**: A sibling author can write their family's file without inventing any structural decision.
 
 **Independent test**: Give the document to a reader who has seen none of the sibling issues; they
-can state the row fields and the above-the-top-row behaviour without guessing (SC-001).
+can state the row fields and why a total can never fall off either end, without guessing (SC-001).
 
 - [x] T004 Write the **index** section of `design/03a-tables.md`: one row per family, each with its
       name, its roll, its uniqueness, and its own `design/03a-N-*.md` file. Those files do not exist
@@ -75,7 +75,8 @@ can state the row fields and the above-the-top-row behaviour without guessing (S
       SC-003).
 - [x] T005 Write the **how a table is rolled and read** section: that the die and the modifier are
       family properties declared in the family's own file, not engine-wide (FR-002, research.md R1);
-      the clamping rule at both ends and why contiguity means there is no third case (FR-003, R2);
+      why there is no out-of-range case at all — contiguity, a floor at the family's lowest total,
+      and an open-topped last row, all required at load (FR-003, R2);
       the reroll rule for a unique-per-character family and the exhaustion outcome when no unheld
       result remains (FR-004, FR-004a, R5).
 - [x] T006 Write the **row schema** section: `range`, `effect`, `description` on every row, and what

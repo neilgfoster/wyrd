@@ -1,8 +1,11 @@
 # Tables
 
-The ruleset in [`03-rules.md`](03-rules.md) names five kinds of table and defines none of them. This
-document is where they are defined: the conventions every table satisfies, and the index of the
-families themselves.
+The engine holds five families of table ([`02-architecture.md`](02-architecture.md)) and, until
+this document, defined none of them. Four are rolled by rules in
+[`03-rules.md`](03-rules.md) — criticals, aftermath, transformations, afflictions. The fifth,
+oracles, has no rule that rolls it yet; it is a family the architecture commits to and the ruleset
+has not reached. This document is where all five are defined: the conventions every table satisfies,
+and the index of the families themselves.
 
 The conventions exist so that five families written at different times behave the same way. The
 engine fixes **the row schema and how a result is looked up**. It does not fix the die — each family
@@ -51,11 +54,15 @@ modifier says so.
 3. Apply the row's effect. Say its description.
 4. Record the outcome with the table's key.
 
-**Both ends clamp.** A total above the highest row reads the highest row; a total below the lowest
-reads the lowest. Because a table's ranges are contiguous, there is no third case — nothing can fall
-between two rows. Clamping is not a fallback but the intended behaviour: the modifier on a critical
-is unbounded, so a hard enough blow will always run off the end of any finite table, and the top row
-is already the worst thing the family has to say.
+**Every total lands on a row.** There is no out-of-range case, because a table is not allowed to
+have one: its ranges are contiguous, they start at the family's lowest possible total, and the last
+row is **open at the top**. A table that leaves a total unanswered does not load.
+
+The open top is what makes this work rather than a convenient assumption. A critical's modifier is
+unbounded — a hard enough blow would run off the end of any table with a highest row — so the last
+row absorbs everything above it, which is also what the ruleset already means by *high results are
+lethal* ([`03-rules.md`](03-rules.md)). The worst row is the worst the family has to say, and it
+says it however far past the end the total goes.
 
 **Repeated results.** A family declares itself *repeatable* or *unique per character*. Taking the
 same wound twice is ordinary, so criticals repeat. Carrying the same permanent change twice is not,

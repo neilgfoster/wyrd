@@ -59,8 +59,8 @@ above the highest row. Both answers are found in the document.
    rolled on and where its modifier comes from, **Then** the document states both, and states them
    once rather than per family.
 2. **Given** a roll resolves above the highest row or below the lowest, **When** the author consults
-   the conventions, **Then** the document states the clamping behaviour without leaving it to the
-   family.
+   the conventions, **Then** the document states that this cannot happen and why, without leaving
+   it to the family.
 3. **Given** a family needs a field the shared schema does not define, **When** the author consults
    the conventions, **Then** the document states whether family-specific fields are permitted and
    how they are declared.
@@ -135,8 +135,9 @@ which table produced it and that it will not be recomputed.
   tense describing the engine's table conventions and indexing every table family.
 - **FR-002**: The document MUST state how a table is rolled: the die used, where the modifier comes
   from, and that the die and modifier are properties of the family rather than of an individual row.
-- **FR-003**: The document MUST state the behaviour at both ends of a table — what happens when a
-  modified roll exceeds the highest row's range and when it falls below the lowest.
+- **FR-003**: The document MUST state that there is no out-of-range case and why — that ranges are
+  contiguous, start at the family's lowest possible total, and end in a row open at the top, all
+  required at load — so no total can fall above the highest row or below the lowest.
 - **FR-004**: The document MUST state that each family declares whether its results are
   unique-per-character or repeatable, that a unique family rerolls when an already-held result comes
   up, and that a repeatable family does not.

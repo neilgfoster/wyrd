@@ -26,7 +26,7 @@ rows:
   - range: [3, 4]
     effect: <a mechanic the engine knows>
     description: <what is said at the table>
-  - range: [5, null]          # null means open at the top; the roll clamps here
+  - range: [5, null]          # null means open at the top: every higher total reads this row
     effect: <a mechanic the engine knows>
     description: <what is said at the table>
 ```
@@ -61,8 +61,8 @@ script cannot settle, so it stays a review obligation.
 
 1. Roll the family's `roll`.
 2. Add the family's `modifier`.
-3. Find the row whose `range` contains the total. Above the highest, read the highest; below the
-   lowest, read the lowest. Contiguity guarantees there is no third case.
+3. Find the row whose `range` contains the total. There is always exactly one: the ranges are
+   contiguous, they start at the family's lowest possible total, and the last is open at the top.
 4. If the family is `unique-per-character` and the character already holds this result, roll again.
    If no result remains that they lack, apply the family's `exhausted` outcome.
 5. Apply `effect`. Say `description`.

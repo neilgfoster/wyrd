@@ -29,7 +29,7 @@ Read `design/03a-tables.md` and confirm each of these is stated, not implied:
 | Question | Requirement |
 |---|---|
 | What die, and where does the modifier come from? | FR-002 |
-| What happens above the top row and below the bottom? | FR-003 |
+| Why can no total fall above the top row or below the bottom? | FR-003 |
 | What happens on a duplicate, and when the table is exhausted? | FR-004, FR-004a |
 | What fields does every row carry? | FR-005 |
 | Where does a table live, and what is it called? | FR-008 |

@@ -32,7 +32,7 @@
 ## Notes
 
 - The deliverable is a design document, so "no implementation details" is read as: the spec states
-  what the conventions must settle, not what they settle it as. Choosing the die, the clamping rule
+  what the conventions must settle, not what they settle it as. Choosing the die, the coverage rule
   and the pin shape is planning work, not specification work.
 - FR-014 and the Assumptions section carry the two scope boundaries the issue was explicit about:
   no table contents, no `tables.py`.

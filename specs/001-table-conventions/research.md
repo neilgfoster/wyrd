@@ -37,15 +37,23 @@ comparable at a glance.
 
 ## R2. What happens above the highest row and below the lowest?
 
-**Decision**: Clamp at both ends. A modified roll above the highest row's range reads the highest
-row; below the lowest, the lowest. A table's ranges must be contiguous, so there is no gap to fall
-into between them.
+**Decision**: There is no out-of-range case, because a table may not have one. Ranges are
+contiguous, they start at the family's lowest possible total, and the **last row is open at the
+top**. A table that leaves a total unanswered does not load.
 
 **Rationale**: The critical roll is `1d6 + points below zero`, and points below zero is unbounded —
-a large enough blow will always exceed any finite table. `design/03-rules.md:115` says "high results
-are lethal", which means the top row is already the worst outcome the family has; clamping to it is
-the behaviour the rules already assume. The alternative, an error, would make the engine fail
-precisely at the most dramatic moment in a fight.
+a large enough blow will always exceed any table with a bounded highest row. An open top absorbs it,
+which is what `design/03-rules.md:115` already means by "high results are lethal": the top row is
+the worst outcome the family has, and it applies however far past the end the total goes.
+
+Making coverage a **load-time requirement** rather than a lookup-time fallback is what keeps this
+deterministic (ADR 0005). A table that cannot answer a total is a table that is wrong, and it is
+caught when it loads rather than at the most dramatic moment in a fight.
+
+**Superseded reading**: an earlier draft of these conventions said the lookup *clamped* at both ends
+while also requiring the last row to be open at the top. Those cannot both hold — if the top is
+open, nothing can exceed it and the clamp is unreachable. One mechanism, stated once: coverage is
+required, so lookup is total.
 
 **Alternatives considered**:
 
@@ -55,9 +63,9 @@ precisely at the most dramatic moment in a fight.
 - *Roll again and combine.* Rejected as a stacking mechanic the ruleset does not have, and one that
   would make the very worst blows slower to resolve rather than more decisive.
 
-**Consequence**: the conventions state clamping once, and state that contiguity is a load-time
-requirement on every table including an overriding one — which is what makes clamping the *only*
-out-of-range case.
+**Consequence**: the conventions state coverage as a load-time requirement on every table,
+including an overriding one — which is what makes "there is no out-of-range case" a guarantee
+rather than a hope.
 
 ---
 

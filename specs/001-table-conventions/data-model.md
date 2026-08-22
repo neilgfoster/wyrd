@@ -38,8 +38,8 @@ One rollable list. Addressed by a key, held in its own file (R6).
 
 1. `key` is one the engine publishes.
 2. Row ranges are contiguous and non-overlapping.
-3. Ranges span from the family's rollable minimum upward; the highest row is open at the top by
-   virtue of clamping (R2).
+3. Ranges span from the family's rollable minimum upward, and the highest row is open at the top —
+   which is what makes every total land on exactly one row (R2).
 4. Every row carries the shared fields plus every field the family declares in `extra_fields`.
 5. Every `effect` names a mechanic the engine knows.
 
