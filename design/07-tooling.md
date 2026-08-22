@@ -81,12 +81,15 @@ engine/wyrd/
 ├─ client.py      # entry point; argparse dispatch built FROM the catalog
 ├─ verbs.py       # the operations
 ├─ rules.py       # resolution, damage, tracks, thresholds — pure functions
-├─ tables.py      # criticals, aftermath, transformations, oracles — pure data
+├─ tables.py      # criticals, aftermath, transformations, afflictions, oracles — pure data
 ├─ state.py       # load/save/validate, atomic writes, invariants
 ├─ calendar.py    # dates, lunar cycles, elapsed time
 ├─ campaign.py    # threats, threads, activation, decay
 └─ render.py      # output formatting (json | text)
 ```
+
+What `tables.py` loads and how a result is looked up is defined in
+[`03a-tables.md`](03a-tables.md).
 
 `TOOLS` drives **both** `describe` and the argparse dispatch, so discovery and execution can
 never drift. Each entry carries:

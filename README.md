@@ -69,6 +69,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [01-principles](design/01-principles.md) | Seven engine principles, the tone contract, the GM contract |
 | [02-architecture](design/02-architecture.md) | The four repositories; code versus prose |
 | [03-rules](design/03-rules.md) | The ruleset |
+| [03a-tables](design/03a-tables.md) | Table conventions, and the index of the table families |
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the party |
 | [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, succession |
 | [06-state](design/06-state.md) | Chronicle state — which is entities |
