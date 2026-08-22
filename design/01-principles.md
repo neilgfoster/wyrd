@@ -108,7 +108,7 @@ What each means to the engine:
 | `power_curve` | how much advancement raises capability ([`03-rules.md`](03-rules.md)) |
 | `scope` | how far the stakes may travel from the character |
 | `scale_drift` | whether stakes may escalate over a chronicle, or must stay local |
-| `mortality` | starting Fate, and how the Aftermath table is applied |
+| `mortality` | starting Fate, and whether the Aftermath table's death rows are closed ([`03a-2-aftermath.md`](03a-2-aftermath.md)) |
 
 A chronicle may narrow the contract further in `houserules.yaml`, never widen it.
 

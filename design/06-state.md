@@ -159,6 +159,28 @@ advances_unspent: 0
 `hidden_threshold` is written once and **never shown to the player**. Any render for the
 player must strip it ([`10-diegesis.md`](10-diegesis.md)).
 
+### Wounds
+
+`wounds` holds the lasting marks a character is carrying. Entries are written by the Aftermath
+table ([`03a-2-aftermath.md`](03a-2-aftermath.md)):
+
+```yaml
+wounds:
+  - id: the-knee-that-never-set   # kebab-case, unique on this character, stable forever
+    from: {table: aftermath, beat: 412}
+    effect: {skill: -10}          # stamina_max | skill | dread
+    recurring: false              # true — fires at the start of every fight
+    description: "the knee never set right"
+```
+
+`effect` names a mechanic the engine knows; anything else is a load error. `id` is what a later
+rule names when it needs to act on exactly one wound. A wound carries **no healing field and no
+duration** — whether wounds mend is not settled, and a field shaped for one answer would prejudge
+it.
+
+Wounds render diegetically, like every other track ([`10-diegesis.md`](10-diegesis.md)): the knee
+never set right, never `skill: -10`.
+
 ## Companions
 
 `character` entities with `role: companion` and a `status`. There is no `party.yaml` — the

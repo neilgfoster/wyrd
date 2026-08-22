@@ -121,11 +121,10 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 character plus companions can face a crowd without a roll per body.
 
 **Death is deferred.** Nothing resolves during the fight; a combatant who drops is *out of
-action*. Afterwards, roll on the **Aftermath** table ([`03a-tables.md`](03a-tables.md)). Most
-results are a lasting mark rather
-than death — a permanent wound, a new enemy, capture, a disfigurement that frightens people,
-a wound that recurs before every future fight. Deferred resolution is how a single-character
-chronicle survives lethal combat.
+action*. Afterwards, roll `d100 + 5 × points below zero` on the **Aftermath** table
+([`03a-2-aftermath.md`](03a-2-aftermath.md)) — once per combatant who dropped, companions
+included. Most results are a lasting mark rather than death. Deferred resolution is how a
+single-character chronicle survives lethal combat.
 
 ---
 
@@ -139,6 +138,11 @@ When Fate is spent the character **survives and is not better off**. The blow wa
 everything goes black; they wake later — tended by companions, or imprisoned, or stripped and
 left in a ditch. The GM chooses where they wake, which makes Fate the chronicle's
 course-correction tool as well as its anti-frustration valve.
+
+Mechanically, spending Fate **closes the death rows** of the Aftermath table: the result is
+re-read on the worst row that is not death, and that is what the character carries away
+([`03a-2-aftermath.md`](03a-2-aftermath.md), [ADR 0009](adr/0009-fate-closes-the-death-rows.md)).
+Fate is spent only against a death result, and never to improve any other.
 
 ### Spending Fate for someone else
 

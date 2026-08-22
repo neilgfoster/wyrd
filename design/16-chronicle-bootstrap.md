@@ -41,7 +41,8 @@ skipped by tooling:
 - **What would you like to avoid?** Recorded and honoured. This is a safety tool and a taste
   tool at once.
 - **How long is a typical session?** Sets the default beat pacing.
-- **How lethal?** Sets starting Fate and whether the Aftermath table is used as written.
+- **How lethal?** Sets starting Fate, and whether the Aftermath table's death rows are closed
+  ([`03a-2-aftermath.md`](03a-2-aftermath.md)).
 - **Should the world act when you are not looking?** Sets whether threats activate during
   spans of *game* time the character did not witness ([`05-campaign.md`](05-campaign.md)).
   This is nothing to do with real-world time between sessions, which never advances the
