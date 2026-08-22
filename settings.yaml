@@ -3,6 +3,9 @@
 # Wyrd is setting-agnostic. Each setting lives in its own repository and is overlaid onto a
 # chronicle at bootstrap (design/16-chronicle-bootstrap.md).
 #
+# `note:` records only a KNOWN ENGINE GAP — something a setting will need that the core does
+# not yet provide. It is not for recording where an engine rule came from.
+#
 # A setting derived from copyrighted material is PRIVATE and its repository will not be
 # reachable by anyone but its owner. Such entries are listed so the catalogue is complete,
 # not because they can be obtained. A setting built from original material may be public.
@@ -13,28 +16,24 @@ settings:
     repo: wyrd-wfrp1e
     visibility: private
     status: stub
-    note: "Dry, bureaucratic, provincial. A strong register target."
 
   - id: wfrp2e
     title: "Warhammer Fantasy Roleplay, 2nd edition"
     repo: wyrd-wfrp2e
     visibility: private
-    status: active
-    note: "201 careers extracted, with their entry and exit graph."
+    status: stub
 
   - id: wfrp3e
     title: "Warhammer Fantasy Roleplay, 3rd edition"
     repo: wyrd-wfrp3e
     visibility: private
     status: stub
-    note: "Source of several structural ideas: session shape, party tension, clocks, nemeses."
 
   - id: wfrp4e
     title: "Warhammer Fantasy Roleplay, 4th edition"
     repo: wyrd-wfrp4e
     visibility: private
     status: stub
-    note: "Source of the Bargain, and the clearest exposure tiers."
 
   - id: darkheresy
     title: "Dark Heresy — the Calixis Sector"
@@ -47,7 +46,6 @@ settings:
     repo: wyrd-onlywar
     visibility: private
     status: stub
-    note: "Source of the thin-companion model."
 
   - id: roguetrader
     title: "Rogue Trader — the Koronus Expanse"
@@ -60,6 +58,6 @@ settings:
     repo: wyrd-tor
     visibility: private
     status: stub
-    note: "Tests the engine boundary — it needs the journey subsystem the core lacks."
+    note: "Known engine gap — needs the journey subsystem the core does not yet have."
 
 # Candidates, unstarted: D6 Star Wars, Maelstrom, Mordheim, Stars Without Number.
