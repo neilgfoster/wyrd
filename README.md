@@ -28,7 +28,7 @@ interviews you about your character and what you want the chronicle to be about.
 - **The dice bind the GM.** Rolls happen in code, before narration, and the result stands.
   Without this, solo play becomes wish-fulfilment.
 - **One roll, three answers.** `d100` gives success, magnitude, and *what else happened* —
-  on genuinely independent axes ([ADR 0001](design/adr/0001-d100-resolution.md)).
+  on genuinely independent axes ([ADR 0001](design/adr/0001-resolution.md)).
 - **The world does not wait.** Threats and characters act on their own objectives; you hear
   about it late, partially, and sometimes wrong.
 - **Adventures are beats**, not scripts — recombinable into campaigns their authors never
@@ -74,7 +74,7 @@ interfering.
 | [14-entities](design/14-entities.md) | The world mesh — ten types, two relations, overlays |
 | [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, recombination, lazy conversion |
 | [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
-| [adr/](design/adr/) | Decision records — resolution, source compatibility |
+| [adr/](design/adr/) | Decision records — the resolution mechanic, and how source material is used |
 
 ## The core idea in one paragraph
 

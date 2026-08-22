@@ -34,7 +34,7 @@ particular book, it belongs in that setting's `rename:` block, not here.
 > - **The units digit of the natural roll** is the **Wyrd die**: what else happened.
 
 One roll, three independent axes, no extra dice. Rationale and rejected alternatives are in
-[ADR 0001](adr/0001-d100-resolution.md).
+[ADR 0001](adr/0001-resolution.md).
 
 **Difficulty** modifies the *skill*, never the roll — which is what keeps the Wyrd die clean:
 
@@ -262,7 +262,7 @@ One of each per session at most.
 | 1 | **change career**, to a legal exit, given a fictional reason |
 
 That is the entire economy. No talent trees, no feats — their absence is deliberate
-([ADR 0002](adr/0002-source-system-compatibility.md)).
+([ADR 0002](adr/0002-source-material.md)).
 
 ### Careers
 
