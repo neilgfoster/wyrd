@@ -73,8 +73,19 @@ drift — which is the fault class most of this design has been corrected for.
 | take a feature from spec to open PR | `kord-loop-feature` |
 | see what is actually actionable now | `kord-board-help` |
 
-`kord-install --target github-issues` has been run here; it owns the three `kord-*` labels and the
-issue templates. Do not hand-edit those.
+Both kord substrates are installed here: `github-issues` (the three `kord-*` labels and the issue
+templates) and `speckit` (the `speckit-*` skills and `.specify/`). **Do not hand-edit either
+substrate's files** — they are owned by `kord-install` and re-running it will overwrite them.
+
+**Capability changes go through the Spec Kit cycle.** Anything that adds or changes engine
+behaviour is specified before it is written: `kord-feature-specify` → `clarify` → `plan` →
+`tasks` → `implement`. `specs/<feature>/` is **committed** — a spec is a design artefact and
+belongs in the history. Documentation-only changes are exempt; the gate is on capability, not on
+every commit.
+
+Where a spec and a design document disagree, the design document is the engine's description and
+the spec is one change to it. Update the design document when the change lands, and do not leave
+the spec as the only record of current behaviour.
 
 **Reference the issue number in commits**, and let the issue carry the reasoning that does not
 belong in a design document.

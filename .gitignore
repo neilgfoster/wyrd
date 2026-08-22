@@ -8,3 +8,10 @@ cookies*.txt
 .github/ISSUE_TEMPLATE/kord-epic.md
 .github/ISSUE_TEMPLATE/kord-feature.md
 # --- end kord: GitHub Issue Tracking substrate ---
+# --- kord: GitHub Spec Kit substrate ---
+# specs/ is deliberately NOT ignored: a feature spec is a design artefact and belongs in the
+# history, the same posture kord itself takes (its ADR 0008). The tooling around it is vendored
+# and regenerable, so that is ignored.
+.specify/
+.claude/skills/speckit-*/
+# --- end kord: GitHub Spec Kit substrate ---
