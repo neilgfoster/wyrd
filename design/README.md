@@ -43,3 +43,10 @@ records that exist mark the places where the obvious answer was wrong.
 | [0006](adr/0006-state-is-entities.md) | State is entities; there is no second storage model |
 | [0007](adr/0007-game-time.md) | Game time is independent of real time |
 | [0008](adr/0008-tables-declare-their-own-roll.md) | The engine fixes the row schema; each table family declares its own roll |
+| [0009](adr/0009-fate-closes-the-death-rows.md) | Fate closes the death rows rather than suppressing the roll |
+| [0010](adr/0010-backlog-order-lives-on-the-board.md) | The backlog order lives on the board, not in a file |
+| [0011](adr/0011-markdown-links-in-prose-wikilinks-in-data.md) | Markdown links in prose, wikilinks in data |
+
+This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
+when a record exists on disk that this table does not list. It had already drifted three
+records behind before the check existed.

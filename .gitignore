@@ -2,7 +2,13 @@
 *.pdf
 *.txt.gz
 cookies*.txt
+
+# Obsidian: the vault CONFIG is committed so the repo opens the same way for everyone
+# (and so markdown links stay the default -- design/adr/0011). Per-machine state is not.
 .obsidian/workspace*
+.obsidian/cache
+.obsidian/graph.json
+.obsidian/hotkeys.json
 # --- kord: GitHub Issue Tracking substrate ---
 .kord/
 .github/ISSUE_TEMPLATE/kord-epic.md

@@ -45,7 +45,7 @@ interviews you about your character and what you want the chronicle to be about.
 | Repo | Holds | Visibility |
 |---|---|---|
 | **wyrd** *(here)* | the engine — rules, CLI, GM contract, design | intended public |
-| **wyrd-\<setting\>** | one setting: world, content, overrides, corpus | private where its sources are |
+| **wyrd-setting-\<name\>** | one setting: world, content, overrides, corpus | private where its sources are |
 | **wyrd-chronicle-template** | clone this to start playing | template |
 | **wyrd-chronicle-\<name\>** | one per chronicle | yours |
 
@@ -70,6 +70,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [02-architecture](design/02-architecture.md) | The four repositories; code versus prose |
 | [03-rules](design/03-rules.md) | The ruleset |
 | [03a-tables](design/03a-tables.md) | Table conventions, and the index of the table families |
+| [03a-2-aftermath](design/03a-2-aftermath.md) | The Aftermath family — what happens to a combatant who drops |
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the party |
 | [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, succession |
 | [06-state](design/06-state.md) | Chronicle state — which is entities |
@@ -83,7 +84,14 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [14-entities](design/14-entities.md) | The world mesh — ten types, two relations, overlays |
 | [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, recombination, lazy conversion |
 | [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
-| [adr/](design/adr/) | Decision records — the resolution mechanic, and how source material is used |
+| [adr/](design/adr/) | Decision records — indexed in [design/README.md](design/README.md) |
+
+Two more trees, reachable from here so nothing in the repo is orphaned:
+
+| | |
+|---|---|
+| [specs/](specs/) | One directory per change that added or altered a capability — spec, plan, tasks |
+| [tools/](tools/) | Repository tooling: `backlog.py` for what to work on next, `check_docs.py` for this page's own integrity |
 
 ## The core idea in one paragraph
 
@@ -110,9 +118,15 @@ not the engine's.
 
 ## Status
 
-**Design complete; no implementation yet.**
+**Design in consolidation; no implementation yet.**
 
 The ruleset has been playtested by hand — dice by script, arithmetic by hand, no engine —
 which corrected the resolution mechanic three times in its first two rolls and is why the
-design says what it does. Findings are in [playtest/](playtest/); chronicles live in their
-own repositories.
+design says what it does. Chronicles live in their own repositories.
+
+The design was built by topic rather than in dependency order, and the recurring result was a
+mechanic referenced before it was defined. The **design programme** is working through it in
+thirteen stages, each finished before the next depends on it; the character model is the stage
+most of the others wait on. Open work is tracked on the board — see
+[CLAUDE.md](CLAUDE.md#the-backlog-has-an-order) — and `python3 tools/backlog.py next` names the
+next thing to do.
