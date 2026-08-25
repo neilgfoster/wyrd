@@ -418,6 +418,51 @@ action*. Afterwards, roll `d100 + 5 × points below zero` on the **Aftermath** t
 included. Most results are a lasting mark rather than death. Deferred resolution is how a
 single-character chronicle survives lethal combat.
 
+### Getting back up
+
+Stamina is spent in the exchange and restored on the clocks the engine already has. There is no
+third clock, and no roll.
+
+> **At each Rally, recover 1 Stamina.** At the end of a **downtime** phase, Stamina returns to
+> maximum. A combatant who dropped below 0 wakes at **0 when the fight ends**, and recovers from
+> there.
+
+**Companions recover on the same rule.** They roll on the same Aftermath table and drop on the same
+numbers; there is no companion rate.
+
+**The rate is Strain's rate, at Strain's trigger** (§5). One number covers both, and a second
+restoration rate at the same pause would be two numbers doing one job.
+
+**Downtime costs no undertaking.** Weeks or a season of rest mending cuts and bruises needs no
+mechanic to explain it — Stamina is not meat — and putting it on the undertaking list would make
+every downtime after a real fight resolve to the same choice, which is the trade
+[`04-session.md`](04-session.md) exists to pose. What downtime cannot mend is a lasting wound, and
+that is what **Mend** is for.
+
+**Waking at 0 is not a second penalty.** The Aftermath table has already priced dropping; this says
+only where the track restarts. Waking at any fraction of maximum would soften the same event twice,
+in two places that would eventually disagree.
+
+The road back is short enough to keep playing and long enough to be felt:
+
+| | Rallies to full |
+|---|---|
+| dropped, Stamina 6 | **6** |
+| dropped, Stamina 7 (a completed career) | 7 |
+| one ordinary fight against an even opponent | 5.4 to 5.7 |
+| one ordinary fight at a 20-point advantage | 2.3 to 3.6 |
+
+An even fight costs nearly the whole track. That is the rule's real weight: a character who fights
+an equal every beat never sees full Stamina again until a downtime, and one who picks their fights
+recovers between them.
+
+**Entering a fight short is the cost, and it is steep.** Against an opponent 20 points below them, a
+character drops **14.8%** of the time at full Stamina and **48.6%** at 2 — the same fight, three
+times as dangerous. Against an equal, dropping is near a coin flip whatever they walked in with,
+which is a property of the damage scale rather than of this rule
+([`check_recovery.py`](../specs/014-stamina-recovery/check_recovery.py),
+[ADR 0020](adr/0020-stamina-recovers-on-the-clocks-the-engine-has.md)).
+
 ## 3. Fate and Fortune
 
 - **Fate** — few, permanent, spent to **avoid death**. Gone when spent; new ones are rare.

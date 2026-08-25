@@ -172,13 +172,22 @@ wounds:
     effect: {skill: -10}          # stamina_max | skill | dread
     bears_on: <setting-skill-id>  # which skill the penalty burdens; omitted when none
     recurring: false              # true — fires at the start of every fight
+    closed: null                  # the beat at which Mend finished it; null while it still bites
     description: "the knee never set right"
 ```
 
 `effect` names a mechanic the engine knows; anything else is a load error. `id` is what a later
-rule names when it needs to act on exactly one wound. A wound carries **no healing field and no
-duration** — whether wounds mend is not settled, and a field shaped for one answer would prejudge
-it.
+rule names when it needs to act on exactly one wound — the **Mend** undertaking
+([`04-session.md`](04-session.md)) names one, and moves its `effect` one grade toward nothing.
+
+`closed` holds the beat at which a wound stopped biting, and is `null` until then. **A closed wound
+is kept, never deleted**: history is never recomputed ([`09-evolution.md`](09-evolution.md)), and a
+character who limped for two years limped for two years. A closed wound's `effect` applies to
+nothing; readers skip it.
+
+**A wound with `recurring: true` never closes**, whatever is spent on it
+([`03a-2-aftermath.md`](03a-2-aftermath.md)). Writing `closed:` on one is a load error, not a
+quietly ignored field.
 
 `bears_on` is the skill the wound burdens, taken from the roll that caused it and named in the
 setting's own vocabulary — the engine has none of its own

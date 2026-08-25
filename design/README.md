@@ -61,6 +61,8 @@ records that exist mark the places where the obvious answer was wrong.
 | [0017](adr/0017-assistance-group-tests-and-extended-tasks.md) | Assistance scales with the helper's skill; a group rolls once; long work accumulates |
 | [0018](adr/0018-combat-sequencing.md) | Turn order is read off the fiction; space is one bit; surprise costs a whole round |
 | [0019](adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) | A crowd is defined by one blow and a skill gap, and it answers once |
+| [0020](adr/0020-stamina-recovers-on-the-clocks-the-engine-has.md) | Stamina recovers on the clocks the engine already has — the Rally and downtime |
+| [0021](adr/0021-mending-steps-and-the-recurring-wound-does-not.md) | Mending steps one grade a season, and the recurring wound never closes |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three

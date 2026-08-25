@@ -56,6 +56,7 @@ Between beats comes a **Rally**: a short pause with mechanical weight.
 
 On a Rally:
 - recover **1 Strain**
+- recover **1 Stamina** ([`03-rules.md`](03-rules.md) §2)
 - The GM assesses the beat and may award an advance
 - **state is written and the chronicle is committed**
 
@@ -112,6 +113,7 @@ Triggered at the end of a scenario or arc, or when the player asks. Structure:
 | **Upkeep** | Time costs something. Away from home: lose 1 Standing, or spend coin equal to Standing. |
 | **Advances** | Spend earned advances (see [`03-rules.md`](03-rules.md)). |
 | **Undertaking** | Choose **one** activity for the period. |
+| **Rest** | Stamina returns to maximum. Automatic; it costs no undertaking. |
 
 Undertakings include: **Recover** (reduce Taint or Strain), **Mend** (treat a lasting
 wound), **Pursue** (advance a personal thread), **Cultivate** (build a relationship or a
@@ -119,6 +121,37 @@ holding), **Learn** (open a new career), **Ask** (gather information on a Threat
 
 The constraint is that you choose **one**. Recovering from taint means *not* pursuing
 the thing that corrupted you. That trade is the whole point.
+
+**Stamina is not on that list**, deliberately. It returns to maximum whether or not the period is
+spent on it ([`03-rules.md`](03-rules.md) §2) — otherwise every downtime after a real fight would
+resolve to the same choice, and the trade above would be a formality rather than a decision.
+
+### Mend
+
+**Mend treats one named lasting wound, and moves its effect one grade.**
+
+| | |
+|---|---|
+| **Names** | one wound, by its `id` ([`06-state.md`](06-state.md)) |
+| **Moves** | that wound's effect one step toward nothing: `skill: -10` → `-5` → closed; `stamina_max: -1` → closed; `dread: +1` → closed |
+| **Leaves alone** | everything else on the record — a mended wound keeps its `id`, its origin and its description |
+| **Costs** | the downtime's one undertaking |
+| **Cannot touch** | a **recurring** wound, ever |
+
+Every step lands on a value the wound record's closed effect set already permits
+([`03a-2-aftermath.md`](03a-2-aftermath.md)) — `−10` and `−5` are the difficulty ladder's own rungs
+(`03-rules.md` §1), so nothing new has to be learned to apply a half-mended wound. A wound whose
+effect reaches nothing is **closed, not deleted**: the record stays, marked, because history is
+never recomputed ([`09-evolution.md`](09-evolution.md)).
+
+**A recurring wound never closes.** Re-reading a `death` result onto the recurring wound is exactly
+what a spent Fate point buys ([`03a-2-aftermath.md`](03a-2-aftermath.md)); a mending rule that
+erased it would price that promise at one season
+([ADR 0021](adr/0021-mending-steps-and-the-recurring-wound-does-not.md)).
+
+A drop leaves **0.61** wound records on average, costing **0.62** downtimes of Mend to clear — so a
+character who fights hard about as often as they rest keeps pace, and one who fights harder than
+that accumulates ([`check_recovery.py`](../specs/014-stamina-recovery/check_recovery.py)).
 
 Downtime **advances the calendar** — typically weeks to a season — which means
 Threats activate. Downtime is when the world gets ahead of you.
