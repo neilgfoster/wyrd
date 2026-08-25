@@ -75,8 +75,8 @@ The companion is down, out of action, and carrying something that will not be go
 Trauma, once.
 
 **What a mortal blow would have looked like.** It did not happen here, and that is worth saying
-plainly rather than staging: `slashing-mortal` begins at 21, which needs fifteen points below zero,
-and the script puts a modifier that size at well under one per cent of criticals. Had the roll been
+plainly rather than staging: `slashing-mortal` begins at 21, which needs fifteen points below zero
+*and* a six on the die — 1.8% of slashing criticals, computed. Had the roll been
 one, the composition is this and no more: the companion would still have been out of action, not
 dead, until the fight ended; the Aftermath roll would then have been read on `death`; and the
 character — present and able to act — could have spent their own Fate to re-read it onto the

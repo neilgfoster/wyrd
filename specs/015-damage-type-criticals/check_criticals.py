@@ -110,6 +110,9 @@ PUBLISHED_WEIGHTS = {                     # nothing lasting, a lasting mark, mor
     "critical-blunt":    (38.0, 61.5, 0.5),
 }
 PUBLISHED_COMPOSED_DEATH = {"critical-blunt": 16.3, "critical-piercing": 17.2}
+# specs/015-damage-type-criticals/worked-criticals.md quotes this one, and a figure quoted in a
+# playtest note goes stale exactly as readily as one quoted in a design document.
+PUBLISHED_MODIFIER_AT_LEAST_15 = 3.8
 PUBLISHED_AFTERMATH_ALONE = 16.3
 TOLERANCE = 0.05                          # a published figure is quoted to one decimal place
 
@@ -266,6 +269,12 @@ def main() -> int:
         check(abs(got - published) < TOLERANCE,
               f"A modifier of {below} occurs {got:.1f}% of the time; the document publishes "
               f"{published}%.")
+
+    tail_15 = sum((p for b, p in mod_dist.items() if b >= 15), Fraction(0))
+    print(f"  Share of criticals with a modifier of 15 or more: {pct(tail_15)}")
+    check(abs(float(tail_15) * 100 - PUBLISHED_MODIFIER_AT_LEAST_15) < TOLERANCE,
+          f"A modifier of 15 or more occurs {float(tail_15) * 100:.1f}% of the time; "
+          f"worked-criticals.md quotes {PUBLISHED_MODIFIER_AT_LEAST_15}%.")
 
     tail_20 = sum((p for b, p in mod_dist.items() if b >= 20), Fraction(0))
     print(f"  Share of criticals with a modifier of 20 or more: {pct(tail_20)}")
