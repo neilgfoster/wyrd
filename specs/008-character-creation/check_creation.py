@@ -406,14 +406,16 @@ def main() -> int:
     print(f"  opening 3, the weakest sits at {min(three)}% — trained, not guessing  "
           f"[{'ok' if min(three) > 25 else 'FAIL'}]")
 
+    # CORRECTED. This was labelled "exchanges" and is HITS -- it ignores the miss rate
+    # entirely, so it understated fight length by a factor of three or more. Turning hits
+    # into exchanges needs the opposed-test hit probability, which is specs/010-opposed-tests.
+    # Stamina is not the lever on fight length; the hit rate is, and that is Stage 5's (#44).
+    # Reported rather than asserted, because creation cannot fix it.
     length = hits_to_drop(chosen, damage_through([6], [6], False))
-    if length > 5:
-        failures.append(
-            f"at starting Stamina {chosen}, an armoured fight runs {num(length)} exchanges — "
-            "too long for the twenty-minute session design/01-principles.md requires"
-        )
-    print(f"  an armoured fight resolves in {num(length)} exchanges              "
-          f"[{'ok' if length <= 5 else 'FAIL'}]")
+    print(f"  a modest-armoured character absorbs {num(length)} hits before dropping")
+    print("  (NOT exchanges -- at starting skills most attacks miss, so a fight runs three")
+    print("   to six times longer than this. See specs/010-opposed-tests/check_opposed.py")
+    print("   and the fight-length finding raised against Stage 5.)")
 
     print(f"  untrained {UNTRAINED}% sits below the {OPENS_AT}% a skill opens at        "
           f"[{'ok' if UNTRAINED < OPENS_AT else 'FAIL'}]")

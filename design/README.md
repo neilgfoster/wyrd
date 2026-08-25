@@ -57,6 +57,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0013](adr/0013-the-engine-names-no-skill.md) | The engine names no skill, and has no characteristics |
 | [0014](adr/0014-character-creation-is-chosen-not-rolled.md) | A character is chosen, not rolled |
 | [0015](adr/0015-loyalty-has-three-relations-not-two.md) | Loyalty has three relations, not two |
+| [0016](adr/0016-opposed-tests-need-a-successful-actor.md) | An opposed test needs a successful actor, and a failure has no degrees |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three

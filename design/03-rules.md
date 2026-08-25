@@ -60,8 +60,27 @@ Having the skill is worth at least 15 points over not having it, at every diffic
 mark a skill as **requiring training**, and then there is no untrained attempt at all — a language
 you do not speak is not a 10% chance ([`03b-the-character.md`](03b-the-character.md)).
 
-**Opposed tests:** both roll; the higher degree of success wins; ties to the defender. The acting side reads the
-Wyrd die.
+### Opposed tests
+
+When someone resists, both roll — but not symmetrically.
+
+1. **The acting side rolls first, and must succeed.** If they fail, the action fails. There is no
+   comparison and the other side need not roll at all.
+2. **Degrees exist only on a success.** A failed roll has no degrees, not negative ones.
+3. **If the resisting side also succeeds, compare degrees.** The higher wins; **ties go to the
+   resisting side**.
+4. **The margin** is the difference in degrees, and it is what a rule like the telling blow reads.
+5. **Only the acting side reads the Wyrd die.** One roll, one omen, however many dice were thrown.
+
+The **acting side** is whoever is trying to change the situation; the other is resisting it. Where
+neither is — two people racing for the same thing — it is not an opposed test, and the GM either
+names an actor or calls for two ordinary tests.
+
+Rule 2 is not a detail. Degrees are `tens(skill) − tens(roll)`, so a failure computes as a negative
+number, and subtracting one *inflates* the margin. Left that way, roughly three quarters of
+successful attacks would be telling blows — doubled damage as the ordinary case, invisible in the
+prose. Recorded in [ADR 0016](adr/0016-opposed-tests-need-a-successful-actor.md) and computed in
+[`check_opposed.py`](../specs/010-opposed-tests/check_opposed.py).
 
 **Only roll when it is dramatic** — when failure is interesting and the outcome is in doubt.
 Everything else simply happens.
