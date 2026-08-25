@@ -23,6 +23,11 @@ Everything here is derived from numbers already merged, not invented:
    and that mapping, because the rule must survive the conversion (#69).
 
 Run: python3 specs/014-stamina-recovery/check_recovery.py
+
+It takes several minutes: every fight is resolved exactly, round by round, in Fraction arithmetic
+over the full damage distribution, with no sampling anywhere. That is the point -- the probability
+claims in this ruleset have been wrong before and were caught only by computing them exactly -- and
+nothing here is on a CI path, so the cost is paid once by whoever changes a number.
 """
 
 from fractions import Fraction
@@ -147,7 +152,11 @@ def fight_outcome(player_stamina, player_skill, opponent_skill, model,
                   opponent_stamina=STARTING_STAMINA, max_rounds=60):
     """Exact round-by-round resolution of one fight, both sides at the ordinary pairing.
 
-    Returns (p_player_dropped, expected_stamina_lost_by_player).
+    Returns (p_player_dropped, expected_Rallies_owed_by_player).
+
+    Rallies owed is capped at the wake point, not the raw damage taken: a combatant who dropped
+    wakes at 0 whatever they dropped by, so overkill below zero costs no further recovery. Counting
+    it would publish a road back longer than the rule produces.
 
     Under the mapping the player rolls once per exchange: success is their blow landing, failure
     is the opponent's. Under today's opposed test both sides act, so each rolls its own attack.
@@ -191,7 +200,7 @@ def fight_outcome(player_stamina, player_skill, opponent_skill, model,
                 for (a, b), q in sub.items():
                     if a < 0:
                         dropped += q
-                        lost += q * (player_stamina - min(a, 0))
+                        lost += q * (player_stamina - DROPPED_WAKES_AT)
                         continue
                     if b < 0:
                         lost += q * (player_stamina - a)
@@ -465,10 +474,10 @@ def main():
         "stamina_max and dread take one": mend_steps("stamina_max") == 1
                                           and mend_steps("dread") == 1,
         "a recurring wound never closes": RECURRING_CLOSES is False,
-        "an even fight costs 5.4 to 5.7 Rallies":
-            (num(even_lo, 1), num(even_hi, 1)) == ("5.4", "5.7"),
-        "a 20-point advantage costs 2.3 to 3.6":
-            (num(adv_lo, 1), num(adv_hi, 1)) == ("2.3", "3.6"),
+        "an even fight costs 4.6 to 4.9 Rallies":
+            (num(even_lo, 1), num(even_hi, 1)) == ("4.6", "4.9"),
+        "a 20-point advantage costs 2.2 to 3.3":
+            (num(adv_lo, 1), num(adv_hi, 1)) == ("2.2", "3.3"),
         "dropping at a 20-point advantage runs 14.8% at full and 48.6% at 2":
             (pct(full[6]).strip(), pct(full[2]).strip()) == ("14.8%", "48.6%"),
         "an even fight is a coin flip at full Stamina": num(full_even[6] * 100, 0) == "50",

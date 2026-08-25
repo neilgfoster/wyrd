@@ -45,9 +45,13 @@ The numbers, computed at the values a real character has rather than at a midpoi
 ([`check_recovery.py`](../../specs/014-stamina-recovery/check_recovery.py)):
 
 - A dropped starting character is **6 Rallies** from full; **7** after a completed career.
-- One ordinary fight against an **even** opponent costs **5.4 to 5.7** Stamina — nearly the whole
+- One ordinary fight against an **even** opponent owes **4.6 to 4.9** Rallies of rest — most of the
   track — and drops the character about half the time whatever they walked in with.
-- The same fight at a **20-point advantage** costs **2.3 to 3.6**.
+- The same fight at a **20-point advantage** owes **2.2 to 3.3**.
+
+Those are Rallies *owed*, capped at the wake point: a combatant who dropped by six points and one
+who dropped by one both wake at 0, so overkill costs no further recovery. Counting the raw damage
+instead published a road back longer than the rule produces, and the first draft did exactly that.
 
 So the rule lands exactly where it was asked to. A character who fights an equal every beat never
 sees full Stamina again before a downtime; one who picks their fights recovers between them. The

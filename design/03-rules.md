@@ -449,10 +449,11 @@ The road back is short enough to keep playing and long enough to be felt:
 |---|---|
 | dropped, Stamina 6 | **6** |
 | dropped, Stamina 7 (a completed career) | 7 |
-| one ordinary fight against an even opponent | 5.4 to 5.7 |
-| one ordinary fight at a 20-point advantage | 2.3 to 3.6 |
+| one ordinary fight against an even opponent | 4.6 to 4.9 |
+| one ordinary fight at a 20-point advantage | 2.2 to 3.3 |
 
-An even fight costs nearly the whole track. That is the rule's real weight: a character who fights
+An even fight costs most of the track — and that is the road back *including* being dropped, since
+a combatant who dropped wakes at 0 however far below it they went. That is the rule's real weight: a character who fights
 an equal every beat never sees full Stamina again until a downtime, and one who picks their fights
 recovers between them.
 
