@@ -338,10 +338,77 @@ surprising side's odds by 4 to 8 points and never past 83%, so an ambush wins fi
 end them before they start
 ([`check_sequencing.py`](../specs/012-combat-sequencing/check_sequencing.py)).
 
-### Mobs
+### Crowds
 
-Each round a character also clears petty opponents weaker than themselves, so one
-character plus companions can face a crowd without a roll per body.
+A fight against twenty people cannot be run one roll at a time. This is the rule that lets a
+character and their companions face a crowd without a `d100` per body — and it is a rule, with
+numbers, not a licence for the GM to decide when a fight stops mattering.
+
+> **At the start of their turn, a character in close engagement with a crowd clears one crowd
+> member, without a roll and without spending their action.**
+
+Each character **and companion** clears one, on their own turn. A cleared body is *out of action*
+and does not act that round; the character then takes their turn as normal, against whatever the
+crowd was in the way of. A character who is not engaged with the crowd — shooting from across the
+yard — clears nobody.
+
+**Who is a crowd member** is a lookup, and nothing else. All three tests must hold:
+
+| Read from | Qualifies when |
+|---|---|
+| the opponent's **maximum Stamina** | **1** |
+| the opponent's **armour** | **none** |
+| the **character's** relevant skill against **theirs** | ahead by **20 or more** |
+
+The first two are the whole of what used to be called *petty*, and they are not a judgement about
+what an opponent is worth — they are the statement that **one connecting blow removes them**. Across
+the whole plausible span of weapon damage, a single ordinary hit takes a body of Stamina 1 in no
+armour below zero between **67% and 100%** of the time; the same body in the lightest armour drops
+as low as **11%**, and a body of Stamina 2 as low as **33%**. The line sits exactly where one blow
+stops being enough
+([`check_mobs.py`](../specs/013-the-mob-rule/check_mobs.py),
+[ADR 0019](adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md)).
+
+The third is the whole of what used to be called *weaker*. Untrained is a flat 10% (§1), so against
+an untrained crowd the rule opens at **30%** — one advance past a newly opened skill. A character
+who is themselves untrained has no gap and clears nobody.
+
+**The clear is worth about what rolling it out would be, and slightly more.** Against a qualifying
+body, attacking and rolling for it removes 0.55 to 0.80 bodies a round across the skills characters
+actually have; the free clear removes 1. That discount — **1.25× to 1.82×** — is what buying out a
+roll per body costs, and it is bounded by the character's own turn: nobody clears two.
+
+**The crowd answers once, not once per body.**
+
+> **A crowd engaged with a character makes one attack on them each round**, at whatever skill its
+> members have, eased by **+10 for each body on that character beyond the first**, to a ceiling of
+> **+20**.
+
+**A crowd's parting blow is one attack on the same terms**, not one per body. Breaking off from a
+crowd otherwise costs a blow from every opponent still engaged (above), which would put back exactly
+the rolls this rule removes.
+
+The ceiling is the top of the difficulty ladder, and it is reached at **three bodies on one
+target**. A crowd's numbers past that buy nothing against that character — what they buy is
+reaching more of the party at once. A party of four is facing a full-strength crowd from twelve
+bodies on.
+
+That leaves the fight where it should be:
+
+| | Rounds to clear | Rounds to be dropped |
+|---|---|---|
+| one character, no armour, six bodies | 6 | **5.7** |
+| one character, modest armour, six bodies | 6 | 12.9 |
+| four characters, no armour, twelve bodies | 3 | 5.7 each |
+| one character, no armour, twenty bodies | 20 | 5.7 |
+
+**A lone unarmoured character loses to six people.** The rule is not a way to win a crowd fight
+alone; it is a way not to roll sixty times. Armour and companions are what actually answer a crowd,
+which is the right answer for both to be.
+
+**The Aftermath table is not rolled for a crowd.** It is rolled once per character and companion who
+dropped (below), and a crowd is neither — twenty Aftermath rolls is the same fault as twenty attack
+rolls. What became of the crowd is the fiction's to say.
 
 ### Death is deferred
 
