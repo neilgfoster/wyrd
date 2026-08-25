@@ -79,6 +79,14 @@ resolve a reference to nothing, and it is available more often than it is taken.
 **Wounds gain a field, and the state schema gains a rule.** `bears_on` is optional, and its absence
 is meaningful rather than missing data.
 
+**The engine must state an untrained base, because there is nothing to derive one from.** Most
+percentile systems let an untrained character fall back on a characteristic. Removing characteristics
+removes that floor, so [`03-rules.md`](../03-rules.md) §1 names a flat **10%** instead — anyone may
+try to shoot; almost nobody hits. A setting may mark a skill as requiring training, and then there is
+no untrained attempt at all. This was missed when the decision was first written, and the omission
+said the opposite: that difficulty and declaration already covered it. They cannot. Difficulty
+modifies the *skill*, so with no skill there is nothing for it to modify.
+
 **The engine cannot balance skills against each other.** It has no idea whether a setting's skill set
 is eleven broad skills or ninety narrow ones, so it cannot warn that one is too broad. That is
 correct: it is the setting author's judgement, and an engine that policed it would be making genre
