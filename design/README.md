@@ -59,6 +59,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0015](adr/0015-loyalty-has-three-relations-not-two.md) | Loyalty has three relations, not two |
 | [0016](adr/0016-opposed-tests-need-a-successful-actor.md) | An opposed test needs a successful actor, and a failure has no degrees |
 | [0017](adr/0017-assistance-group-tests-and-extended-tasks.md) | Assistance scales with the helper's skill; a group rolls once; long work accumulates |
+| [0018](adr/0018-combat-sequencing.md) | Turn order is read off the fiction; space is one bit; surprise costs a whole round |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
