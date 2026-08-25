@@ -119,6 +119,21 @@ two items is one number, not a renumbering. Two things to know:
   from the board, and a `Depends on:` naming an issue that does not exist. Run it after raising
   work rather than assuming the order is still whole.
 
+### The documents are a checked graph
+
+The repo is an Obsidian vault. **Prose links with markdown, entity data links with
+`[[wikilinks]]`** ([`design/adr/0011`](design/adr/0011-markdown-links-in-prose-wikilinks-in-data.md)) —
+GitHub does not render wikilinks and this repo is read there.
+
+```bash
+python3 tools/check_docs.py     # reachability, dead links, ADR index, link policy
+```
+
+Every document under `design/` must be reachable from `README.md`, directly or through an index it
+links to. Adding a design document means linking it from the hub; the check fails otherwise. Four
+indexes had already gone stale silently before this existed, so treat it the same way as
+`backlog.py check` — run it, do not assume.
+
 ## Deterministic over inference
 
 The rule the engine follows ([`design/07-tooling.md`](design/07-tooling.md)) applies to the
