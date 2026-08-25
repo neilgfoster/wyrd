@@ -134,6 +134,76 @@ paragraph of generic atmosphere does not. Terse play must stay viable — sessio
 phone. And prefer *no roll* to a large bonus: a plan good enough to remove the risk should
 simply succeed.
 
+### Assistance
+
+A companion may help. One does.
+
+- **The helper must be able to do the task.** Someone who could not attempt it alone cannot
+  improve someone who is attempting it.
+- **The help must be specific** — what they actually do, in the fiction. Encouragement is not
+  assistance.
+- **The helper does not roll.** One test, one natural roll, one omen.
+- **The bonus is a tenth of the helper's own skill**, rounded down, to a ceiling of **+10**.
+
+| Helper's skill | Worth |
+|---|---|
+| 30% | **+3** |
+| 45% | **+4** |
+| 65% | **+6** |
+| 100% | **+10** |
+
+**Further hands do not add.** A second, third and fourth companion change the fiction, and may
+change the *difficulty the GM sets*, but they never accumulate a bonus. This is the rule that keeps
+the ladder meaning something: at a Hard test a practised character sits at 15%, and four companions
+adding +10 each would put them at 55% — the rung the GM chose, deleted by turning up with friends.
+Computed in [`check_assistance.py`](../specs/011-assistance-and-group-tests/check_assistance.py) and
+recorded in [ADR 0017](adr/0017-assistance-group-tests-and-extended-tasks.md).
+
+A helper who is barely competent is worth almost nothing, which is the point. Help from someone who
+cannot do the task is not help.
+
+### Group tests
+
+**A group acts, a group rolls once.** The party's composition shows in the *skill tested*, never in
+the number of dice. Which skill depends on a question about the fiction:
+
+| The fiction | Test |
+|---|---|
+| the thing must get done | the **most capable** member's skill, with assistance |
+| everyone must get through | the **least capable** member's skill, with assistance |
+
+Hauling a cart from a ditch is the first: one strong pair of arms and willing hands. Crossing a
+courtyard unseen is the second — the party is as quiet as its noisiest member, and the scout can
+only do so much for them.
+
+A member with no relevant skill at all is tested at the untrained 10%, and in a test everyone must
+get through, that is who is tested. Leaving them behind is a decision available to the party, and
+usually the interesting one.
+
+### Extended tasks
+
+Some work does not resolve in a beat. Forging a blade, deciphering a dead language, nursing someone
+through a fever — these accumulate.
+
+- **The target is a count of degrees.** Reach it and the work is done.
+- **One test per interval**, and the interval is named by the fiction: a night, a week, a season.
+- **A success adds its degrees, minimum 1.** A bare success never stalls the work.
+- **A failed interval is spent and gains nothing.** The time is gone; the work is where it was.
+- **The Wyrd die is read every interval**, from that interval's natural roll, as in any test.
+
+| Scope | Target |
+|---|---|
+| a night's work | **2** |
+| a season's work | **4** |
+| a great labour | **6** |
+
+At a competent 45% those are roughly two, four and six intervals. At 25% the largest is nearly
+eighteen, and the rule does not hide that: **an extended task at a skill you barely have is not a
+long task, it is a wall.** Bring a helper, lower the difficulty, or do not attempt it.
+
+**An interval must be worth a beat of prose**, or it is not worth a roll. Work that produces no
+scene worth writing is not an extended task; it is a single test, or it simply happens.
+
 ### Luck
 
 A percentage the player *may choose* to test to dodge a misfortune or break a tie. Testing
