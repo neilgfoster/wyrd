@@ -72,6 +72,7 @@ drift — which is the fault class most of this design has been corrected for.
 | log feature-sized work | `kord-feature-create` |
 | take a feature from spec to open PR | `kord-loop-feature` |
 | see what is actually actionable now | `kord-board-help` |
+| decide what to implement next | `python3 tools/backlog.py next` |
 
 Both kord substrates are installed here: `github-issues` (the three `kord-*` labels and the issue
 templates) and `speckit` (the `speckit-*` skills and `.specify/`). **Do not hand-edit either
@@ -89,6 +90,34 @@ the spec as the only record of current behaviour.
 
 **Reference the issue number in commits**, and let the issue carry the reasoning that does not
 belong in a design document.
+
+### The backlog has an order
+
+kord records a dependency order inside an epic and no priority order anywhere. Wyrd's priority
+order is a numeric **`Rank`** field on the board, on **root-level items only** — issues with no
+parent ([`design/adr/0010`](design/adr/0010-backlog-order-lives-on-the-board.md)). Children are
+not ranked; they already carry `Depends on: #N`, and a second ordering of the same work is the
+drift this repo keeps being corrected for.
+
+```bash
+python3 tools/backlog.py next     # the one issue to work on, and what it passed over
+python3 tools/backlog.py list     # the whole ordered tree, with what is blocked
+python3 tools/backlog.py check    # drift guard; non-zero exit on any problem
+```
+
+`next` does not stop at the rank. It descends the sub-issue tree to a **ready leaf** — no open
+children, every declared dependency closed — because an epic is never something you can start.
+**Where priority and dependency disagree, dependency wins:** a rank orders what you choose
+between, it never authorises work whose prerequisites are open.
+
+**Raising root-level work includes ranking it.** Ranks are seeded in tens, so inserting between
+two items is one number, not a renumbering. Two things to know:
+
+- `kord-epic-create` adds its issue to the board; **`kord-feature-create` does not.** A
+  root-level feature must be added by hand (`gh project item-add`) before it can be ranked.
+- `tools/backlog.py check` catches an unranked root, a duplicate rank, a labelled issue missing
+  from the board, and a `Depends on:` naming an issue that does not exist. Run it after raising
+  work rather than assuming the order is still whole.
 
 ## Deterministic over inference
 
