@@ -132,12 +132,12 @@ the trouble of building. Instead `written_for` feeds the danger calculation:
 
 > `danger_effective = danger × (party_effective / written_for)`
 
-where `party_effective` counts the player character as 1 and each companion at a fraction, since companions
-are GM-run and less capable. A danger-3 arc written for four, run by one character and two
-companions,
-plays at roughly danger 2 — fewer enemies, lower stat lines, shorter odds — via the same mechanism
-that already scales content ([`03-rules.md`](03-rules.md)); mob clearing does the
-rest of the work in combat.
+where both party sizes are read as **effective** sizes rather than head counts — the k-th body is
+worth `1/k`, so a party of three counts 1.833 and a party of four counts 2.083
+([`03-rules.md`](03-rules.md) §7 holds the rule and the arithmetic). A danger-3 arc written for
+four, run by one character and two companions, plays at **danger 2.64**: six cultists become five,
+three watchmen stay three, and the stat lines and odds come down with them, via the same mechanism
+that already scales content. Mob clearing does the rest of the work in combat.
 
 `danger` in the record is therefore *intrinsic difficulty as written for its stated party
 size*, not what this table will face. The engine computes the latter.
