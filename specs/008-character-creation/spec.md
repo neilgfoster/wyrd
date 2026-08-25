@@ -32,11 +32,17 @@ Two things narrowed the answer before it was designed:
 Every step stated, in order, with each one's content sourced either from the engine or from named
 setting data. Running it twice on the same inputs gives the same character.
 
-### FR-2 — Every starting value is defined
+### FR-2 — A character has a background, expressed as career progress
+
+A new character is part-way through their first career. A pool of free advances is spent inside that
+career, and how it is spent is who they were. No separate background skill list: advances may only
+raise career-granted skills, so a skill from outside the career would be frozen at 25% forever.
+
+### FR-3 — Every starting value is defined
 
 Skills, Stamina, Luck, Fate, Fortune and every track. No value may be left to judgement.
 
-### FR-3 — Starting Stamina is computed, not chosen
+### FR-4 — Starting Stamina is computed, not chosen
 
 Four already-merged facts constrain it: the +1 from a completed career being "the only durable
 toughening", "a character ten years in is not harder to kill", `check_aftermath.py`'s verified
@@ -46,17 +52,17 @@ demonstrate the value satisfies all of them.
 `CLAUDE.md`: probability claims here have been wrong twice, and both were caught only by computing
 them.
 
-### FR-4 — The setting's obligations are stated
+### FR-5 — The setting's obligations are stated
 
 What a setting must provide for creation to run at all, so a setting missing one fails to load
 rather than being filled in by the GM.
 
-### FR-5 — Creation hands off cleanly
+### FR-6 — Creation hands off cleanly
 
 No creation-only rule that later stops applying, and no separate "starting character" state.
 Succession runs the same procedure.
 
-### FR-6 — The decision is recorded
+### FR-7 — The decision is recorded
 
 Chosen-not-rolled has real rejected alternatives — rolled statistics, a point pool, a subset of the
 career's skills — and someone will propose each again.
@@ -71,6 +77,7 @@ career's skills — and someone will propose each again.
 ## Acceptance criteria
 
 - [ ] A design document states every step, in order, and every starting value.
+- [ ] The free-advance pool is derived from the diegetic skill bands, not picked.
 - [ ] `check_creation.py` derives Stamina from the four constraints and exits zero.
 - [ ] The script fails when a constraint is violated, not merely when the author disagrees.
 - [ ] An ADR records chosen-not-rolled and its rejected alternatives.

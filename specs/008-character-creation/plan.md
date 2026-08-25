@@ -34,6 +34,22 @@ Values 5–10 then all pass, so a tiebreak is stated rather than smuggled: above
 thins below 15% and an armoured fight runs past five exchanges, which does not fit the twenty-minute
 session `01-principles.md` requires.
 
+## The background
+
+Raised in review: creation as first written had no background, and step 7 asked where a character was
+from while nothing read the answer — decorative data that reads as if it matters.
+
+The answer is to **tie the background to the first career**. Every granted skill opens at 25%, then
+six free advances are spent *inside that career*. How they are spent is the background, and the
+character starts part-way through career one rather than at its very beginning.
+
+This beats a separate background skill list on a rule already in place: advances may only raise
+career-granted skills, so a background skill from outside the career would sit at 25% for the entire
+chronicle. It also needs no new setting data — careers already declare their skills.
+
+Six is derived, not chosen: it is the largest pool that cannot open a character at *expert*
+(60%+ in `10-diegesis.md`'s bands). Seven would.
+
 ## Fate by mortality
 
 `low` 2, `standard` 3, `high` 4 — rising with lethality. Fate is the anti-frustration valve as much

@@ -210,6 +210,40 @@ def main() -> int:
     print("  something to lose after a heavy arc. 25 is exhausted by one bad arc; 50 makes")
     print("  testing near-automatic early on.")
 
+    print()
+    print("Free advances at creation — how far into the first career a character starts")
+    print("-" * 64)
+    print("  Every career-granted skill opens at 25%. A pool of free advances is then spent")
+    print("  inside that career, and how it is spent IS the character's background. Bounded")
+    print("  by the skill bands in design/10-diegesis.md:")
+    print()
+    print("    <=25 guessing | 30-40 trained | 45-55 practised | 60-70 expert | 75+ definitive")
+    print()
+    print("  A new character should be able to reach TRAINED broadly or PRACTISED narrowly,")
+    print("  and must not begin EXPERT in anything -- that is what a chronicle is for.")
+    print()
+    print("  pool   all on one skill   spread over 3   spread over 6   verdict")
+    ADVANCE = 5
+    OPEN = 25
+    best_n = None
+    for pool in range(2, 13):
+        one = OPEN + ADVANCE * pool
+        three = OPEN + ADVANCE * (pool // 3)
+        six = OPEN + ADVANCE * (pool // 6)
+        # Must not reach expert (60) even if entirely dumped on one skill...
+        no_expert = one < 60
+        # ...but must be able to clear "guessing" on at least three skills.
+        trains_broadly = three >= 30
+        ok = no_expert and trains_broadly
+        if ok:
+            best_n = pool
+        print(f"  {pool:>4}   {one:>13}%   {three:>11}%   {six:>11}%   "
+              f"{'ok' if ok else ('expert too early' if not no_expert else 'too thin')}")
+    print()
+    print(f"  The band is satisfied by pools up to {best_n}. The largest passing value is taken:")
+    print("  a smaller pool makes the choice trivial and the background faint, and the whole")
+    print("  point is that how it is spent distinguishes two characters of one career.")
+
     # ---- the decision, stated as checks rather than as a preference ----
     print()
     print("Verdict")
@@ -267,6 +301,23 @@ def main() -> int:
         failures.append("armour is not reducing the number of hits needed")
     print(f"  unarmoured drops in {num(bare)}, so armour roughly doubles endurance  "
           f"[{'ok' if bare < ordinary else 'FAIL'}]")
+
+    # Free advances: the pool must not make a starting character expert at anything, and
+    # must let them read as trained across a few skills.
+    pool = 6
+    if 25 + 5 * pool >= 60:
+        failures.append(
+            f"a pool of {pool} advances lets a new character open at "
+            f"{25 + 5 * pool}%, which design/10-diegesis.md calls expert"
+        )
+    print(f"  {pool} free advances peak at {25 + 5 * pool}% — practised, not expert  "
+          f"[{'ok' if 25 + 5 * pool < 60 else 'FAIL'}]")
+    if 25 + 5 * (pool // 3) < 30:
+        failures.append(
+            f"a pool of {pool} advances cannot lift three skills out of the guessing band"
+        )
+    print(f"  spread over 3 skills they reach {25 + 5 * (pool // 3)}% — trained        "
+          f"[{'ok' if 25 + 5 * (pool // 3) >= 30 else 'FAIL'}]")
 
     length = hits_to_drop(chosen, damage_through([6], [6], False))
     if length > 5:

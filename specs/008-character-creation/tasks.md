@@ -10,6 +10,12 @@
 - [x] T004 State the tiebreak within the passing band, rather than picking quietly.
 - [x] T005 Model Luck erosion across an arc.
 
+## Phase 1b — Background (raised in review)
+
+- [x] T005a Derive the free-advance pool from the diegetic skill bands.
+- [x] T005b Add the background step; state that origin is fiction, not mechanics.
+- [x] T005c Record why a separate background skill list fails, and why rolling is refused.
+
 ## Phase 2 — Design
 
 - [x] T006 `design/03c-character-creation.md`: the ordered steps.
