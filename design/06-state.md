@@ -129,6 +129,7 @@ mechanical state:
 id: <player-character-id>
 type: character
 role: player
+loyalty: <setting-loyalty-id>   # what decides who will travel with them (04-session.md)
 career: <career-id>
 career_history: []
 skills: {}                   # name -> percentage

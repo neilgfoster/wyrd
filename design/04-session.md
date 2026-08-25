@@ -170,12 +170,47 @@ arc: "<the choice this companion is heading toward>"
 including against the player's interest, and may refuse, leave, lie, or act while the player
 sleeps.
 
+### Loyalty — who will travel with whom
+
+Some settings divide their world so deeply that two people from opposite sides of the line would
+never share a road, whatever else they had in common. The engine has to know that, because the GM
+assembles the party and the question comes up constantly.
+
+Every character carries a **Loyalty**: what they serve, or what they are. The engine fixes nothing
+about what Loyalties exist — a setting declares them, and names them
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)). Most settings need two or three; a
+setting with one dividing line and a setting with none are both legal.
+
+Between any two Loyalties the setting declares one of three relations. Only the interesting ones are
+written down; anything undeclared is the first:
+
+| Relation | Effect |
+|---|---|
+| *(undeclared)* | nothing. They travel together like anyone else. |
+| **strained** | They travel together **badly**. Tension rises **twice as fast** while both are in the party. |
+| **irreconcilable** | They do not travel together. A companion of an irreconcilable Loyalty **cannot join**, and the engine refuses rather than asking. |
+
+`strained` needs no machinery of its own: Party Tension below already measures exactly this kind of
+friction, and already says what happens when it accumulates. A strained party is not forbidden — it
+is a party on a shorter fuse, and the fuse is the one that already exists.
+
+**A Loyalty can change.** Conversion, corruption, a revelation about someone's birth — settings that
+allow it will use it. When a character's Loyalty changes, the party is re-checked. If that makes an
+existing pairing irreconcilable, **Tension breaks immediately**: a departure, a betrayal, a refusal
+at the worst possible moment, exactly as at 6. The engine needs no new event for this, because the
+one it already has says the right thing.
+
+The player's character is not exempt. A player whose Loyalty changes may find the party they built
+will no longer ride with them, and that is a consequence the chronicle should record rather than
+soften.
+
 ### Party Tension
 
 The mechanism that makes a GM-played party feel alive on a schedule rather than
 arbitrarily.
 
-A single **Tension** track, 0-6. It rises when:
+A single **Tension** track, 0-6. It rises **twice as fast** while the party holds a strained pairing
+of Loyalties (above). It rises when:
 - the player overrules a companion on something touching their agenda
 - a companion is hurt by the player's choice
 - the party goes hungry, unpaid, or unrested
