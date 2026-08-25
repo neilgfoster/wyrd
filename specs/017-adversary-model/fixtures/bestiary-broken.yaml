@@ -1,0 +1,60 @@
+# Every rejection class the validator holds, one per entry. This file must FAIL.
+creatures:
+  - id: missing-fields
+    name: Has no baseline, no stamina, no armour and no skills
+
+  - id: unknown-field
+    name: Smuggles a mechanism in through a field the engine does not define
+    baseline: 30
+    stamina_max: 3
+    armour: light
+    skills:
+      claws: 40
+    regeneration: 2
+
+  - id: out-of-range
+    name: Values the ruleset cannot absorb
+    baseline: 140
+    stamina_max: 0
+    armour: plate
+    skills:
+      claws: 120
+
+  - id: bad-damage-type
+    name: A damage type outside the closed four
+    baseline: 30
+    stamina_max: 3
+    armour: none
+    skills:
+      claws: 40
+    damage: 1d6
+    damage_type: psychic
+
+  - id: damage-without-type
+    name: Deals damage and never says what kind
+    baseline: 30
+    stamina_max: 3
+    armour: none
+    skills:
+      claws: 40
+    damage: 1d6
+
+  - id: bad-trait
+    name: A trait effect outside the closed vocabulary
+    baseline: 30
+    stamina_max: 3
+    armour: none
+    skills:
+      claws: 40
+    traits:
+      - name: Regenerating
+        effect:
+          heals_each_round: 2
+
+  - id: bad-trait
+    name: And a duplicate id, which must not silently win
+    baseline: 30
+    stamina_max: 3
+    armour: none
+    skills:
+      claws: 40

@@ -215,6 +215,9 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 
 ### The exchange
 
+What is on the other side of the roll — what an opponent carries, and which of these rules reads
+each field — is in [`03d-the-adversary.md`](03d-the-adversary.md).
+
 - Attacks are opposed tests. The winner rolls the weapon's damage.
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
@@ -647,7 +650,9 @@ A successor inherits none of the competence and all of the position
 Content is written once with a **danger rating** used as a multiplier inside it: a trap
 written `Nd4` does `6d4` at danger 6, and enemy counts and skill values scale from the same
 number. It is also written for a party of a stated size — `written_for`, a head count and never
-a gate ([`11-corpus-index.md`](11-corpus-index.md)).
+a gate ([`11-corpus-index.md`](11-corpus-index.md)). Counts scale below; skill values scale in
+points, further down. An opponent's own record never changes — what a written opponent carries is in
+[`03d-the-adversary.md`](03d-the-adversary.md), and it is absolute.
 
 Effective danger accounts for the party actually present:
 
@@ -707,6 +712,48 @@ largest count in a piece of content — which is generally the fight.
 A worked case: a danger-3 arc written for four, run by one character and two companions, is
 three bodies against four. The ratio is `1.833 / 2.083`, or **0.88**, and `danger_effective` is
 **2.64** — six cultists become five, three watchmen stay three.
+
+### The skill values scale too, in points
+
+A percentage cannot be multiplied by a ratio: 45 × 2.64 is not a skill. So the second quantity this
+section scales resolves to a **points adjustment added to the opponent's percentage**, which is how
+every other modifier in this engine works — the difficulty ladder in §1 is +20 to −40, not a
+multiplier.
+
+> **The adjustment is `15.5 × log₂(ratio)`, rounded to the nearest 5 and clipped to ±20.**
+
+| party \ `written_for` | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| **1** | +0 | −10 | −15 | −15 | −20 | −20 |
+| **2** | +10 | +0 | −5 | −5 | −10 | −10 |
+| **3** | +15 | +5 | +0 | −5 | −5 | −5 |
+| **4** | +15 | +5 | +5 | +0 | +0 | −5 |
+| **5** | +20 | +10 | +5 | +0 | +0 | +0 |
+| **6** | +20 | +10 | +5 | +5 | +0 | +0 |
+
+Three properties, and none of them was chosen:
+
+**The diagonal is +0.** Content written for four, run by four bodies, meets opponents at exactly
+their written percentages. That is the identity case the ratio exists to preserve, and it now holds
+on both quantities rather than on the count alone.
+
+**The coefficient is fitted, not picked.** Across every party and `written_for` from one to six the
+ratio runs `0.408` to `2.450` — exactly antisymmetric, because swapping the two inverts it. Require
+the extreme of that computed range to land on the ladder's top rung and the coefficient falls out:
+`20 / log₂(2.45)`. It was derived before it was written down, which is the only way a round number
+in this repo means anything ([`07-tooling.md`](07-tooling.md)).
+
+**The clip is symmetric at ±20**, not the ladder's −40, because the adjustment must negate when
+party and `written_for` swap. A −40 floor against a +20 ceiling would break exactly that.
+
+**An adjusted percentage floors at 0.** An opponent already at the untrained 10, in content written
+for six, met by a lone character, takes the full −20 and would land below zero. A percentage is not
+a negative number, and §1 already says what a test at or below zero is: it is not attempted.
+
+The rounding step is **5** because that is the finest unit the engine moves a skill by at all (§6).
+Rounding to the ladder's 10 preserves the identity case too, but discards a rung the engine can
+express. Computed in
+[`check_adversary.py`](../specs/017-adversary-model/check_adversary.py).
 
 ### The retinue is not a difficulty setting
 

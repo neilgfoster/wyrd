@@ -105,6 +105,13 @@ A companion is a person first and a small set of numbers second
 ([`04-session.md`](04-session.md)), and advances rarely and simply — one competence gained or
 limitation lost at a downtime ([`03-rules.md`](03-rules.md) §6).
 
-How an adversary is represented, and whether it uses this model or a deliberately thinner one, is not
-yet decided. It is the subject of Stage 7 of the design programme and nothing here presumes the
-answer.
+**An adversary is deliberately thinner than this document describes.** It carries what a published
+rule reads off it — a baseline, maximum Stamina, an armour rank, skills, and what its blows are —
+and none of the tracks, no career, no Loyalty and no advancement. Every track above accrues, and a
+thing met once has nowhere to accrue to. The block is in
+[`03d-the-adversary.md`](03d-the-adversary.md); why it is thin rather than a second character is in
+[ADR 0025](adr/0025-an-adversary-is-a-thin-block.md).
+
+A **named antagonist** is not an exception to that. It is a `character` entity
+([`14-entities.md`](14-entities.md)) which also carries an adversary block — the person layer from
+this document and the fighting layer from that one, rather than a third model.

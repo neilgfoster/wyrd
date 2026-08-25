@@ -66,6 +66,8 @@ records that exist mark the places where the obvious answer was wrong.
 | [0022](adr/0022-four-damage-types-named-for-the-wound.md) | Four damage types, named for the shape of the wound |
 | [0023](adr/0023-a-critical-never-kills-during-the-fight.md) | A critical never kills during the fight |
 | [0024](adr/0024-a-party-is-worth-less-than-its-head-count.md) | A party is worth less than its head count, on both sides of the ratio |
+| [0025](adr/0025-an-adversary-is-a-thin-block.md) | An adversary is a thin block, and a named antagonist wears one |
+| [0026](adr/0026-danger-scales-a-skill-in-points-not-in-multiples.md) | Danger scales a skill in points, not in multiples |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
