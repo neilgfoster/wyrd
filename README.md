@@ -70,6 +70,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [02-architecture](design/02-architecture.md) | The four repositories; code versus prose |
 | [03-rules](design/03-rules.md) | The ruleset |
 | [03b-the-character](design/03b-the-character.md) | What a character is made of, and on what scale |
+| [03c-character-creation](design/03c-character-creation.md) | Turning a setting's options into a playable character |
 | [03a-tables](design/03a-tables.md) | Table conventions, and the index of the table families |
 | [03a-2-aftermath](design/03a-2-aftermath.md) | The Aftermath family — what happens to a combatant who drops |
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the party |
