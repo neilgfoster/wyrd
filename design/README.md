@@ -6,16 +6,23 @@ Two kinds of document, with different lifecycles.
 |---|---|---|
 | Answers | **what Wyrd is** | **why, and what was rejected** |
 | Tense | present | dated |
-| When it changes | rewritten in place; always current | never edited; superseded by a later record |
+| When it changes | rewritten in place; always current | its reasoning is never edited; a later record supersedes it |
 | Read for | building or playing | re-litigating a decision |
 
 A design document is **replaceable**. When something changes, the old text goes and the
 document describes the new state — git holds the history, but the document itself is only
 ever the present.
 
-A decision record is **historical**. It is written once, dated, and left alone. If the
-decision is reversed, a new record supersedes it and both remain, because the reasoning that
-was rejected is as useful as the reasoning that won.
+A decision record is **historical**. It is written once, dated, and its reasoning is left
+alone. If the decision is reversed, a new record supersedes it and both remain, because the
+reasoning that was rejected is as useful as the reasoning that won.
+
+**One line of a record does change: its `Status:`.** A superseded record's status names the
+record that replaced it, and moves to [`adr/superseded/`](adr/superseded/README.md), where it keeps the
+number it was written under — permanently, so a historical reference still resolves to the
+reasoning it meant. Nothing else in an accepted record is ever edited, and no record is ever
+deleted. The full rule, and the reset that made it necessary, are in
+[ADR 0012](adr/0012-the-design-reset-and-how-records-are-consolidated.md).
 
 ## What earns a decision record
 
@@ -46,6 +53,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0009](adr/0009-fate-closes-the-death-rows.md) | Fate closes the death rows rather than suppressing the roll |
 | [0010](adr/0010-backlog-order-lives-on-the-board.md) | The backlog order lives on the board, not in a file |
 | [0011](adr/0011-markdown-links-in-prose-wikilinks-in-data.md) | Markdown links in prose, wikilinks in data |
+| [0012](adr/0012-the-design-reset-and-how-records-are-consolidated.md) | The design reset, and how decision records are consolidated |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
