@@ -38,6 +38,12 @@ A new character is part-way through their first career. A pool of free advances 
 career, and how it is spent is who they were. No separate background skill list: advances may only
 raise career-granted skills, so a skill from outside the career would be frozen at 25% forever.
 
+### FR-2b — An untrained test has a stated base
+
+A character may attempt a skill they do not have. Removing characteristics removed the floor other
+percentile systems fall back on, so the engine must name one. A setting may mark a skill as requiring
+training, in which case there is no untrained attempt.
+
 ### FR-3 — Every starting value is defined
 
 Skills, Stamina, Luck, Fate, Fortune and every track. No value may be left to judgement.

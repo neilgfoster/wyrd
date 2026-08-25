@@ -47,9 +47,13 @@ What a given percentage *means* — from "you would be guessing" to "it is part 
 tabulated once, in [`10-diegesis.md`](10-diegesis.md), because that is where the engine's own
 vocabulary for describing a character to their player lives. It is not repeated here.
 
-A character has a skill or does not. There is no unskilled default value: whether an untrained
-attempt is possible at all, and at what difficulty, is a judgement the ruleset already covers under
-declaration and difficulty ([`03-rules.md`](03-rules.md) §1).
+A character has a skill or does not — and **not having it does not mean not trying.** An untrained
+test is taken at a flat **10%**, before difficulty and declaration
+([`03-rules.md`](03-rules.md) §1). Anyone may try to shoot; almost nobody hits.
+
+That base has to be stated rather than derived, because there are no characteristics to derive it
+from ([ADR 0013](adr/0013-the-engine-names-no-skill.md)). Most percentile systems fall back to an
+attribute; this one has nowhere to fall back to, so the engine names the number.
 
 ### What a setting declares
 
@@ -59,6 +63,10 @@ A skill entry is a name and the fiction around it. The engine assumes only this:
 - **A display name**, which is what the player ever sees.
 - **Which careers grant it**, because that is what makes it openable and what caps it
   ([`03-rules.md`](03-rules.md) §6).
+- **Whether it may be attempted untrained.** Most skills may: a person who has never shot can still
+  point a weapon and pull. Some cannot, and a setting says which — reading a language you do not
+  speak, or performing surgery, is not a 10% chance, it is nothing. A skill is attemptable untrained
+  unless the setting says otherwise, because that is the commoner case and the safer default.
 
 The engine does not assume a category, a parent statistic, a governing attribute, or a fixed count.
 A setting with eleven skills and a setting with ninety are both legal, and neither is more correct.

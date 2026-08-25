@@ -244,6 +244,49 @@ def main() -> int:
     print("  a smaller pool makes the choice trivial and the background faint, and the whole")
     print("  point is that how it is spent distinguishes two characters of one career.")
 
+    print()
+    print("The untrained base — a skill the character does not have")
+    print("-" * 64)
+    print("  There are no characteristics to fall back on (ADR 0013), so the engine states a")
+    print("  flat base. It has to sit below the 25% a skill opens at, stay inside the")
+    print("  guessing band, and still let a well-judged easy attempt be worth making.")
+    print()
+    DIFFICULTY = [("easy", 20), ("average", 0), ("challenging", -10),
+                  ("difficult", -20), ("hard", -30), ("very hard", -40)]
+    DECLARATION = [("brief", 0), ("specific", 10), ("leveraging", 20)]
+    print("  base   " + "".join(f"{d:>12}" for d, _ in DIFFICULTY))
+    for base in (5, 10, 15, 20):
+        row = "".join(f"{max(0, base + m):>12}" for _, m in DIFFICULTY)
+        print(f"  {base:>4}   {row}")
+    print()
+    print("  At base 10, with declaration (easy difficulty):")
+    for label, bonus in DECLARATION:
+        print(f"    {label:<12} {10 + 20 + bonus:>3}%")
+
+    UNTRAINED = 10
+    OPENS_AT = 25
+    GUESSING_TOP = 25
+    if UNTRAINED >= OPENS_AT:
+        failures.append(
+            f"untrained {UNTRAINED}% is not below the {OPENS_AT}% a skill opens at — "
+            "having the skill would buy nothing"
+        )
+    if UNTRAINED > GUESSING_TOP:
+        failures.append(
+            f"untrained {UNTRAINED}% is outside the <={GUESSING_TOP}% guessing band in "
+            "design/10-diegesis.md"
+        )
+    if UNTRAINED + (-30) > 0:
+        failures.append(
+            f"untrained {UNTRAINED}% remains possible at hard difficulty; an untrained "
+            "attempt at something hard should not be"
+        )
+    if UNTRAINED + 20 + 20 < 40:
+        failures.append(
+            f"untrained {UNTRAINED}% with an easy task and a good declaration is still not "
+            "worth attempting, which makes the base decorative"
+        )
+
     # ---- the decision, stated as checks rather than as a preference ----
     print()
     print("Verdict")
@@ -327,6 +370,13 @@ def main() -> int:
         )
     print(f"  an armoured fight resolves in {num(length)} exchanges              "
           f"[{'ok' if length <= 5 else 'FAIL'}]")
+
+    print(f"  untrained {UNTRAINED}% sits below the {OPENS_AT}% a skill opens at        "
+          f"[{'ok' if UNTRAINED < OPENS_AT else 'FAIL'}]")
+    print(f"  untrained is impossible at hard difficulty ({UNTRAINED - 30}%)         "
+          f"[{'ok' if UNTRAINED - 30 <= 0 else 'FAIL'}]")
+    print(f"  a well-judged easy untrained attempt reaches {UNTRAINED + 40}%         "
+          f"[{'ok' if UNTRAINED + 40 >= 40 else 'FAIL'}]")
 
     print()
     if failures:

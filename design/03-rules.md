@@ -42,6 +42,24 @@ One roll, three independent axes, no extra dice. Rationale and rejected alternat
 |---|---|---|---|---|---|
 | +20 | +0 | −10 | −20 | −30 | −40 |
 
+**Untrained — a skill you do not have** is tested at a flat **10%**, before difficulty and
+declaration. Anyone may try to shoot; almost nobody hits. The engine has no characteristics to fall
+back on ([ADR 0013](adr/0013-the-engine-names-no-skill.md)), so this base is stated rather than
+derived, and it sits inside the *you would be guessing* band
+([`10-diegesis.md`](10-diegesis.md)).
+
+| Attempting | At |
+|---|---|
+| untrained, average difficulty, said briefly | **10%** |
+| untrained, easy, said briefly | **30%** |
+| untrained, easy, specific and leveraging something established | **50%** |
+| untrained, hard | impossible — the modifier takes it below zero |
+| trained, average difficulty, said briefly | **25%** and up |
+
+Having the skill is worth at least 15 points over not having it, at every difficulty. A setting may
+mark a skill as **requiring training**, and then there is no untrained attempt at all — a language
+you do not speak is not a 10% chance ([`03b-the-character.md`](03b-the-character.md)).
+
 **Opposed tests:** both roll; the higher degree of success wins; ties to the defender. The acting side reads the
 Wyrd die.
 
