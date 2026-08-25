@@ -54,6 +54,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0010](adr/0010-backlog-order-lives-on-the-board.md) | The backlog order lives on the board, not in a file |
 | [0011](adr/0011-markdown-links-in-prose-wikilinks-in-data.md) | Markdown links in prose, wikilinks in data |
 | [0012](adr/0012-the-design-reset-and-how-records-are-consolidated.md) | The design reset, and how decision records are consolidated |
+| [0013](adr/0013-the-engine-names-no-skill.md) | The engine names no skill, and has no characteristics |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three

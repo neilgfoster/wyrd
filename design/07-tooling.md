@@ -136,6 +136,11 @@ returns the whole structured result, not a sentence:
 
 The GM narrates from that object. It does not need to know how any of it was derived.
 
+`skill` carries whatever the **setting** calls that skill — the engine has no skill vocabulary of
+its own and echoes back the identifier it was given
+([ADR 0013](adr/0013-the-engine-names-no-skill.md)). The value above is one setting's word, not an
+engine skill.
+
 ### Modular and extensible
 
 - `rules.py` and `tables.py` are **pure** — no I/O, no state, trivially testable
@@ -184,7 +189,7 @@ configuration is written into the chronicle at bootstrap and versioned with ever
 
 | Kind | Mechanism | Cost to the tooling |
 |---|---|---|
-| **Extend** | a data file appended to a list — skills, careers, gear, creatures | none; these were always data |
+| **Extend** | a data file appended to a list — careers, gear, creatures | none; these were always data |
 | **Retune** | a table path replaced | none; tables are loaded by name |
 | **Rename** | a presentation-layer lookup | **none in code — see below** |
 | **Disable** | a mechanism switched off | verbs and checks must react |
