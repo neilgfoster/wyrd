@@ -226,6 +226,12 @@ def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, 
     Depth-first through the ranked roots. A leaf is an issue with no OPEN children; it is
     ready when every issue it declares a dependency on is closed. The blocked list is
     returned rather than discarded so `next` can say why the obvious answer was not chosen.
+
+    An epic is never the answer. An epic whose children have all closed is a *spent* epic --
+    either it is finished and wants closing, or it wants decomposing into the work that is
+    actually left. Handing one out as the next thing to implement is how a completed stage
+    gets silently reopened as a task: found when Stage 2's children closed and `next` offered
+    the stage itself.
     """
     blocked: list[dict] = []
     chosen: dict | None = None
@@ -250,6 +256,11 @@ def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, 
             "rank": board.get(path[0], {}).get("rank"),
             "blocked_by": blockers,
         }
+        if issue["is_epic"]:
+            # A container with nothing open inside it. Not work, at any rank. Reported
+            # exhaustively by spent_epics(), not from here -- the walk stops at the first
+            # answer, so anything it collected on the way would be an arbitrary subset.
+            return None
         if blockers:
             blocked.append(entry)
             return None
@@ -262,6 +273,29 @@ def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, 
     return chosen, blocked
 
 
+def spent_epics(issues: dict[int, dict], board: dict[int, dict]) -> list[dict]:
+    """Every open epic with no open children, ranked ones first.
+
+    Each is either finished and wanting closure, or never decomposed and hiding work that
+    cannot be reached. Both stall the backlog silently: an undecomposed epic is skipped by
+    the walk forever, and a finished one used to be offered as the next thing to build.
+
+    A full scan rather than a by-product of the walk, which stops at its first answer.
+    """
+    found = [
+        {
+            "number": n,
+            "title": i["title"],
+            "url": i["url"],
+            "rank": board.get(n, {}).get("rank"),
+            "root": i["parent"] is None,
+        }
+        for n, i in issues.items()
+        if i["is_epic"] and not i["open_children"]
+    ]
+    return sorted(found, key=lambda e: (e["rank"] is None, e["rank"] or 0, e["number"]))
+
+
 def describe_path(path: list[int], issues: dict[int, dict]) -> str:
     return " > ".join(f"#{n} {issues[n]['title']}" for n in path if n in issues)
 
@@ -270,9 +304,11 @@ def cmd_next(args) -> int:
     issues = fetch_issues()
     board = fetch_board()
     chosen, blocked = walk(issues, board)
+    spent = spent_epics(issues, board)
 
     if args.format == "json":
-        print(json.dumps({"next": chosen, "blocked": blocked}, indent=2))
+        print(json.dumps(
+            {"next": chosen, "blocked": blocked, "spent_epics": spent}, indent=2))
         return 0 if chosen else 1
 
     if not chosen:
@@ -282,6 +318,7 @@ def cmd_next(args) -> int:
             for entry in blocked:
                 deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
                 print(f"  #{entry['number']} {entry['title']}  <- blocked by {deps}")
+        report_spent(spent)
         return 1
 
     print(f"Next: #{chosen['number']}  {chosen['title']}")
@@ -295,7 +332,19 @@ def cmd_next(args) -> int:
         for entry in blocked:
             deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
             print(f"  #{entry['number']} {entry['title']}  <- blocked by {deps}")
+
+    report_spent(spent)
     return 0
+
+
+def report_spent(spent: list[dict]) -> None:
+    """Epics with nothing open inside them. Finished, or never decomposed."""
+    if not spent:
+        return
+    print(f"\n{len(spent)} epic(s) with no open children — close them, or decompose them:")
+    for entry in spent:
+        rank = f"rank {entry['rank']}" if entry["rank"] is not None else "unranked"
+        print(f"  #{entry['number']} {entry['title']}  ({rank})")
 
 
 def cmd_list(args) -> int:
@@ -311,7 +360,9 @@ def cmd_list(args) -> int:
         marker = f"[{rank:>3}] " if rank is not None else "      "
         blockers = open_blockers(issue, issues)
         suffix = ""
-        if blockers:
+        if issue["is_epic"] and not issue["open_children"]:
+            suffix = "  <- no open children; close or decompose"
+        elif blockers:
             suffix = "  <- blocked by " + ", ".join(f"#{d}" for d in blockers)
         elif not issue["open_children"]:
             suffix = "  <- ready"

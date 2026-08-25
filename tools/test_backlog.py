@@ -144,7 +144,9 @@ class TestWalk(unittest.TestCase):
                           labels=("kord-epic",)),
             2: make_issue(2, title="blocked leaf", parent=1, depends_on=[9]),
             9: make_issue(9, title="the blocker"),
-            5: make_issue(5, title="lower priority", labels=("kord-epic",)),
+            # A feature, not an epic: an epic is never handed out as work, so using one
+            # here would test the epic rule rather than the dependency rule.
+            5: make_issue(5, title="lower priority", labels=("kord-feature",)),
         }
         board = {1: {"rank": 10}, 5: {"rank": 20}, 9: {"rank": None}}
         chosen, blocked = backlog.walk(issues, board)
@@ -203,6 +205,68 @@ class TestWalk(unittest.TestCase):
         first, _ = backlog.walk(issues, board)
         second, _ = backlog.walk(issues, board)
         self.assertEqual(first, second)
+
+
+class TestEpicsAreNeverWork(unittest.TestCase):
+    """An epic is a container. Handing one out as the next thing to build is a bug.
+
+    Found in practice: when Stage 2's two children both closed, `next` offered Stage 2
+    itself as the work to do -- a completed stage silently reopened as a task.
+    """
+
+    def test_a_spent_epic_is_not_chosen(self):
+        issues = {
+            1: make_issue(1, title="stage", labels=("kord-epic",),
+                          children=[2], open_children=[]),
+        }
+        chosen, _ = backlog.walk(issues, {1: {"rank": 10}})
+        spent = backlog.spent_epics(issues, {1: {"rank": 10}})
+        self.assertIsNone(chosen)
+        self.assertEqual([e["number"] for e in spent], [1])
+
+    def test_the_walk_moves_on_to_the_next_root(self):
+        """A spent epic must not stop the search, only decline to be the answer."""
+        issues = {
+            1: make_issue(1, title="finished stage", labels=("kord-epic",),
+                          children=[9], open_children=[]),
+            2: make_issue(2, title="real work"),
+        }
+        board = {1: {"rank": 10}, 2: {"rank": 20}}
+        chosen, _ = backlog.walk(issues, board)
+        spent = backlog.spent_epics(issues, board)
+        self.assertEqual(chosen["number"], 2)
+        self.assertEqual([e["number"] for e in spent], [1])
+
+    def test_an_epic_with_open_children_is_descended_not_reported(self):
+        issues = {
+            1: make_issue(1, labels=("kord-epic",), children=[2], open_children=[2]),
+            2: make_issue(2, title="leaf", parent=1),
+        }
+        chosen, _ = backlog.walk(issues, {1: {"rank": 10}})
+        spent = backlog.spent_epics(issues, {1: {"rank": 10}})
+        self.assertEqual(chosen["number"], 2)
+        self.assertEqual(spent, [])
+
+    def test_a_feature_with_no_children_is_still_work(self):
+        """The rule is about epics, not about childlessness."""
+        issues = {1: make_issue(1, title="a feature", labels=("kord-feature",))}
+        chosen, _ = backlog.walk(issues, {1: {"rank": 10}})
+        spent = backlog.spent_epics(issues, {1: {"rank": 10}})
+        self.assertEqual(chosen["number"], 1)
+        self.assertEqual(spent, [])
+
+    def test_a_spent_epic_is_reported_even_when_it_is_blocked(self):
+        """Its dependencies are irrelevant: it is not work either way."""
+        issues = {
+            1: make_issue(1, labels=("kord-epic",), children=[9], open_children=[],
+                          depends_on=[2]),
+            2: make_issue(2, title="blocker"),
+        }
+        board = {1: {"rank": 10}, 2: {"rank": 20}}
+        _, blocked = backlog.walk(issues, board)
+        spent = backlog.spent_epics(issues, board)
+        self.assertEqual([e["number"] for e in spent], [1])
+        self.assertEqual(blocked, [])
 
 
 class TestAgainstCapturedBoard(unittest.TestCase):
