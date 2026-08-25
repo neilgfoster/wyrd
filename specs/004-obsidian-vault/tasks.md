@@ -29,4 +29,4 @@
 
 ## Phase 5 — Ship
 
-- [ ] T013 Commit referencing #39, open the PR.
+- [x] T013 Commit referencing #39, open the PR.
