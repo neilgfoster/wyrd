@@ -213,6 +213,8 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 
 ## 2. Combat
 
+### The exchange
+
 - Attacks are opposed tests. The winner rolls the weapon's damage.
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
@@ -224,16 +226,130 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 - Weapons are **casual** or **martial**. Martial weapons mark the bearer and are illegal in
   most civilised places — a social constraint that does real work.
 
-**Mobs.** Each round a character also clears petty opponents weaker than themselves, so one
+### Rounds and turn order
+
+A **round** is the span in which every combatant acts once. It has no fixed length in the fiction;
+it is as long as the exchange needs.
+
+> **Whoever started the exchange acts first.** That side takes the whole first round, then the other
+> side takes theirs.
+
+Order costs no dice and needs no roll, which matters twice over: it keeps a round cheap in prose,
+and the engine names no skill and has no characteristics
+([ADR 0013](adr/0013-the-engine-names-no-skill.md)), so there is nothing an initiative roll could be
+made against without inventing an attribute for the purpose.
+
+Within a side, order is the fiction's and carries no mechanical weight — companions act where they
+make sense, and nothing depends on which of them goes first.
+
+**Where neither side started it** — a mutual encounter, both parties seeing each other at once — the
+side already holding a weapon acts first. If both are armed, or neither is, the player's side acts
+first. That last clause is the one rule here decided from outside the fiction, and it is stated
+plainly rather than dressed up ([ADR 0018](adr/0018-combat-sequencing.md)).
+
+### A turn is one action
+
+On their turn a combatant does **one** thing:
+
+| Action | Effect |
+|---|---|
+| **Attack** | in close engagement, or at range |
+| **Close** | enter close engagement with someone |
+| **Break off** | leave close engagement, at the cost of a parting blow |
+| **Ready or use** | draw, reload, drink, brace, work something |
+| **Act on the fiction** | anything else the scene affords |
+
+One action, no second action and no free action. Anything that would need two is two turns.
+
+### Engagement
+
+The engine records **one** fact about position: two combatants are **in close engagement**, or they
+are not. There are no distances, no ranges and no map — a chronicle can record a state and cannot
+record a battlefield.
+
+**Closing costs the closing combatant their action.** They arrive; they do not also swing.
+
+**Being closed with is not refusable.** Once someone has closed, the engagement exists, and leaving
+it means breaking off.
+
+That single exchange rate is what holds ranged and close combat in tension. A fighter spends a turn
+to reach an archer; the archer spends a parting blow to get clear again. Neither is free, and
+neither is impossible.
+
+### Ranged attacks
+
+A ranged attack is an ordinary attack. What makes one harder is what the fiction already carries,
+read on the difficulty ladder in §1 — never a distance, because there is not one:
+
+| The shot | Difficulty |
+|---|---|
+| clear sight, target unaware or standing still | **Easy** |
+| ordinary | **Average** |
+| target has cover, or the light is poor | **Challenging** |
+| **the shooter is in close engagement** | **Difficult** |
+| **the target is in close engagement with someone else** | **Challenging** |
+| target has hard cover and knows the shot is coming | **Hard** |
+
+Two of those rows do work worth naming. Shooting **while engaged** is hard enough that an archer
+would usually rather break off — which is what stops a fight collapsing into everyone shooting at
+arm's length. Shooting **into someone else's fight** is the situation that arises constantly and
+that no rule covered until it was played: it is one rung harder, and an **Ill Omen** on the shot
+means the ally is hit instead.
+
+### Breaking off, and getting away
+
+Leaving a fight is two things, and they cost separately.
+
+**Breaking close engagement always works, and always costs a parting blow.** Every opponent still
+engaged with the departing combatant attacks them as they go. There is no roll to leave.
+
+**Getting away from the scene is a group test**, in the *everyone must get through* shape from §1 —
+the party escapes as fast as its slowest member, and the fastest can only do so much for them. The
+pursuit sets the difficulty:
+
+| Pursuit | Difficulty |
+|---|---|
+| one pursuer | **Challenging** |
+| each further pursuer | one rung harder |
+| no one able or willing to follow | no test — you simply go |
+
+On a failure the fight resumes, and it resumes **where the slowest member is**.
+
+Flight is therefore never impossible — retreat stays the right answer to a fight going badly, and
+the engine lets a player take it — and never free.
+
+### Surprise and ambush
+
+> **A surprised side does not act in the first round at all.**
+
+This is the ordinary turn-order rule taken to its limit: the exchange began and one side did not
+know it.
+
+**A surprised combatant still defends.** They lose their turn, not their reflexes. Without that
+sentence surprise is worth roughly twice what it is meant to be.
+
+**Ambush is surprise that was prepared** rather than stumbled into — a position chosen, a weapon
+already drawn, a moment waited for. It eases the first round's attacks by **+20**, and nothing
+after. Preparing an ambush is therefore worth more than being handed one, and worth no more than a
+perfectly judged declaration (§1).
+
+A free round is decisive without being deciding: computed across realistic pairings it moves the
+surprising side's odds by 4 to 8 points and never past 83%, so an ambush wins fights and does not
+end them before they start
+([`check_sequencing.py`](../specs/012-combat-sequencing/check_sequencing.py)).
+
+### Mobs
+
+Each round a character also clears petty opponents weaker than themselves, so one
 character plus companions can face a crowd without a roll per body.
 
-**Death is deferred.** Nothing resolves during the fight; a combatant who drops is *out of
+### Death is deferred
+
+Nothing resolves during the fight; a combatant who drops is *out of
 action*. Afterwards, roll `d100 + 5 × points below zero` on the **Aftermath** table
 ([`03a-2-aftermath.md`](03a-2-aftermath.md)) — once per combatant who dropped, companions
 included. Most results are a lasting mark rather than death. Deferred resolution is how a
 single-character chronicle survives lethal combat.
-
----
 
 ## 3. Fate and Fortune
 
