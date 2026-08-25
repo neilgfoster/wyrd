@@ -23,4 +23,4 @@
 
 ## Phase 4 — Ship
 
-- [ ] T011 Commit referencing #40, open the PR.
+- [x] T011 Commit referencing #40, open the PR.
