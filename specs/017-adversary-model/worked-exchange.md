@@ -29,7 +29,7 @@ inventing anything, and this is the only place every rule that reads an opponent
         difficulty: -10
 ```
 
-Nine fields, six of them required. Every one is read by a published rule, and the table in
+Ten fields, six of them required. Every one is read by a published rule, and the table in
 [`design/03d-the-adversary.md`](../../design/03d-the-adversary.md) names which.
 
 ---
@@ -56,9 +56,29 @@ a newly trained one almost always. That is the correct shape for a nemesis and i
 property of the block, not a claim about how frightening the thing is meant to be.
 
 **Every field the exchange consumed came off the block**: the skill it resisted with, the armour
-that subtracted dice, the Stamina it had to lose, and the damage type that selects the critical
-table. The one thing the GM chose was the difficulty of the shot, which is what the difficulty
-ladder is for.
+that subtracted dice, the Stamina it had to lose, and the dice its own blows roll. The one thing the
+GM chose was the difficulty of the shot, which is what the difficulty ladder is for.
+
+The `damage` field earns its place by changing the answer. The same opponent, same skill, same
+armour, swinging `2d6` instead of `1d6`, drops a 45% character **92.7%** of the time rather than
+**75.8%**.
+
+### The critical, and what is not rolled
+
+When the character wins, damage takes the opponent below 0 and the critical rule applies: `1d6 +
+points below zero`, on the table for **the block's own damage type**. Against this opponent the
+totals run **2 to 11**, mean **5.12**, and the whole distribution's mass equals the chance the
+opponent dropped at all.
+
+The lowest reachable total is 2, which is exactly where the critical tables' first row starts
+([`03a-1-criticals.md`](../../design/03a-1-criticals.md)) — a blow that drops someone is at least one
+point below zero, and the die adds at least one more. The table has no row for 1 because no roll can
+produce one.
+
+**The Aftermath table is not rolled here.** It is rolled once per *character or companion* who
+dropped ([`03-rules.md`](../../design/03-rules.md) §2), and an adversary is neither — the same rule
+§2 already states for a crowd. A named antagonist is a `character` entity and so does roll, but not
+because it is important: because it is a character, which is the test the rule already applies.
 
 ---
 

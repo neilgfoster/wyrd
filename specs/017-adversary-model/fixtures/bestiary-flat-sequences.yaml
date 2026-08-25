@@ -1,0 +1,31 @@
+# The same content as bestiary-valid.yaml, written with sequences at their parent key's own
+# indentation. Legal YAML, commonly written, and it must validate identically.
+creatures:
+- id: mob-body
+  name: A body in the crowd
+  baseline: 10
+  stamina_max: 1
+  armour: none
+  skills:
+    brawl: 20
+  damage: 1d3
+  damage_type: blunt
+  ranged: false
+- id: the-hunter
+  name: A named antagonist
+  baseline: 35
+  stamina_max: 7
+  armour: modest
+  skills:
+    blade: 55
+    tracking: 60
+  damage: 1d6
+  damage_type: slashing
+  ranged: false
+  traits:
+  - name: Unhurried
+    effect:
+      difficulty: -10
+  - name: Thick coat
+    effect:
+      armour_rank: 1

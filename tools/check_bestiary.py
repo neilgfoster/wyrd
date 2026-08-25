@@ -35,7 +35,6 @@ import argparse
 import json
 import pathlib
 import re
-import sys
 
 # --- The block, from design/03d-the-adversary.md ----------------------------
 
@@ -67,8 +66,9 @@ DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
 
 # --- The small internal reader ----------------------------------------------
 # The restricted subset: nested mappings, lists of mappings or scalars, scalars, comments,
-# blank lines. Two-space indentation is not required, but indentation must be consistent within
-# a block. Anything outside the subset is an error rather than a guess.
+# blank lines. Indentation must be consistent within a block, but its width is free, and a
+# sequence may sit either indented under its key or at the key's own indentation -- both are
+# legal YAML and both get written. Anything outside the subset is an error rather than a guess.
 
 
 class YamlError(Exception):
@@ -99,6 +99,10 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
             break
         if ind > indent:
             raise YamlError(f"line {lineno}: unexpected indentation")
+        if items and not text.startswith("- "):
+            # A sequence sitting at its parent key's indentation ends where the parent's next
+            # key begins. Without this the next key would be read as part of the list.
+            break
         if text.startswith("- "):
             rest = text[2:].strip()
             if ":" in rest and not rest.startswith(("\"", "'")):
@@ -130,6 +134,12 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
         if j < len(lines) and lines[j][1] > indent:
             value, j = _parse_block(lines, j, lines[j][1])
             mapping[key] = value
+        elif j < len(lines) and lines[j][1] == indent and lines[j][2].startswith("- "):
+            # YAML lets a sequence share its parent key's indentation, and plenty of people
+            # write it that way. Rejecting it fails closed, but it rejects a correct file with
+            # a message pointing nowhere near the cause.
+            value, j = _parse_block(lines, j, indent)
+            mapping[key] = value
         else:
             mapping[key] = None
         i = j
@@ -160,9 +170,6 @@ def read_yaml(path: pathlib.Path):
 
 def check_entry(entry, where: str) -> list[str]:
     problems: list[str] = []
-
-    def bad(field: str, why: str) -> None:
-        problems.append(f"{where}: {field}: {why}")
 
     if not isinstance(entry, dict):
         return [f"{where}: entry is not a mapping"]

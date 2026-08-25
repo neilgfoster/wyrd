@@ -169,6 +169,19 @@ HIT_MODELS = [("opposed", p_opposed_win), ("mapped", p_mapped)]
 
 ORDINARY_HIT = damage_through(ORDINARY_WEAPON, ARMOUR[ORDINARY_ARMOUR])
 
+# The critical table rows run from 2 (1d6 plus at least 1 point below zero) to 22+
+# (design/03a-1-criticals.md). One table per damage type; the block picks which.
+CRITICAL_FIRST_ROW = 2
+CRITICAL_DIE = 6
+
+
+def parse_damage(expr: str) -> list[int]:
+    """'1d6' -> [6], '2d6' -> [6, 6]. The block writes what its blows roll, and the fight has
+    to read it -- otherwise the damage field is decoration and the exchange proves nothing
+    about it."""
+    count, _, faces = expr.partition("d")
+    return [int(faces)] * int(count or 1)
+
 
 # ---------------------------------------------------------------------------
 # T004. The memoised exchange table, built once, before any figure is read from it.
@@ -179,13 +192,16 @@ ORDINARY_HIT = damage_through(ORDINARY_WEAPON, ARMOUR[ORDINARY_ARMOUR])
 def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
                   model_name: str, opponent_stamina: int = STARTING_STAMINA,
                   opponent_armour: str = ORDINARY_ARMOUR,
-                  max_rounds: int = 60) -> tuple[Fraction, Fraction, Fraction]:
+                  opponent_damage: str = "1d6",
+                  max_rounds: int = 60):
     """Exact round-by-round resolution of one fight.
 
-    Returns (p_player_dropped, p_opponent_dropped, expected_rounds).
+    Returns (p_player_dropped, p_opponent_dropped, expected_rounds, below_zero), where
+    below_zero maps points-below-zero to probability for the opponent -- which is what the
+    critical rule reads.
 
-    Both sides swing an ordinary weapon; each side's incoming damage is read through its own
-    armour, which is what makes the opponent's armour rank a field the fight actually consumes.
+    Each side's incoming damage is read through its own armour, and the opponent's blows roll
+    the dice its own block declares. Both are fields the fight actually consumes.
     """
     model = p_opposed_win if model_name == "opposed" else p_mapped
     if model_name == "mapped":
@@ -198,12 +214,13 @@ def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
         independent = True
 
     to_opponent = damage_through(ORDINARY_WEAPON, ARMOUR[opponent_armour])
-    to_player = ORDINARY_HIT
+    to_player = damage_through(parse_damage(opponent_damage), ARMOUR[ORDINARY_ARMOUR])
 
     state = {(player_stamina, opponent_stamina): Fraction(1)}
     player_dropped = Fraction(0)
     opponent_dropped = Fraction(0)
     rounds = Fraction(0)
+    below_zero: dict[int, Fraction] = {}
     for r in range(1, max_rounds + 1):
         nxt: dict[tuple[int, int], Fraction] = {}
         for (ps, os_), p in state.items():
@@ -235,6 +252,7 @@ def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
                     if b < 0:
                         opponent_dropped += q
                         rounds += q * r
+                        below_zero[-b] = below_zero.get(-b, Fraction(0)) + q
                         continue
                     nxt[(a, b)] = nxt.get((a, b), Fraction(0)) + q
         state = nxt
@@ -242,7 +260,7 @@ def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
             break
     for _, q in state.items():
         rounds += q * max_rounds
-    return player_dropped, opponent_dropped, rounds
+    return player_dropped, opponent_dropped, rounds, below_zero
 
 
 # ---------------------------------------------------------------------------
@@ -575,17 +593,58 @@ def main() -> int:
     print("  model     character   p(character drops)  p(opponent drops)   rounds")
     for model_name, _ in HIT_MODELS:
         for skill in REAL_SKILLS:
-            pd, od, rounds = fight_outcome(STARTING_STAMINA, skill,
-                                           NEMESIS["skills"]["blade"], model_name,
-                                           NEMESIS["stamina_max"], NEMESIS["armour"])
+            pd, od, rounds, _ = fight_outcome(STARTING_STAMINA, skill,
+                                              NEMESIS["skills"]["blade"], model_name,
+                                              NEMESIS["stamina_max"], NEMESIS["armour"],
+                                              NEMESIS["damage"])
             print(f"  {model_name:<9} {skill:>7}%  {pct(pd):>18}  {pct(od):>17}"
                   f"  {num(rounds):>7}")
             check(f"the exchange resolves under {model_name} at {skill}",
                   pd + od > Fraction(99, 100), num(pd + od, 4))
     print()
     print("  Every field the exchange consumed came off the block: the skill it resisted with,")
-    print("  the armour that subtracted, the Stamina it had to lose, and the damage type that")
-    print("  selects the critical table. Nothing was invented at the table.")
+    print("  the armour that subtracted, the Stamina it had to lose, and the dice its own blows")
+    print("  roll. Nothing was invented at the table.")
+    print()
+
+    # The damage field has to change the answer, or the fight is not reading it.
+    base = fight_outcome(STARTING_STAMINA, 45, NEMESIS["skills"]["blade"], "mapped",
+                         NEMESIS["stamina_max"], NEMESIS["armour"], "1d6")
+    heavier = fight_outcome(STARTING_STAMINA, 45, NEMESIS["skills"]["blade"], "mapped",
+                            NEMESIS["stamina_max"], NEMESIS["armour"], "2d6")
+    print(f"  the same opponent swinging 1d6: character drops {pct(base[0]).strip()}")
+    print(f"                        and 2d6: character drops {pct(heavier[0]).strip()}")
+    check("the block's declared damage changes the outcome", heavier[0] > base[0],
+          f"{pct(base[0]).strip()} vs {pct(heavier[0]).strip()}")
+    print()
+
+    # -- The critical the damage type selects -------------------------------
+    print("  The critical, when the character wins: 1d6 + points below zero, on the table for")
+    print(f"  the block's damage type ({NEMESIS['damage_type']}).")
+    _, od, _, below = fight_outcome(STARTING_STAMINA, 55, NEMESIS["skills"]["blade"],
+                                    "mapped", NEMESIS["stamina_max"], NEMESIS["armour"],
+                                    NEMESIS["damage"])
+    totals: dict[int, Fraction] = {}
+    for points, p_points in below.items():
+        for die in range(1, CRITICAL_DIE + 1):
+            total = die + points
+            totals[total] = totals.get(total, Fraction(0)) + p_points / CRITICAL_DIE
+    mass = sum(totals.values(), Fraction(0))
+    expected = sum((k * v for k, v in totals.items()), Fraction(0)) / mass
+    print(f"  totals run {min(totals)} to {max(totals)}, mean {num(expected)}")
+    check("every critical total reaches the table's first row",
+          min(totals) >= CRITICAL_FIRST_ROW, str(min(totals)))
+    check("the critical mass equals the chance the opponent dropped",
+          mass == od, f"{num(mass, 4)} vs {num(od, 4)}")
+    check("the damage type names a table that exists",
+          NEMESIS["damage_type"] in DAMAGE_TYPES, NEMESIS["damage_type"])
+    print("  The lowest reachable total is the table's own first row, which is why that row")
+    print("  starts at 2 rather than 1: a blow that drops someone is at least 1 point below")
+    print("  zero, and the die adds at least 1 more.")
+    print()
+    print("  The Aftermath table is NOT rolled here. It is rolled once per character or")
+    print("  companion who dropped (03-rules.md section 2), and an adversary is neither --")
+    print("  which is the same rule section 2 already states for a crowd.")
     print()
 
     # -- T013: the published figures ----------------------------------------
