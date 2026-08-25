@@ -308,6 +308,26 @@ class TestDriftDetection(unittest.TestCase):
         self.assertTrue(backlog._exists_cache[15])  # but it does exist
         self.assertEqual(self.problems(issues, board), [])
 
+    def test_ranked_non_root_is_caught(self):
+        """A child that was once a root keeps its Rank when re-parented.
+
+        Found for real: the design-programme restructure moved #26 under a stage and its
+        rank 50 stayed behind, showing up in `list` as though the child were ordered.
+        """
+        issues, board = load_fixture()
+        child = next(n for n, i in issues.items() if i["parent"] is not None)
+        board[child] = {"rank": 999}
+        found = self.problems(issues, board)
+        self.assertTrue(
+            any(f"#{child}" in p and "not root-level" in p for p in found), found
+        )
+
+    def test_unranked_non_root_is_fine(self):
+        issues, board = load_fixture()
+        child = next(n for n, i in issues.items() if i["parent"] is not None)
+        board[child] = {"rank": None}
+        self.assertEqual(self.problems(issues, board), [])
+
     def test_a_kord_task_is_not_expected_on_the_board(self):
         """Only epics and features are backlog items; tasks live inside a feature."""
         issues, board = load_fixture()
