@@ -17,7 +17,7 @@ wyrd-<name>/
 │  ├─ voice.md        # THE most important file. See below.
 │  ├─ careers.yaml    # the career graph — nodes with entries and exits
 │  ├─ gear.yaml       # weapons, armour, prices, what is legal to carry where
-│  ├─ bestiary.yaml   # creature stat blocks (a lookup table)
+│  ├─ bestiary.yaml   # adversary blocks (a lookup table) — see below
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
 │  ├─ names.yaml      # given / family / place, by culture
 │  ├─ conversion.yaml # REQUIRED if derived from another system — see below
@@ -71,6 +71,43 @@ Two kinds of content, and the distinction is simple:
 
 The test: *would anything ever link to it, or would a chronicle ever change it?* If yes it is
 an entity. A career is a row; the guild that grants it is an entity.
+
+### `bestiary.yaml`
+
+One `creatures:` list. Each entry is one **adversary block** — the fields the ruleset reads off an
+opponent, defined once in [`03d-the-adversary.md`](03d-the-adversary.md):
+
+```yaml
+creatures:
+  - id: the-hunter          # stable, kebab-case, unique
+    name: A named antagonist
+    baseline: 35            # what it tests any skill it does not list at
+    stamina_max: 7
+    armour: modest          # none | light | modest | heavy
+    skills:
+      blade: 55
+      tracking: 60
+    damage: 1d6             # optional; an opponent may have no attack
+    damage_type: slashing   # slashing | piercing | blunt | searing
+    ranged: false           # optional, defaults to false
+    traits:                 # optional; effects from the closed vocabulary only
+      - name: Unhurried
+        effect:
+          difficulty: -10
+```
+
+`id`, `name`, `baseline`, `stamina_max`, `armour` and `skills` are **required**. Run
+`python3 tools/check_bestiary.py setting/bestiary.yaml` — it rejects a missing required field, a
+field the engine does not define, an out-of-range value, a damage type outside the closed four, a
+trait effect outside the vocabulary, and a duplicated id.
+
+**The unrecognised-field rejection is the one worth understanding.** A trait like
+`regenerates: 2`, or a field like `immune_to: fire`, is not a setting retuning the engine — it is a
+setting adding a mechanism, which the hard rule below forbids. The validator is where that rule is
+actually enforced rather than merely stated.
+
+A **named antagonist** does not go here. It is a `character` entity carrying the same block
+([`14-entities.md`](14-entities.md)) — a bestiary holds kinds of thing, not individuals.
 
 ## `voice.md` is the hard part
 
@@ -283,7 +320,7 @@ the contract is not confirming that it fits, but discovering precisely where it 
 2. `voice.md` — write this **first**, before any data. It will change what you put in the data.
 3. `names.yaml` and `calendar.yaml` — cheap, and immediately make the world feel inhabited
 4. `careers.yaml` — the character system; the largest single job
-5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything
+5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything; validate with `tools/check_bestiary.py`
 6. a few `organisation` entities with objectives — so the world can act while the player is absent
 7. One threat and one arc — enough to play
 8. Index whatever sources you have ([`11-corpus-index.md`](11-corpus-index.md))

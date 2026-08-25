@@ -1,0 +1,40 @@
+# A bestiary that holds. Every entry is invented for this fixture -- no setting, no system.
+creatures:
+  - id: mob-body
+    name: A body in the crowd
+    baseline: 10
+    stamina_max: 1
+    armour: none
+    skills:
+      brawl: 20
+    damage: 1d3
+    damage_type: blunt
+    ranged: false
+
+  - id: the-hunter
+    name: A named antagonist
+    baseline: 35
+    stamina_max: 7
+    armour: modest
+    skills:
+      blade: 55
+      tracking: 60
+    damage: 1d6
+    damage_type: slashing
+    ranged: false
+    traits:
+      - name: Unhurried
+        effect:
+          difficulty: -10
+      - name: Thick coat
+        effect:
+          armour_rank: 1
+
+  - id: the-thing-in-the-dark
+    name: Something that does not fight
+    baseline: 25
+    stamina_max: 4
+    armour: none
+    skills:
+      hiding: 70
+    notes: dangerous by being present; it has no attack
