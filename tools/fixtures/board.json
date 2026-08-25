@@ -1,0 +1,432 @@
+{
+  "issues": {
+    "1": {
+      "number": 1,
+      "title": "Build the Wyrd engine",
+      "url": "https://github.com/neilgfoster/wyrd/issues/1",
+      "labels": [
+        "kord-epic"
+      ],
+      "parent": null,
+      "children": [
+        6,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "open_children": [
+        6,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "depends_on": [],
+      "is_epic": true
+    },
+    "2": {
+      "number": 2,
+      "title": "Close the known engine gaps",
+      "url": "https://github.com/neilgfoster/wyrd/issues/2",
+      "labels": [
+        "kord-epic"
+      ],
+      "parent": null,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": true
+    },
+    "3": {
+      "number": 3,
+      "title": "Corpus extraction and indexing",
+      "url": "https://github.com/neilgfoster/wyrd/issues/3",
+      "labels": [
+        "kord-epic"
+      ],
+      "parent": null,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": true
+    },
+    "4": {
+      "number": 4,
+      "title": "Onboard settings",
+      "url": "https://github.com/neilgfoster/wyrd/issues/4",
+      "labels": [
+        "kord-epic"
+      ],
+      "parent": null,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": true
+    },
+    "5": {
+      "number": 5,
+      "title": "R1.6 \u2014 Decide and record the skill list",
+      "url": "https://github.com/neilgfoster/wyrd/issues/5",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": false
+    },
+    "6": {
+      "number": 6,
+      "title": "R1.1 \u2014 Define the engine's tables",
+      "url": "https://github.com/neilgfoster/wyrd/issues/6",
+      "labels": [
+        "kord-epic"
+      ],
+      "parent": 1,
+      "children": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "open_children": [
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "depends_on": [],
+      "is_epic": true
+    },
+    "7": {
+      "number": 7,
+      "title": "R1.7 \u2014 Specify opposed test resolution",
+      "url": "https://github.com/neilgfoster/wyrd/issues/7",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": false
+    },
+    "8": {
+      "number": 8,
+      "title": "R1.9 \u2014 Define party_effective",
+      "url": "https://github.com/neilgfoster/wyrd/issues/8",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": false
+    },
+    "9": {
+      "number": 9,
+      "title": "R1.3 \u2014 Character creation procedure",
+      "url": "https://github.com/neilgfoster/wyrd/issues/9",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        5
+      ],
+      "is_epic": false
+    },
+    "10": {
+      "number": 10,
+      "title": "R1.2 \u2014 Stamina recovery and the fate of lasting wounds",
+      "url": "https://github.com/neilgfoster/wyrd/issues/10",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        6
+      ],
+      "is_epic": false
+    },
+    "11": {
+      "number": 11,
+      "title": "R1.4 \u2014 Combat sequencing, ranged combat, flight and surprise",
+      "url": "https://github.com/neilgfoster/wyrd/issues/11",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": false
+    },
+    "12": {
+      "number": 12,
+      "title": "R1.5 \u2014 Career caps and the advancement bound",
+      "url": "https://github.com/neilgfoster/wyrd/issues/12",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        5
+      ],
+      "is_epic": false
+    },
+    "13": {
+      "number": 13,
+      "title": "R1.8 \u2014 Specify the mob rule",
+      "url": "https://github.com/neilgfoster/wyrd/issues/13",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        11
+      ],
+      "is_epic": false
+    },
+    "14": {
+      "number": 14,
+      "title": "R3 \u2014 Prove the completed ruleset on paper",
+      "url": "https://github.com/neilgfoster/wyrd/issues/14",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 1,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "is_epic": false
+    },
+    "17": {
+      "number": 17,
+      "title": "The damage-type critical tables",
+      "url": "https://github.com/neilgfoster/wyrd/issues/17",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 6,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        15
+      ],
+      "is_epic": false
+    },
+    "18": {
+      "number": 18,
+      "title": "The transformation table",
+      "url": "https://github.com/neilgfoster/wyrd/issues/18",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 6,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        15
+      ],
+      "is_epic": false
+    },
+    "19": {
+      "number": 19,
+      "title": "The affliction table",
+      "url": "https://github.com/neilgfoster/wyrd/issues/19",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 6,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        15
+      ],
+      "is_epic": false
+    },
+    "20": {
+      "number": 20,
+      "title": "Oracle answer tables",
+      "url": "https://github.com/neilgfoster/wyrd/issues/20",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 6,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        15
+      ],
+      "is_epic": false
+    },
+    "21": {
+      "number": 21,
+      "title": "Oracle prompt tables",
+      "url": "https://github.com/neilgfoster/wyrd/issues/21",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": 6,
+      "children": [],
+      "open_children": [],
+      "depends_on": [
+        15,
+        20
+      ],
+      "is_epic": false
+    },
+    "24": {
+      "number": 24,
+      "title": "Track backlog priority order across root-level kord epics and features",
+      "url": "https://github.com/neilgfoster/wyrd/issues/24",
+      "labels": [
+        "kord-feature"
+      ],
+      "parent": null,
+      "children": [],
+      "open_children": [],
+      "depends_on": [],
+      "is_epic": false
+    }
+  },
+  "board": {
+    "1": {
+      "rank": 10,
+      "repository": "neilgfoster/wyrd"
+    },
+    "2": {
+      "rank": 30,
+      "repository": "neilgfoster/wyrd"
+    },
+    "3": {
+      "rank": 40,
+      "repository": "neilgfoster/wyrd"
+    },
+    "4": {
+      "rank": 50,
+      "repository": "neilgfoster/wyrd"
+    },
+    "5": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "6": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "7": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "8": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "9": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "10": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "11": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "12": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "13": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "14": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "15": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "16": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "17": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "18": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "19": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "20": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "21": {
+      "rank": null,
+      "repository": "neilgfoster/wyrd"
+    },
+    "24": {
+      "rank": 20,
+      "repository": "neilgfoster/wyrd"
+    }
+  },
+  "known_issue_numbers": {
+    "5": true,
+    "6": true,
+    "7": true,
+    "8": true,
+    "9": true,
+    "10": true,
+    "11": true,
+    "12": true,
+    "13": true,
+    "15": true,
+    "20": true
+  }
+}
