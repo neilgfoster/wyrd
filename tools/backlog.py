@@ -333,7 +333,7 @@ def find_problems(issues: dict[int, dict], board: dict[int, dict]) -> list[str]:
     """
     problems: list[str] = []
 
-    root_numbers = roots(issues)
+    root_numbers = set(roots(issues))
 
     # 1. An open root-level issue with no rank. The order is incomplete and `next` would
     #    silently sort it last.
@@ -369,7 +369,21 @@ def find_problems(issues: dict[int, dict], board: dict[int, dict]) -> list[str]:
                 "so it cannot be ranked"
             )
 
-    # 4. A dependency naming an issue that does not exist. Reads as satisfied because the
+    # 4. A ranked item that is NOT root-level. Ranks belong to roots only; a child that was
+    #    once a root keeps its Rank when it is re-parented, and the stale value then shows up
+    #    in `list` as though the child were ordered. Found exactly that way after the design
+    #    programme restructure moved #26 under a stage.
+    for number, issue in sorted(issues.items()):
+        if number in root_numbers:
+            continue
+        rank = board.get(number, {}).get("rank")
+        if rank is not None:
+            problems.append(
+                f"#{number} ({issue['title']}) has {RANK_FIELD} {rank} but is not root-level "
+                f"(parent #{issue['parent']}); only roots carry a rank"
+            )
+
+    # 5. A dependency naming an issue that does not exist. Reads as satisfied because the
     #    number is not in the OPEN set, which is exactly how a typo becomes "ready".
     for number, issue in sorted(issues.items()):
         for target in dangling_refs(issue, issues):
