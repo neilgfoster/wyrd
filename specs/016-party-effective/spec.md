@@ -39,7 +39,7 @@ This feature therefore carries a decision, not a transcription: **what a compani
 ### Session 2026-08-25
 
 - **Q: What is one companion worth inside `party_effective`?** → **Diminishing: the k-th companion
-  is worth `1/(k+1)`** — the first a half, the second a third, the fourth a quarter, and so on. A
+  is worth `1/(k+1)`** — the first a half, the second a third, the third a quarter, and so on. A
   retinue is therefore not a power curve; the tenth companion is worth about a tenth of the first.
   The series has a closed form: `1 + 1/2 + 1/3 + … + 1/p` for `p` bodies, the p-th harmonic number,
   so the definition is order-independent and needs no roster ordering. Rejected: a flat half each,
