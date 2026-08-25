@@ -78,6 +78,13 @@ Two tables answer one blow, and they answer different questions:
 
 A critical describes the wound as it lands. Aftermath describes what the character is left carrying.
 
+**A critical never kills during the fight.** The worst row of every critical table marks the blow
+**mortal**, and a combatant carrying a mortal blow has their result here **read on the `death` row**,
+whatever the dice said — the mirror of the re-read a spent Fate point performs (below). Nothing about
+that changes this table's die, its modifier, or when it is rolled
+([`03a-1-criticals.md`](03a-1-criticals.md),
+[ADR 0023](adr/0023-a-critical-never-kills-during-the-fight.md)).
+
 ---
 
 ## The table
@@ -230,6 +237,11 @@ deterministic — no second roll, no judgement call:
 
 In practice that is the recurring wound. The character survives, and carries something that wakes
 before every fight for the rest of their life.
+
+A mortal critical arrives at the same rows from the other direction, and Fate answers it the same
+way: a mortal blow fixes the result at `death`, and a spent Fate point re-reads that `death` onto the
+worst non-death row. A mortal blow is not a way around Fate; it is a way into the row Fate answers
+([`03a-1-criticals.md`](03a-1-criticals.md)).
 
 | Closed by | Condition |
 |---|---|

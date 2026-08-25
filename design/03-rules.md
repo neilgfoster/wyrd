@@ -219,10 +219,17 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
   A minimum of 1 always gets through.
-- **Telling blow:** win by 3 or more degrees and the damage doubles.
+- **Telling blow:** win by 3 or more degrees and **the damage rolled doubles**, and then armour
+  subtracts. The order matters: it is where almost every large critical comes from
+  ([`03a-1-criticals.md`](03a-1-criticals.md)).
+- **Damage has a type** — **slashing**, **piercing**, **blunt** or **searing**. The set is closed,
+  and a setting renames one it has no fiction for
+  ([ADR 0022](adr/0022-four-damage-types-named-for-the-wound.md)).
 - **Critical** when damage takes a combatant **below 0 Stamina**. Roll `1d6 + points below
-  zero` on the table for the damage type ([`03a-tables.md`](03a-tables.md)). High results are
-  lethal.
+  zero` on the table for the damage type ([`03a-1-criticals.md`](03a-1-criticals.md)). High results
+  are lethal — the worst row marks the blow **mortal**, and a mortal blow is answered when the fight
+  ends, like every other death in this ruleset
+  ([ADR 0023](adr/0023-a-critical-never-kills-during-the-fight.md)).
 - Weapons are **casual** or **martial**. Martial weapons mark the bearer and are illegal in
   most civilised places — a social constraint that does real work.
 

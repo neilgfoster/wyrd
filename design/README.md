@@ -63,6 +63,8 @@ records that exist mark the places where the obvious answer was wrong.
 | [0019](adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) | A crowd is defined by one blow and a skill gap, and it answers once |
 | [0020](adr/0020-stamina-recovers-on-the-clocks-the-engine-has.md) | Stamina recovers on the clocks the engine already has — the Rally and downtime |
 | [0021](adr/0021-mending-steps-and-the-recurring-wound-does-not.md) | Mending steps one grade a season, and the recurring wound never closes |
+| [0022](adr/0022-four-damage-types-named-for-the-wound.md) | Four damage types, named for the shape of the wound |
+| [0023](adr/0023-a-critical-never-kills-during-the-fight.md) | A critical never kills during the fight |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
