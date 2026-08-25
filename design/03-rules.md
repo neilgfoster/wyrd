@@ -646,7 +646,8 @@ A successor inherits none of the competence and all of the position
 
 Content is written once with a **danger rating** used as a multiplier inside it: a trap
 written `Nd4` does `6d4` at danger 6, and enemy counts and skill values scale from the same
-number.
+number. It is also written for a party of a stated size — `written_for`, a head count and never
+a gate ([`11-corpus-index.md`](11-corpus-index.md)).
 
 Effective danger accounts for the party actually present:
 
@@ -654,3 +655,76 @@ Effective danger accounts for the party actually present:
 
 This is how a chronicle stays interesting for years **without escalating the fiction**. The
 same village mystery runs in year one or year eight; the danger scales, the scope need not.
+
+### What a party counts for
+
+A head count is not an effective size, because the second body in a room is worth less than the
+first and the tenth is worth less again.
+
+> **The k-th body is worth `1/k`.** A party of `p` bodies has an effective size of
+> `1 + 1/2 + 1/3 + … + 1/p`.
+
+| Bodies | Effective size |
+|---|---|
+| 1 | 1.000 |
+| 2 | 1.500 |
+| 3 | 1.833 |
+| 4 | 2.083 |
+| 5 | 2.283 |
+| 6 | 2.450 |
+
+The sum is order-independent, so no roster order has to be invented and two people counting the
+same party in different orders reach the same number.
+
+**Both sides of the ratio are read through that same function.** `party_effective` is the
+effective size of the party present; the denominator is the effective size of a party of
+`written_for` bodies. Comparing an effective size with a raw head count would be comparing two
+different things, and the identity case would never land: as it stands, **a table of four bodies
+runs content written for four exactly as written**, which is what makes the equation a ratio
+rather than a discount.
+
+**The party is a query, not a roster.** It is the player character, who counts as one body, plus
+every companion at `status: with-party` ([`06-state.md`](06-state.md)). A companion who is away,
+dead, lost or departed counts for nothing, and no companion counts for more or less than any
+other — the engine holds no capability score for a companion and this rule does not invent one.
+Scaling happens when content is prepared, not when a door opens, so who is standing in a
+particular room is never consulted.
+
+**Where `written_for` is missing or zero, the content runs as written.** A record that never
+stated a party size is not a record claiming a party of none.
+
+### Rounding happens at the point of use
+
+`danger_effective` is **never rounded**. It is carried exact, and each quantity built from it
+rounds separately:
+
+> **Round half up, and never below 1 where the written quantity was at least 1.**
+
+A trap written `Nd4` always throws at least one die. Rounding `danger_effective` itself would
+throw away precision that the multiplications afterwards need, and it goes wrong first at the
+largest count in a piece of content — which is generally the fight.
+
+A worked case: a danger-3 arc written for four, run by one character and two companions, is
+three bodies against four. The ratio is `1.833 / 2.083`, or **0.88**, and `danger_effective` is
+**2.64** — six cultists become five, three watchmen stay three.
+
+### The retinue is not a difficulty setting
+
+Effective size grows like a logarithm, so gathering bodies buys steadily less. Against content
+written for four:
+
+| Bodies | Ratio |
+|---|---|
+| 1 | 0.48 |
+| 3 | 0.88 |
+| 5 | 1.10 |
+| 10 | 1.41 |
+| 20 | 1.73 |
+
+Five times the head count does not buy double the danger. The first companion buys 0.24; the
+fifth buys 0.08.
+
+**The curve is not overridable.** With the same function on both sides of the ratio, replacing it
+on one side alone would break the identity case, and replacing it on both would cancel out. A
+setting's levers over difficulty are the companions it grants and the `danger` its content
+carries.
