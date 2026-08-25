@@ -179,10 +179,13 @@ wounds:
 
 An effect naming anything else is a load error, not a row quietly ignored.
 
-**A wound record carries no healing field, no duration and no severity.** Whether a wound ever mends
-is not settled here, and a field shaped for one answer would prejudge it. When a rule exists that
-reads one, adding it is an additive change ([`09-evolution.md`](09-evolution.md)) and costs nothing
-to have deferred.
+**A wound record carries no duration and no severity**, and it does not need them: a wound lasts
+until something mends it, and what mends it is the **Mend** undertaking
+([`04-session.md`](04-session.md)), which moves one named wound's effect one grade per downtime
+spent. A wound whose effect reaches nothing gains `closed:` — the record is kept and marked, never
+deleted, because history is never recomputed ([`09-evolution.md`](09-evolution.md)).
+
+**A recurring wound is the exception, and never closes** (below).
 
 **Wounds are rendered diegetically** ([`10-diegesis.md`](10-diegesis.md)). The knee never set right;
 never `skill: -10`.
@@ -198,7 +201,7 @@ One row is not a result at all but an ongoing condition: a wound record with `re
 | **Fires** | when a fight begins, before the first roll |
 | **Effect** | `−10` to the skill the wound bears on, for that fight |
 | **Between fights** | nothing |
-| **Duration** | the rest of the chronicle, unless a later rule says otherwise |
+| **Duration** | the rest of the chronicle. Mend cannot reach it |
 | **Stacking** | the family is repeatable, so a character may carry more than one; each fires |
 
 **`−10` is not a new number.** It is the *Challenging* step the difficulty table already publishes,
@@ -208,6 +211,12 @@ to be learned to apply it.
 
 It fires without a test, deliberately. A wound flaring for the two-hundredth time is not dramatic,
 and the ruleset only rolls when it is.
+
+**It is the one wound the Mend undertaking cannot touch.** Every other wound steps toward nothing
+over enough seasons; this one does not, because re-reading a `death` result onto it is precisely
+what a spent Fate point buys (below). A rule that let a downtime erase it would price Fate's promise
+at one season and quietly undo the argument the death rows close on
+([ADR 0021](adr/0021-mending-steps-and-the-recurring-wound-does-not.md)).
 
 ---
 
@@ -269,7 +278,9 @@ death result stands, `away` while they are held. No new status value is introduc
 **Trauma.** A critical already costs 1 Trauma when it is taken ([`03-rules.md`](03-rules.md)).
 Awarding more here would charge the same blow twice.
 
-**Stamina recovery.** How a character gets back up, and over how long, is not this table's business.
+**Stamina recovery.** How a character gets back up is [`03-rules.md`](03-rules.md) §2's: a
+combatant who dropped wakes at 0 and recovers 1 at each Rally, or to maximum at a downtime. This
+table says what the fight cost, never how long the bruises take.
 
 ---
 
