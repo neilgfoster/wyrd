@@ -37,6 +37,8 @@ import sys
 HUB = "README.md"
 ADR_DIR = "design/adr"
 ADR_INDEX = "design/README.md"
+ADR_ARCHIVE = "design/adr/superseded"
+ADR_ARCHIVE_INDEX = "design/adr/superseded/README.md"
 
 # Trees that are not ours to police: vendored substrates, tooling caches, git internals.
 SKIP_PARTS = {".git", ".specify", ".claude", ".pytest_cache", "node_modules", "__pycache__"}
@@ -49,6 +51,14 @@ SKIP_PREFIXES = (".github/ISSUE_TEMPLATE",)
 REACHABLE_REQUIRED = ("design/",)
 
 MD_LINK = re.compile(r"\[([^\]]*)\]\(\s*<?([^)>\s]+)>?\s*\)")
+# A prose reference to a decision record: "ADR 0005". These are NOT links, so the link check
+# is blind to them -- and there are eleven. When the live set is renumbered (ADR 0012) a stale
+# one would resolve to nothing and nothing would say so, which is the exact fault the design
+# programme exists to remove. Matching the number rather than the slug is deliberate: a
+# record's title may be improved during consolidation, and a reference naming only the number
+# should survive that. The question is whether the decision is findable, not whether the prose
+# quoted its title.
+ADR_PROSE_REF = re.compile(r"\bADR[\s\u00a0]+(\d{4})\b")
 WIKILINK = re.compile(r"\[\[[^\]]+\]\]")
 FENCE = re.compile(r"^\s*(```|~~~)")
 INLINE_CODE = re.compile(r"`[^`]*`")
@@ -162,18 +172,62 @@ def check_links(root: pathlib.Path) -> list[Problem]:
 
 
 def check_adr_index(root: pathlib.Path) -> list[Problem]:
-    adr_dir = root / ADR_DIR
-    index = root / ADR_INDEX
-    if not adr_dir.is_dir() or not index.exists():
-        return []
-    listed = index.read_text(encoding="utf-8", errors="replace")
+    """Every record is listed by its own index -- the live set and the archive alike."""
     problems = []
-    for record in sorted(adr_dir.glob("*.md")):
-        if record.name not in listed:
-            problems.append(Problem(
-                f"{record.relative_to(root).as_posix()} is not listed in {ADR_INDEX}; the index "
-                "has drifted behind the records on disk"
-            ))
+    for directory, index_path in ((ADR_DIR, ADR_INDEX), (ADR_ARCHIVE, ADR_ARCHIVE_INDEX)):
+        adr_dir, index = root / directory, root / index_path
+        if not adr_dir.is_dir() or not index.exists():
+            continue  # the archive is legitimately absent until something is superseded
+        listed = index.read_text(encoding="utf-8", errors="replace")
+        for record in sorted(adr_dir.glob("*.md")):
+            if record.name == "README.md":
+                continue
+            if record.name not in listed:
+                problems.append(Problem(
+                    f"{record.relative_to(root).as_posix()} is not listed in {index_path}; the "
+                    "index has drifted behind the records on disk"
+                ))
+    return problems
+
+
+def adr_numbers(root: pathlib.Path) -> set[str]:
+    """Every decision-record number that exists, live or archived.
+
+    The archive counts: a superseded record keeps its original number permanently (ADR 0012),
+    precisely so that a reference written years ago still resolves to the reasoning it meant.
+    """
+    found = set()
+    for directory in (ADR_DIR, ADR_ARCHIVE):
+        adr_dir = root / directory
+        if not adr_dir.is_dir():
+            continue
+        for record in adr_dir.glob("*.md"):
+            match = re.match(r"(\d{4})-", record.name)
+            if match:
+                found.add(match.group(1))
+    return found
+
+
+def check_adr_references(root: pathlib.Path) -> list[Problem]:
+    """Every "ADR NNNN" written in prose names a record that exists.
+
+    The link check cannot see these, and renumbering the live set is exactly what breaks them
+    (ADR 0012). Without this, the programme's own cleanup would reintroduce the fault class the
+    programme was convened to remove.
+    """
+    known = adr_numbers(root)
+    if not known:
+        return []
+    problems = []
+    for path in markdown_files(root):
+        rel = path.relative_to(root).as_posix()
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for number in sorted(set(ADR_PROSE_REF.findall(text))):
+            if number not in known:
+                problems.append(Problem(
+                    f"{rel} refers to ADR {number}, which does not exist in {ADR_DIR}/ or "
+                    f"{ADR_ARCHIVE}/"
+                ))
     return problems
 
 
@@ -195,6 +249,7 @@ CHECKS = [
     ("reachable from the hub", check_reachable),
     ("links resolve", check_links),
     ("decision records indexed", check_adr_index),
+    ("decision references resolve", check_adr_references),
     ("link policy", check_link_policy),
 ]
 

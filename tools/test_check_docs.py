@@ -121,6 +121,62 @@ class TestAdrIndex(TreeCase):
         self.assertEqual(self.problems(), [])
 
 
+class TestAdrReferences(TreeCase):
+    """Prose references, which the link check cannot see. See ADR 0012."""
+
+    def scaffold(self):
+        self.write("README.md", "[index](design/README.md)")
+        self.write("design/README.md", "[0005](adr/0005-determinism.md)")
+        self.write("design/adr/0005-determinism.md", "# 5")
+
+    def test_reference_to_an_existing_record_passes(self):
+        self.scaffold()
+        self.write("design/03-rules.md", "Computed rather than inferred (ADR 0005).")
+        self.write("design/README.md", "[0005](adr/0005-determinism.md) [rules](03-rules.md)")
+        self.assertEqual(self.problems(), [])
+
+    def test_reference_to_a_missing_record_is_caught(self):
+        """What renumbering breaks, and what nothing noticed before this check."""
+        self.scaffold()
+        self.write("design/README.md",
+                   "[0005](adr/0005-determinism.md) [rules](03-rules.md)")
+        self.write("design/03-rules.md", "As set out in ADR 0099.")
+        found = self.problems()
+        self.assertTrue(any("ADR 0099, which does not exist" in p for p in found), found)
+
+    def test_a_superseded_record_still_satisfies_a_reference(self):
+        """The archive keeps its numbers so old references keep resolving (ADR 0012)."""
+        self.scaffold()
+        self.write("design/README.md",
+                   "[0005](adr/0005-determinism.md) [rules](03-rules.md) "
+                   "[archive](adr/superseded/README.md)")
+        self.write("design/adr/superseded/README.md", "[0003](0003-old.md)")
+        self.write("design/adr/superseded/0003-old.md", "# 3, superseded")
+        self.write("design/03-rules.md", "The earlier position was ADR 0003.")
+        self.assertEqual(self.problems(), [])
+
+    def test_absent_archive_is_not_an_error(self):
+        """Nothing has been superseded yet; that must not fail the build."""
+        self.scaffold()
+        self.assertEqual(self.problems(), [])
+
+    def test_archive_index_must_list_its_records(self):
+        self.scaffold()
+        self.write("design/README.md",
+                   "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
+        self.write("design/adr/superseded/README.md", "nothing listed here")
+        self.write("design/adr/superseded/0003-old.md", "# 3")
+        found = self.problems()
+        self.assertTrue(any("0003-old.md is not listed" in p for p in found), found)
+
+    def test_archive_readme_is_not_itself_treated_as_a_record(self):
+        self.scaffold()
+        self.write("design/README.md",
+                   "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
+        self.write("design/adr/superseded/README.md", "*(none yet)*")
+        self.assertEqual(self.problems(), [])
+
+
 class TestLinkPolicy(TreeCase):
     def test_wikilink_in_prose_is_caught(self):
         self.write("README.md", "See [[03-rules]] for the ruleset.")
@@ -153,6 +209,15 @@ class TestAgainstTheRealRepo(unittest.TestCase):
         seen = check_docs.reachable_from_hub(REPO)
         for path in (REPO / "design").rglob("*.md"):
             self.assertIn(path.resolve(), seen, f"{path.name} unreachable from README")
+
+    def test_every_adr_reference_in_the_repo_resolves(self):
+        """All 11 prose references, checked. This is the renumbering mitigation."""
+        self.assertEqual([str(p) for p in check_docs.check_adr_references(REPO)], [])
+
+    def test_the_archive_exists_and_is_documented(self):
+        archive = REPO / check_docs.ADR_ARCHIVE
+        self.assertTrue(archive.is_dir(), "superseded/ must exist before a stage needs it")
+        self.assertTrue((archive / "README.md").exists())
 
     def test_every_decision_record_is_indexed(self):
         index = (REPO / check_docs.ADR_INDEX).read_text(encoding="utf-8")
