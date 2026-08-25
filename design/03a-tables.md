@@ -26,7 +26,7 @@ there and summarised here.
 
 | Family | Roll | Uniqueness | Defined in |
 |---|---|---|---|
-| **Criticals** | `1d6` + points below zero | repeatable | `03a-1-criticals.md` — not yet written |
+| **Criticals** | `1d6` + points below zero | repeatable | [`03a-1-criticals.md`](03a-1-criticals.md) |
 | **Aftermath** | `d100` + 5 × points below zero | repeatable | [`03a-2-aftermath.md`](03a-2-aftermath.md) |
 | **Transformations** | declared by the family | unique per character | `03a-3-transformations.md` — not yet written |
 | **Afflictions** | declared by the family | unique per character | `03a-4-afflictions.md` — not yet written |
