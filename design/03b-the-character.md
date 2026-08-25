@@ -17,6 +17,7 @@ Every name here is an **engine** name. What a setting calls any of it is the set
 | **The tracks** | Taint, Trauma, Strain, Resolve, Dread — those the setting has not disabled | [`03-rules.md`](03-rules.md) §4–5 |
 | **Fate** and **Luck** | the death valve, and the tested counterweight | [`03-rules.md`](03-rules.md) §1, §3 |
 | **A career**, and a career history | where competence comes from, and a biography | [`03-rules.md`](03-rules.md) §6 |
+| **A Loyalty** | what they serve, or what they are — the thing that decides who will share a road with them | [`04-session.md`](04-session.md) |
 | **What has happened to them** | wounds, Marks, Reputation, Allegiances, Holdings, Bonds | [`06-state.md`](06-state.md), [`03-rules.md`](03-rules.md) §6 |
 
 **Nothing else is numeric.** There are no characteristics, no attributes, no derived statistics. A

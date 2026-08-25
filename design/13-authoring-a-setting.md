@@ -107,6 +107,7 @@ The engine guarantees, and a setting may rely on:
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called*, what causes them, and **whether they exist at all** |
 | Career graph mechanics — entries, exits, advance triggers | the graph itself |
 | Beats, Rally, downtime, party tension | what downtime looks like here |
+| Loyalty, and the strained/irreconcilable relations | **which Loyalties exist, what they are called, and which pairs are strained or irreconcilable** ([`04-session.md`](04-session.md)) |
 | Threats, threads, elapsed time, succession | who the Threats are |
 | Diegetic bands ([`10-diegesis.md`](10-diegesis.md)) | the idiom they are spoken in |
 | *(nothing)* | **the tone contract** ([`01-principles.md`](01-principles.md)) |

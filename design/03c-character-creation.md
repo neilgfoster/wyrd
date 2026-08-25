@@ -15,19 +15,20 @@ engine one and a setting one.
 |---|---|---|
 | 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`14-entities.md`](14-entities.md)) |
 | 2 | **Spend 8 advances** inside that career, opening and raising skills. This is the character's background. | §3 |
-| 3 | **Set Stamina** to 6, current and maximum. | engine, §2 |
-| 4 | **Set Luck** to 40, current and maximum. | engine, §2 |
-| 5 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
-| 6 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
-| 7 | **Name them, and place them.** Name, a Drive, a Bond, and where they are from. | the setting's name and place tables |
+| 3 | **Choose a Loyalty**, from those the setting declares. | the setting's Loyalties ([`04-session.md`](04-session.md)) |
+| 4 | **Set Stamina** to 6, current and maximum. | engine, §2 |
+| 5 | **Set Luck** to 40, current and maximum. | engine, §2 |
+| 6 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
+| 7 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
+| 8 | **Name them, and place them.** Name, a Drive, a Bond, and where they are from. | the setting's name and place tables |
 
-Steps 3–6 are fixed. Steps 1, 2 and 7 read setting data and cannot be completed without it.
+Steps 4–7 are fixed. Steps 1, 2, 3 and 8 read setting data and cannot be completed without it.
 
 **Nothing is rolled.** No characteristics exist to roll ([ADR 0013](adr/0013-the-engine-names-no-skill.md)),
 Stamina and Luck are flat, and skills come from the career. A character is *chosen*, not generated —
 see [ADR 0014](adr/0014-character-creation-is-chosen-not-rolled.md).
 
-Of step 7, only the **Drive** and the **Bond** carry mechanical weight — a Drive can be invoked for
+Of step 8, only the **Drive** and the **Bond** carry mechanical weight — a Drive can be invoked for
 −20 ([`03-rules.md`](03-rules.md) §1) and a Bond is a real relationship
 ([`04-session.md`](04-session.md)). The name and the place of origin are fiction, and the engine
 never reads them. Where a character is *from* shows up mechanically in step 3, not here.
@@ -42,6 +43,7 @@ never reads them. Where a character is *from* shows up mechanically in step 3, n
 | **Fate** | by `mortality`: `low` **2**, `standard` **3**, `high` **4** | the tone contract sets it ([`01-principles.md`](01-principles.md)) |
 | **Fortune** | equal to Fate, renewed daily | [`03-rules.md`](03-rules.md) §3 |
 | **Taint, Trauma, Strain, Resolve, Dread** | 0 | nothing has happened yet |
+| **Loyalty** | chosen from the setting's | what decides who will travel with them ([`04-session.md`](04-session.md)) |
 
 A setting may **retune** any of these ([`13-authoring-a-setting.md`](13-authoring-a-setting.md)) —
 altering starting Fate is named there as a permitted override. These are the engine's defaults, not
@@ -130,6 +132,7 @@ filled in by the GM's judgement.
 | **Names** | enough to name a person of this world |
 | **Places** | somewhere to be from |
 | **Drives** | the things a character wants, in this world's terms |
+| **Loyalties** | at least one, and the relations between any that are strained or irreconcilable. A setting with a single Loyalty is legal, and means the question never arises |
 
 Everything else a character carries starts empty: no wounds, no Marks, no career history, no
 Reputation, no Allegiances, no Holdings, no Bonds beyond the one chosen at step 7.
