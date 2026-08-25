@@ -169,6 +169,7 @@ wounds:
   - id: the-knee-that-never-set   # kebab-case, unique on this character, stable forever
     from: {table: aftermath, beat: 412}
     effect: {skill: -10}          # stamina_max | skill | dread
+    bears_on: <setting-skill-id>  # which skill the penalty burdens; omitted when none
     recurring: false              # true — fires at the start of every fight
     description: "the knee never set right"
 ```
@@ -177,6 +178,15 @@ wounds:
 rule names when it needs to act on exactly one wound. A wound carries **no healing field and no
 duration** — whether wounds mend is not settled, and a field shaped for one answer would prejudge
 it.
+
+`bears_on` is the skill the wound burdens, taken from the roll that caused it and named in the
+setting's own vocabulary — the engine has none of its own
+([`03b-the-character.md`](03b-the-character.md), [ADR 0013](adr/0013-the-engine-names-no-skill.md)).
+
+**It is optional, and its absence is meaningful rather than missing.** A fall, a fire, a poisoning
+or a wound taken while unconscious has no skill behind it. Such a wound simply carries no
+`skill: -N` effect; it may still cost `stamina_max` or `dread`. An `effect` of `skill: -N` **with
+no `bears_on`** is a load error: the penalty would have nothing to apply to.
 
 Wounds render diegetically, like every other track ([`10-diegesis.md`](10-diegesis.md)): the knee
 never set right, never `skill: -10`.

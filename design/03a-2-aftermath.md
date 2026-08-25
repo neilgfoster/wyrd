@@ -196,7 +196,7 @@ One row is not a result at all but an ongoing condition: a wound record with `re
 | | |
 |---|---|
 | **Fires** | when a fight begins, before the first roll |
-| **Effect** | `−10` to the character's combat skill, for that fight |
+| **Effect** | `−10` to the skill the wound bears on, for that fight |
 | **Between fights** | nothing |
 | **Duration** | the rest of the chronicle, unless a later rule says otherwise |
 | **Stacking** | the family is repeatable, so a character may carry more than one; each fires |

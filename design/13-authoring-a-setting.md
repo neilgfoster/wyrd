@@ -101,7 +101,7 @@ The engine guarantees, and a setting may rely on:
 
 | Engine provides | Setting supplies |
 |---|---|
-| `d100` resolution, degrees of success, the Wyrd die | skill names |
+| `d100` resolution, degrees of success, the Wyrd die | **every skill name, and which skills exist** ([`03b-the-character.md`](03b-the-character.md)) |
 | Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called*, what causes them, and **whether they exist at all** |
@@ -133,7 +133,7 @@ rather than a family of incompatible forks, and it is not negotiable.
 
 | Override | Example |
 |---|---|
-| **Extend** | add setting-specific skills, careers, talents, gear, creatures |
+| **Extend** | add careers, talents, gear, creatures. *(Skills are not extended — a setting declares its own outright; there is no engine list to add to. See [ADR 0013](adr/0013-the-engine-names-no-skill.md).)* |
 | **Retune** | replace a table with one that has more setting feel; change exposure tiers; alter starting Fate |
 | **Rename** | Taint becomes Shadow, or Warp-taint, or Sin. Vocabulary only |
 | **Disable** | switch off Taint entirely for a high-fantasy setting; switch off Trauma for a lighter one |
@@ -190,8 +190,9 @@ version: 1                      # bump on any change; converted content records 
 skills:
   method: direct                # direct | scale | table
   note: "source is already percentile; values are read as printed"
-characteristics:
-  map: {combat: weapon-skill, ranged: ballistic-skill, physical: strength}
+  # A source skill maps to one of THIS setting's skill names. There is no engine
+  # skill vocabulary in between -- see design/adr/0013.
+  map: {"<source skill>": "<this setting's skill>"}
 difficulty:
   map: {easy: +20, average: 0, challenging: -10, difficult: -20, hard: -30}
 damage:
