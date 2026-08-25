@@ -62,7 +62,7 @@ companion defends: rolls **1** — a success, three degrees. Three beats two: **
 
 ## Round 3
 
-**The scout shoots.** 30%, rolls **25** — a success, two degrees. Units 5: nothing. The traveller
+**The scout shoots.** 30%, rolls **25** — a success, one degree. Units 5: nothing. The traveller
 defends: rolls **36** against 35 — a failure, so there is nothing to compare and the shot lands.
 
 Damage `1d6` → **2**. Light armour `1d3` → **3**. The armour beats the damage, but **a minimum of 1
