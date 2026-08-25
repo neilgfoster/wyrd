@@ -35,7 +35,7 @@
 ## Phase 5 — Ship
 
 - [x] T014 Run `check` and `next` against the live board; confirm the answer is a ready leaf.
-- [ ] T015 Commit referencing #24, open the PR.
+- [x] T015 Commit referencing #24, open the PR.
 
 ## Out of scope
 
