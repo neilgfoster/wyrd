@@ -8,8 +8,9 @@ static number rather than a roll, mapped so an even match is a coin flip:
     effective% = 50 + (player_skill - opponent_skill)
 
 The open question is the *slope*. A half-difference variant, 50 + (S - O) / 2, reads as the more
-cautious choice. It is not: it is flat everywhere except an even match, and it caps at 75% even
-against a total novice.
+cautious choice. It is not: it is flat everywhere except an even match, and it needs a 90-point
+skill gap to reach the top of the scale at all -- a master against a competent professional still
+loses one contest in four.
 
 This script answers the slope question by computing two independent contest models that assume no
 linearity at all, and comparing both candidate mappings against them. Exact arithmetic throughout;
