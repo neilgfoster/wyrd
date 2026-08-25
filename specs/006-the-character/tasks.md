@@ -32,4 +32,4 @@
 
 ## Phase 6 — Ship
 
-- [ ] T014 Commit referencing #5 and #33, open the PR.
+- [x] T014 Commit referencing #5 and #33, open the PR.
