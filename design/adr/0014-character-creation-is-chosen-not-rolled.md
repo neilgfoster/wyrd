@@ -24,10 +24,12 @@ either uses those doors or invents a second set that would then have to be kept 
 
 **A character is chosen, not generated. Nothing at creation is rolled.**
 
-- Pick an entry career; take **every skill it grants, at 25%** — the same door an advance uses.
-- Spend **6 free advances** inside that career, under the ordinary spending rule. **This is the
-  background**: a new character is already part-way through their first career, and how far and in
-  which direction is who they were.
+- Pick an entry career, and spend **8 advances inside it**, under the ordinary spending rules —
+  opening a skill at 25% or raising an open one by +5%. At least two skills must be opened. **This
+  is the background**: a new character is already part-way through their first career, and how far
+  and in which direction is who they were.
+- A career grants a list of skills the character *may* learn. Skills not opened are simply not had,
+  and are attempted untrained at 10% ([`03-rules.md`](../03-rules.md) §1).
 - **Stamina 6**, **Luck 40**, flat for everyone.
 - **Fate** by the setting's `mortality`: `low` 2, `standard` 3, `high` 4. **Fortune** equals it.
 - Every track the setting has not disabled starts at zero.
@@ -59,14 +61,29 @@ breadth. There is no optimum to find, only a shape to choose, which is why it do
 optimisation problem that talent trees and feats were rejected for
 ([ADR 0002](0002-source-material.md)).
 
+**Creation invents no door.** [`03-rules.md`](../03-rules.md) §6 has exactly three ways to spend an
+advance, and creation uses two of them. An earlier draft opened *every* career skill for free, which
+is not a door the economy has — and it left a starting character holding five to nine skills at 25%,
+which [`10-diegesis.md`](../10-diegesis.md) calls "never really done this; you would be guessing". A
+character guessing at their own profession. Spending for what they have fixes it and removes a
+special case at the same time.
+
+**A character is a specialist, and honestly untrained elsewhere.** Two to four skills in the
+*trained* band, and the flat 10% for everything else. This is what makes the untrained base matter
+rather than being unreachable trivia: a character genuinely lacks most skills instead of owning them
+all at a token value.
+
 **Nothing is frozen.** Because every advance is spent inside the starting career, every skill a
 character has can still be raised by ordinary play. An earlier design gave background skills from
 outside the career, and those would have sat at 25% permanently — advances may only raise
 career-granted skills ([`03-rules.md`](../03-rules.md) §6) — producing competences the character
 could never develop.
 
-**Six is a ceiling, not a preference.** Seven advances would let a character open at 60%, which
-[`10-diegesis.md`](../10-diegesis.md) calls *expert*. Beginning expert is what a chronicle is for.
+**Eight, and a floor of two skills, are both ceilings rather than preferences.** Eight puts every
+opened skill in the *trained* band at every legal spread. The floor of two exists because without it
+eight advances on a single skill would open at 60% — *expert*
+([`10-diegesis.md`](../10-diegesis.md)) — and beginning expert is what a chronicle is for. A career
+is not one skill, so the floor costs nothing a character would plausibly want.
 
 **Bootstrap becomes deterministic.** Two runs against the same setting and the same answers produce
 the same character. That is what makes it scriptable rather than a conversation the model has to get

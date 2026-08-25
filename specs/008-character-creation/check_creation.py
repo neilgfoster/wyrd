@@ -211,6 +211,38 @@ def main() -> int:
     print("  testing near-automatic early on.")
 
     print()
+    print("Creation spends advances; it does not open skills for free")
+    print("-" * 64)
+    print("  design/03-rules.md section 6 has exactly three doors: open a career skill at")
+    print("  25%, raise one by +5%, or change career. Opening every career skill for free is")
+    print("  not one of them, and doing so left a starting character holding 5-9 skills at")
+    print("  25% -- which design/10-diegesis.md calls 'never really done this'. A character")
+    print("  guessing at their own profession. Creation uses the same doors play uses.")
+    print()
+    OPEN_COST, RAISE, OPENS_AT_PCT = 1, 5, 25
+    print("  pool   opened   resulting values                 lowest band")
+    for pool in (6, 8, 10, 12):
+        for k in (2, 3, 4):
+            if k > pool:
+                continue
+            vals = [OPENS_AT_PCT] * k
+            for i in range(pool - k):
+                vals[i % k] += RAISE
+            vals.sort(reverse=True)
+            worst = min(vals)
+            b = ("guessing" if worst <= 25 else "trained" if worst <= 40
+                 else "practised" if worst <= 55 else "expert")
+            mark = "  <-- chosen" if pool == 8 and k == 3 else ""
+            print(f"  {pool:>4}   {k:>6}   {', '.join(f'{v}%' for v in vals):<32} {b}{mark}")
+        print()
+    print("  A pool of 8 puts every opened skill in the trained band at every spread from 2")
+    print("  to 4 skills, and leaves everything else honestly untrained at 10%.")
+    print()
+    print("  At least two skills must be opened. Without that floor, 8 advances on a single")
+    print("  skill opens at 60% -- expert, before the chronicle has begun. A career is not")
+    print("  one skill, so the floor costs nothing a character would plausibly want.")
+
+    print()
     print("Free advances at creation — how far into the first career a character starts")
     print("-" * 64)
     print("  Every career-granted skill opens at 25%. A pool of free advances is then spent")
@@ -347,20 +379,32 @@ def main() -> int:
 
     # Free advances: the pool must not make a starting character expert at anything, and
     # must let them read as trained across a few skills.
-    pool = 6
-    if 25 + 5 * pool >= 60:
+    pool = 8
+    MIN_OPENED = 2
+    # Two advances open two skills; the remaining pool-2 can all pile onto one of them.
+    # A career is not one skill -- someone who has soldiered knows more than one soldierly
+    # thing -- and without the minimum, 8 advances on a single skill opens at 60%, which
+    # design/10-diegesis.md calls expert. Beginning expert is what a chronicle is for.
+    peak = 25 + 5 * (pool - MIN_OPENED)
+    if peak >= 60:
         failures.append(
-            f"a pool of {pool} advances lets a new character open at "
-            f"{25 + 5 * pool}%, which design/10-diegesis.md calls expert"
+            f"a pool of {pool} advances peaks at {peak}%, which design/10-diegesis.md "
+            "calls expert — a chronicle should be what gets you there"
         )
-    print(f"  {pool} free advances peak at {25 + 5 * pool}% — practised, not expert  "
-          f"[{'ok' if 25 + 5 * pool < 60 else 'FAIL'}]")
-    if 25 + 5 * (pool // 3) < 30:
+    print(f"  {pool} advances, {MIN_OPENED} skills minimum, peak {peak}% — practised   "
+          f"[{'ok' if peak < 60 else 'FAIL'}]")
+
+    # Opening 3 skills costs 3; the remaining 5 raise them. The weakest must clear "guessing".
+    three = [25, 25, 25]
+    for i in range(pool - 3):
+        three[i % 3] += 5
+    if min(three) <= 25:
         failures.append(
-            f"a pool of {pool} advances cannot lift three skills out of the guessing band"
+            f"a pool of {pool} leaves a skill at {min(three)}% when three are opened — "
+            "design/10-diegesis.md calls that guessing, in the character's own career"
         )
-    print(f"  spread over 3 skills they reach {25 + 5 * (pool // 3)}% — trained        "
-          f"[{'ok' if 25 + 5 * (pool // 3) >= 30 else 'FAIL'}]")
+    print(f"  opening 3, the weakest sits at {min(three)}% — trained, not guessing  "
+          f"[{'ok' if min(three) > 25 else 'FAIL'}]")
 
     length = hits_to_drop(chosen, damage_through([6], [6], False))
     if length > 5:

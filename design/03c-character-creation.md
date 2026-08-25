@@ -14,21 +14,20 @@ engine one and a setting one.
 | | Step | Where the content comes from |
 |---|---|---|
 | 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`14-entities.md`](14-entities.md)) |
-| 2 | **Take every skill that career grants, at 25%.** | the career's own declaration |
-| 3 | **Spend 6 free advances** inside that career. This is the character's background. | §3 |
-| 4 | **Set Stamina** to 6, current and maximum. | engine, §2 |
-| 5 | **Set Luck** to 40, current and maximum. | engine, §2 |
-| 6 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
-| 7 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
-| 8 | **Name them, and place them.** Name, a Drive, a Bond, and where they are from. | the setting's name and place tables |
+| 2 | **Spend 8 advances** inside that career, opening and raising skills. This is the character's background. | §3 |
+| 3 | **Set Stamina** to 6, current and maximum. | engine, §2 |
+| 4 | **Set Luck** to 40, current and maximum. | engine, §2 |
+| 5 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
+| 6 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
+| 7 | **Name them, and place them.** Name, a Drive, a Bond, and where they are from. | the setting's name and place tables |
 
-Steps 4–7 are fixed. Steps 1, 2, 3 and 8 read setting data and cannot be completed without it.
+Steps 3–6 are fixed. Steps 1, 2 and 7 read setting data and cannot be completed without it.
 
 **Nothing is rolled.** No characteristics exist to roll ([ADR 0013](adr/0013-the-engine-names-no-skill.md)),
 Stamina and Luck are flat, and skills come from the career. A character is *chosen*, not generated —
 see [ADR 0014](adr/0014-character-creation-is-chosen-not-rolled.md).
 
-Of step 8, only the **Drive** and the **Bond** carry mechanical weight — a Drive can be invoked for
+Of step 7, only the **Drive** and the **Bond** carry mechanical weight — a Drive can be invoked for
 −20 ([`03-rules.md`](03-rules.md) §1) and a Bond is a real relationship
 ([`04-session.md`](04-session.md)). The name and the place of origin are fiction, and the engine
 never reads them. Where a character is *from* shows up mechanically in step 3, not here.
@@ -37,7 +36,7 @@ never reads them. Where a character is *from* shows up mechanically in step 3, n
 
 | | Value | Why |
 |---|---|---|
-| **Skills** | every skill the starting career grants, at **25%**, plus **6 free advances** spent inside that career | 25% is what an advance opens a skill at ([`03-rules.md`](03-rules.md) §6); creation uses the same door, and the same currency |
+| **Skills** | **8 advances**, spent inside the starting career, opening at least two skills | creation uses the same doors play uses ([`03-rules.md`](03-rules.md) §6) and invents none |
 | **Stamina** | **6**, current and maximum | derived; see below |
 | **Luck** | **40**, current and maximum | a test must fail more often than it succeeds, and still have something to erode |
 | **Fate** | by `mortality`: `low` **2**, `standard` **3**, `high` **4** | the tone contract sets it ([`01-principles.md`](01-principles.md)) |
@@ -83,32 +82,42 @@ daily resource at all.
 A new character is not at the start of their first career. They have been doing it a while, and
 **how far and in which direction is their background.**
 
-Six free advances, spent under the ordinary rules
-([`03-rules.md`](03-rules.md) §6) and constrained to the **starting career's** skills:
+**Eight advances**, spent under the ordinary rules ([`03-rules.md`](03-rules.md) §6) and constrained
+to the **starting career's** skills:
 
 | Cost | Buys |
 |---|---|
-| 1 | **+5%** to a skill that career grants, to the career's cap |
+| 1 | **open** a skill that career grants, at 25% |
+| 1 | **+5%** to a skill already open, to the career's cap |
 
-Opening a skill costs nothing here, because step 2 already opened all of them. Nothing may exceed
-the career's cap, and no advance may be spent outside the career — that constraint is what makes the
-result a *background* rather than a shopping trip.
+These are the only doors, and they are the same ones play uses. **A career grants a list of skills
+the character *may* learn — not skills they already have.** Nothing may exceed the career's cap, and
+no advance may be spent outside the career; that constraint is what makes the result a *background*
+rather than a shopping trip.
+
+**At least two skills must be opened.** A career is not one thing, and without the floor eight
+advances on a single skill would open it at 60% — *expert*
+([`10-diegesis.md`](10-diegesis.md)) before the chronicle has begun.
 
 Two characters entering the same career therefore differ, and differ in a way that says something:
 
 | Spent | Reads as |
 |---|---|
-| all six on one skill | 55% — **practised**; the one thing they are known for, and little else |
-| two each on three skills | 35% — **trained** across a working spread |
-| one each on six skills | 30% — barely **trained** everywhere; a generalist who has seen a lot |
+| open 2, everything into one | **55%** and 25% — one real strength, and a thing they have barely touched |
+| open 2, split evenly | **40% / 40%** — a narrow, solid pair |
+| open 3 | **35% / 35% / 30%** — a working spread, all *trained* |
+| open 4 | **30% × 4** — a journeyman who has done a bit of everything |
 
-Six is the largest pool that cannot produce an **expert** ([`10-diegesis.md`](10-diegesis.md)) at
-creation: seven would allow 60%, and beginning expert is what a chronicle is for. It is computed
-in [`check_creation.py`](../specs/008-character-creation/check_creation.py) rather than picked.
+**Everything the career grants but the character never opened, they are simply untrained at** — the
+flat 10% of [`03-rules.md`](03-rules.md) §1. That is the honest answer, and it is why the untrained
+base matters: a character genuinely lacks most skills rather than owning them all at a token value.
 
-**This is the only allocation in creation, and it buys no advantage the fiction does not.** A
-character with 55% in one skill is worse at everything else than one who spread; there is no
-optimum, only a shape.
+The pool is computed in
+[`check_creation.py`](../specs/008-character-creation/check_creation.py) rather than picked: eight
+puts every opened skill in the *trained* band at every legal spread, and cannot reach *expert*.
+
+**This is the only allocation in creation, and it buys no advantage the fiction does not.** Depth
+costs breadth; there is no optimum, only a shape.
 
 ## 4. What a setting must provide
 
