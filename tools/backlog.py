@@ -243,17 +243,31 @@ def issue_exists(number: int) -> bool:
 
 
 def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, list[dict]]:
-    """The first ready leaf, and every blocked leaf passed over on the way to it.
+    """The first ready leaf, and every blocked or spent issue passed over on the way to it.
 
     Depth-first through the ranked roots. A leaf is an issue with no OPEN children; it is
     ready when every issue it declares a dependency on is closed. The blocked list is
-    returned rather than discarded so `next` can say why the obvious answer was not chosen.
+    returned rather than discarded so `next` can say why the obvious answer was not chosen --
+    and, since a spent epic occupies a rank position too, it is reported through the same
+    list rather than a disconnected side channel `next` might not weigh against its answer.
 
-    An epic is never the answer. An epic whose children have all closed is a *spent* epic --
-    either it is finished and wants closing, or it wants decomposing into the work that is
-    actually left. Handing one out as the next thing to implement is how a completed stage
-    gets silently reopened as a task: found when Stage 2's children closed and `next` offered
-    the stage itself.
+    An epic is never *implementation* work. An epic with no open children is a *spent* epic,
+    and is one of two distinct things depending on whether it ever had children at all:
+
+    - **children non-empty, all closed** ("close"): finished. Closing it is never gated by
+      its own `Depends on:` -- that dependency was about permission to do the work, and the
+      work is already done. Handing an epic out as implementation work is how a completed
+      stage gets silently reopened as a task: found when Stage 2's children closed and `next`
+      offered the stage itself.
+    - **children empty** ("decompose"): never broken down. Decomposing it *is* gated by its
+      own `Depends on:` -- an epic that explicitly defers its own decomposition (`Implement
+      the engine`, `Depends on: #1`) must not be offered for decomposition while that holds.
+
+    Both are recorded in `blocked` with an `action` field (`"close"` / `"decompose"`, vs.
+    `"blocked"` for an ordinary not-ready leaf) so `cmd_next` can recognize that resolving one
+    of these may unblock a higher-ranked root than any ready leaf found elsewhere -- CLAUDE.md:
+    a rank orders what you choose between, and an un-actioned spent epic at a higher rank is
+    exactly the kind of prerequisite that should outrank a lower-ranked ready leaf.
     """
     blocked: list[dict] = []
     chosen: dict | None = None
@@ -279,10 +293,12 @@ def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, 
             "blocked_by": blockers,
         }
         if issue["is_epic"]:
-            # A container with nothing open inside it. Not work, at any rank. Reported
-            # exhaustively by spent_epics(), not from here -- the walk stops at the first
-            # answer, so anything it collected on the way would be an arbitrary subset.
+            # Never the answer, at any rank -- but recorded, not discarded: see the
+            # "close" vs "decompose" split in the docstring above.
+            entry["action"] = "close" if issue["children"] else "decompose"
+            blocked.append(entry)
             return None
+        entry["action"] = "blocked"
         if blockers:
             blocked.append(entry)
             return None
@@ -322,24 +338,96 @@ def describe_path(path: list[int], issues: dict[int, dict]) -> str:
     return " > ".join(f"#{n} {issues[n]['title']}" for n in path if n in issues)
 
 
+def lifecycle_action_outranking(chosen: dict | None, blocked: list[dict]) -> dict | None:
+    """The highest-priority actionable close/decompose entry, if it outranks `chosen`.
+
+    "Actionable" means a `"close"` entry (never gated -- the work behind it is already done,
+    so its own `Depends on:` is irrelevant to the bookkeeping of closing it) or a
+    `"decompose"` entry with no blockers of its own. "Outranks" means its rank is at or above
+    `chosen`'s (lower number = higher priority), or nothing was chosen at all -- #90 sitting
+    at rank 20 with zero children, above a ready leaf found only at rank 30 under a different
+    root, is exactly the case this exists to catch: CLAUDE.md's "a rank orders what you choose
+    between" applies to a spent epic's un-actioned position too, not only to real leaves.
+    """
+    candidates = [
+        e for e in blocked
+        if e["action"] in ("close", "decompose")
+        and (e["action"] == "close" or not e["blocked_by"])
+    ]
+    if not candidates:
+        return None
+    best = min(candidates, key=lambda e: (e["rank"] is None, e["rank"] or 0, e["number"]))
+    if chosen is None:
+        return best
+    if best["rank"] is None:
+        return None
+    if chosen["rank"] is None or best["rank"] <= chosen["rank"]:
+        return best
+    return None
+
+
+def format_passed_over(entry: dict) -> str:
+    if entry["action"] == "close":
+        return f"  #{entry['number']} {entry['title']}  <- finished; close it"
+    if entry["action"] == "decompose":
+        if entry["blocked_by"]:
+            deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
+            return f"  #{entry['number']} {entry['title']}  <- no children yet, and blocked by {deps}"
+        return f"  #{entry['number']} {entry['title']}  <- no children yet; decompose it"
+    deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
+    return f"  #{entry['number']} {entry['title']}  <- blocked by {deps}"
+
+
 def cmd_next(args) -> int:
     issues = fetch_issues()
     board = fetch_board()
     chosen, blocked = walk(issues, board)
     spent = spent_epics(issues, board)
+    preferred = lifecycle_action_outranking(chosen, blocked)
+    rest = [e for e in blocked if e is not preferred]
 
     if args.format == "json":
         print(json.dumps(
-            {"next": chosen, "blocked": blocked, "spent_epics": spent}, indent=2))
-        return 0 if chosen else 1
+            {
+                "next": preferred or chosen,
+                "superseded_leaf": chosen if (preferred and chosen) else None,
+                "blocked": rest,
+                "spent_epics": spent,
+            },
+            indent=2,
+        ))
+        return 0 if (preferred or chosen) else 1
+
+    if preferred:
+        verb = "Close" if preferred["action"] == "close" else "Decompose"
+        why = (
+            "it has finished (every child is closed)"
+            if preferred["action"] == "close"
+            else "nothing has been broken out under it yet"
+        )
+        print(f"Next: {verb} #{preferred['number']}  {preferred['title']}")
+        print(f"      {preferred['url']}")
+        if len(preferred["path"]) > 1:
+            print(f"      under {describe_path(preferred['path'][:-1], issues)}")
+        print(f"      rank {preferred['rank']} -- {why}, outranking any ready leaf found")
+        if chosen:
+            print(
+                f"\n(The best ready leaf otherwise was #{chosen['number']} {chosen['title']}, "
+                f"rank {chosen['rank']} -- lower priority than the action above.)"
+            )
+        if rest:
+            print("\nAlso passed over:")
+            for entry in rest:
+                print(format_passed_over(entry))
+        report_spent(spent)
+        return 0
 
     if not chosen:
         print("Nothing is ready to start.")
         if blocked:
             print("\nEverything reachable is blocked:")
             for entry in blocked:
-                deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
-                print(f"  #{entry['number']} {entry['title']}  <- blocked by {deps}")
+                print(format_passed_over(entry))
         report_spent(spent)
         return 1
 
@@ -349,11 +437,10 @@ def cmd_next(args) -> int:
         print(f"      under {describe_path(chosen['path'][:-1], issues)}")
     print(f"      rank {chosen['rank']}")
 
-    if blocked:
+    if rest:
         print("\nPassed over (higher up the order, but blocked):")
-        for entry in blocked:
-            deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
-            print(f"  #{entry['number']} {entry['title']}  <- blocked by {deps}")
+        for entry in rest:
+            print(format_passed_over(entry))
 
     report_spent(spent)
     return 0
