@@ -447,6 +447,31 @@ class TestLifecycleActionOutranking(unittest.TestCase):
         blocked = [blocked_entry(2, action="blocked", blocked_by=[9], rank=10)]
         self.assertIsNone(backlog.lifecycle_action_outranking(chosen, blocked))
 
+    def test_a_spent_epic_nested_two_levels_deep_still_outranks_a_lower_rank_leaf(self):
+        """The rule is not just "a root's direct child" -- an epic finished deep inside a
+        higher-ranked root's tree must surface the same way #49 (a direct child of #1) does.
+        `walk()` recurses uniformly regardless of depth; this exercises the whole pipeline
+        (walk -> blocked -> outranking) against a two-level nesting to prove it, rather than
+        asserting it only holds for the one depth #49 happens to sit at.
+        """
+        issues = {
+            1: make_issue(1, title="root epic", children=[40], open_children=[40],
+                          labels=("kord-epic",)),
+            40: make_issue(40, title="mid-level epic", parent=1, children=[49],
+                            open_children=[49], labels=("kord-epic",)),
+            49: make_issue(49, title="finished, two levels deep", parent=40,
+                            children=[26, 56], open_children=[], labels=("kord-epic",)),
+            91: make_issue(91, title="other root", children=[97], open_children=[97],
+                            labels=("kord-epic",)),
+            97: make_issue(97, title="ready leaf", parent=91),
+        }
+        board = {1: {"rank": 10}, 91: {"rank": 30}}
+        chosen, blocked = backlog.walk(issues, board)
+        self.assertEqual(chosen["number"], 97)
+        self.assertEqual([(e["number"], e["action"], e["rank"]) for e in blocked], [(49, "close", 10)])
+        preferred = backlog.lifecycle_action_outranking(chosen, blocked)
+        self.assertEqual(preferred["number"], 49)
+
 
 class TestDriftDetection(unittest.TestCase):
     """FR-4, exercised through find_problems itself.
