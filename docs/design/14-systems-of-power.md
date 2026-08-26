@@ -48,6 +48,18 @@ applies; the declared `resolve_cost`, if present, applies identically. Failing a
 costs what attempting it costs — the same shape any strenuous, risky effort already has in this
 engine.
 
+**Cost does not scale with the narrative magnitude of what was attempted — that is intentional,
+not an oversight.** "I warm myself against the chill" and "I burn the entire city down" cost the
+same declared Strain if both are framed as the same system of power, because the schema already
+has a lever for how hard an invocation is: **difficulty**, set by the GM from the fiction, which
+modifies the skill the roll is tested against ([`03-rules.md`](03-rules.md) §1). A second lever
+that scaled cost by intensity would duplicate difficulty's job without a clean boundary of its
+own — nothing distinguishes "this working is difficult" from "this working is costly" cleanly
+enough to justify two mechanically distinct dials for the same fictional judgment. A GM who wants
+burning down a city to cost more than warming a hand does that by making it a harder test, or by
+having the fiction demand a second invocation, not by a cost multiplier. This keeps every system
+of power a single flat number, exactly as the schema already requires.
+
 ## The Ill Omen consequence
 
 **An Ill Omen on an invocation applies the declared `ill_omen_taint` through the engine's existing
