@@ -6,57 +6,111 @@
 # `note:` records only a KNOWN ENGINE GAP — something a setting will need that the core does
 # not yet provide. It is not for recording where an engine rule came from.
 #
+# `status:` is an ordered progression, not a boolean:
+#   stub            no library content beyond the template skeleton
+#   library-loaded  library content present, not yet indexed
+#   indexed         a real index exists over the library
+#   playable        indexed and confirmed usable at the table
+#
+# `group:` (optional) names a shared world for settings that are distinct entries within one
+# (e.g. `wh40k`, `maelstrom`) — data only; no engine behaviour reads it yet.
+#
 # A setting derived from copyrighted material is PRIVATE and its repository will not be
 # reachable by anyone but its owner. Such entries are listed so the catalogue is complete,
 # not because they can be obtained. A setting built from original material may be public.
+#
+# tools/check_settings_catalogue.py checks this file against the live repository fleet.
 
 settings:
-  - id: wfrp1e
+  - id: wfrp-1e
     title: "Warhammer Fantasy Roleplay, 1st edition"
-    repo: wyrd-wfrp1e
+    repo: wyrd-setting-wfrp-1e
     visibility: private
-    status: stub
+    status: library-loaded
 
-  - id: wfrp2e
+  - id: wfrp-2e
     title: "Warhammer Fantasy Roleplay, 2nd edition"
-    repo: wyrd-wfrp2e
+    repo: wyrd-setting-wfrp-2e
     visibility: private
-    status: stub
+    status: library-loaded
 
-  - id: wfrp3e
+  - id: wfrp-3e
     title: "Warhammer Fantasy Roleplay, 3rd edition"
-    repo: wyrd-wfrp3e
+    repo: wyrd-setting-wfrp-3e
     visibility: private
-    status: stub
+    status: library-loaded
 
-  - id: wfrp4e
+  - id: wfrp-4e
     title: "Warhammer Fantasy Roleplay, 4th edition"
-    repo: wyrd-wfrp4e
+    repo: wyrd-setting-wfrp-4e
     visibility: private
-    status: stub
+    status: library-loaded
 
-  - id: darkheresy
+  - id: wh40k-darkheresy
     title: "Dark Heresy — the Calixis Sector"
-    repo: wyrd-darkheresy
+    repo: wyrd-setting-wh40k-darkheresy
     visibility: private
-    status: stub
+    status: library-loaded
+    group: wh40k
 
-  - id: onlywar
+  - id: wh40k-onlywar
     title: "Only War — the Spinward Front"
-    repo: wyrd-onlywar
+    repo: wyrd-setting-wh40k-onlywar
     visibility: private
-    status: stub
+    status: library-loaded
+    group: wh40k
 
-  - id: roguetrader
+  - id: wh40k-roguetrader
     title: "Rogue Trader — the Koronus Expanse"
-    repo: wyrd-roguetrader
+    repo: wyrd-setting-wh40k-roguetrader
     visibility: private
-    status: stub
+    status: library-loaded
+    group: wh40k
+
+  - id: wh40k-blackcrusade
+    title: "Black Crusade"
+    repo: wyrd-setting-wh40k-blackcrusade
+    visibility: private
+    status: library-loaded
+    group: wh40k
+
+  - id: wh40k-deathwatch
+    title: "Deathwatch"
+    repo: wyrd-setting-wh40k-deathwatch
+    visibility: private
+    status: library-loaded
+    group: wh40k
 
   - id: tor
     title: "The One Ring — Wilderland"
-    repo: wyrd-tor
+    repo: wyrd-setting-tor
     visibility: private
-    status: stub
+    status: library-loaded
 
-# Candidates, unstarted: D6 Star Wars, Maelstrom, Mordheim, Stars Without Number.
+  - id: maelstrom
+    title: "Maelstrom"
+    repo: wyrd-setting-maelstrom
+    visibility: private
+    status: library-loaded
+    group: maelstrom
+
+  - id: maelstrom-domesday
+    title: "Maelstrom: Domesday"
+    repo: wyrd-setting-maelstrom-domesday
+    visibility: private
+    status: library-loaded
+    group: maelstrom
+
+  - id: titan
+    title: "Titan"
+    repo: wyrd-setting-titan
+    visibility: private
+    status: library-loaded
+
+  - id: darkfuture
+    title: "Dark Future"
+    repo: wyrd-setting-darkfuture
+    visibility: private
+    status: library-loaded
+
+# Candidates, unstarted: D6 Star Wars, Mordheim, Stars Without Number.

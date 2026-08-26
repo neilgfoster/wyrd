@@ -13,7 +13,8 @@ gets built.
 | Repo | Holds | Visibility |
 |---|---|---|
 | **wyrd** *(this one)* | engine, design, decision records | **intended public** |
-| **wyrd-\<setting\>** | one setting: world, content, indexes | private where its sources are |
+| **wyrd-setting-template** | the skeleton a new setting is cloned from | template |
+| **wyrd-setting-\<name\>** | one setting: world, content, indexes | private where its sources are |
 | **wyrd-chronicle-template** | cloned to start a chronicle | template |
 | **wyrd-chronicle-\<name\>** | one per chronicle | the player's |
 | **wyrd-research** | corpus, mining notes, extractions, source tooling | **never public** |
