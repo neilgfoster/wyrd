@@ -610,10 +610,13 @@ Three tiers of mental harm, distinguished by how long they last.
 - **Strain** — today. From failed mental tests, terror, exhaustion. Recovered at a Rally.
 - **Trauma** — long-term and sticky. **1 per critical taken**, 1 per failed Terror test, more
   at the GM's discretion for genuinely terrible events.
-- **Afflictions** — permanent. At **6+ Trauma**, test on every further point; on a failure
-  take an Affliction ([`03a-tables.md`](03a-tables.md)) and **lose 6 Trauma**. The track
-  sawtooths, so a character can break
-  many times across years.
+- **Afflictions** — permanent. At **6+ Trauma**, test on every further point (a fiction-chosen
+  skill, pass/fail only — [`03a-4-afflictions.md`](03a-4-afflictions.md)); on a failure take an
+  Affliction and **lose 6 Trauma**. The track sawtooths, so a character can break many times
+  across years — the same Affliction may recur, which is ordinary rather than a defect. Computed
+  in [`03a-4-afflictions.md`](03a-4-afflictions.md): the long-run cadence is exactly 1 Affliction
+  per 6 Trauma-adding events, independent of the test's skill, because the floor and the drop are
+  the same number.
 
 **Fear** prevents pressing an attack; **Terror** routs, and costs a Trauma point on a failure.
 An Affliction is never described as an Affliction — it is described as behaviour.
