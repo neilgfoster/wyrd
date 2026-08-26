@@ -21,6 +21,7 @@ this is one configurable mechanism rather than a set of engine-defined shapes.
 | `resolve_cost` | no | Resolve paid on every invocation, in addition to Strain |
 | `ill_omen_taint` | no, default `1` | Taint gained when an invocation's Wyrd die reads Ill Omen |
 | `description` | no | flavour only; no mechanical effect |
+| `intensity_tiers` | no | see below — scales cost and Ill Omen Taint by declared ambition |
 
 A setting declares as many systems of power as it needs. Nothing about the schema constrains how
 many a character may know, how a system is learned, or what an invocation looks like in the
@@ -47,6 +48,40 @@ character does not speak is not a 10% chance; nor is a system of power marked th
 applies; the declared `resolve_cost`, if present, applies identically. Failing an invocation still
 costs what attempting it costs — the same shape any strenuous, risky effort already has in this
 engine.
+
+## Intensity tiers
+
+**`intensity_tiers` is optional, and a system of power with none declared behaves exactly as
+above** — a flat cost, a difficulty the GM sets from the fiction, an unmodified `ill_omen_taint`.
+Nothing about this section requires an existing declared system of power to change.
+
+A setting that wants "I warm myself against the chill" and "I burn the entire city down" to carry
+different stakes, even when both are the same system of power, declares `intensity_tiers`: a list
+of named points, each with
+
+| Field | What it means |
+|---|---|
+| `label` | the setting's own word for this level of ambition — free text, e.g. minor/moderate/major |
+| `difficulty` | one of the six rungs [`03-rules.md`](03-rules.md) §1 already defines — a shorthand for the difficulty the GM would otherwise set fresh each time; the GM may still override it from the fiction |
+| `cost_multiplier` | multiplies the system's base `strain_cost`/`resolve_cost` for an invocation declared at this tier |
+| `ill_omen_taint_bonus` | adds to the system's base `ill_omen_taint` before it feeds the Taint-accrual path below |
+
+**This closes a gap difficulty alone does not.** Difficulty only discounts *how often* an
+ambitious working succeeds — it does nothing about the asymmetry of the downside, since the
+declared cost is paid identically whether the working was trivial or vast. A tier's
+`ill_omen_taint_bonus` is what actually ties ambition to consequence: an Ill Omen on a working
+declared at the `major` tier now risks meaningfully more Taint — and a more likely transformation
+roll — than an Ill Omen on the same system invoked at `minor`. Which tier an invocation is
+declared at is decided the same way any other declaration specificity is — the player states it
+as part of the same declaration step, subject to the GM's usual authority over plausibility; this
+is not a new procedural step.
+
+**No new resolution path.** `cost_multiplier` and `ill_omen_taint_bonus` compose with the
+existing rules exactly as stated above and below — win-or-lose cost, the same Taint-accrual path
+— they do not introduce a second dice mechanic, a second table, or a tier-specific consequence
+chain. A tier is a modifier on the one mechanism this document already defines, consistent with
+[ADR 0036](../adr/0036-one-configurable-power-mechanism.md)'s decision that a system of power is
+one configurable mechanism, not a family of mechanism shapes.
 
 ## The Ill Omen consequence
 
@@ -87,6 +122,41 @@ fiction, the player rolls `d100` against their Ember-craft skill exactly as any 
 resolution — success or failure — the character's Strain drops by 2 and Resolve by 1. If the
 natural roll's units digit was 0 (Ill Omen), the character also gains 1 Taint through the existing
 accrual path, with a transformation roll to follow only if that crosses a threshold.
+
+A setting that wants ember-craft's stakes to scale with what was attempted adds tiers to the same
+declaration:
+
+```yaml
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    resolve_cost: 1
+    requires_training: true
+    ill_omen_taint: 1
+    intensity_tiers:
+      - label: minor
+        difficulty: average
+        cost_multiplier: 1
+        ill_omen_taint_bonus: 0
+      - label: moderate
+        difficulty: hard
+        cost_multiplier: 2
+        ill_omen_taint_bonus: 1
+      - label: major
+        difficulty: very hard
+        cost_multiplier: 4
+        ill_omen_taint_bonus: 3
+```
+
+Warming your hands is `minor` — resolution is identical to the untiered example above.
+Burning down a city is `major`: the GM sets Very Hard rather than picking a difficulty fresh, the
+roll is against `d100` exactly as before, and on resolution the character pays `2 * 4 = 8` Strain
+and `1 * 4 = 4` Resolve rather than the base 2 and 1. If the natural roll's units digit is 0 (Ill
+Omen), the character gains `1 + 3 = 4` Taint through the same accrual path — not the 1 Taint a
+`minor` Ill Omen would cost — reflecting that an ambitious working going wrong is a worse thing to
+have happen, mechanically as well as fictionally.
 
 A second, structurally different example — confirming the schema does not assume a mythic
 register:
