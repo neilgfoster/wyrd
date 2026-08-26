@@ -174,6 +174,25 @@ it was subtle, why it survived. Reference backlog identifiers where they apply.
 Avoid backticks in commit message bodies; they are shell-interpreted and have silently eaten
 words here before.
 
+## Pull requests
+
+A run of PRs in this repo shipped titled with the raw branch name (`033-doc-move-and-numbering`)
+and bodied `No description provided.` — because `kord-pr-raise` was called without a summary,
+and its fallback is exactly that literal. **A PR's title and body are not optional metadata; a
+reviewer decides whether to open the diff from them.** Concretely:
+
+- **Title says what changed, not where it lives.** `Move the design documents under docs/ and
+  settle numbering (closes #38)` — not `033-doc-move-and-numbering`. If it reads like a branch
+  name or a ticket ID with nothing else, it is not a title yet.
+- **Body says what changed and why**, referencing the issue it closes and the decisions it
+  made — the same "why, not what" rule commit messages already follow. A reader should be able
+  to decide whether to review closely from the body alone, before opening the diff.
+- **Always pass a summary to `kord-pr-raise`** (or write the title/body directly if raising a PR
+  by hand). Its fallback — commit subject lines, or failing that the branch name — exists for
+  when nothing better is available, not as the default path.
+- `.github/pull_request_template.md` gives every PR the same shape; fill every section, and
+  leave none as an unaddressed placeholder comment.
+
 ## Before proposing a rule change
 
 The engine has been playtested exactly once, and that session corrected the resolution
