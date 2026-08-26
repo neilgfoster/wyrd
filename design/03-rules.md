@@ -62,7 +62,8 @@ you do not speak is not a 10% chance ([`03b-the-character.md`](03b-the-character
 
 ### Opposed tests
 
-When someone resists, both roll — but not symmetrically.
+When two people genuinely act against each other and neither's number stands in for the other's
+roll — a contest of wills, a race for the same outcome — both roll, but not symmetrically:
 
 1. **The acting side rolls first, and must succeed.** If they fail, the action fails. There is no
    comparison and the other side need not roll at all.
@@ -75,6 +76,12 @@ When someone resists, both roll — but not symmetrically.
 The **acting side** is whoever is trying to change the situation; the other is resisting it. Where
 neither is — two people racing for the same thing — it is not an opposed test, and the GM either
 names an actor or calls for two ordinary tests.
+
+**Combat does not use this shape.** An opponent's capability is a static number, not a roll
+([`03d-the-adversary.md`](03d-the-adversary.md)), and an attack or defence in combat resolves as a
+single player-facing roll (§2) — [ADR 0027](adr/0027-combat-rolls-belong-to-the-player.md)
+supersedes the rules above for that case. This section still governs the contests it was written
+for outside combat.
 
 Rule 2 is not a detail. Degrees are `tens(skill) − tens(roll)`, so a failure computes as a negative
 number, and subtracting one *inflates* the margin. Left that way, roughly three quarters of
@@ -218,13 +225,31 @@ Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's cho
 What is on the other side of the roll — what an opponent carries, and which of these rules reads
 each field — is in [`03d-the-adversary.md`](03d-the-adversary.md).
 
-- Attacks are opposed tests. The winner rolls the weapon's damage.
+- **The opponent never rolls.** Its capability is a static number
+  ([`03d-the-adversary.md`](03d-the-adversary.md)), and every roll in combat belongs to a player
+  character or companion ([ADR 0027](adr/0027-combat-rolls-belong-to-the-player.md)).
+- **Attack:** the attacker rolls once against `effective% = clip(50 + (attack_skill −
+  defender_skill_or_baseline), 5, 95)` — an even match is a coin flip, and no skill gap reaches
+  certainty or impossibility. On success, roll the weapon's damage.
+- **Defence:** when the target is a player character or companion, the player rolls once against
+  `effective%` computed the other way round — `clip(50 + (defence_skill −
+  attacker_skill_or_baseline), 5, 95)` — instead of the opponent rolling an attack. Failure means
+  the blow lands; success means it does not.
+- **Degrees** are read from the roll exactly as in §1 — `tens(effective%) − tens(roll)` — using
+  `effective%` as the skill value.
+- **The Wyrd die always belongs to the player** making the roll, attack or defence — there is no
+  roll on the opponent's side for it to belong to instead.
+- **Assistance** (§1) applies identically to the attack roll and the defence roll.
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
   A minimum of 1 always gets through.
-- **Telling blow:** win by 3 or more degrees and **the damage rolled doubles**, and then armour
+- **Telling blow:** win by 6 or more degrees and **the damage rolled doubles**, and then armour
   subtracts. The order matters: it is where almost every large critical comes from
-  ([`03a-1-criticals.md`](03a-1-criticals.md)).
+  ([`03a-1-criticals.md`](03a-1-criticals.md)). Computed against the roll this section actually
+  produces, not carried over from the shape it replaced — telling blows stay a minority of hits
+  at every realistic pairing
+  ([`check_conversion.py`](../specs/018-player-facing-combat/check_conversion.py),
+  [ADR 0028](adr/0028-the-telling-blow-threshold-and-the-damage-finding.md)).
 - **Damage has a type** — **slashing**, **piercing**, **blunt** or **searing**. The set is closed,
   and a setting renames one it has no fiction for
   ([ADR 0022](adr/0022-four-damage-types-named-for-the-wound.md)).
@@ -459,8 +484,8 @@ The road back is short enough to keep playing and long enough to be felt:
 |---|---|
 | dropped, Stamina 6 | **6** |
 | dropped, Stamina 7 (a completed career) | 7 |
-| one ordinary fight against an even opponent | 4.6 to 4.9 |
-| one ordinary fight at a 20-point advantage | 2.2 to 3.3 |
+| one ordinary fight against an even opponent, won | 4.0 |
+| one ordinary fight at a 20-point advantage, won | 2.1 |
 
 An even fight costs most of the track — and that is the road back *including* being dropped, since
 a combatant who dropped wakes at 0 however far below it they went. That is the rule's real weight: a character who fights
