@@ -39,12 +39,24 @@ import tempfile
 # --- The schema, from docs/design/14-systems-of-power.md ----------------------
 
 REQUIRED_FIELDS = {"id", "name", "skill", "strain_cost", "requires_training"}
-OPTIONAL_FIELDS = {"resolve_cost", "ill_omen_taint", "description"}
+OPTIONAL_FIELDS = {"resolve_cost", "ill_omen_taint", "description", "intensity_tiers"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # docs/design/27-entities.md: kebab-case
+ID_RE = re.compile(
+    r"^[a-z0-9]+(-[a-z0-9]+)*$"
+)  # docs/design/27-entities.md: kebab-case
 
 DEFAULT_ILL_OMEN_TAINT = 1
+
+# The six difficulty-ladder rungs, docs/design/03-rules.md section 1's table -- intensity_tiers
+# names one of these rather than inventing a second scale.
+TIER_REQUIRED_FIELDS = {
+    "label",
+    "difficulty",
+    "cost_multiplier",
+    "ill_omen_taint_bonus",
+}
+DIFFICULTY_RUNGS = {"easy", "average", "challenging", "difficult", "hard", "very hard"}
 
 
 # --- The small internal reader ----------------------------------------------
@@ -146,6 +158,58 @@ def read_yaml(path: pathlib.Path):
 # --- The checks ---------------------------------------------------------------
 
 
+def check_tier(tier, index: int, label: str, bad) -> None:
+    """Validate one entry of a system of power's intensity_tiers list.
+
+    docs/design/14-systems-of-power.md's Intensity tiers section: a tier is malformed the same
+    four ways check_entry already rejects a system of power -- a missing/empty required field or
+    a value outside the range the engine can absorb. Failures are named by tier position, since a
+    tier has no id of its own to identify it by.
+    """
+    tier_label = f"intensity_tiers[{index}]"
+    if not isinstance(tier, dict):
+        bad(tier_label, "entry is not a mapping")
+        return
+
+    for field in sorted(TIER_REQUIRED_FIELDS - set(tier)):
+        bad(f"{tier_label}.{field}", "required field is missing")
+    for field in sorted(set(tier) - TIER_REQUIRED_FIELDS):
+        bad(
+            f"{tier_label}.{field}", "field is not defined by the intensity-tier schema"
+        )
+
+    if "label" in tier and (not isinstance(tier["label"], str) or not tier["label"]):
+        bad(f"{tier_label}.label", f"{tier['label']!r} is not a non-empty label")
+
+    if "difficulty" in tier:
+        difficulty = tier["difficulty"]
+        if not isinstance(difficulty, str) or difficulty not in DIFFICULTY_RUNGS:
+            bad(
+                f"{tier_label}.difficulty",
+                f"{difficulty!r} is not one of the six recognised difficulty rungs "
+                f"({', '.join(sorted(DIFFICULTY_RUNGS))})",
+            )
+
+    if "cost_multiplier" in tier:
+        multiplier = tier["cost_multiplier"]
+        if not isinstance(multiplier, (int, float)) or isinstance(multiplier, bool):
+            bad(f"{tier_label}.cost_multiplier", f"{multiplier!r} is not a number")
+        elif multiplier <= 0:
+            bad(
+                f"{tier_label}.cost_multiplier",
+                f"{multiplier} must be a positive number",
+            )
+
+    if "ill_omen_taint_bonus" in tier:
+        bonus = tier["ill_omen_taint_bonus"]
+        if not isinstance(bonus, int) or isinstance(bonus, bool):
+            bad(
+                f"{tier_label}.ill_omen_taint_bonus", f"{bonus!r} is not a whole number"
+            )
+        elif bonus < 0:
+            bad(f"{tier_label}.ill_omen_taint_bonus", f"{bonus} must not be negative")
+
+
 def check_entry(entry, where: str, known_skills: set[str] | None = None) -> list[str]:
     problems: list[str] = []
 
@@ -189,6 +253,14 @@ def check_entry(entry, where: str, known_skills: set[str] | None = None) -> list
     if "description" in entry and not isinstance(entry["description"], str):
         bad("description", "must be text")
 
+    if "intensity_tiers" in entry:
+        tiers = entry["intensity_tiers"]
+        if not isinstance(tiers, list):
+            bad("intensity_tiers", f"{tiers!r} is not a list")
+        else:
+            for index, tier in enumerate(tiers):
+                check_tier(tier, index, label, bad)
+
     return problems
 
 
@@ -230,11 +302,35 @@ def check_file(path: pathlib.Path, known_skills: set[str] | None = None) -> list
 # script makes no claim about it and imports nothing from check_mapping.py.
 
 
-def resolution_trace(entry: dict) -> dict:
+def resolution_trace(entry: dict, tier_label: str | None = None) -> dict:
+    """The cost and Ill Omen Taint an invocation actually pays/risks.
+
+    With no tier_label, this is unchanged from before intensity_tiers existed -- the base
+    strain_cost/resolve_cost/ill_omen_taint, applied exactly as docs/design/14-systems-of-power.md's
+    Resolution and Ill Omen sections state. With tier_label naming one of the system's declared
+    intensity_tiers, the Intensity tiers section's formulas apply on top: cost is multiplied by
+    the tier's cost_multiplier, ill_omen_taint gains the tier's ill_omen_taint_bonus.
+    """
+    strain = entry["strain_cost"]
+    resolve = entry.get("resolve_cost", 0)
+    ill_omen_taint = entry.get("ill_omen_taint", DEFAULT_ILL_OMEN_TAINT)
+
+    if tier_label is not None:
+        tiers = entry.get("intensity_tiers", [])
+        matches = [
+            t for t in tiers if isinstance(t, dict) and t.get("label") == tier_label
+        ]
+        if not matches:
+            raise KeyError(f"no intensity tier labelled {tier_label!r} on this entry")
+        tier = matches[0]
+        strain *= tier["cost_multiplier"]
+        resolve *= tier["cost_multiplier"]
+        ill_omen_taint += tier["ill_omen_taint_bonus"]
+
     return {
-        "strain_paid": entry["strain_cost"],
-        "resolve_paid": entry.get("resolve_cost", 0),
-        "ill_omen_taint": entry.get("ill_omen_taint", DEFAULT_ILL_OMEN_TAINT),
+        "strain_paid": strain,
+        "resolve_paid": resolve,
+        "ill_omen_taint": ill_omen_taint,
     }
 
 
@@ -297,6 +393,85 @@ systems_of_power:
     skill: broken-four
     strain_cost: 0
     requires_training: false
+"""
+
+TIERED_EMBER_CRAFT_YAML = """
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    resolve_cost: 1
+    requires_training: true
+    ill_omen_taint: 1
+    intensity_tiers:
+      - label: minor
+        difficulty: average
+        cost_multiplier: 1
+        ill_omen_taint_bonus: 0
+      - label: moderate
+        difficulty: hard
+        cost_multiplier: 2
+        ill_omen_taint_bonus: 1
+      - label: major
+        difficulty: very hard
+        cost_multiplier: 4
+        ill_omen_taint_bonus: 3
+"""
+
+BAD_TIER_DIFFICULTY_YAML = """
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    requires_training: true
+    intensity_tiers:
+      - label: major
+        difficulty: apocalyptic
+        cost_multiplier: 4
+        ill_omen_taint_bonus: 3
+"""
+
+BAD_TIER_MULTIPLIER_YAML = """
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    requires_training: true
+    intensity_tiers:
+      - label: major
+        difficulty: very hard
+        cost_multiplier: 0
+        ill_omen_taint_bonus: 3
+"""
+
+BAD_TIER_TAINT_BONUS_YAML = """
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    requires_training: true
+    intensity_tiers:
+      - label: major
+        difficulty: very hard
+        cost_multiplier: 4
+        ill_omen_taint_bonus: -1
+"""
+
+MISSING_TIER_LABEL_YAML = """
+systems_of_power:
+  - id: ember-craft
+    name: Ember-craft
+    skill: ember-craft
+    strain_cost: 2
+    requires_training: true
+    intensity_tiers:
+      - difficulty: very hard
+        cost_multiplier: 4
+        ill_omen_taint_bonus: 3
 """
 
 
@@ -365,6 +540,73 @@ def self_test() -> None:
         # A skill the setting never declared is rejected when a skill list is supplied.
         problems = check_file(ember_path, known_skills={"signal-attunement"})
         assert any("skill" in p and "ember-craft" in p for p in problems), problems
+
+        # intensity_tiers: a well-formed tiered declaration validates clean (spec User Story 1).
+        tiered_path = tmpdir / "tiered.yaml"
+        tiered_path.write_text(TIERED_EMBER_CRAFT_YAML, encoding="utf-8")
+        problems = check_file(tiered_path)
+        assert not problems, (
+            f"tiered ember-craft fixture should validate clean, got: {problems}"
+        )
+
+        # A system of power with no intensity_tiers is unaffected -- same fixture, same trace,
+        # as before this feature existed (spec User Story 2, FR-003/FR-006).
+        assert resolution_trace(ember_data) == {
+            "strain_paid": 2,
+            "resolve_paid": 1,
+            "ill_omen_taint": 1,
+        }
+
+        # Resolution trace at a non-default tier: hand-computed expected values, not a
+        # re-derivation of the formula under test (CLAUDE.md: assert prior numbers).
+        # major: cost_multiplier 4, ill_omen_taint_bonus 3 -> strain 2*4=8, resolve 1*4=4,
+        # taint 1+3=4.
+        tiered_data = read_yaml(tiered_path)["systems_of_power"][0]
+        major_trace = resolution_trace(tiered_data, tier_label="major")
+        assert major_trace == {
+            "strain_paid": 8,
+            "resolve_paid": 4,
+            "ill_omen_taint": 4,
+        }, major_trace
+        # minor: cost_multiplier 1, ill_omen_taint_bonus 0 -> identical to the untiered base.
+        minor_trace = resolution_trace(tiered_data, tier_label="minor")
+        assert minor_trace == {
+            "strain_paid": 2,
+            "resolve_paid": 1,
+            "ill_omen_taint": 1,
+        }, minor_trace
+
+        # Each malformed-tier class is rejected, naming the tier at fault (spec User Story 3).
+        bad_difficulty_path = tmpdir / "bad_tier_difficulty.yaml"
+        bad_difficulty_path.write_text(BAD_TIER_DIFFICULTY_YAML, encoding="utf-8")
+        problems = check_file(bad_difficulty_path)
+        assert any(
+            "intensity_tiers[0].difficulty" in p and "apocalyptic" in p
+            for p in problems
+        ), problems
+
+        bad_multiplier_path = tmpdir / "bad_tier_multiplier.yaml"
+        bad_multiplier_path.write_text(BAD_TIER_MULTIPLIER_YAML, encoding="utf-8")
+        problems = check_file(bad_multiplier_path)
+        assert any(
+            "intensity_tiers[0].cost_multiplier" in p and "positive" in p
+            for p in problems
+        ), problems
+
+        bad_taint_bonus_path = tmpdir / "bad_tier_taint_bonus.yaml"
+        bad_taint_bonus_path.write_text(BAD_TIER_TAINT_BONUS_YAML, encoding="utf-8")
+        problems = check_file(bad_taint_bonus_path)
+        assert any(
+            "intensity_tiers[0].ill_omen_taint_bonus" in p and "negative" in p
+            for p in problems
+        ), problems
+
+        missing_label_path = tmpdir / "missing_tier_label.yaml"
+        missing_label_path.write_text(MISSING_TIER_LABEL_YAML, encoding="utf-8")
+        problems = check_file(missing_label_path)
+        assert any(
+            "intensity_tiers[0].label" in p and "missing" in p for p in problems
+        ), problems
 
     print(
         "Self-test passed: both worked examples validate clean, every rejection class fires, "
