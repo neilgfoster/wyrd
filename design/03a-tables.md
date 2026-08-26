@@ -2,9 +2,9 @@
 
 The engine holds five families of table ([`02-architecture.md`](02-architecture.md)). Four are
 rolled by rules in [`03-rules.md`](03-rules.md) — criticals, aftermath, transformations,
-afflictions. The fifth, oracles, is rolled by the GM's own judgment of when a question needs
-settling ([`03a-5-oracle-answers.md`](03a-5-oracle-answers.md)), not by a rule that forces the
-roll. This document is where all five are defined: the conventions every table satisfies, and the
+afflictions. The fifth, oracles, is rolled by the GM's own judgment of when a question needs settling or
+content needs generating ([`03a-5-oracle-answers.md`](03a-5-oracle-answers.md),
+[`03a-6-oracle-prompts.md`](03a-6-oracle-prompts.md)), not by a rule that forces the roll. This document is where all five are defined: the conventions every table satisfies, and the
 index of the families themselves.
 
 The conventions exist so that five families written at different times behave the same way. The
@@ -30,7 +30,7 @@ there and summarised here.
 | **Aftermath** | `d100` + 5 × points below zero | repeatable | [`03a-2-aftermath.md`](03a-2-aftermath.md) |
 | **Transformations** | `1d6` | unique per character | [`03a-3-transformations.md`](03a-3-transformations.md) |
 | **Afflictions** | `1d12`, no modifier | repeatable | [`03a-4-afflictions.md`](03a-4-afflictions.md) |
-| **Oracles** | `1d100` | repeatable | [`03a-5-oracle-answers.md`](03a-5-oracle-answers.md) |
+| **Oracles** | `1d100` | repeatable | [`03a-5-oracle-answers.md`](03a-5-oracle-answers.md), [`03a-6-oracle-prompts.md`](03a-6-oracle-prompts.md) |
 
 A family holds one table or several. Criticals hold one per damage type; a family with a single
 table needs no variant.
@@ -106,10 +106,10 @@ live at `engine/tables/<key>.yaml`.
 
 ---
 
-## What a setting may replace
+## What a setting may replace or extend
 
-A setting replaces a table's **rows** — their ranges, their effects, their descriptions — by naming
-the table under `overrides.tables:` in `setting.yaml`
+A setting **replaces** a table's rows wholesale — their ranges, their effects, their descriptions —
+by naming the table under `overrides.tables:` in `setting.yaml`
 ([`13-authoring-a-setting.md`](13-authoring-a-setting.md)):
 
 ```yaml
@@ -117,11 +117,27 @@ overrides:
   tables: {critical-slashing: setting/rules/tables/critical-slashing.yaml}
 ```
 
-A setting may **not** change the family's die, its modifier, its uniqueness, its exhaustion outcome,
-or the row schema. Each of those is a mechanism rather than content, and a setting that needs a
-mechanism the engine lacks files an engine gap so every setting gets it
-([`13-authoring-a-setting.md`](13-authoring-a-setting.md)). A replacement file therefore carries rows
-and nothing else.
+A setting **extends** a table — adds rows on top of the engine's own, rather than restating them —
+by naming the table under `extend:` instead, the same override kind already used for careers,
+talents, gear and creatures ([`13-authoring-a-setting.md`](13-authoring-a-setting.md)):
+
+```yaml
+overrides:
+  extend: {oracle-prompt-npc-objective: setting/rules/tables/oracle-prompt-npc-objective-extra.yaml}
+```
+
+An extension file's rows are appended above the engine's own highest range, contiguous with it and
+never overlapping, so every engine row stays live; the combined table's now-last row stays open at
+the top, per this document's row-schema rule. Extension suits a family a setting wants to add
+flavour to without discarding the baseline — prompt tables are the case this was written for
+([`03a-6-oracle-prompts.md`](03a-6-oracle-prompts.md)) — where replacement suits a family a setting
+wants to fully re-author.
+
+A setting may **not** change a family's die, its modifier, its uniqueness, its exhaustion outcome,
+or the row schema, by either path. Each of those is a mechanism rather than content, and a setting
+that needs a mechanism the engine lacks files an engine gap so every setting gets it
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)). A replacement or extension file
+therefore carries rows and nothing else, each satisfying the same row schema as the engine's own.
 
 **A replacement must load.** These are checked, not trusted:
 

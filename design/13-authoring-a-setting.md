@@ -208,7 +208,7 @@ rather than a family of incompatible forks, and it is not negotiable.
 
 | Override | Example |
 |---|---|
-| **Extend** | add careers, talents, gear, creatures. *(Skills are not extended — a setting declares its own outright; there is no engine list to add to. See [ADR 0013](adr/0013-the-engine-names-no-skill.md).)* |
+| **Extend** | add careers, talents, gear, creatures, or rows to a table (append above the engine's own range, without restating it — see [`03a-tables.md`](03a-tables.md)). *(Skills are not extended — a setting declares its own outright; there is no engine list to add to. See [ADR 0013](adr/0013-the-engine-names-no-skill.md).)* |
 | **Retune** | replace a table with one that has more setting feel; change exposure tiers; alter starting Fate |
 | **Rename** | Taint becomes Shadow, or Warp-taint, or Sin. Vocabulary only |
 | **Disable** | switch off Taint entirely for a high-fantasy setting; switch off Trauma for a lighter one |
@@ -230,7 +230,7 @@ overrides:
   disable: [taint, trauma]     # a high-fantasy setting
   rename: {taint: shadow}
   tables: {critical-slashing: setting/rules/tables/critical-slashing.yaml}
-  extend: {skills: setting/rules/skills.yaml}
+  extend: {skills: setting/rules/skills.yaml, oracle-prompt-npc-objective: setting/rules/tables/oracle-prompt-npc-objective-extra.yaml}
 ```
 
 Loaded after engine defaults, exactly like a chronicle's `houserules.yaml`. What is
