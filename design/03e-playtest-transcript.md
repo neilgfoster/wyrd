@@ -185,8 +185,9 @@ them in, so no die drawn here was thrown away.
 
 ### Round 1
 
-- **Senna attacks** (eff. 40). Roll **61** — fails. No degrees, no Wyrd die read (§1: only a
-  successful roll's die matters here, since nothing came of this one). No damage.
+- **Senna attacks** (eff. 40). Roll **61** — fails. No degrees (degrees only exist on a success).
+  The Wyrd die is still read on a failure ([`03-rules.md`](03-rules.md) §1: success and failure
+  carry the units digit independently) — units digit 1, nothing. No damage.
 - **The collector attacks; Senna defends** (eff. 40). Roll **69** — fails to defend, meaning **the
   blow lands**. Units digit 9 → **Fair Omen**, but the Wyrd die belongs to the roll that was made,
   and this roll failed, so the omen reads on the failure: something also breaks Senna's way even as
