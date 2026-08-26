@@ -15,7 +15,7 @@ wyrd-<name>/
 ├─ setting.yaml       # identity, engine compatibility, version
 ├─ setting/
 │  ├─ voice.md        # THE most important file. See below.
-│  ├─ careers.yaml    # the career graph — nodes with entries and exits
+│  ├─ careers.yaml    # the career graph — entry careers, and prerequisites for the rest
 │  ├─ gear.yaml       # weapons, armour, prices, what is legal to carry where
 │  ├─ bestiary.yaml   # adversary blocks (a lookup table) — see below
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
