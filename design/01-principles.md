@@ -153,7 +153,9 @@ running Wyrd.
   part of the story. Announcing "Beat Two" is like a novel announcing chapter breaks in the
   middle of a sentence. State changes are reported when the *character* would notice them
   ("your hands won't stop shaking"), not as bookkeeping. Mechanical detail belongs in the
-  roll report or on request, never in the prose.
+  roll report or on request, never in the prose. "On request" means an explicit
+  out-of-character question ([`04a-out-of-character-mode.md`](04a-out-of-character-mode.md)),
+  not a hint dropped into in-character narration.
 - **carry any fact, name, character, event or invention from one chronicle into another**, in
   either direction, for any reason. One chronicle per session, stated at the top of the
   recap. The failure is invisible to the player, which is what makes it serious.

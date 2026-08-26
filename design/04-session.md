@@ -35,6 +35,11 @@ They are how the engine knows when to persist, when to offer a stopping point, a
 compact — the equivalent of a page break, not a plot point. See the GM contract in
 [`01-principles.md`](01-principles.md).
 
+A player who wants to step outside the fiction — to ask a question as themselves rather than
+act as their character — does not need to wait for a beat boundary; see
+[`04a-out-of-character-mode.md`](04a-out-of-character-mode.md). The exchange never becomes
+part of the beat.
+
 ## The two modes
 
 A beat is either **played** or **summarised**.

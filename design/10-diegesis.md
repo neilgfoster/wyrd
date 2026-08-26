@@ -25,7 +25,10 @@ turn of luck in you today"* — but the player must be able to count it. Never o
 number the player is required to make a decision with.
 
 Mechanical detail is always available **on request**. A player who asks "what's my actual
-stamina?" gets the number. The default is prose; the raw sheet is a query, not a habit.
+stamina?" gets the number. The default is prose; the raw sheet is a query, not a habit. The
+request mechanism itself — how a player steps out of the fiction to ask, and how the answer
+stays out of the chronicle — is specified in
+[`04a-out-of-character-mode.md`](04a-out-of-character-mode.md).
 
 ---
 
