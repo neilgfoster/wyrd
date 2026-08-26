@@ -73,6 +73,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0029](adr/0029-transformation-thresholds-at-every-three-taint.md) | Taint thresholds sit at every 3 points, and Dread equals severity |
 | [0030](adr/0030-afflictions-are-repeatable-and-test-no-named-skill.md) | Afflictions are repeatable, and the Trauma test names no skill |
 | [0031](adr/0031-fault-line-biases-exposure-not-the-transformation-table.md) | The Fault Line biases Exposure's Taint gain, not the transformation table |
+| [0032](adr/0032-career-cap-and-the-stamina-ceiling.md) | Career caps sit at 70%, and maximum Stamina stops climbing at 10 |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
