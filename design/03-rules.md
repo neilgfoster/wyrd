@@ -579,9 +579,15 @@ their Drives and Misfortune. It names *how* they fall — the direction, not onl
 
 ### Thresholds and the hidden count
 
-Crossing a Taint threshold forces a **Transformation** (body) or an **Affliction** (mind),
-rolled on the tables for each ([`03a-tables.md`](03a-tables.md)). The result consumes Taint equal
-to its severity, dropping the character back below the threshold; if still over, roll again.
+**A Taint threshold always forces a Transformation (body). It never forces an Affliction (mind).**
+Afflictions are Trauma's business alone — they arise at 6+ Trauma, a separate track (§5) — and a
+Taint threshold never produces one. The thresholds sit at every multiple of 3 (3, 6, 9, …), the
+same interval the Wyrd-die bands above already use for the first two. Crossing one forces a roll
+on the transformation table ([`03a-3-transformations.md`](03a-3-transformations.md)). The result
+consumes Taint equal to its severity, dropping the character back below the threshold; if still
+over, roll again — a loop that terminates by construction
+([`03a-3-transformations.md`](03a-3-transformations.md),
+[`check_transformation.py`](../tools/check_transformation.py)).
 
 On the **first** Transformation the engine **secretly rolls the hidden threshold** — how many
 this character can endure. **The player never sees it.** Written to state once, so later
@@ -591,7 +597,9 @@ When it runs out the character is **lost**, and becomes a character the GM contr
 leave the chronicle; they join the opposition.
 
 Transformations carry **Dread** — Taint's cost is social as well as mechanical. The
-transformed character's problem is being seen.
+transformed character's problem is being seen. Full detail —
+the table, the threshold's roll and range, and Dread's magnitude and effect — lives in
+[`03a-3-transformations.md`](03a-3-transformations.md).
 
 ---
 

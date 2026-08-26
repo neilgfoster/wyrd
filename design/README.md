@@ -70,6 +70,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0026](adr/0026-danger-scales-a-skill-in-points-not-in-multiples.md) | Danger scales a skill in points, not in multiples |
 | [0027](adr/0027-combat-rolls-belong-to-the-player.md) | Combat rolls belong to the player; the opponent's dice are gone |
 | [0028](adr/0028-the-telling-blow-threshold-and-the-damage-finding.md) | The telling blow moves to 6 degrees; the issue's damage-multiplier figure is corrected |
+| [0029](adr/0029-transformation-thresholds-at-every-three-taint.md) | Taint thresholds sit at every 3 points, and Dread equals severity |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
