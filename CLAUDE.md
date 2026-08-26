@@ -199,6 +199,16 @@ reviewer decides whether to open the diff from them.** Concretely:
 - **Always pass a summary to `kord-pr-raise`** (or write the title/body directly if raising a PR
   by hand). Its fallback — commit subject lines, or failing that the branch name — exists for
   when nothing better is available, not as the default path.
+- **`kord-pr-raise --summary` becomes the title from its first line, verbatim, with no
+  truncation.** `cmd_pr_raise` takes `summary.splitlines()[0]` as the title and puts the whole
+  string in the body regardless. Passing one unbroken paragraph as `--summary` makes that entire
+  paragraph the PR title — this has shipped twice. Always shape `--summary` as a short title
+  line, then a blank line, then the full detail, and check that shape *before* calling — fixing a
+  bad title afterward risks a `gh api PATCH` that regenerates the body and discards the template's
+  section structure along with it — PATCH `title` only, never regenerate `body`, if a fix is ever
+  genuinely needed. (`gh pr edit` itself fails outright in this environment, on an unrelated
+  Projects-Classic GraphQL query the deprecated field triggers regardless of what's being edited;
+  `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title=...` is the working substitute.)
 - `.github/pull_request_template.md` gives every PR the same shape. `kord-pr-raise` fills only
   the template's *first* placeholder section from `--summary`; every later placeholder section
   it leaves untouched gets stamped `N/A` rather than your actual content — so put what and why,

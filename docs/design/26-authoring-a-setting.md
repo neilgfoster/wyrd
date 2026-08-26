@@ -72,6 +72,54 @@ Two kinds of content, and the distinction is simple:
 The test: *would anything ever link to it, or would a chronicle ever change it?* If yes it is
 an entity. A career is a row; the guild that grants it is an entity.
 
+### `careers.yaml`
+
+One `careers:` list — the career graph character creation and advancement both draw skills from
+([`05-character-creation.md`](05-character-creation.md)). Each entry is one career:
+
+```yaml
+careers:
+  - id: guard                 # stable, kebab-case, unique
+    entry: true                # choosable at character creation with no prerequisite
+    skills: [blade, watch]
+  - id: soldier
+    entry: true
+    skills: [blade, drill]
+  - id: guard-captain
+    entry: false
+    prerequisites: [guard, soldier]  # one or more; completing ANY ONE qualifies
+    skills: [blade, watch, command]
+```
+
+`id`, `entry` and `skills` are **required** on every career. `prerequisites` is required (length
+at least one) exactly when `entry` is `false`, and absent when it is `true` — a career is either
+an entry point or names one or more predecessors, never both and never neither.
+**`prerequisites` is OR, not AND: a character is eligible once *any one* listed career is
+complete for them** — a single-entry list is a plain ladder rung (`guard-captain` above could
+just as well list one career); a multi-entry list is a **zigzag** convergence, letting a career
+be reached from more than one ladder. This is what makes both a **specialist** (a character who
+keeps climbing one ladder's successive prerequisites) and a **generalist** (a character who
+completes a spread of careers across different ladders) possible over the same graph shape — the
+difference is which careers a character chose to complete, not a separate mechanic. `skills`'
+length is **setting-defined per career**, not fixed across the table: nothing ties two careers to
+the same skill count, only the "at least two skills opened" floor advancement already enforces
+([`05-character-creation.md`](05-character-creation.md) §3).
+
+**At least one career in the table must declare `entry: true`** — a character always has
+somewhere to start. Every entry in `prerequisites` must name another career **in the same
+table**, and the graph those edges form **must be acyclic**: a career is unreachable, and
+therefore a setting-authoring error, only if **every** one of its `prerequisites` entries
+eventually requires the career itself — the same class of error as a dangling `prerequisites`
+reference. (A career named in more than one other career's `prerequisites` — as `guard` and
+`soldier` both are above — is convergence, not a cycle.)
+
+A career is **complete** for a character when every skill in its `skills` list has been opened
+and raised to that career's cap — the terminal state of the advance mechanics
+[`05-character-creation.md`](05-character-creation.md) §3 already defines, not a new one. Two
+things key off that completed state: the **+1 maximum Stamina** bonus a completed career grants,
+and **eligibility for any career listing it in `prerequisites`** — a character may choose a
+non-entry career once any one of its declared prerequisites is complete for them.
+
 ### `bestiary.yaml`
 
 One `creatures:` list. Each entry is one **adversary block** — the fields the ruleset reads off an
