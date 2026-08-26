@@ -9,7 +9,7 @@ describes the shape of that row, not a schema validator (out of scope, FR-009).
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| identifier | string | yes | unique key within the setting's career table |
+| id | string | yes | unique key within the setting's career table |
 | skills | list of skill references | yes | the skills this career grants; length is setting-defined per career, not fixed across careers (research.md) |
 | entry | boolean | yes | `true` marks the career as an entry point — choosable at character creation with no prerequisite |
 | prerequisite | career identifier | required when `entry` is `false`; absent when `entry` is `true` | the single career a character must have **completed** (see below) to become eligible for this career |
