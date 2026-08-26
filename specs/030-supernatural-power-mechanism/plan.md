@@ -9,13 +9,13 @@ fills in to define supernatural or extraordinary effort — instead of a closed 
 mechanism shapes. Invoking one resolves as the engine's ordinary d100 test against a setting-owned
 skill (no new dice mechanism); the declared Strain cost (and optional Resolve cost) is paid on
 resolution regardless of outcome; an Ill Omen applies the declared Taint gain through the existing
-transformation-threshold path. This is [ADR 0036](../../doc/adr/0036-one-configurable-power-mechanism.md)'s
+transformation-threshold path. This is [ADR 0036](../../docs/adr/0036-one-configurable-power-mechanism.md)'s
 load-bearing fork, made concrete as a new design document and a validator that mirrors
 `check_bestiary.py`/`check_gear.py`.
 
 ## The load-bearing decision
 
-**One schema, not a menu of shapes.** `doc/design/26-authoring-a-setting.md`'s hard rule — a setting
+**One schema, not a menu of shapes.** `docs/design/26-authoring-a-setting.md`'s hard rule — a setting
 may extend, retune, rename or disable, never add a mechanism — already governs every other piece
 of setting texture (`bestiary.yaml`, `gear.yaml`, the career graph) as one engine-defined schema
 instantiated with data. A closed set of engine-side "mechanism shapes" (Vancian slots, a mana
@@ -57,16 +57,16 @@ first).
 
 | Document | Change |
 |---|---|
-| `doc/design/14-systems-of-power.md` (new) | the schema: declaration, cost, training gate, Ill Omen consequence, worked example |
-| `doc/adr/0036-one-configurable-power-mechanism.md` (new) | records the load-bearing fork |
-| `doc/README.md` | links the new document so `tools/check_docs.py` finds it reachable |
-| `doc/design/03-rules.md` | unchanged in substance — casting reuses §1 verbatim; a one-line cross-reference added at the end of §1 pointing to the new document, matching how other consequence chains are cross-referenced |
+| `docs/design/14-systems-of-power.md` (new) | the schema: declaration, cost, training gate, Ill Omen consequence, worked example |
+| `docs/adr/0036-one-configurable-power-mechanism.md` (new) | records the load-bearing fork |
+| `docs/README.md` | links the new document so `tools/check_docs.py` finds it reachable |
+| `docs/design/03-rules.md` | unchanged in substance — casting reuses §1 verbatim; a one-line cross-reference added at the end of §1 pointing to the new document, matching how other consequence chains are cross-referenced |
 | `tools/check_power_systems.py` (new) | the validator |
 
 ## The order of work
 
 The ADR is written first — it is what the design document and validator both have to agree with,
-not something the design document's prose derives after the fact. Then `doc/design/14-systems-of-power.md`,
+not something the design document's prose derives after the fact. Then `docs/design/14-systems-of-power.md`,
 then `tools/check_power_systems.py` (which embeds the two worked examples the design document also
 shows), then the `README.md`/`03-rules.md` cross-references, then the guards: the new validator
 itself, `python3 tools/check_docs.py`, `python3 tools/check_dangling_mechanics.py`, `python3
@@ -114,7 +114,7 @@ pointer), not a separate constitution file:
 - **Capability change → Spec Kit cycle, `specs/` committed.** This plan is that cycle. Pass.
 - **A setting may extend, retune, rename or disable; never add a mechanism.** The entire point of
   this feature — see "The load-bearing decision" above. Pass.
-- **Deterministic over inference** ([ADR 0005](../../doc/adr/0005-deterministic-over-inference.md)).
+- **Deterministic over inference** ([ADR 0005](../../docs/adr/0005-deterministic-over-inference.md)).
   Every claim in the design document (schema fields, cost application, Ill Omen path) is checked
   by `check_power_systems.py`, not merely asserted. Pass.
 - **Design documents rewritten in place; accepted ADRs never edited.** `03-rules.md` receives a

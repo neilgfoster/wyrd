@@ -5,7 +5,7 @@
 
 ## Context
 
-**Nothing in `doc/design/` said how an opponent was represented.** Adversary, opponent and statblock
+**Nothing in `docs/design/` said how an opponent was represented.** Adversary, opponent and statblock
 returned no matches across every design document.
 
 Two documents gestured at it and neither delivered. [`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)

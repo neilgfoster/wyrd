@@ -4,7 +4,7 @@
 
 ## Summary
 
-Enumerate four damage types, write one critical table for each in `doc/design/08-criticals.md` on the
+Enumerate four damage types, write one critical table for each in `docs/design/08-criticals.md` on the
 `1d6 + points below zero` ladder, and settle where a critical stops and Aftermath starts. Compute the
 modifier distribution at the values a real character has *before* drawing a single range, play a
 worked fight by hand before settling the rows, and record the enumeration and the mortal-blow
@@ -72,7 +72,7 @@ model up front — it is re-run on every figure correction:
    finding, not a rounding error.
 6. **Agreement with the figures merged issues computed** — 1.56 through modest armour and 4.5 hits
    to drop (`specs/013-the-mob-rule/check_mobs.py`), and Aftermath's 71% / 23%
-   (`doc/design/09-aftermath.md`). A private damage model would make everything here internally tidy
+   (`docs/design/09-aftermath.md`). A private damage model would make everything here internally tidy
    and wrong.
 7. **Every figure the new document publishes**, asserted against the model, so drift fails loudly.
 
@@ -87,13 +87,13 @@ rolls. The worked fight is allowed to change the rows.
 
 | Document | Change |
 |---|---|
-| `doc/design/08-criticals.md` | **new** — the four types, the four tables, the composition with Aftermath, what a setting may replace |
-| `doc/design/07-tables.md` | the Criticals index row gains its link; the `critical-slashing` example stays true |
-| `doc/design/03-rules.md` §2 | the critical rule points at the new file and names the types |
-| `doc/design/09-aftermath.md` | the boundary table gains the mortal-blow row; the death-row section gains its mirror |
-| `doc/design/26-authoring-a-setting.md` | the override example verified against the published keys |
-| `doc/README.md` | the new document linked, so `tools/check_docs.py` passes |
-| `doc/adr/` | two ADRs: the enumeration, and the mortal blow |
+| `docs/design/08-criticals.md` | **new** — the four types, the four tables, the composition with Aftermath, what a setting may replace |
+| `docs/design/07-tables.md` | the Criticals index row gains its link; the `critical-slashing` example stays true |
+| `docs/design/03-rules.md` §2 | the critical rule points at the new file and names the types |
+| `docs/design/09-aftermath.md` | the boundary table gains the mortal-blow row; the death-row section gains its mirror |
+| `docs/design/26-authoring-a-setting.md` | the override example verified against the published keys |
+| `docs/README.md` | the new document linked, so `tools/check_docs.py` passes |
+| `docs/adr/` | two ADRs: the enumeration, and the mortal blow |
 
 ## The order of work
 

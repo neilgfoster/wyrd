@@ -20,18 +20,18 @@ description: "Task list for the design-doc move and numbering settlement (issue 
 ## Phase 2: The move (User Story 1)
 
 - [X] T003 [US1] Run the migration script's `git mv` step for all 30 design documents and the
-  hub (`doc/README.md` → `doc/README.md`), per data-model.md
-- [X] T004 [US1] Run the migration script's `git mv` step for `doc/adr/` (including
-  `superseded/`) → `doc/adr/`, numbers unchanged
+  hub (`docs/README.md` → `docs/README.md`), per data-model.md
+- [X] T004 [US1] Run the migration script's `git mv` step for `docs/adr/` (including
+  `superseded/`) → `docs/adr/`, numbers unchanged
 - [X] T005 [US1] Run the migration script's link-rewrite step over every file now under `doc/`
 - [X] T006 [US1] Update `README.md`'s "Read in this order" table: all thirty documents in the
-  corrected order, including the three previously missing (`doc/design/12-oracle-answers.md`,
+  corrected order, including the three previously missing (`docs/design/12-oracle-answers.md`,
   `13-oracle-prompts.md`, `17-out-of-character-mode.md`)
 
 ## Phase 3: External references (User Story 2)
 
 - [X] T007 [US2] Rewrite `README.md`'s and `CLAUDE.md`'s remaining `design/...` references to
-  `doc/design/...` / `doc/adr/...`
+  `docs/design/...` / `docs/adr/...`
 - [X] T008 [US2] Rewrite every `design/`-referencing line in `tools/*.py` (18 lines, per the
   scope confirmed during specification) to the new paths
 - [X] T009 [US2] Run `python3 -m unittest discover -s tools -p 'test_*.py'` and fix any script
@@ -48,24 +48,24 @@ description: "Task list for the design-doc move and numbering settlement (issue 
 ## Phase 4: The durable check (User Story 3)
 
 - [X] T012 [US3] Retarget `tools/check_docs.py`'s `HUB` constant at `README.md` (unchanged path,
-  now pointing into `doc/`) and `ADR_INDEX`/`ADR_DIR`/`ADR_ARCHIVE` constants at `doc/README.md`,
-  `doc/adr`, `doc/adr/superseded`
+  now pointing into `doc/`) and `ADR_INDEX`/`ADR_DIR`/`ADR_ARCHIVE` constants at `docs/README.md`,
+  `docs/adr`, `docs/adr/superseded`
 - [X] T013 [US3] Update `tools/test_check_docs.py`'s fixtures/paths for the new root, if any
   hardcode the old `design/` path
 - [X] T014 [US3] Run `python3 tools/check_docs.py` and confirm a clean pass against the moved tree
 
 ## Phase 5: The ADR-link policy (FR-012)
 
-- [X] T015 Write `doc/adr/0038-an-adr-path-is-repaired-not-its-reasoning.md` recording the
+- [X] T015 Write `docs/adr/0038-an-adr-path-is-repaired-not-its-reasoning.md` recording the
   Clarifications' ADR-link-repair decision, in the shape of every prior accepted ADR (context,
   decision, alternatives rejected, consequences)
-- [X] T016 Add the new ADR to `doc/README.md`'s index
+- [X] T016 Add the new ADR to `docs/README.md`'s index
 
 ## Phase 6: Verification
 
 - [X] T017 [P] Run the corruption grep from quickstart.md
   (`diffisecty|secture|otherworldly power, no database`) — expect no output
-- [X] T018 [P] Run `git log --oneline --follow doc/design/01-principles.md` and confirm pre-move
+- [X] T018 [P] Run `git log --oneline --follow docs/design/01-principles.md` and confirm pre-move
   history is reachable, for a small sample of moved files
 - [X] T019 Run `python3 tools/check_docs.py` one final time against the fully-updated tree
 - [X] T020 [P] Run `python3 -m unittest discover -s tools -p 'test_*.py'` one final time

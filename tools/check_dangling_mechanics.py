@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Check that every mechanic named in doc/design/ is defined somewhere in doc/design/.
+"""Check that every mechanic named in docs/design/ is defined somewhere in docs/design/.
 
 At least six mechanics were referenced before they were defined -- engine characteristics in
 the conversion contract, Standing in Upkeep, `party_effective` in the danger formula, the
 damage-type critical tables, the skill list, and the wound schema -- each reading as
 authoritative. Prose review caught none of them. This is the guard, per
-doc/design/20-tooling.md section 1: where a claim can be checked, check it.
+docs/design/20-tooling.md section 1: where a claim can be checked, check it.
 
 A **definition** is a place a mechanic's name is established: a Markdown heading naming it, a
 table row whose leading cell names it, or a glossary-style `**Term**: explanation` entry. A
@@ -21,15 +21,15 @@ A single bare capitalized word (e.g. "Standing" on its own) is deliberately **no
 a reference candidate: prose capitalizes far too many ordinary words mid-sentence (abbreviations,
 list continuations, emphasis) for that signal to be reliable, and a first working version of
 this check that tried it produced over a thousand false positives against this repo's own
-`doc/design/` tree on the very first run. Multi-word phrases and code-styled identifiers are the
+`docs/design/` tree on the very first run. Multi-word phrases and code-styled identifiers are the
 line this check draws between a mechanic's proper name and incidental capitalization -- see
 research.md's "definitions and references are detected structurally, not semantically" decision
 and its FR-010 trade-off (favouring precision over full recall).
 
-A reference candidate whose exact text matches no definition anywhere under doc/design/ is a
+A reference candidate whose exact text matches no definition anywhere under docs/design/ is a
 dangling reference.
 
-The vocabulary is derived from doc/design/ itself on every run rather than hand-maintained
+The vocabulary is derived from docs/design/ itself on every run rather than hand-maintained
 (CLAUDE.md fault class 4, "stale but plausible specifications") -- there is no separate list
 of mechanic names to fall behind the documents.
 
@@ -41,7 +41,7 @@ Usage:
     python3 tools/check_dangling_mechanics.py
     python3 tools/check_dangling_mechanics.py --format json
 
-Python 3.11+, standard library only (doc/design/20-tooling.md). Reads the filesystem, nothing else.
+Python 3.11+, standard library only (docs/design/20-tooling.md). Reads the filesystem, nothing else.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ import re
 import sys
 from dataclasses import dataclass
 
-DESIGN_DIR = "doc/design"
+DESIGN_DIR = "docs/design"
 
 SKIP_PARTS = {
     ".git",
@@ -126,7 +126,7 @@ LEADING_STOPWORDS = {
 }
 
 # tools/check_*.py script names are Wyrd tooling, documented in tools/ itself -- not a design
-# mechanic that doc/design/ is responsible for defining.
+# mechanic that docs/design/ is responsible for defining.
 SCRIPT_NAME_PREFIX = "check_"
 
 
@@ -246,7 +246,7 @@ def _reference_candidates(line: str) -> list[tuple[int, int, str]]:
         if words[0].lower() in LEADING_STOPWORDS:
             continue
         # RFC2119-style directives ("MUST NOT", "SHOULD NOT") are all-uppercase keywords, not
-        # mechanic names -- doc/design/01-principles.md's GM contract vocabulary, not this check's
+        # mechanic names -- docs/design/01-principles.md's GM contract vocabulary, not this check's
         # concern.
         if all(w.isupper() for w in words):
             continue

@@ -8,8 +8,8 @@ Two things are verified here:
 
 1. **Structure.** Ranges are contiguous, non-overlapping, start at the family's lowest
    possible total, and the last row is open at the top -- so every total the roll can
-   produce lands on exactly one row (doc/design/07-tables.md).
-2. **Weighting.** doc/design/03-rules.md already claims "most results are a lasting mark rather
+   produce lands on exactly one row (docs/design/07-tables.md).
+2. **Weighting.** docs/design/03-rules.md already claims "most results are a lasting mark rather
    than death". That has to be true of the rows as written, across the range of modifiers a
    character actually experiences -- not only at the midpoint.
 
@@ -26,7 +26,7 @@ from fractions import Fraction
 # family's lowest total, and at mortality: high a combatant dropped by only 1 could reach
 # the death row -- which is precisely what deferred death exists to prevent. `mortality`
 # is an application rule instead (see MORTALITY_CLOSES_DEATH_ROWS below), which is also
-# what doc/design/01-principles.md literally says: it governs "how the Aftermath table is
+# what docs/design/01-principles.md literally says: it governs "how the Aftermath table is
 # applied", not what is rolled.
 DIE_FACES = 100
 PER_POINT_BELOW_ZERO = 5
@@ -35,7 +35,7 @@ PER_POINT_BELOW_ZERO = 5
 # the same mechanism a spent Fate point uses. No new machinery, and the roll is untouched.
 MORTALITY_CLOSES_DEATH_ROWS = {"low": True, "standard": False, "high": False}
 
-# Rows as written in doc/design/09-aftermath.md.
+# Rows as written in docs/design/09-aftermath.md.
 # (low, high or None for open-topped, key, is_death, is_lasting_mark)
 ROWS = [
     (6, 30, "out-of-action", False, False),

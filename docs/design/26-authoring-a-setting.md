@@ -266,7 +266,7 @@ skills:
   method: direct                # direct | scale | table
   note: "source is already percentile; values are read as printed"
   # A source skill maps to one of THIS setting's skill names. There is no engine
-  # skill vocabulary in between -- see doc/adr/0013.
+  # skill vocabulary in between -- see docs/adr/0013.
   map: {"<source skill>": "<this setting's skill>"}
 difficulty:
   map: {easy: +20, average: 0, challenging: -10, difficult: -20, hard: -30}

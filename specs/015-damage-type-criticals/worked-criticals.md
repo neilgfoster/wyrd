@@ -15,7 +15,7 @@ nothing chosen after the fact. The roll log is at the bottom and every number be
 | **The mailed man** | 55% | greatsword `2d6` | slashing | heavy `2d6` | 8 | none |
 
 The three at the ford are not a crowd: Stamina 3 clears the first test of the crowd rule
-(`doc/design/03-rules.md`), so every one of them is fought a roll at a time.
+(`docs/design/03-rules.md`), so every one of them is fought a roll at a time.
 
 ## Round 1 — the ambush
 
@@ -37,7 +37,7 @@ against no armour. He is at 3, so this takes him to **−2**: two points below z
 > `critical-piercing`, `1d6` = **1**, `+2` → **3** → `piercing-grazed`. Nothing lasting.
 
 He is out of action for the rest of the fight and will roll Aftermath when it ends. The critical
-cost him 1 Trauma, by `doc/design/03-rules.md` §5 — the table charged him nothing.
+cost him 1 Trauma, by `docs/design/03-rules.md` §5 — the table charged him nothing.
 
 **The companion** clubs the knifeman: **13**, two degrees. He rolls **76** and fails. `1d6` = **5**
 takes him from 3 to **−2**.
@@ -115,13 +115,13 @@ sword did. Aftermath said what it cost. Neither could have said both.
 2. **The telling blow is where the modifier comes from.** Every large modifier in this fight came
    from a doubled blow, not from a big weapon. Which means the reading — *the damage rolled doubles,
    and then armour subtracts* — is load-bearing for the whole modifier distribution, and
-   `doc/design/03-rules.md` had not said it in so many words. It says it now.
+   `docs/design/03-rules.md` had not said it in so many words. It says it now.
 3. **The worst row is genuinely rare, and staging it would have been a lie.** No mortal blow
    occurred in fourteen rounds. The document says how rare rather than implying it never happens.
 4. **Opponents roll Aftermath too**, and its rows answer for them without a special case: the
    axeman was `taken` rather than killed, which is a scene the GM did not have to invent.
 5. **One question this fight raised belongs to another issue.** When the acting side succeeds and
-   the resisting side *fails*, `doc/design/03-rules.md` does not say what the margin is — and the
+   the resisting side *fails*, `docs/design/03-rules.md` does not say what the margin is — and the
    telling blow reads the margin. It was played here as the acting side's own degrees, which is the
    only reading consistent with ADR 0016. It is noted rather than settled, because opposed tests are
    not this issue's to change.

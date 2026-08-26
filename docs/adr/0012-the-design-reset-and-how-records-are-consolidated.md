@@ -54,7 +54,7 @@ Three things are authorised, and the third is bounded tightly:
 it carries `**Supersedes:** ADR NNNN`. The link runs both ways so neither can be found without the
 other.
 
-**Location.** A superseded record moves to `doc/adr/superseded/`.
+**Location.** A superseded record moves to `docs/adr/superseded/`.
 
 **Numbering.** The archive keeps original numbers **permanently**. The live set is renumbered into a
 clean sequence. So a reference to a superseded decision always resolves to the reasoning it meant;

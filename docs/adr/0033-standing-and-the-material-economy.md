@@ -99,7 +99,7 @@ where routing the consequence through Standing keeps the design to one mechanism
 
 - `03-rules.md` states Standing in the engine-label table and defines gear, coin, encumbrance,
   and the martial-weapon consequence in §2, next to the mechanics that already depended on them.
-- `16-session.md`'s Upkeep line resolves entirely within `doc/design/` — no dangling reference.
+- `16-session.md`'s Upkeep line resolves entirely within `docs/design/` — no dangling reference.
 - `26-authoring-a-setting.md` gives a setting author the `gear.yaml` schema and its validator, the
   same way it already does for `bestiary.yaml`.
 - `23-diegesis.md`'s "realistic, not logistic" framing is extended, not contradicted, by stating

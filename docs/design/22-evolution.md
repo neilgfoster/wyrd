@@ -164,9 +164,9 @@ build enforces.
 ## Design records
 
 The design documents themselves evolve, and the *reasons* matter more than the current
-state — most of what is in `doc/design/` is a decision with a rejected alternative behind it.
+state — most of what is in `docs/design/` is a decision with a rejected alternative behind it.
 
-`doc/adr/NNNN-title.md`, one per significant decision: context, the decision, the
+`docs/adr/NNNN-title.md`, one per significant decision: context, the decision, the
 alternatives rejected and why, and consequences. Superseded ADRs are marked superseded, not
 deleted.
 

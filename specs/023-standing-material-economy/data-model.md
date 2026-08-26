@@ -10,10 +10,10 @@ documents define and the schema the validator checks, not a persisted model.
 | Standing | a small, open-ended count on the character. Starts at a value set during character
   creation (setting- or table-dependent, like other tracks); rises and falls through play,
   primarily through Upkeep and social consequence. Rendered diegetically, never as a raw number,
-  per `doc/design/23-diegesis.md`. |
+  per `docs/design/23-diegesis.md`. |
 
 No file schema — Standing lives on the character sheet the way Stamina and the other tracks do,
-already covered by `doc/design/04-the-character.md`'s existing character-state conventions.
+already covered by `docs/design/04-the-character.md`'s existing character-state conventions.
 
 ## Coin (design entity, not a file schema)
 

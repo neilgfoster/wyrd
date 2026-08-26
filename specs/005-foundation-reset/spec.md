@@ -14,7 +14,7 @@ is completed in Stage 13.
 ## Context
 
 The design programme revises documents and decision records that the repository's own rules protect.
-`doc/README.md` states that an ADR is "never edited; superseded by a later record", and `CLAUDE.md`
+`docs/README.md` states that an ADR is "never edited; superseded by a later record", and `CLAUDE.md`
 says an accepted ADR is never edited. The programme is authorised to change that, but an authorised
 exception that is not written down is indistinguishable from drift six months later.
 
@@ -23,7 +23,7 @@ the rule** every later stage will revise records under.
 
 ## Findings — the foundation review
 
-`doc/design/01-principles.md` was re-read in full against everything the programme has surfaced:
+`docs/design/01-principles.md` was re-read in full against everything the programme has surfaced:
 magic having no engine mechanism, characters having no defined model, adversaries having no
 representation, and the economies never being treated as one system.
 
@@ -66,7 +66,7 @@ stage instead of once in total.
 
 ### FR-4 — Superseded records keep their original numbers
 
-A superseded record moves to `doc/adr/superseded/` and **keeps the number it was written under**,
+A superseded record moves to `docs/adr/superseded/` and **keeps the number it was written under**,
 permanently. The live set is renumbered into a clean sequence; the archive is not. This means a
 historical reference to a superseded decision still resolves to the reasoning it meant.
 
@@ -82,21 +82,21 @@ resolves to a record that exists, in either the live set or the archive.
 
 ### FR-6 — The lifecycle table describes the new rule
 
-`doc/README.md` currently says ADRs are never edited. It must describe what is actually true, in
+`docs/README.md` currently says ADRs are never edited. It must describe what is actually true, in
 the present tense, with no "previously we…" note.
 
 ## Constraints
 
 - Python 3.11+, stdlib only; `unittest`.
 - No record is deleted, at any point, for any reason.
-- `doc/design/01-principles.md` is amended only where the review found a genuine fault. It found none.
+- `docs/design/01-principles.md` is amended only where the review found a genuine fault. It found none.
 - Nothing under `.kord/`, `.specify/` or `.github/ISSUE_TEMPLATE/`.
 
 ## Acceptance criteria
 
 - [ ] An ADR records the reset, the consolidation rule, and what the reset does not authorise.
 - [ ] The rule states marking, location, numbering and timing unambiguously.
-- [ ] `doc/README.md`'s lifecycle table describes the present rule.
+- [ ] `docs/README.md`'s lifecycle table describes the present rule.
 - [ ] `check_docs.py` fails on a prose `ADR NNNN` reference that resolves to nothing.
 - [ ] The checker resolves references against both the live set and `superseded/`.
 - [ ] The foundation review is recorded as a finding, including the deferred tone knob.

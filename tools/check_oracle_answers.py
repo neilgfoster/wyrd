@@ -3,7 +3,7 @@
 
 Computes, for every likelihood band, the exact d100 row widths and resulting
 outcome probabilities, and asserts them against the numbers claimed in
-research.md and doc/design/12-oracle-answers.md. Run directly; exits non-zero
+research.md and docs/design/12-oracle-answers.md. Run directly; exits non-zero
 on any mismatch (CLAUDE.md: "check the maths").
 """
 

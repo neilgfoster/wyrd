@@ -8,7 +8,7 @@ recalled.
 
 ## Decision: journeys are `scale: journey` arcs
 
-**Rationale**: `doc/design/28-arcs-and-beats.md` already generalises containment recursively —
+**Rationale**: `docs/design/28-arcs-and-beats.md` already generalises containment recursively —
 "arcs contain arcs... at every level" — and arcs already carry a `scale` field (the existing
 example uses `scale: adventure`). A journey needing no new containment shape, only two extra
 fields (pace, hazard rating) and a recognised scale value, is the smallest change that satisfies
@@ -21,7 +21,7 @@ rejected — it would need its own selection/conversion logic duplicating what
 
 ## Decision: hazard trigger reuses the Threat activation formula
 
-**Rationale** (clarified 2026-08-26): `doc/design/18-campaign.md` defines Threat activation as
+**Rationale** (clarified 2026-08-26): `docs/design/18-campaign.md` defines Threat activation as
 `d100 ≤ imminence × 10`, rolled per game-week. A journey leg is the travel-subsystem's
 equivalent unit of time, so the same formula shape (`d100 ≤ hazard_rating × 10`, rolled per
 leg) gives the engine one "does this recur" mechanic instead of two to keep consistent. Worked

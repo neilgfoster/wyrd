@@ -4,7 +4,7 @@
 
 ## 1. The foundation review — finding: sound, no amendment
 
-`doc/design/01-principles.md` (197 lines) was re-read in full against what the programme has surfaced:
+`docs/design/01-principles.md` (197 lines) was re-read in full against what the programme has surfaced:
 no engine mechanism for magic, no defined character model, no representation for adversaries, and
 five scarce resources never treated as one system.
 
@@ -57,7 +57,7 @@ decision — the reasoning that was rejected, which `CLAUDE.md` values as much a
 would point at whatever record inherited that number. Worse than a dead reference, because it resolves
 to the wrong thing and reads as correct.
 
-Freezing the archive fixes it: `doc/adr/superseded/0009-….md` means what it always meant. Only
+Freezing the archive fixes it: `docs/adr/superseded/0009-….md` means what it always meant. Only
 records that stayed live and moved number need their references rewritten, and those are checkable.
 
 ## 5. Why the renumber waits for Stage 13

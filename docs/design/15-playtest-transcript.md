@@ -1,6 +1,6 @@
 # A hand-run playtest
 
-R3 of epic #1 ([`doc/adr/0012-the-design-reset-and-how-records-are-consolidated.md`](../adr/0012-the-design-reset-and-how-records-are-consolidated.md)
+R3 of epic #1 ([`docs/adr/0012-the-design-reset-and-how-records-are-consolidated.md`](../adr/0012-the-design-reset-and-how-records-are-consolidated.md)
 records what the reset was; this document is the proof the resulting R1 specification can be run
 without a rulebook the GM is inventing on the fly). One character, created entirely by hand
 against [`05-character-creation.md`](05-character-creation.md), and one exchange of combat, run
@@ -285,7 +285,7 @@ already supply. That is the acceptance criterion this document exists to demonst
 run one character through creation and one exchange through to its resolution without inventing a
 rule at the table.
 
-**It does not prove** every rule in `doc/design/` is complete — only the ones this run actually
+**It does not prove** every rule in `docs/design/` is complete — only the ones this run actually
 exercised: creation steps 1–9, ordinary (non-surprise, non-ranged, non-crowd) sequencing, the
 player-facing attack/defence roll, armour, the telling blow (never triggered, so its threshold was
 read but not crossed), a single critical, and the adversary's non-participation in Trauma and

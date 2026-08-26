@@ -14,9 +14,9 @@ is by script and by grep, per `CLAUDE.md`'s "deterministic over inference."
 python3 tools/check_oracle_prompts.py
 ```
 
-Expected: for each of the four `oracle-prompt-*` tables in `doc/design/13-oracle-prompts.md`,
+Expected: for each of the four `oracle-prompt-*` tables in `docs/design/13-oracle-prompts.md`,
 prints its row count and confirms ranges are contiguous, start at 1, and the last row is open at
-the top (`doc/design/07-tables.md`'s row-schema rule); confirms every row carries the `checked` extra
+the top (`docs/design/07-tables.md`'s row-schema rule); confirms every row carries the `checked` extra
 field; exits 0. A nonzero exit means a row range disagrees with the schema, or a row is missing
 its recorded genre-neutrality check.
 
@@ -24,7 +24,7 @@ its recorded genre-neutrality check.
 
 There is no computable "grim-and-comic" test — genre-neutrality is a qualitative reading, not a
 number (`research.md`). `tools/check_oracle_prompts.py` (above) confirms every row *has* a
-recorded check; read `doc/design/13-oracle-prompts.md` by eye against a grim example and a comic
+recorded check; read `docs/design/13-oracle-prompts.md` by eye against a grim example and a comic
 example for a handful of rows per table to spot-check that the recorded checks are honest, not
 merely present.
 
@@ -32,7 +32,7 @@ merely present.
 
 ```bash
 grep -rniE '(d&d|dnd|pathfinder|call of cthulhu|blades in the dark|mythic|fate core|apocalypse world)' \
-  doc/design/13-oracle-prompts.md doc/design/07-tables.md doc/design/26-authoring-a-setting.md
+  docs/design/13-oracle-prompts.md docs/design/07-tables.md docs/design/26-authoring-a-setting.md
 ```
 
 Expected: no output.
@@ -43,18 +43,18 @@ Expected: no output.
 python3 tools/check_docs.py
 ```
 
-Expected: exits 0 — `doc/design/13-oracle-prompts.md` is reachable from `README.md` via
-`doc/design/07-tables.md`'s index, which already links every family in the table.
+Expected: exits 0 — `docs/design/13-oracle-prompts.md` is reachable from `README.md` via
+`docs/design/07-tables.md`'s index, which already links every family in the table.
 
 ## Walk the scenario by hand
 
 1. Pick one example situation per family (an NPC whose objective isn't established; a scene that
    isn't as presented; a thread due to turn; a scene needing a complication) and confirm
-   `doc/design/13-oracle-prompts.md` states plainly that the GM is obliged to roll rather than
+   `docs/design/13-oracle-prompts.md` states plainly that the GM is obliged to roll rather than
    invent in each case.
 2. Roll (or pick) a row from each of the four tables and confirm its `effect` maps onto a field
-   `doc/design/16-session.md` or `doc/design/18-campaign.md` / `doc/design/28-arcs-and-beats.md` already
+   `docs/design/16-session.md` or `docs/design/18-campaign.md` / `docs/design/28-arcs-and-beats.md` already
    defines, with no new state structure invented to hold it.
-3. Read `doc/design/26-authoring-a-setting.md`'s amended `extend:` override and confirm a
+3. Read `docs/design/26-authoring-a-setting.md`'s amended `extend:` override and confirm a
    setting-authored extra-rows file for one prompt table is accepted by the rules stated there
    without needing to replace the engine's own rows.

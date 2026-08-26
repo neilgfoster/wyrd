@@ -2,22 +2,22 @@
 """Compute Stamina recovery and the Mend ladder, at the values a real character has.
 
 CLAUDE.md: where a claim can be checked by a script, check it. The rule this settles had no
-numbers at all -- nothing in design/ restored Stamina, and doc/design/09-aftermath.md declined the
+numbers at all -- nothing in design/ restored Stamina, and docs/design/09-aftermath.md declined the
 question outright -- so every figure below has to be computed before it can be written down.
 
 Everything here is derived from numbers already merged, not invented:
 
 1. **A starting character has Stamina 6**, and a completed career grants +1 -- the only durable
-   toughening (doc/design/05-character-creation.md, doc/design/03-rules.md section 6).
+   toughening (docs/design/05-character-creation.md, docs/design/03-rules.md section 6).
 2. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
-   (doc/design/03-rules.md section 2).
+   (docs/design/03-rules.md section 2).
 3. **The ordinary pairing** is a mid-band weapon against modest armour: 1.56 points through,
    4.5 hits to drop a starting character (specs/013-the-mob-rule/check_mobs.py, #44).
 4. **A critical happens below 0 Stamina**, and the dropped combatant rolls on the Aftermath table
-   at +5 per point below zero (doc/design/09-aftermath.md).
+   at +5 per point below zero (docs/design/09-aftermath.md).
 5. **The Aftermath table's own weights**: a lasting mark 71%, death 23%, unweighted across drops
-   of one to twelve (doc/design/09-aftermath.md).
-6. **Strain recovers 1 at a Rally** (doc/design/03-rules.md section 5) -- the rate this rule borrows.
+   of one to twelve (docs/design/09-aftermath.md).
+6. **Strain recovers 1 at a Rally** (docs/design/03-rules.md section 5) -- the rate this rule borrows.
 7. **The recorded player-facing mapping** is effective% = 50 + (player - opponent), clipped to
    5-95 (specs/012-combat-sequencing). Every claim is computed under BOTH today's opposed test
    and that mapping, because the rule must survive the conversion (#69).
@@ -48,13 +48,13 @@ STARTING_STAMINA = 6
 CAREER_STAMINA = 7          # after one completed career
 REAL_SKILLS = [25, 35, 45, 55]
 
-# Beats -- and therefore Rallies -- a real session produces. doc/design/16-session.md: a single beat
+# Beats -- and therefore Rallies -- a real session produces. docs/design/16-session.md: a single beat
 # is the default shape, an extended session is several. Not a midpoint.
 RALLIES_PER_SESSION = [1, 2, 3]
 
 # Aftermath rows that leave a wound record, and the effect each carries. Rows whose effect the
 # table leaves open are modelled as uniform over the closed effect set, because that set is
-# closed: doc/design/09-aftermath.md makes anything outside it a load error.
+# closed: docs/design/09-aftermath.md makes anything outside it a load error.
 CLOSED_EFFECTS = ["stamina_max", "skill", "dread"]
 
 # ---------------------------------------------------------------------------
@@ -67,8 +67,8 @@ DROPPED_WAKES_AT = 0        # a combatant who went below 0 restarts the track he
 MEND_STEPS_PER_DOWNTIME = 1     # one named wound, one grade
 
 # The ladder, per effect. Every rung is a value the closed effect set already permits: -10 and -5
-# are the difficulty table's own rungs (doc/design/03-rules.md section 1), and "closed" is the record
-# kept and marked, never deleted (doc/design/22-evolution.md).
+# are the difficulty table's own rungs (docs/design/03-rules.md section 1), and "closed" is the record
+# kept and marked, never deleted (docs/design/22-evolution.md).
 MEND_LADDER = {
     "skill": [-10, -5, None],
     "stamina_max": [-1, None],

@@ -2,7 +2,7 @@
 
 Wyrd is a framework for running a tabletop RPG for **one player**,
 over text, across years of real time. This document is the constitution: everything else in
-`doc/design/` must be consistent with it.
+`docs/design/` must be consistent with it.
 
 Research behind these choices is recorded in the private `wyrd-research` repository.
 

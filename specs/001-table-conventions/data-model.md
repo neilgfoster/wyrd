@@ -61,7 +61,7 @@ makes renames presentation-only in practice rather than only in principle (FR-01
 ## Recorded outcome
 
 What a roll on a table leaves in the log. Extends the provenance shape already in
-`doc/design/22-evolution.md:105` — one new field, no new version (R7).
+`docs/design/22-evolution.md:105` — one new field, no new version (R7).
 
 | Field | Source |
 |---|---|
@@ -86,7 +86,7 @@ May replace: rows — ranges, effects, descriptions.
 
 May not replace: the family's `roll`, `modifier`, `uniqueness`, `exhausted`, the row schema, or the
 set of published keys. Each of these is a mechanism, and a setting that needs a new mechanism files
-an engine gap (`doc/design/26-authoring-a-setting.md`).
+an engine gap (`docs/design/26-authoring-a-setting.md`).
 
 ## Relationships
 
@@ -105,4 +105,4 @@ Recorded outcome ──references──> Table.key + engine/setting version
 
 None. Tables are pure data read at load and rolled on; they hold no state of their own. The only
 lifecycle is versioning, and that is forward-only: a changed table applies to future rolls and never
-recomputes a recorded outcome (`doc/design/22-evolution.md`, R7).
+recomputes a recorded outcome (`docs/design/22-evolution.md`, R7).

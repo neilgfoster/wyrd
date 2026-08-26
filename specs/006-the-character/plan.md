@@ -4,7 +4,7 @@
 
 ## Summary
 
-Write `doc/design/04-the-character.md`, record the decision as an ADR, and correct the four places that
+Write `docs/design/04-the-character.md`, record the decision as an ADR, and correct the four places that
 contradict it.
 
 The shape of the answer, from [research.md](./research.md): **the engine describes a character
@@ -14,7 +14,7 @@ the whole model, and it is why no characteristics are needed: there is nothing f
 
 ## The document's placement
 
-`doc/design/04-the-character.md`, and in `README.md`'s reading order it sits **immediately after
+`docs/design/04-the-character.md`, and in `README.md`'s reading order it sits **immediately after
 `03-rules`**, before the table annexes. The character belongs directly after resolution and before
 combat, which is where standard design order puts it and where this design's absence of it caused the
 trouble.
@@ -57,10 +57,10 @@ Fixing one and not the others is how the fault comes back, so all five land toge
 
 ## Steps
 
-1. `doc/design/04-the-character.md`.
+1. `docs/design/04-the-character.md`.
 2. ADR 0013 — no characteristics, no skill vocabulary.
 3. The five corrections.
-4. `README.md` reading order; `doc/README.md` index.
+4. `README.md` reading order; `docs/README.md` index.
 5. `check_docs.py`, `backlog.py check`, and a grep for `characteristic` as a mechanic.
 
 ## Risks

@@ -5,7 +5,7 @@
 
 ## Context
 
-The engine has no concept of magic or the supernatural at all — grepping `doc/design/` and
+The engine has no concept of magic or the supernatural at all — grepping `docs/design/` and
 `README.md` finds nothing. Every catalogued setting has practitioners of some kind, and
 [`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)'s hard rule — *"A setting may extend,
 retune or disable what the engine provides. It may never add a mechanism the engine does not

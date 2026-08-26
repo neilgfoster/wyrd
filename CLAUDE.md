@@ -3,7 +3,7 @@
 Ground rules for contributing to this repository.
 
 **This is not the GM contract.** That governs how the engine behaves *at play time* and lives
-in [`doc/design/01-principles.md`](doc/design/01-principles.md). This file governs how Wyrd itself
+in [`docs/design/01-principles.md`](docs/design/01-principles.md). This file governs how Wyrd itself
 gets built.
 
 ---
@@ -25,7 +25,7 @@ material. If it derives from someone else's book, it belongs in research.
 
 ## Decisions are recorded
 
-Significant decisions become **ADRs** in [`doc/adr/`](doc/adr/), numbered and dated.
+Significant decisions become **ADRs** in [`docs/adr/`](docs/adr/), numbered and dated.
 
 A decision earns a record when **both** hold:
 
@@ -42,7 +42,7 @@ not append changelogs or leave "previously we…" notes in them. Git holds the h
 
 ## The engine is setting-agnostic
 
-- **No setting or system names** in `doc/design/` or `README.md` — not in prose, not in examples,
+- **No setting or system names** in `docs/design/` or `README.md` — not in prose, not in examples,
   not in a table row.
 - **Engine labels are descriptive English**, never a term borrowed from a source system. If a
   label only makes sense to someone who has read a particular book, it belongs in a setting's
@@ -96,7 +96,7 @@ belong in a design document.
 
 kord records a dependency order inside an epic and no priority order anywhere. Wyrd's priority
 order is a numeric **`Rank`** field on the board, on **root-level items only** — issues with no
-parent ([`design/adr/0010`](doc/adr/0010-backlog-order-lives-on-the-board.md)). Children are
+parent ([`design/adr/0010`](docs/adr/0010-backlog-order-lives-on-the-board.md)). Children are
 not ranked; they already carry `Depends on: #N`, and a second ordering of the same work is the
 drift this repo keeps being corrected for.
 
@@ -123,21 +123,21 @@ two items is one number, not a renumbering. Two things to know:
 ### The documents are a checked graph
 
 The repo is an Obsidian vault. **Prose links with markdown, entity data links with
-`[[wikilinks]]`** ([`design/adr/0011`](doc/adr/0011-markdown-links-in-prose-wikilinks-in-data.md)) —
+`[[wikilinks]]`** ([`design/adr/0011`](docs/adr/0011-markdown-links-in-prose-wikilinks-in-data.md)) —
 GitHub does not render wikilinks and this repo is read there.
 
 ```bash
 python3 tools/check_docs.py     # reachability, dead links, ADR index, link policy
 ```
 
-Every document under `doc/design/` must be reachable from `README.md`, directly or through an index it
+Every document under `docs/design/` must be reachable from `README.md`, directly or through an index it
 links to. Adding a design document means linking it from the hub; the check fails otherwise. Four
 indexes had already gone stale silently before this existed, so treat it the same way as
 `backlog.py check` — run it, do not assume.
 
 ## Deterministic over inference
 
-The rule the engine follows ([`doc/design/20-tooling.md`](doc/design/20-tooling.md)) applies to the
+The rule the engine follows ([`docs/design/20-tooling.md`](docs/design/20-tooling.md)) applies to the
 work as well. Where a claim can be checked by a script, check it — do not assert it.
 
 Concretely, and from experience:
@@ -174,6 +174,39 @@ it was subtle, why it survived. Reference backlog identifiers where they apply.
 Avoid backticks in commit message bodies; they are shell-interpreted and have silently eaten
 words here before.
 
+## Pull requests
+
+A run of PRs in this repo shipped titled with the raw branch name (`033-doc-move-and-numbering`)
+and bodied `No description provided.` — because `kord-pr-raise` was called without a summary,
+and its fallback is exactly that literal. **A PR's title and body are not optional metadata; a
+reviewer decides whether to open the diff from them.** Concretely:
+
+- **Title is concise, and says what changed, not where it lives.** `Move the design documents
+  under docs/ and settle numbering (closes #38)` — not `033-doc-move-and-numbering`, and not a
+  paragraph of detail crammed into the title itself. If it reads like a branch name or a ticket
+  ID with nothing else, it is not a title yet; if it is long enough to need its own line wrap,
+  the detail belongs in the body, not the title. One early run of PRs here went the other way —
+  titles that were the entire commit message, several hundred characters long — which is exactly
+  as unreadable in a PR list as the empty-title failure mode, just in the other direction.
+- **Include the issue number when the PR is related to one** — a `kord-epic`- or
+  `kord-feature`-labelled issue, whatever it closes or advances — `(closes #38)` or `(#69)` if it
+  doesn't close the issue outright. A PR with no linked issue (a tactical fix, a follow-up
+  correction) carries no fabricated number.
+- **Body says what changed and why**, referencing the issue it closes and the decisions it
+  made — the same "why, not what" rule commit messages already follow. A reader should be able
+  to decide whether to review closely from the body alone, before opening the diff. The detail a
+  concise title had to drop lives here, in full.
+- **Always pass a summary to `kord-pr-raise`** (or write the title/body directly if raising a PR
+  by hand). Its fallback — commit subject lines, or failing that the branch name — exists for
+  when nothing better is available, not as the default path.
+- `.github/pull_request_template.md` gives every PR the same shape. `kord-pr-raise` fills only
+  the template's *first* placeholder section from `--summary`; every later placeholder section
+  it leaves untouched gets stamped `N/A` rather than your actual content — so put what and why,
+  the verification you actually ran, and anything load-bearing in that first section, not split
+  across later ones a generated PR would silently blank. Delete "Decisions this PR makes" if it
+  genuinely doesn't apply; don't let it render as an `N/A` that reads as "checked, none" when it
+  was never looked at.
+
 ## Before proposing a rule change
 
 The engine has been playtested exactly once, and that session corrected the resolution
@@ -182,4 +215,4 @@ over arguing about it.** Where a mechanic is uncertain, run the numbers at the v
 character actually has, not at the midpoint.
 
 Rules changes apply **forward only**. History is never recomputed
-([`doc/design/22-evolution.md`](doc/design/22-evolution.md)).
+([`docs/design/22-evolution.md`](docs/design/22-evolution.md)).

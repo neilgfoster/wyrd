@@ -32,7 +32,7 @@
 ## Notes
 
 - Language/framework mentions (stdlib Python, `tools/`) appear only because the issue and
-  `doc/design/20-tooling.md` mandate them as project-wide engineering constraints, not as an
+  `docs/design/20-tooling.md` mandate them as project-wide engineering constraints, not as an
   implementation choice made by this spec — consistent with how the template's guidance is
   applied elsewhere in this repo's specs (e.g. specs/002-aftermath-table).
 - All items pass; no iteration needed.

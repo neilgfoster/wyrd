@@ -34,7 +34,7 @@
 - Follows this repository's house shape (Context / Requirements / Constraints / Assumptions /
   Success criteria / Acceptance criteria) rather than the stock Spec Kit user-story template,
   matching `specs/010-*` through `specs/012-*`. The engine's "user" is a GM reading
-  `doc/design/03-rules.md`, so a requirement *is* the scenario.
+  `docs/design/03-rules.md`, so a requirement *is* the scenario.
 - Two requirements the issue did not name were added after reading the rule against the rest of §2:
   **FR-5**, that the crowd's own attacks cost no more rolls than the player's side, and **FR-9**,
   that the script assert agreement with the damage scale #44 established. FR-9 immediately caught a

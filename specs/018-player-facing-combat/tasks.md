@@ -35,19 +35,19 @@
 
 - [x] T009 Decide whether two-sided opposed tests survive outside combat, and state the answer
   plainly — reaffirmed, narrowed, or retired entirely (FR-007).
-- [x] T010 Write `doc/adr/0027-*.md`, superseding ADR 0016 for combat's single-roll structure and
+- [x] T010 Write `docs/adr/0027-*.md`, superseding ADR 0016 for combat's single-roll structure and
   recording T009's answer for what remains outside combat. ADR 0016 itself is left untouched
   (FR-008).
-- [x] T011 Write `doc/adr/0028-*.md`, recording the corrected telling-blow threshold (T003) and
+- [x] T011 Write `docs/adr/0028-*.md`, recording the corrected telling-blow threshold (T003) and
   the damage-multiplier finding (T004), each as a computed figure with the rejected threshold/figure
   named (FR-006, FR-010).
 
 ## The rules
 
-- [x] T012 `doc/design/03-rules.md` §1 — narrow or remove the two-sided opposed-test description per
+- [x] T012 `docs/design/03-rules.md` §1 — narrow or remove the two-sided opposed-test description per
   T009's answer; the degrees formula's wording is unchanged, but its worked commentary is updated
   for `effective%` as the input (FR-007, FR-013).
-- [x] T013 `doc/design/03-rules.md` §2 — rewrite the exchange: the attack roll, the defence roll, the
+- [x] T013 `docs/design/03-rules.md` §2 — rewrite the exchange: the attack roll, the defence roll, the
   opponent never rolling, the corrected telling-blow threshold, and (if changed) the corrected
   starting-Stamina table (FR-001, FR-003, FR-005, FR-006, FR-009, FR-013).
 - [x] T014 Confirm assistance (§1) is stated to apply identically to the attack and the defence roll

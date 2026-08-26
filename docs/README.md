@@ -2,7 +2,7 @@
 
 Two kinds of document, with different lifecycles.
 
-| | `doc/design/*.md` | `doc/adr/*.md` |
+| | `docs/design/*.md` | `docs/adr/*.md` |
 |---|---|---|
 | Answers | **what Wyrd is** | **why, and what was rejected** |
 | Tense | present | dated |
@@ -35,7 +35,7 @@ A decision earns one when **both** hold:
 2. **Someone would plausibly propose it again** — including the author, in a year, having
    forgotten why not.
 
-By that test most of `doc/design/` needs no record: it describes rather than chooses. The
+By that test most of `docs/design/` needs no record: it describes rather than chooses. The
 records that exist mark the places where the obvious answer was wrong.
 
 ## Index

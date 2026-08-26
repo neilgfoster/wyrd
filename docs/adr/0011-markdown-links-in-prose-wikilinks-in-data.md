@@ -30,7 +30,7 @@ one.
 
 **Prose uses markdown links. Entity data uses `[[wikilinks]]`.**
 
-- Every document a person reads as prose — `README.md`, `CLAUDE.md`, `doc/design/*.md`, ADRs, specs —
+- Every document a person reads as prose — `README.md`, `CLAUDE.md`, `docs/design/*.md`, ADRs, specs —
   links with a markdown link: square brackets for the text, round brackets for a relative path.
 - Every entity record — the world mesh in a setting or chronicle repo — links with `[[wikilinks]]`,
   unchanged.

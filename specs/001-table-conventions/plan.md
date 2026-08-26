@@ -6,7 +6,7 @@
 
 ## Summary
 
-Create `doc/design/07-tables.md`: the engine's table index and the shared conventions every table
+Create `docs/design/07-tables.md`: the engine's table index and the shared conventions every table
 family must satisfy. It settles five structural questions once — the roll, why no total can fall
 off either end, the row schema, the override contract, and versioning — so that issue #15's four sibling
 children produce one coherent system rather than four independently-reasonable ones.
@@ -15,12 +15,12 @@ The approach, from [research.md](./research.md): the engine fixes the **row sche
 rule**; each **family declares its own roll**. That split is what lets criticals keep the
 `1d6 + points below zero` the ruleset already commits to while an oracle rolls something else
 entirely, without the index becoming five unrelated documents. Everything else is chosen to add
-nothing new — the override contract is the one `doc/design/26-authoring-a-setting.md` already draws, and
-the version pin reuses the four versions `doc/design/19-state.md` already defines rather than
+nothing new — the override contract is the one `docs/design/26-authoring-a-setting.md` already draws, and
+the version pin reuses the four versions `docs/design/19-state.md` already defines rather than
 introducing a fifth.
 
 Alongside the new document, four existing design documents gain links to it and one stale list is
-corrected (`doc/design/20-tooling.md:84` omits afflictions). One ADR records the decision that a real
+corrected (`docs/design/20-tooling.md:84` omits afflictions). One ADR records the decision that a real
 alternative — a single universal table format — was rejected.
 
 ## Technical Context
@@ -68,14 +68,14 @@ evaluated against those.
 | Engine labels are descriptive English | `CLAUDE.md` | **Pass** — `family`, `range`, `effect`, `description`, `severity` are all plain English; none is borrowed |
 | Tone is a setting property | `CLAUDE.md`, ADR 0004 | **Pass** — the `effect`/`description` split exists precisely so register lives in the replaceable half |
 | Deterministic over inference | `CLAUDE.md`, ADR 0005 | **Pass** — six of the seven table-file rules are mechanical and stated as load errors; the seventh is explicitly marked as review, not load |
-| Design documents describe the present | `CLAUDE.md`, `doc/README.md` | **Pass** — no changelog, no "previously we…"; the `07-tooling.md` list is corrected in place |
+| Design documents describe the present | `CLAUDE.md`, `docs/README.md` | **Pass** — no changelog, no "previously we…"; the `07-tooling.md` list is corrected in place |
 | ADRs are never edited | `CLAUDE.md` | **Pass** — one new ADR, no existing one touched |
 | Capability changes go through Spec Kit, `specs/` committed | `CLAUDE.md` | **Pass** — this cycle; `specs/001-table-conventions/` is committed |
-| Rules changes are forward-only | ADR-adjacent, `doc/design/22-evolution.md` | **Pass** — R7 states a table change is tuning or additive, never retroactive |
+| Rules changes are forward-only | ADR-adjacent, `docs/design/22-evolution.md` | **Pass** — R7 states a table change is tuning or additive, never retroactive |
 
 **Re-check after Phase 1**: unchanged, all pass. The Phase 1 artifacts introduce no mechanism beyond
 what Phase 0 settled; the one genuine addition — the `table` key on a recorded outcome — extends the
-provenance shape `doc/design/22-evolution.md:105` already defines rather than creating a new one.
+provenance shape `docs/design/22-evolution.md:105` already defines rather than creating a new one.
 
 **Note on the constitution file**: it was an unfilled Spec Kit template when this plan was first
 written. On the operator's decision it became a pointer to `CLAUDE.md` and the ADRs rather than a
@@ -114,7 +114,7 @@ design/
     └── 0008-tables-declare-their-own-roll.md   # NEW
 ```
 
-**Structure Decision**: The new document is `doc/design/07-tables.md`, sitting between `03-rules.md`
+**Structure Decision**: The new document is `docs/design/07-tables.md`, sitting between `03-rules.md`
 and `04-session.md` because it is an annexe to the ruleset rather than a peer of it — the ruleset
 names the tables, the annexe defines them. Each sibling family will land as `design/03a-N-*.md`
 under the same prefix, per issue #15's stated deviation from epic #6's "one new file" deliverable.
@@ -138,8 +138,8 @@ Three things are easy to get wrong here and are worth stating before tasks are g
    pre-empts the sibling whose job it is. The contract's example rows use angle-bracket placeholders
    for this reason; the design document should do the same or omit rows entirely.
 
-3. **`doc/design/20-tooling.md:84` is a real stale list, not a typo.** It omits afflictions while
-   `doc/design/02-architecture.md:91` includes them and `doc/design/03-rules.md:229` requires them. Correct
+3. **`docs/design/20-tooling.md:84` is a real stale list, not a typo.** It omits afflictions while
+   `docs/design/02-architecture.md:91` includes them and `docs/design/03-rules.md:229` requires them. Correct
    it in place as part of this change — leaving two documents disagreeing about the family set while
    publishing an index of the family set would be the exact fault this feature exists to prevent.
 

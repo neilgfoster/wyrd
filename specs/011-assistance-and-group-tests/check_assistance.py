@@ -28,7 +28,7 @@ FACES = 100
 # career cap is not yet set (#12, Stage 9), so the upper end is a practised character.
 REALISTIC = [25, 30, 35, 40, 45, 55, 65]
 
-# doc/design/03-rules.md section 1. The rungs, as modifiers to the skill.
+# docs/design/03-rules.md section 1. The rungs, as modifiers to the skill.
 LADDER = [("Easy", 20), ("Average", 0), ("Challenging", -10),
           ("Difficult", -20), ("Hard", -30), ("Very Hard", -40)]
 
@@ -44,7 +44,7 @@ MAX_INTERVALS = 8   # more than this and a long task stops being a handful of be
 
 
 def degrees(skill: int, roll: int) -> int:
-    """Tens digit of the skill minus tens digit of the roll (doc/design/03-rules.md section 1)."""
+    """Tens digit of the skill minus tens digit of the roll (docs/design/03-rules.md section 1)."""
     return skill // 10 - roll // 10
 
 

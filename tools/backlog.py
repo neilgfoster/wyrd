@@ -29,7 +29,7 @@ Usage:
     python3 tools/backlog.py check           # drift guard; non-zero exit on any problem
 
 Requires the `gh` CLI, authenticated with the `project` scope.
-Python 3.11+, standard library only (doc/design/20-tooling.md).
+Python 3.11+, standard library only (docs/design/20-tooling.md).
 """
 
 from __future__ import annotations

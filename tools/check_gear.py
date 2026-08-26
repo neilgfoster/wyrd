@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate a setting's gear against the weapon and armour schema.
 
-doc/design/26-authoring-a-setting.md named `setting/gear.yaml` as a setting file for as long as that
+docs/design/26-authoring-a-setting.md named `setting/gear.yaml` as a setting file for as long as that
 document has existed, promising "weapons, armour, prices, what is legal to carry where," and
-never said what a gear entry declares -- even though doc/design/03-rules.md section 2 already reads
+never said what a gear entry declares -- even though docs/design/03-rules.md section 2 already reads
 weapon damage, armour rank and the casual/martial distinction off it. This is the validator for
 that schema (specs/023-standing-material-economy/data-model.md), in the same shape as
 tools/check_bestiary.py -- reused here rather than reinvented, since gear reads into the same
@@ -12,10 +12,10 @@ combat fields (damage, damage type, armour rank) the adversary block already val
 It fails loudly on the same four classes check_bestiary.py does:
 
 1. **A missing required field.**
-2. **An unrecognised field** -- rejected rather than ignored (doc/design/26-authoring-a-setting.md: a
+2. **An unrecognised field** -- rejected rather than ignored (docs/design/26-authoring-a-setting.md: a
    setting may extend, retune, rename or disable, and may never add a mechanism).
 3. **A value outside the range the ruleset can absorb** -- an armour rank outside the published
-   set, a damage type outside the closed four (doc/adr/0022), a negative price.
+   set, a damage type outside the closed four (docs/adr/0022), a negative price.
 4. **A `class` outside the closed casual/martial vocabulary.**
 
 Every failure is reported, not just the first, and every one names the entry and the field.
@@ -24,7 +24,7 @@ Usage:
     python3 tools/check_gear.py <path-to-gear.yaml> [...]
     python3 tools/check_gear.py --format json <path>
 
-Python 3.11+, standard library only (doc/design/20-tooling.md section 2). The YAML reader is
+Python 3.11+, standard library only (docs/design/20-tooling.md section 2). The YAML reader is
 tools/check_bestiary.py's own -- imported, not copied, so the two files can't drift on how they
 read the same restricted subset.
 """
@@ -47,11 +47,11 @@ WEAPON_REQUIRED = {"id", "name", "kind", "damage", "damage_type", "class", "pric
 ARMOUR_REQUIRED = {"id", "name", "kind", "rank", "price", "availability"}
 COMMON_OPTIONAL = {"notes"}
 
-ARMOUR_RANKS = ("none", "light", "modest", "heavy")          # doc/design/03-rules.md section 2
-DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # doc/adr/0022, closed
-WEAPON_CLASSES = ("casual", "martial")                        # doc/design/03-rules.md section 2
+ARMOUR_RANKS = ("none", "light", "modest", "heavy")          # docs/design/03-rules.md section 2
+DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # docs/adr/0022, closed
+WEAPON_CLASSES = ("casual", "martial")                        # docs/design/03-rules.md section 2
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")               # doc/design/27-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")               # docs/design/27-entities.md: kebab-case
 DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
 
 
