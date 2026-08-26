@@ -264,18 +264,32 @@ def _reference_candidates(line: str) -> list[tuple[int, int, str]]:
     return sorted(resolved)
 
 
+def _strip_inline_code(text: str) -> str:
+    """Blank out inline code spans across the whole document, preserving line count.
+
+    A backtick span can open on one line and close on a later one (e.g. a formula wrapped for
+    line length) -- stripping per line, as check_docs.py's own strip_code does for wikilinks,
+    misses that case entirely. `[^`]*` already matches newlines without re.DOTALL, so a
+    document-wide substitution catches a multi-line span; replacing the match with one newline
+    per newline it contained keeps every later line's number aligned with the original text.
+    """
+    return INLINE_CODE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+
+
 def find_references(root: pathlib.Path) -> list[MechanicReference]:
     references: list[MechanicReference] = []
     for path in design_files(root):
         text = path.read_text(encoding="utf-8", errors="replace")
-        lines = text.splitlines()
+        stripped = _strip_inline_code(text)
+        lines = stripped.splitlines()
+        raw_lines = text.splitlines()
         in_fence = _fenced_lines(text)
-        for i, raw_line in enumerate(lines):
+        for i, line in enumerate(lines):
             if in_fence[i]:
                 continue
+            raw_line = raw_lines[i]
             if _definition_line(raw_line) is not None:
                 continue
-            line = INLINE_CODE.sub("", raw_line)
             for _, _, name in _reference_candidates(line):
                 if len(name) < MIN_NAME_LENGTH:
                     continue

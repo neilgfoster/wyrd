@@ -165,6 +165,17 @@ class TestExemptions(TreeCase):
         )
         self.assertEqual(self.problems(), [])
 
+    def test_multi_line_code_span_reference_is_not_flagged(self):
+        # A code span split across a line break (e.g. a formula wrapped for line length), as
+        # in design/03-rules.md's own attack/defence formulas -- both identifiers must be
+        # exempt even though the opening and closing backtick land on different lines.
+        self.write(
+            "design/01-example.md",
+            "# Example\n\n"
+            "The roll is `attack_skill −\ndefender_skill`, an even match is a coin flip.\n",
+        )
+        self.assertEqual(self.problems(), [])
+
     def test_specs_directory_is_exempt(self):
         self.write(
             "specs/001-example/spec.md",
