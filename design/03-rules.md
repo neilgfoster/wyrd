@@ -676,9 +676,24 @@ Careers form a **directed graph**: each declares its entries and exits
 ([`14-entities.md`](14-entities.md)). You may only move to a legal exit, so a career history
 is a biography, and the engine cannot grant a career your past does not permit.
 
-**Completing a career** — every granted skill at its cap — is the only durable toughening:
+**Every career caps its skills at 70%** — the top of the *expert* band ([`10-diegesis.md`](10-diegesis.md))
+— one figure applied to every skill that career grants. No advance may raise a skill past its
+career's cap; a career alone never buys the 75%+ band, "it is part of who you are."
+
+**Completing a career** — every skill it grants at that 70% cap — is the only durable toughening:
 **+1 maximum Stamina** and a permanent **Mark**, one small benefit that persists across every
-later career. Depth is rewarded over breadth, and this is the whole power curve.
+later career. Depth is rewarded over breadth, and this is the whole power curve. Completion is
+tracked **per career-instance**: a character who leaves a career unfinished and re-enters it
+later starts a fresh instance and grants nothing for the one abandoned, but a career finished
+twice across a lifetime — legal, since the career graph may loop — grants its Stamina and Mark
+each time.
+
+**Maximum Stamina stops climbing at 10.** Creation fixes the starting value at 6 because a further
++1 there is a 16.7% gain, and states directly that "much above 10 [...] the sentence stops being
+true" ([`03c-character-creation.md`](03c-character-creation.md)) — a gain below 10% no longer
+reads as durable toughening. Ten is exactly that boundary (1⁄10 = 10%), computed and asserted in
+[`check_advancement.py`](../tools/check_advancement.py). A career completed after maximum Stamina
+reaches 10 still grants its Mark; it grants no further Stamina.
 
 ### What actually grows
 
