@@ -1,0 +1,61 @@
+# Worked example for tools/check_gear.py -- see data-model.md for the schema.
+gear:
+  - id: belt-knife
+    name: Belt knife
+    kind: weapon
+    damage: 1d3
+    damage_type: slashing
+    class: casual
+    price: 2
+    availability: common
+    notes: Carried by nearly everyone; draws no attention.
+
+  - id: hand-axe
+    name: Hand axe
+    kind: weapon
+    damage: 1d6
+    damage_type: slashing
+    class: casual
+    price: 8
+    availability: common
+
+  - id: broadsword
+    name: Broadsword
+    kind: weapon
+    damage: 1d8
+    damage_type: slashing
+    class: martial
+    price: 40
+    availability: restricted
+    notes: Marks the bearer; illegal to carry openly in most civilised places.
+
+  - id: war-hammer
+    name: War hammer
+    kind: weapon
+    damage: 2d6
+    damage_type: blunt
+    class: martial
+    price: 55
+    availability: illegal
+
+  - id: padded-coat
+    name: Padded coat
+    kind: armour
+    rank: light
+    price: 6
+    availability: common
+
+  - id: brigandine
+    name: Brigandine
+    kind: armour
+    rank: modest
+    price: 25
+    availability: restricted
+
+  - id: plate-harness
+    name: Plate harness
+    kind: armour
+    rank: heavy
+    price: 120
+    availability: illegal
+    notes: Unmistakably military; never worn openly in a settled town.

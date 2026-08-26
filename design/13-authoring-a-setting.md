@@ -109,6 +109,43 @@ actually enforced rather than merely stated.
 A **named antagonist** does not go here. It is a `character` entity carrying the same block
 ([`14-entities.md`](14-entities.md)) — a bestiary holds kinds of thing, not individuals.
 
+### `gear.yaml`
+
+One `gear:` list. Each entry is a **weapon** or an **armour** piece — the fields
+[`03-rules.md`](03-rules.md) §2 already reads for damage, armour rank and the casual/martial
+distinction:
+
+```yaml
+gear:
+  - id: broadsword
+    name: Broadsword
+    kind: weapon
+    damage: 1d8              # dice expression
+    damage_type: slashing    # slashing | piercing | blunt | searing
+    class: martial            # casual | martial
+    price: 40
+    availability: restricted # setting-defined vocabulary, e.g. common | restricted | illegal
+
+  - id: brigandine
+    name: Brigandine
+    kind: armour
+    rank: modest              # none | light | modest | heavy
+    price: 25
+    availability: restricted
+```
+
+A weapon requires `id`, `name`, `kind`, `damage`, `damage_type`, `class`, `price`,
+`availability`. Armour requires `id`, `name`, `kind`, `rank`, `price`, `availability`. Both
+accept an optional `notes` field for flavour only.
+
+`availability` is a **setting-defined vocabulary** — the engine does not close this set the way
+it closes armour ranks and damage types, because what is legal to carry where is a fact about the
+setting, not the engine ([`03-rules.md`](03-rules.md) §2).
+
+Run `python3 tools/check_gear.py setting/gear.yaml` — same shape as `check_bestiary.py`: it
+rejects a missing required field, a field the schema does not define, an out-of-range armour
+rank or damage type, a `class` outside casual/martial, and a negative price.
+
 ## `voice.md` is the hard part
 
 Everything else is data that can be typed in. The voice is the setting.
@@ -320,7 +357,7 @@ the contract is not confirming that it fits, but discovering precisely where it 
 2. `voice.md` — write this **first**, before any data. It will change what you put in the data.
 3. `names.yaml` and `calendar.yaml` — cheap, and immediately make the world feel inhabited
 4. `careers.yaml` — the character system; the largest single job
-5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything; validate with `tools/check_bestiary.py`
+5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything; validate with `tools/check_gear.py` and `tools/check_bestiary.py`
 6. a few `organisation` entities with objectives — so the world can act while the player is absent
 7. One threat and one arc — enough to play
 8. Index whatever sources you have ([`11-corpus-index.md`](11-corpus-index.md))

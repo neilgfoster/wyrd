@@ -54,7 +54,7 @@ open. Every term it uses resolves within the design docs.
    outcomes are defined in terms the design already establishes.
 2. **Given** a character's Standing has changed (risen or fallen), **When** the GM narrates a
    social scene, **Then** the design states what about the scene Standing is meant to change —
-   it is diegetic status, not a hidden number ([[wyrd-diegetic-status]]).
+   it is diegetic status, not a hidden number (`10-diegesis.md`).
 
 ---
 
@@ -133,7 +133,7 @@ encounter trigger) rather than only a sentence of flavour text.
 
 - What resolves Upkeep when a character has *no* Standing left to lose and no coin to spend?
 - What does a Standing score start at for a new character, and does it cap the way careers now do
-  ([[wyrd-single-pc-npc-party]] context: career caps, #12, already landed)?
+  (career caps, #12, already landed — see `03-rules.md` §6)?
 - Does Standing move at times other than Upkeep — e.g., as a consequence of a scene, the way
   Taint or Trauma do?
 - A setting with no formal currency at all (barter, favours) — does the wealth abstraction still
@@ -148,7 +148,7 @@ encounter trigger) rather than only a sentence of flavour text.
 
 - **FR-001**: The design MUST define Standing — what it represents, its starting value, what
   raises and lowers it, and how it is rendered to the player (diegetically, per
-  [[wyrd-diegetic-status]]) — or MUST remove every reference to it and rewrite Upkeep in terms
+  `10-diegesis.md`) — or MUST remove every reference to it and rewrite Upkeep in terms
   that are otherwise defined.
 - **FR-002**: If Standing is kept, the design MUST state what losing Upkeep's "1 Standing" costs
   the character in play — not merely that the number changes.

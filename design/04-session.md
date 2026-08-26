@@ -110,7 +110,7 @@ Triggered at the end of a scenario or arc, or when the player asks. Structure:
 | Step | What happens |
 |---|---|
 | **Destination** | Where you spend it. Companions may disperse to their own affairs. |
-| **Upkeep** | Time costs something. Away from home: lose 1 Standing, or spend coin equal to Standing. |
+| **Upkeep** | Time costs something. Away from home: lose 1 Standing, or spend coin equal to your current Standing ([`03-rules.md`](03-rules.md) §2). Losing the Standing means the position it bought — the favour, the open door — is gone until it's rebuilt in play; spending the coin keeps the position and costs the money instead. |
 | **Advances** | Spend earned advances (see [`03-rules.md`](03-rules.md)). |
 | **Undertaking** | Choose **one** activity for the period. |
 | **Rest** | Stamina returns to maximum. Automatic; it costs no undertaking. |

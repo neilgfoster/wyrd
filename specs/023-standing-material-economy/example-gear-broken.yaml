@@ -1,0 +1,50 @@
+# Deliberately broken copy of example-gear.yaml -- one planted fault per entry, for exercising
+# tools/check_gear.py's error reporting (quickstart.md).
+gear:
+  # missing required field: no damage_type
+  - id: belt-knife
+    name: Belt knife
+    kind: weapon
+    damage: 1d3
+    class: casual
+    price: 2
+    availability: common
+
+  # invalid armour rank
+  - id: padded-coat
+    name: Padded coat
+    kind: armour
+    rank: featherweight
+    price: 6
+    availability: common
+
+  # invalid damage type
+  - id: hand-axe
+    name: Hand axe
+    kind: weapon
+    damage: 1d6
+    damage_type: fire
+    class: casual
+    price: 8
+    availability: common
+
+  # unrecognised field: weight is not part of the schema
+  - id: broadsword
+    name: Broadsword
+    kind: weapon
+    damage: 1d8
+    damage_type: slashing
+    class: martial
+    price: 40
+    availability: restricted
+    weight: 3
+
+  # negative price
+  - id: war-hammer
+    name: War hammer
+    kind: weapon
+    damage: 2d6
+    damage_type: blunt
+    class: martial
+    price: -5
+    availability: illegal
