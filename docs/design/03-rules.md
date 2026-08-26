@@ -223,6 +223,11 @@ scene worth writing is not an extended task; it is a single test, or it simply h
 A percentage the player *may choose* to test to dodge a misfortune or break a tie. Testing
 Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's choice.
 
+**Luck resets to maximum at the start of each top-level arc** ([ADR 0039](../adr/0039-luck-resets-at-the-top-level-arc-boundary.md)) — the arc level
+[`18-campaign.md`](18-campaign.md) gives a job the deeper, recursive arcs beneath it do not.
+Spending Luck inside a nested arc does not restore it early; only its enclosing top-level arc
+ending does.
+
 **Invoking a system of power** — a setting's declared mechanism for supernatural or extraordinary
 effort — is an ordinary test governed entirely by this section; see
 [`14-systems-of-power.md`](14-systems-of-power.md) for the schema, the cost a setting
