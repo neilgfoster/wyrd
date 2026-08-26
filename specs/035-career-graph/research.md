@@ -44,37 +44,57 @@ implies the latter but never states it."
 
 ## Prerequisite cardinality
 
-**Decision**: a non-entry career declares exactly one prerequisite career.
+**Decision**: a non-entry career declares one or more prerequisite careers; completing **any
+one** of them satisfies eligibility (OR semantics).
 
-**Rationale**: every existing mention of succession in the corpus is singular — "a character
-cannot start as a 'master' without first completing 'apprentice'" (issue #118's own framing),
-and `05-character-creation.md` never gestures at a career needing more than one predecessor.
-A single-prerequisite graph is a strict tree/DAG of chains and merges cleanly with the
-cycle-forbidding rule below. Multi-prerequisite (AND/OR) support is speculative generality this
-feature was not asked to build; it can be added later as a forward-only rule change
-([`22-evolution.md`](../../docs/design/22-evolution.md)) if a setting ever needs it, without
-disturbing any career graph authored under this rule.
+**Rationale**: a single mandatory prerequisite only models a strict ladder — one lineage,
+climbed one rung at a time. The design goal is to also support a **zigzag** path: a career
+reachable from more than one lower career, so a character can converge on the same next rung
+from different starting ladders (e.g. `guard-captain` reachable from either `guard` or
+`soldier`). OR semantics is what "any one of several ladders can lead here" means mechanically,
+and it degrades cleanly to the single-prerequisite case (a list of length one) — no separate
+rule is needed for the common linear career, only a looser cardinality on the field.
+
+A **specialist** and a **generalist** both fall out of this without any further mechanism: a
+specialist keeps satisfying the same career's own listed prerequisites up one ladder; a
+generalist completes a spread of different careers across different ladders (each satisfying
+whatever OR-branches they open) rather than climbing one chain — a difference in *which* careers
+a character chose to complete, not a difference the career graph's shape needs to encode
+specially. No convergence career that *requires* several completed prerequisites at once (AND
+semantics) is defined by this decision; nothing in the corpus or this feature's goal calls for
+gating a career behind multiple simultaneous completions, only for widening how a single next
+career can be reached.
 
 **Alternatives considered**:
-- *Allow a list of prerequisites, ANY of which satisfies eligibility.* Rejected for now —
-  no source material or existing text calls for branching convergence, and it complicates the
-  eligibility check (FR-004) for no requested benefit.
-- *Allow a list of prerequisites, ALL of which are required.* Rejected for the same reason, and
-  additionally: requiring multiple completed careers before touching a third pushes character
-  creation/advancement pacing further than anything in `05-character-creation.md` establishes.
+- *Exactly one prerequisite per career (no zigzag).* Rejected — cannot express a career reachable
+  from more than one ladder, which is exactly the mechanic the zigzag/generalist goal needs.
+- *AND semantics (a career requires every listed prerequisite completed).* Rejected — nothing in
+  the corpus or the stated goal calls for a convergence career gated behind multiple simultaneous
+  completions; the generalist/specialist distinction already falls out of OR semantics through
+  which careers a character chooses to complete, without needing a career that mechanically
+  demands more than one. AND can be added later as a forward-only change if a setting ever wants
+  a true convergence career, without disturbing any graph authored under this rule (OR is a
+  strict subset of what an AND-capable schema could express).
+- *A per-career mode flag choosing AND or OR.* Rejected for now as more schema than the stated
+  goal needs — OR alone already produces both the ladder and the zigzag/generalist cases the
+  feature asked for.
 
 ## Cycle policy
 
 **Decision**: the career graph must be acyclic. A career naming itself as a prerequisite,
 directly or transitively, is a setting-authoring error.
 
-**Rationale**: with a single prerequisite per career (above), a cycle would mean a career is
-permanently unreachable — its prerequisite's prerequisite chain never terminates at an entry
-career, so no character could ever complete it and become eligible. That is a broken graph, not
-a valid design choice, so it belongs in the class of setting-authoring errors the setting's own
-validation is expected to catch (consistent with `26-authoring-a-setting.md`'s general framing
-of `careers.yaml` as setting-owned, validated content) — not a case the engine's rules need to
-define behavior for.
+**Rationale**: with OR semantics (above), a career now has one or more prerequisite edges, so
+the graph is a DAG rather than a strict tree — but the same acyclicity requirement still applies
+to every edge. A cycle among a career's *entire* prerequisite set (every one of its listed
+prerequisites eventually requires the career itself) would mean it is permanently unreachable —
+no branch of its OR terminates at an entry career, so no character could ever complete it and
+become eligible. That is a broken graph, not a valid design choice, so it belongs in the class of
+setting-authoring errors the setting's own validation is expected to catch (consistent with
+`26-authoring-a-setting.md`'s general framing of `careers.yaml` as setting-owned, validated
+content) — not a case the engine's rules need to define behavior for. (A career appearing on more
+than one path — e.g. two different careers both naming it as a prerequisite — is not a cycle; the
+graph is a DAG, not a tree, precisely because OR semantics allows convergence.)
 
 **Alternatives considered**:
 - *Permit cycles and treat them as an intentional dead loop* (a career nobody can ever reach).

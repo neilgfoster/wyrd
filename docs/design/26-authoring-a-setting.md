@@ -79,34 +79,46 @@ One `careers:` list — the career graph character creation and advancement both
 
 ```yaml
 careers:
-  - id: apprentice           # stable, kebab-case, unique
-    entry: true               # choosable at character creation with no prerequisite
-    skills: [craft, appraise]
-  - id: master
+  - id: guard                 # stable, kebab-case, unique
+    entry: true                # choosable at character creation with no prerequisite
+    skills: [blade, watch]
+  - id: soldier
+    entry: true
+    skills: [blade, drill]
+  - id: guard-captain
     entry: false
-    prerequisite: apprentice  # exactly one; required when entry is false, absent when true
-    skills: [craft, appraise, teach]
+    prerequisites: [guard, soldier]  # one or more; completing ANY ONE qualifies
+    skills: [blade, watch, command]
 ```
 
-`id`, `entry` and `skills` are **required** on every career. `prerequisite` is required exactly
-when `entry` is `false`, and absent when it is `true` — a career is either an entry point or has
-one named predecessor, never both and never neither. `skills`' length is **setting-defined per
-career**, not fixed across the table: nothing ties two careers to the same skill count, only the
-"at least two skills opened" floor advancement already enforces
+`id`, `entry` and `skills` are **required** on every career. `prerequisites` is required (length
+at least one) exactly when `entry` is `false`, and absent when it is `true` — a career is either
+an entry point or names one or more predecessors, never both and never neither.
+**`prerequisites` is OR, not AND: a character is eligible once *any one* listed career is
+complete for them** — a single-entry list is a plain ladder rung (`guard-captain` above could
+just as well list one career); a multi-entry list is a **zigzag** convergence, letting a career
+be reached from more than one ladder. This is what makes both a **specialist** (a character who
+keeps climbing one ladder's successive prerequisites) and a **generalist** (a character who
+completes a spread of careers across different ladders) possible over the same graph shape — the
+difference is which careers a character chose to complete, not a separate mechanic. `skills`'
+length is **setting-defined per career**, not fixed across the table: nothing ties two careers to
+the same skill count, only the "at least two skills opened" floor advancement already enforces
 ([`05-character-creation.md`](05-character-creation.md) §3).
 
 **At least one career in the table must declare `entry: true`** — a character always has
-somewhere to start. Every `prerequisite` must name another career **in the same table**, and the
-graph those edges form **must be acyclic**: a career reachable, directly or transitively, as its
-own prerequisite is unreachable by any character and is a setting-authoring error, the same class
-as a dangling `prerequisite` reference.
+somewhere to start. Every entry in `prerequisites` must name another career **in the same
+table**, and the graph those edges form **must be acyclic**: a career is unreachable, and
+therefore a setting-authoring error, only if **every** one of its `prerequisites` entries
+eventually requires the career itself — the same class of error as a dangling `prerequisites`
+reference. (A career named in more than one other career's `prerequisites` — as `guard` and
+`soldier` both are above — is convergence, not a cycle.)
 
 A career is **complete** for a character when every skill in its `skills` list has been opened
 and raised to that career's cap — the terminal state of the advance mechanics
 [`05-character-creation.md`](05-character-creation.md) §3 already defines, not a new one. Two
 things key off that completed state: the **+1 maximum Stamina** bonus a completed career grants,
-and **eligibility for any career naming it as `prerequisite`** — a character may choose a
-non-entry career only once its declared prerequisite is complete for them.
+and **eligibility for any career listing it in `prerequisites`** — a character may choose a
+non-entry career once any one of its declared prerequisites is complete for them.
 
 ### `bestiary.yaml`
 

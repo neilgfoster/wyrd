@@ -35,13 +35,15 @@ career and a dependent non-entry career and state their full shape with no inven
 - [x] T002 [US1] Rewrite the `careers.yaml` description in
       `docs/design/26-authoring-a-setting.md` to state the career-graph structure: identifier,
       `skills` (setting-defined length per career, not fixed — research.md), `entry` flag, and
-      `prerequisite` (required and singular when `entry` is false, absent when `entry` is true),
+      `prerequisites` (required, length >= 1, when `entry` is false, absent when `entry` is true;
+      OR semantics -- completing any one qualifies),
       per `data-model.md`
 - [x] T003 [US1] Add the validity rules to the same section: at least one entry career required
-      (already stated in `05-character-creation.md`, cross-referenced here), exactly one
-      prerequisite per non-entry career, the prerequisite graph must be acyclic, and a
-      prerequisite must name an existing career — all as setting-authoring validation
-      expectations (research.md's cycle-policy decision)
+      (already stated in `05-character-creation.md`, cross-referenced here), at least one
+      prerequisite per non-entry career (OR semantics -- a multi-entry list is the zigzag case),
+      the prerequisite graph must be acyclic, and every prerequisite must name an existing
+      career — all as setting-authoring validation expectations (research.md's cardinality and
+      cycle-policy decisions)
 
 **Checkpoint**: `26-authoring-a-setting.md` alone is enough to write a legal `careers.yaml` entry
 of either kind.
@@ -59,7 +61,7 @@ to yes/no per the worked example in quickstart.md steps 2–4.
       every skill it grants has been opened and raised to the career's cap (data-model.md's
       derived-state section)
 - [x] T005 [US2] In the same document, state the eligibility rule for a non-entry career: a
-      character may choose it only if its declared prerequisite career (per T002) is complete
+      character may choose it once any one of its declared prerequisites (per T002) is complete
       for that character, per the completion definition in T004
 
 **Checkpoint**: both the Stamina bonus and career eligibility now cite one shared, checkable
@@ -89,12 +91,28 @@ anywhere in the corpus.
 - [x] T009 Diff `26-authoring-a-setting.md`'s career-graph field list (T002) against
       `data-model.md`'s `Career` table field-for-field to confirm they match exactly (SC-004)
 
+## Phase 7: Revision — zigzag/generalist support (post-PR feedback)
+
+**Goal**: widen `prerequisite` (singular, exactly-one) to `prerequisites` (plural, OR semantics)
+so a career can converge from more than one ladder — the mechanism a specialist/generalist
+distinction needs (research.md's revised cardinality decision).
+
+- [x] T010 Update `research.md`'s prerequisite-cardinality and cycle-policy decisions,
+      `data-model.md`'s `Career` table and validity rules, `spec.md`'s FR-005/edge cases/Story 1
+      acceptance scenarios, `quickstart.md`'s worked example, and this file's US1 task text — all
+      from singular `prerequisite`/exactly-one to plural `prerequisites`/OR-semantics
+- [x] T011 Rewrite the `careers.yaml` example and prose in `docs/design/26-authoring-a-setting.md`
+      to use `prerequisites` (a list, OR semantics) with a convergence example (two entry
+      careers both feeding one non-entry career)
+- [x] T012 Re-run `python3 tools/check_docs.py` and re-walk `quickstart.md`'s (updated) worked
+      example to confirm SC-001–SC-004 still hold under the widened cardinality
+
 ## Dependencies
 
 - T001 (Setup) has no dependencies.
 - **US1** (T002, T003) depends only on T001. T003 depends on T002 (same section, sequential
   edit).
-- **US2** (T004, T005) depends on T002 (needs the `prerequisite` field named in prose to write
+- **US2** (T004, T005) depends on T002 (needs the `prerequisites` field named in prose to write
   the eligibility rule against) but not on T003. T005 depends on T004.
 - **US3** (T006) depends on T002 (the destination section must exist before the link can point
   at it).
@@ -103,7 +121,7 @@ anywhere in the corpus.
 ## Parallel execution examples
 
 - T002 and T004 touch different files (`26-authoring-a-setting.md` vs.
-  `05-character-creation.md`) but T004's eligibility half (T005) needs T002's `prerequisite`
+  `05-character-creation.md`) but T004's eligibility half (T005) needs T002's `prerequisites`
   field to exist first — so within a single pass, do T002 before starting T004/T005, but T003
   and the *drafting* of T004's completion-definition text (which does not need T002) can proceed
   together.

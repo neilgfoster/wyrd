@@ -31,12 +31,16 @@ choose it.
 2. **Given** the same structure, **When** a setting author writes a non-entry career, **Then**
    they can state its prerequisite career(s) and the eligibility rule resolves to a clear
    yes/no for any given character.
+3. **Given** a setting author wants a career reachable from more than one ladder (e.g. a career
+   captain's post reachable from either a guard's or a soldier's career), **When** they declare
+   more than one prerequisite on it, **Then** a character who has completed *any one* of them is
+   eligible — no character need complete every listed prerequisite.
 
 ### User Story 2 - A player reads what "completing" their career means (Priority: P2)
 
 A player advancing their character needs to know when their career counts as *completed* — the
 event that grants the existing "+1 maximum Stamina" bonus ([`05-character-creation.md`](../../docs/design/05-character-creation.md)) and, for a non-entry
-career elsewhere in the graph, satisfies its prerequisite.
+career elsewhere in the graph, satisfies that career as one of its qualifying prerequisites.
 
 **Why this priority**: the completion bonus already exists in the text as an effect with no
 defined cause; this is the second load-bearing consumer of the same definition, after the entry
@@ -74,12 +78,16 @@ that actually defines the career graph.
 - A setting declares a non-entry career whose prerequisite career is itself never marked as an
   entry point (an unreachable career) — the graph does not need to forbid this, but the rule
   must not silently treat such a career as reachable.
-- A career could in principle name more than one prerequisite (multiple predecessor careers all
-  satisfy eligibility, or all are required) — the decision must state which, since the current
-  text only ever discusses a single predecessor.
+- A career may name more than one prerequisite — a **zigzag** path, where several different
+  ladders converge on the same next rung and completing any one of them qualifies. This is what
+  lets a **specialist** (one ladder, climbed straight up) and a **generalist** (a spread of
+  completed careers across different ladders) both exist as different choices over the same
+  graph shape, rather than needing separate mechanics for each.
 - Two careers could name each other as mutual prerequisites, or a career could be its own
   prerequisite through a longer cycle — the decision must state whether cycles are permitted or
-  are a validation error.
+  are a validation error. With multiple prerequisites per career, a cycle exists only when
+  **every** one of a career's prerequisite entries eventually requires the career itself — a
+  career listed as a prerequisite by more than one other career is convergence, not a cycle.
 
 ## Requirements *(mandatory)*
 
@@ -96,8 +104,10 @@ that actually defines the career graph.
 - **FR-004**: The design MUST define the eligibility rule for a non-entry career: what a
   character must have done (in terms of career completion, per FR-003) to be allowed to choose
   it, resolvable to a clear yes/no for any character and any non-entry career.
-- **FR-005**: The design MUST state whether a non-entry career may declare more than one
-  prerequisite, and if so, whether satisfying any one or all of them grants eligibility.
+- **FR-005**: A non-entry career MUST be able to declare one or more prerequisite careers, and
+  satisfying **any one** of them (not all) MUST grant eligibility — this is what makes a zigzag
+  career path (convergence from several ladders onto one career) possible, alongside the plain
+  single-prerequisite ladder case.
 - **FR-006**: The design MUST state whether the career graph may contain cycles (a career
   reachable, directly or transitively, as its own prerequisite), and if not, that this is a
   setting-authoring error the setting's own validation is expected to catch.

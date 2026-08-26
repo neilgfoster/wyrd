@@ -23,21 +23,29 @@ Expected: passes with no dead links — in particular, the cross-reference from
 This is the manual proof for SC-001 and SC-002 — write it out on paper (or as a scratch
 `careers.yaml` fragment) and confirm every step below is answerable with no guessing.
 
-1. Declare two careers per the shape in [`data-model.md`](data-model.md):
+1. Declare three careers per the shape in [`data-model.md`](data-model.md):
    - `apprentice`: `entry: true`, `skills: [craft, appraise]`
-   - `master`: `entry: false`, `prerequisite: apprentice`, `skills: [craft, appraise, teach]`
-2. **A new character at creation** may choose `apprentice` (it is an entry career) but not
-   `master` (its prerequisite, `apprentice`, is not yet complete for a character who does not
-   exist yet) — SC-002 resolves this to a clear "no."
+   - `sailor`: `entry: true`, `skills: [rope, navigate]`
+   - `master`: `entry: false`, `prerequisites: [apprentice, sailor]`, `skills: [craft, appraise, teach]`
+2. **A new character at creation** may choose `apprentice` or `sailor` (both entry careers) but
+   not `master` (neither listed prerequisite is complete for a character who does not exist
+   yet) — SC-002 resolves this to a clear "no."
 3. **A character who has spent advances** opening `craft` and `appraise` under `apprentice`,
    but not yet raised both to `apprentice`'s cap, has `apprentice` **in progress**, not
-   complete. `master` is still not eligible — SC-002 again resolves to "no," not "maybe."
+   complete. `master` is still not eligible (`sailor` was never started either) — SC-002 again
+   resolves to "no," not "maybe."
 4. **A character who has raised both `craft` and `appraise` to `apprentice`'s cap** has
    completed `apprentice`: they gain the +1 maximum Stamina bonus (once), and `master` is now
-   eligible — SC-002 resolves to "yes."
-5. **Confirm SC-004**: check that `docs/design/26-authoring-a-setting.md`'s prose description of
+   eligible — SC-002 resolves to "yes," even though `sailor` was never touched. This is OR
+   semantics: completing *any one* listed prerequisite is enough (a **specialist** path).
+5. **A different character instead completes `sailor`** (never touching `apprentice` at all) —
+   `master` is eligible for them too, by the same rule. Two characters can each become eligible
+   for `master` by completely different routes, which is the mechanism a **generalist** career
+   path relies on: nothing in the graph forces every character reaching `master` through the
+   same ladder.
+6. **Confirm SC-004**: check that `docs/design/26-authoring-a-setting.md`'s prose description of
    `careers.yaml`'s expected shape names exactly the fields in this worked example (`entry`,
-   `skills`, `prerequisite`) — no field appears in one document and not the other.
+   `skills`, `prerequisites`) — no field appears in one document and not the other.
 
 ## Expected outcome
 

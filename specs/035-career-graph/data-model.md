@@ -12,19 +12,22 @@ describes the shape of that row, not a schema validator (out of scope, FR-009).
 | id | string | yes | unique key within the setting's career table |
 | skills | list of skill references | yes | the skills this career grants; length is setting-defined per career, not fixed across careers (research.md) |
 | entry | boolean | yes | `true` marks the career as an entry point — choosable at character creation with no prerequisite |
-| prerequisite | career identifier | required when `entry` is `false`; absent when `entry` is `true` | the single career a character must have **completed** (see below) to become eligible for this career |
+| prerequisites | list of career identifiers | required (length ≥ 1) when `entry` is `false`; absent when `entry` is `true` | the careers a character may have **completed** (see below) to become eligible for this career — completing **any one** satisfies it (OR semantics, research.md) |
 
 ### Validity rules
 
 - **At least one career in the setting must have `entry: true`** — already established by
   `05-character-creation.md`'s "Entry careers: at least one career marked as an entry point."
-- **A career with `entry: false` must declare exactly one `prerequisite`** — a single
-  predecessor career, per the cardinality decision in `research.md`. Lists or multiple
-  prerequisites are not part of this shape.
-- **The graph formed by `prerequisite` edges must be acyclic.** A career reachable, directly or
-  transitively, as its own prerequisite is a setting-authoring error (research.md).
-- **A `prerequisite` must name a career that exists in the same table.** A dangling reference is
-  a setting-authoring error, same class as the cycle rule.
+- **A career with `entry: false` must declare at least one `prerequisites` entry.** A
+  single-entry list is the plain-ladder case; a multi-entry list is what lets several different
+  ladders converge on the same next rung (the zigzag case, research.md) — both use the same
+  field, just a different length.
+- **The graph formed by `prerequisites` edges must be acyclic.** A career is unreachable, and
+  therefore a setting-authoring error, only if **every** one of its `prerequisites` entries
+  eventually requires the career itself — a career appearing as a prerequisite of more than one
+  other career is convergence, not a cycle (research.md).
+- **Every entry in `prerequisites` must name a career that exists in the same table.** A
+  dangling reference is a setting-authoring error, same class as the cycle rule.
 
 ## Career completion (derived state, not a stored field)
 
@@ -41,7 +44,11 @@ redefined here:
 - the **+1 maximum Stamina** "durable toughening" bonus
   ([`05-character-creation.md`](../../docs/design/05-character-creation.md), "Why Stamina is 6")
 - **eligibility for a non-entry career**: a character may choose career *B* (where *B.entry is
-  false*) only if *B.prerequisite* is complete for that character.
+  false*) once **any one** career in *B.prerequisites* is complete for that character (OR
+  semantics). A **specialist** keeps completing careers along one chain of successive
+  prerequisites; a **generalist** completes a spread of careers across different ladders — both
+  are simply different choices of *which* completed careers a character accumulates, not a
+  distinction the graph itself encodes.
 
 ### State transition
 
@@ -53,7 +60,8 @@ career in progress
    │  (every skill in the career's list reaches the career's cap)
    ▼
 career complete  →  grants +1 max Stamina (once)
-                  →  satisfies this career as a `prerequisite` for any career naming it
+                  →  satisfies this career as one qualifying entry in `prerequisites`
+                     for any career listing it
 ```
 
 Nothing in this feature changes what "the career's cap" is, or how advances are spent — both
