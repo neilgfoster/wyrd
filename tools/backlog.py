@@ -193,6 +193,28 @@ def open_blockers(issue: dict, issues: dict[int, dict]) -> list[int]:
     return [d for d in issue["depends_on"] if d in issues]
 
 
+def effective_blockers(path: list[int], issues: dict[int, dict]) -> list[int]:
+    """Every currently-open issue that this issue, or any ancestor on `path`, depends on.
+
+    A leaf is not ready merely because it carries no `Depends on:` of its own -- CLAUDE.md's
+    own rule ("a rank orders what you choose between, it never authorises work whose
+    prerequisites are open") applies to an ancestor epic's declared dependency too. #90
+    ("Implement the engine") declares `Depends on: #1`; before this, a leaf under #90 with no
+    dependency of its own read as ready even while #1 was open, and #31 was picked up as a
+    result. Order-preserving and deduplicated across the whole path so the same blocker is
+    not repeated.
+    """
+    blockers: list[int] = []
+    for number in path:
+        issue = issues.get(number)
+        if issue is None:
+            continue
+        for blocker in open_blockers(issue, issues):
+            if blocker not in blockers:
+                blockers.append(blocker)
+    return blockers
+
+
 def dangling_refs(issue: dict, issues: dict[int, dict]) -> list[int]:
     """Declared dependencies that match no issue at all, open or closed.
 
@@ -247,7 +269,7 @@ def walk(issues: dict[int, dict], board: dict[int, dict]) -> tuple[dict | None, 
                 if found:
                     return found
             return None
-        blockers = open_blockers(issue, issues)
+        blockers = effective_blockers(path, issues)
         entry = {
             "number": number,
             "title": issue["title"],
@@ -351,14 +373,15 @@ def cmd_list(args) -> int:
     issues = fetch_issues()
     board = fetch_board()
 
-    def render(number: int, depth: int) -> None:
+    def render(number: int, depth: int, path: list[int]) -> None:
         issue = issues.get(number)
         if issue is None:
             return
+        path = path + [number]
         rank = board.get(number, {}).get("rank")
         prefix = "  " * depth
         marker = f"[{rank:>3}] " if rank is not None else "      "
-        blockers = open_blockers(issue, issues)
+        blockers = effective_blockers(path, issues)
         suffix = ""
         if issue["is_epic"] and not issue["open_children"]:
             suffix = "  <- no open children; close or decompose"
@@ -368,10 +391,10 @@ def cmd_list(args) -> int:
             suffix = "  <- ready"
         print(f"{marker}{prefix}#{number} {issue['title']}{suffix}")
         for child in sorted(issue["open_children"], key=lambda c: sort_key(c, board)):
-            render(child, depth + 1)
+            render(child, depth + 1, path)
 
     for root in sorted(roots(issues), key=lambda r: sort_key(r, board)):
-        render(root, 0)
+        render(root, 0, [])
     return 0
 
 
