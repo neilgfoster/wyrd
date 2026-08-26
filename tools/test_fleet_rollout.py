@@ -239,6 +239,25 @@ class FindExistingRolloutPrTests(unittest.TestCase):
         self.assertIsNone(url)
 
 
+class FindClosedRolloutPrTests(unittest.TestCase):
+    def test_returns_url_for_closed_unmerged_pr(self):
+        raw = json.dumps([{"url": "https://example.invalid/pr/2", "mergedAt": None}])
+        with mock.patch.object(fr, "gh", return_value=raw):
+            url = fr.find_closed_rollout_pr("wyrd-setting-hemmelfurt", "003-add-glossary")
+        self.assertEqual(url, "https://example.invalid/pr/2")
+
+    def test_ignores_a_merged_pr(self):
+        raw = json.dumps([{"url": "https://example.invalid/pr/2", "mergedAt": "2026-01-01T00:00:00Z"}])
+        with mock.patch.object(fr, "gh", return_value=raw):
+            url = fr.find_closed_rollout_pr("wyrd-setting-hemmelfurt", "003-add-glossary")
+        self.assertIsNone(url)
+
+    def test_returns_none_when_no_closed_pr(self):
+        with mock.patch.object(fr, "gh", return_value="[]"):
+            url = fr.find_closed_rollout_pr("wyrd-setting-hemmelfurt", "003-add-glossary")
+        self.assertIsNone(url)
+
+
 class ReadVersionMarkerTests(unittest.TestCase):
     def test_absent_on_404(self):
         with mock.patch.object(fr, "gh", side_effect=fr.GhError("gh api ... failed (1): HTTP 404: Not Found")):

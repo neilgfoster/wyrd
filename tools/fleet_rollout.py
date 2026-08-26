@@ -392,6 +392,24 @@ def find_existing_rollout_pr(repo: str, latest_entry_id: str) -> str | None:
     return matches[0]["url"] if matches else None
 
 
+def find_closed_rollout_pr(repo: str, latest_entry_id: str) -> str | None:
+    """The URL of a rollout PR for this exact bundle that was closed without merging, if any.
+
+    A rejected bundle is never reopened identically (spec Edge Cases) -- distinguished from
+    "already open" so `rollout` can report it rather than attempting a push that would
+    collide with the closed PR's still-existing remote branch.
+    """
+    branch = f"wyrd-fleet-rollout/{latest_entry_id}"
+    raw = gh(
+        [
+            "pr", "list", "--repo", f"{OWNER}/{repo}",
+            "--head", branch, "--state", "closed", "--json", "url,mergedAt",
+        ]
+    )
+    matches = [m for m in json.loads(raw) if not m.get("mergedAt")]
+    return matches[0]["url"] if matches else None
+
+
 def apply_rollout(repo: str, source_repo: str, actions: list[dict]) -> str:
     """Clone the target repo, apply every action as a commit on a fresh branch, and open a PR
     against it. Never pushes to the repo's default branch.
@@ -539,6 +557,10 @@ def cmd_rollout(args: argparse.Namespace) -> int:
         existing = find_existing_rollout_pr(repo["name"], latest_id)
         if existing:
             print(f"{repo['name']}: skipped: already open at {existing}")
+            continue
+        rejected = find_closed_rollout_pr(repo["name"], latest_id)
+        if rejected:
+            print(f"{repo['name']}: skipped: previously closed without merging ({rejected})")
             continue
         if args.dry_run:
             ids = ", ".join(a["id"] for a in actions)
