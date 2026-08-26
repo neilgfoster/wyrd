@@ -29,7 +29,7 @@ there and summarised here.
 | **Criticals** | `1d6` + points below zero | repeatable | [`03a-1-criticals.md`](03a-1-criticals.md) |
 | **Aftermath** | `d100` + 5 × points below zero | repeatable | [`03a-2-aftermath.md`](03a-2-aftermath.md) |
 | **Transformations** | `1d6` | unique per character | [`03a-3-transformations.md`](03a-3-transformations.md) |
-| **Afflictions** | declared by the family | unique per character | `03a-4-afflictions.md` — not yet written |
+| **Afflictions** | `1d12`, no modifier | repeatable | [`03a-4-afflictions.md`](03a-4-afflictions.md) |
 | **Oracles** | declared by the family | repeatable | `03a-5-oracles.md` — not yet written |
 
 A family holds one table or several. Criticals hold one per damage type; a family with a single
