@@ -1,0 +1,8 @@
+{
+  "live_repos": [
+    "wyrd-setting-alpha",
+    "wyrd-setting-beta",
+    "wyrd-setting-orphan"
+  ],
+  "catalogue_text": "settings:\n  - id: alpha\n    title: \"Alpha\"\n    repo: wyrd-setting-alpha\n    visibility: private\n    status: library-loaded\n\n  - id: beta\n    title: \"Beta\"\n    repo: wyrd-setting-beta\n    visibility: private\n    status: stub\n    group: shared-world\n\n  - id: gone\n    title: \"Gone\"\n    repo: wyrd-setting-does-not-exist\n    visibility: private\n    status: stub\n"
+}
