@@ -20,18 +20,30 @@ engine one and a setting one.
 | 5 | **Set Luck** to 40, current and maximum. | engine, §2 |
 | 6 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
 | 7 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
-| 8 | **Name them, and place them.** Name, a Drive, a Bond, and where they are from. | the setting's name and place tables |
+| 8 | **Name them, and place them.** Name, a Drive, a Misfortune, a Bond, and where they are from. | the setting's name, Drive and Misfortune tables |
+| 9 | **Write the Fault Line** — one sentence naming the direction Taint pulls this character, from the Drive and Misfortune chosen above. | engine, §1 below |
 
-Steps 4–7 are fixed. Steps 1, 2, 3 and 8 read setting data and cannot be completed without it.
+Steps 4–7 are fixed. Steps 1, 2, 3, 8 and 9 read setting data or the choices already made and cannot
+be completed without them.
 
 **Nothing is rolled.** No characteristics exist to roll ([ADR 0013](adr/0013-the-engine-names-no-skill.md)),
 Stamina and Luck are flat, and skills come from the career. A character is *chosen*, not generated —
 see [ADR 0014](adr/0014-character-creation-is-chosen-not-rolled.md).
 
-Of step 8, only the **Drive** and the **Bond** carry mechanical weight — a Drive can be invoked for
-−20 ([`03-rules.md`](03-rules.md) §1) and a Bond is a real relationship
-([`04-session.md`](04-session.md)). The name and the place of origin are fiction, and the engine
-never reads them. Where a character is *from* shows up mechanically in step 3, not here.
+Of step 8, the **Drive**, the **Misfortune** and the **Bond** carry mechanical weight — a Drive can be
+invoked for −20 ([`03-rules.md`](03-rules.md) §1), a Misfortune feeds the Fault Line (step 9) and
+seeds a Threat at chronicle creation ([`05-campaign.md`](05-campaign.md)), and a Bond is a real
+relationship ([`04-session.md`](04-session.md)). The name and the place of origin are fiction, and
+the engine never reads them. Where a character is *from* shows up mechanically in step 3, not here.
+
+**The Fault Line (step 9) is written, not chosen from a list.** It names the direction Taint pulls
+this character — how they fall, not how much ([`03-rules.md`](03-rules.md) §4) — and it is one
+sentence combining the Drive and the Misfortune just chosen: what they want, and what already works
+against them, read together. No roll and no table decide it; the GM and player agree the sentence at
+the table, the same judgment call the GM already makes to invoke a Drive. A setting may replace the
+free sentence with a lookup from its own taxonomy — deriving the Fault Line from a culture rather
+than a Drive, say — as a **retune**, since the mechanism the Fault Line feeds does not change
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)).
 
 ## 2. The starting values
 
@@ -132,6 +144,7 @@ filled in by the GM's judgement.
 | **Names** | enough to name a person of this world |
 | **Places** | somewhere to be from |
 | **Drives** | the things a character wants, in this world's terms |
+| **Misfortunes** | the things already working against a character, in this world's terms — what step 9 draws on to write the Fault Line |
 | **Loyalties** | at least one, and the relations between any that are strained or irreconcilable. A setting with a single Loyalty is legal, and means the question never arises |
 
 Everything else a character carries starts empty: no wounds, no Marks, no career history, no
