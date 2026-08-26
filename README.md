@@ -90,6 +90,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [14-entities](design/14-entities.md) | The world mesh — ten types, two relations, overlays |
 | [15-arcs-and-beats](design/15-arcs-and-beats.md) | Beats, recombination, lazy conversion |
 | [16-chronicle-bootstrap](design/16-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
+| [17-journeys](design/17-journeys.md) | The travel subsystem — legs, hazards, and when it's inert |
 | [adr/](design/adr/) | Decision records — indexed in [design/README.md](design/README.md) |
 
 Two more trees, reachable from here so nothing in the repo is orphaned:

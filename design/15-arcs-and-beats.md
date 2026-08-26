@@ -101,6 +101,11 @@ Stub. Not yet decomposed.
 
 A stub carries **enough to be selected** — a summary, tags, a source path — and nothing more.
 
+`scale` is not limited to the sizes above one library naturally produces — `scale: journey` is
+a recognised value for an arc whose children are legs of travel, decomposed and converted the
+same way any other arc is. See [`17-journeys.md`](17-journeys.md) for the fields specific to
+it.
+
 **Conversion happens on demand.** When the engine is planning the next stage of a chronicle
 and a stub looks like the right fit, it pulls the source, decomposes *that arc* into
 sub-arcs and beats, and **commits the result back to the setting repository**. The setting
