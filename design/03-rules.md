@@ -64,32 +64,37 @@ you do not speak is not a 10% chance ([`03b-the-character.md`](03b-the-character
 
 ### Opposed tests
 
-When two people genuinely act against each other and neither's number stands in for the other's
-roll — a contest of wills, a race for the same outcome — both roll, but not symmetrically:
+When a player character or companion is opposed by an NPC/opponent — a lock picked while a guard
+listens, a bluff run past a suspicious gatekeeper, breaking free of a captor's grip — the test
+resolves as a single player-facing roll, exactly as combat's attack and defence rolls already do
+(§2, [ADR 0027](adr/0027-combat-rolls-belong-to-the-player.md)):
 
-1. **The acting side rolls first, and must succeed.** If they fail, the action fails. There is no
-   comparison and the other side need not roll at all.
-2. **Degrees exist only on a success.** A failed roll has no degrees, not negative ones.
-3. **If the resisting side also succeeds, compare degrees.** The higher wins; **ties go to the
-   resisting side**.
-4. **The margin** is the difference in degrees, and it is what a rule like the telling blow reads.
-5. **Only the acting side reads the Wyrd die.** One roll, one omen, however many dice were thrown.
+1. **The player rolls once**, against `effective% = clip(50 + (skill −
+   opponent_skill_or_baseline), 5, 95)` — an even match is a coin flip, no skill gap reaches
+   certainty or impossibility. **The opponent's dice are never consulted.**
+2. **Degrees** are read `tens(effective%) − tens(roll)`, using `effective%` as the skill value —
+   the same formula this section has always used, fed the same input combat already feeds it.
+3. **A failure simply fails the action.** There is no resisting-side roll and no degrees
+   comparison to have skipped.
+4. **The Wyrd die always belongs to the player** making the roll — there is no roll on the
+   opponent's side for it to belong to instead.
+5. **Assistance** (below), declaration and the untrained-10% rule apply exactly as they do to any
+   other roll; nothing about this shape treats them differently.
 
-The **acting side** is whoever is trying to change the situation; the other is resisting it. Where
-neither is — two people racing for the same thing — it is not an opposed test, and the GM either
-names an actor or calls for two ordinary tests.
+**A contest between two player-controlled entities** — a player character and a companion, or two
+companions, in genuine tension with no NPC/opponent side — has no opponent skill to set
+`effective%` against. The GM either names which side is acting and calls one ordinary test, or
+treats it as two ordinary tests. This is not the shape above; it is not resolved by a roll on each
+side compared against the other's, and it does not need to be — it comes up rarely, and an
+ordinary test already answers it.
 
-**Combat does not use this shape.** An opponent's capability is a static number, not a roll
-([`03d-the-adversary.md`](03d-the-adversary.md)), and an attack or defence in combat resolves as a
-single player-facing roll (§2) — [ADR 0027](adr/0027-combat-rolls-belong-to-the-player.md)
-supersedes the rules above for that case. This section still governs the contests it was written
-for outside combat.
-
-Rule 2 is not a detail. Degrees are `tens(skill) − tens(roll)`, so a failure computes as a negative
-number, and subtracting one *inflates* the margin. Left that way, roughly three quarters of
-successful attacks would be telling blows — doubled damage as the ordinary case, invisible in the
-prose. Recorded in [ADR 0016](adr/0016-opposed-tests-need-a-successful-actor.md) and computed in
-[`check_opposed.py`](../specs/010-opposed-tests/check_opposed.py).
+**This generalises what combat already did.** [ADR 0027](adr/0027-combat-rolls-belong-to-the-player.md)
+converted combat's attack and defence rolls to this shape; [ADR 0035](adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md)
+extends it to every opposed test where one side is an NPC/opponent, which was every remaining live
+use of the two-sided roll-both shape this section once described. That earlier shape — both sides
+roll, the acting side first and must succeed, ties to the resister — is recorded in
+[ADR 0016](adr/0016-opposed-tests-need-a-successful-actor.md) as the mechanic it replaced; it
+governs nothing in the current ruleset.
 
 **Only roll when it is dramatic** — when failure is interesting and the outcome is in doubt.
 Everything else simply happens.

@@ -76,6 +76,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0032](adr/0032-career-cap-and-the-stamina-ceiling.md) | Career caps sit at 70%, and maximum Stamina stops climbing at 10 |
 | [0033](adr/0033-standing-and-the-material-economy.md) | Standing is kept and defined; wealth reconciles with it, not beside it |
 | [0034](adr/0034-bond-is-the-positive-party-track.md) | Bond is the positive party track; no standalone Cohesion track is added |
+| [0035](adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md) | Opposed tests generalise to the player-facing roll; ADR 0016 is retired |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
