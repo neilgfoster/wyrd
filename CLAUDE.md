@@ -190,8 +190,13 @@ reviewer decides whether to open the diff from them.** Concretely:
 - **Always pass a summary to `kord-pr-raise`** (or write the title/body directly if raising a PR
   by hand). Its fallback — commit subject lines, or failing that the branch name — exists for
   when nothing better is available, not as the default path.
-- `.github/pull_request_template.md` gives every PR the same shape; fill every section, and
-  leave none as an unaddressed placeholder comment.
+- `.github/pull_request_template.md` gives every PR the same shape. `kord-pr-raise` fills only
+  the template's *first* placeholder section from `--summary`; every later placeholder section
+  it leaves untouched gets stamped `N/A` rather than your actual content — so put what and why,
+  the verification you actually ran, and anything load-bearing in that first section, not split
+  across later ones a generated PR would silently blank. Delete "Decisions this PR makes" if it
+  genuinely doesn't apply; don't let it render as an `N/A` that reads as "checked, none" when it
+  was never looked at.
 
 ## Before proposing a rule change
 

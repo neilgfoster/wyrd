@@ -4,25 +4,26 @@ numbering (closes #38)" -- not the branch name, not a ticket ID with nothing els
 would read the same with every word after the issue number deleted, it isn't a title yet.
 -->
 
-## What and why
+## Summary
 
-<!-- What changed, and why -- the diff already says what changed in detail; this says what
-     problem it solves and the reasoning behind the approach, the same "why, not what" rule
-     commit messages follow. Reference the issue this closes. A reviewer should be able to
-     decide whether to look closely from this section alone, before opening the diff. -->
+<!-- What changed, why, and what you actually verified -- the diff already says what changed in
+     detail; this says what problem it solves, the reasoning behind the approach (the same
+     "why, not what" rule commit messages follow), and what you ran to confirm it works
+     ("ran python3 tools/check_docs.py, 236 documents all reachable" -- not "should pass").
+     Reference the issue this closes. A reviewer should be able to decide whether to look
+     closely from this section alone, before opening the diff.
 
-## Verification
-
-<!-- What you actually ran to confirm this works: `python3 tools/check_docs.py`, the relevant
-     `check_*.py` script, `python3 -m pytest -q`, a manual walkthrough. State the result, not
-     just the command -- "ran X, got Y" rather than "should pass X". -->
+     kord-pr-raise fills only this first placeholder from --summary; every later one gets
+     stamped "N/A" if left as a bare comment, so put everything load-bearing here rather than
+     splitting it across sections a generated PR would leave unfilled. -->
 
 ## Decisions this PR makes
 
 <!-- Only if a real judgment call was made along the way that a future reader would want the
      reasoning for -- a genuine alternative rejected, or a design/09-evolution.md-style
      forward-only choice. Link the ADR if one was recorded. Delete this section if nothing here
-     rises to that bar; most PRs won't. -->
+     rises to that bar; most PRs won't -- an empty/deleted section is fine, a stamped "N/A" one
+     reads as "I checked and there's genuinely none," so only leave it in if that's true. -->
 
 ## Checklist
 
