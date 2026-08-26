@@ -13,7 +13,7 @@ engine one and a setting one.
 
 | | Step | Where the content comes from |
 |---|---|---|
-| 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`27-entities.md`](27-entities.md)) |
+| 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)) |
 | 2 | **Spend 8 advances** inside that career, opening and raising skills. This is the character's background. | §3 |
 | 3 | **Choose a Loyalty**, from those the setting declares. | the setting's Loyalties ([`16-session.md`](16-session.md)) |
 | 4 | **Set Stamina** to 6, current and maximum. | engine, §2 |
@@ -68,7 +68,10 @@ Four things already fixed it, and it was computed rather than chosen
 
 - A completed career grants **+1 maximum Stamina**, called "the only durable toughening"
   ([`03-rules.md`](03-rules.md) §6). At 6 that is a **16.7%** gain. Much above 10 and the sentence
-  stops being true.
+  stops being true. A career is **complete** once every skill it grants has been opened and
+  raised to that career's cap — the terminal state of the advance mechanics in §3, not a separate
+  event. The same completed state is what makes a character **eligible** for any career naming
+  it as a prerequisite ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)).
 - An **ordinary** telling blow — a mid-band weapon against modest armour — drops a full-Stamina
   character **2.4 points** below zero, inside the 1–3 that the Aftermath family treats as ordinary.
   Deferred death stays routinely survivable.

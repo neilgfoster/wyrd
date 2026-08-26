@@ -72,6 +72,42 @@ Two kinds of content, and the distinction is simple:
 The test: *would anything ever link to it, or would a chronicle ever change it?* If yes it is
 an entity. A career is a row; the guild that grants it is an entity.
 
+### `careers.yaml`
+
+One `careers:` list — the career graph character creation and advancement both draw skills from
+([`05-character-creation.md`](05-character-creation.md)). Each entry is one career:
+
+```yaml
+careers:
+  - id: apprentice           # stable, kebab-case, unique
+    entry: true               # choosable at character creation with no prerequisite
+    skills: [craft, appraise]
+  - id: master
+    entry: false
+    prerequisite: apprentice  # exactly one; required when entry is false, absent when true
+    skills: [craft, appraise, teach]
+```
+
+`id`, `entry` and `skills` are **required** on every career. `prerequisite` is required exactly
+when `entry` is `false`, and absent when it is `true` — a career is either an entry point or has
+one named predecessor, never both and never neither. `skills`' length is **setting-defined per
+career**, not fixed across the table: nothing ties two careers to the same skill count, only the
+"at least two skills opened" floor advancement already enforces
+([`05-character-creation.md`](05-character-creation.md) §3).
+
+**At least one career in the table must declare `entry: true`** — a character always has
+somewhere to start. Every `prerequisite` must name another career **in the same table**, and the
+graph those edges form **must be acyclic**: a career reachable, directly or transitively, as its
+own prerequisite is unreachable by any character and is a setting-authoring error, the same class
+as a dangling `prerequisite` reference.
+
+A career is **complete** for a character when every skill in its `skills` list has been opened
+and raised to that career's cap — the terminal state of the advance mechanics
+[`05-character-creation.md`](05-character-creation.md) §3 already defines, not a new one. Two
+things key off that completed state: the **+1 maximum Stamina** bonus a completed career grants,
+and **eligibility for any career naming it as `prerequisite`** — a character may choose a
+non-entry career only once its declared prerequisite is complete for them.
+
 ### `bestiary.yaml`
 
 One `creatures:` list. Each entry is one **adversary block** — the fields the ruleset reads off an
