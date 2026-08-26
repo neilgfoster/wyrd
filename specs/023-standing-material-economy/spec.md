@@ -11,6 +11,26 @@ referenced in Upkeep and defined nowhere; the material economy (gear, wealth, en
 casual/martial distinction) is sketched only as a setting file promise. Define both, or remove
 what can't be defined, without turning play into inventory logistics."
 
+## Clarifications
+
+### Session 2026-08-26
+
+- Q: Does Standing get a fixed numeric scale (like a percentile skill or a small 0–N track), or
+  does it stay an open, uncapped count the way coin would? → A: A small open-ended count, not a
+  percentile or a fixed 0–N band — consistent with how Taint/Trauma/Strain/Resolve are specified
+  as accruing tracks rather than bounded scores in `03-rules.md`, and because Upkeep only ever
+  moves it by 1 at a time. Planning MUST NOT invent a percentile Standing.
+- Q: Is wealth ("coin") a numeric score the character tracks, or a narrative abstraction resolved
+  case-by-case like inventory already is? → A: A numeric-but-small abstraction — coin is a plain
+  count a player can state a total for (it is spent "equal to Standing" in Upkeep, which requires
+  comparing two numbers), but it is not a ledger of transactions; the design does not ask the
+  player to itemize purchases. This keeps FR-005/FR-006 from drifting into logistics.
+- Q: Does the encumbrance rule need a concrete mechanical test (a roll, a threshold), or is it
+  purely a GM judgment call? → A: GM judgment call, framed as a question the GM asks of the
+  fiction ("would it make sense for them to have this"), the same shape `10-diegesis.md` already
+  uses for "what is missing" — no roll, no threshold number. This bounds FR-006's scope for
+  planning.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Upkeep resolves to a defined term (Priority: P1)
@@ -139,12 +159,13 @@ encounter trigger) rather than only a sentence of flavour text.
 - **FR-004**: The design MUST provide (or point to) a validator for a gear file against that
   schema, consistent with how the adversary block is validated today
   (`design/03d-the-adversary.md`).
-- **FR-005**: The design MUST state how wealth works — as a score, a currency, or an
-  abstraction — and MUST reconcile it explicitly with Standing (are they the same resource, do
-  they interconvert, are they independent).
-- **FR-006**: The design MUST specify how encumbrance is handled, and that specification MUST NOT
-  require the player or GM to maintain a numeric running total or consult an item-weight table,
-  consistent with `design/10-diegesis.md`'s existing "realistic, not logistic" rule.
+- **FR-005**: The design MUST state how wealth works — a small numeric count of coin the player
+  can state a total for, without itemized transaction tracking — and MUST reconcile it explicitly
+  with Standing (are they the same resource, do they interconvert, are they independent).
+- **FR-006**: The design MUST specify encumbrance as a GM judgment call against the fiction (the
+  same shape `design/10-diegesis.md` already uses for what a character is missing), not as a roll
+  or a numeric threshold, and that specification MUST NOT require the player or GM to maintain a
+  numeric running total or consult an item-weight table.
 - **FR-007**: The design MUST state a concrete mechanical consequence (not only social framing)
   for carrying a martial weapon somewhere it's restricted, or MUST show that an existing mechanic
   (e.g. a Standing effect, an encounter rule) already covers it and cite where.
