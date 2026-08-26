@@ -568,6 +568,17 @@ Three routes, deliberately in both directions:
 2. **Exposure** — resist with a test. Minor `1`, moderate `2`, major `3`, reduced by degrees
    of success. Sources are a setting matter, and should include **moral** ones as well as
    supernatural — giving in to despair or cruelty is exposure.
+
+   **When the source runs with the grain of the character's Fault Line** — the GM's call,
+   grounded in the fiction, the same judgment already used to invoke a Drive below — a failed
+   resistance gains Taint **one tier worse**: minor `1` becomes `2`, moderate `2` becomes `3`,
+   major stays at `3`. This never touches the resolution roll itself, only the Taint number
+   consumed on a failure, so it does not compound invisibly with the way Taint already bends
+   the Wyrd die. It applies **at most once per Exposure event**, and is independent of an
+   Invocation drawn against the same roll — one changes what is gained on failure, the other
+   changes the difficulty of the roll that produced it, and applying both does not compound
+   either beyond its own step
+   ([`tools/check_fault_line.py`](../tools/check_fault_line.py)).
 3. **Invocation** — before a roll, the GM may **spend one of the character's Taint points** to
    impose a penalty, narrating how it surfaces. Maximum one per check, and it *consumes* the
    point, so it cannot be leaned on.
@@ -575,7 +586,13 @@ Three routes, deliberately in both directions:
 ### Fault Line
 
 Taint is **specific, not generic**. Each character has a Fault Line derived at creation from
-their Drives and Misfortune. It names *how* they fall — the direction, not only the quantity.
+their Drives and Misfortune. It names *how* they fall — the direction, not only the quantity —
+and it is not only descriptive: it is what the GM reads against Exposure sources above to decide
+whether a failure gains Taint at its stated tier or one tier worse. Two characters at equal Taint
+with different Fault Lines therefore accrue Taint at different rates once the fiction starts
+drawing on each of their directions, without any change to the transformation table itself
+([`03a-3-transformations.md`](03a-3-transformations.md)) or to any resolution roll
+([ADR 0031](adr/0031-fault-line-biases-exposure-not-the-transformation-table.md)).
 
 ### Thresholds and the hidden count
 
