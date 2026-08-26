@@ -182,22 +182,40 @@ line that keeps companions meaningful rather than merely fragile.
 
 ### Companions are people
 
-Each companion is a `character` entity carrying:
+Each companion is a `character` entity carrying two layers ([ADR 0034](adr/0034-bond-is-the-positive-party-track.md)):
 
 ```yaml
 role: companion
 status: with-party
-career: <career-id>
+# narrative layer — who this person is; no field here is ever read by a resolution rule
 objective:
   wants: "<what they are actually here for>"
   next_step: "<what they will do about it next>"
 flaw: "<the thing that gets them into trouble>"
+secret: "<something the player does not know>"
+arc: "<the choice this companion is heading toward>"
+# mechanical layer — closed at five fields; everything a resolution rule reads
+career: <career-id>
 bond: 3                    # -3..+3, toward the player
 taint: 1
 strain: 0
-secret: "<something the player does not know>"
-arc: "<the choice this companion is heading toward>"
+wounds: []
 ```
+
+**The narrative layer** — `objective`, `flaw`, `secret`, `arc` — is what tells four companions
+apart. It is prose the GM writes and plays; nothing on it is consulted by a die roll.
+
+**The mechanical layer is deliberately thin and closed at five fields**: `career` bounds the
+skill % any test a companion attempts uses, exactly as it does for the player character
+([`03-rules.md`](03-rules.md) §"Careers"); `bond` is below; `taint` and `strain` are read on the
+same terms as the player character's own ([`03-rules.md`](03-rules.md) §4); `wounds` records
+lasting-wound entries from the same Aftermath table, same rows — "there is no companion rate"
+([`03-rules.md`](03-rules.md) §3). A companion has no capability score of its own and no Stamina
+track separate from `wounds` (a wound's `stamina_max: -N` effect already covers it). This is what
+lets a GM run a full party — up to five companions alongside the player character, the largest
+size the design's own effective-size table counts — without a per-companion character sheet:
+every value a beat needs is already one of these five, and none needs a lookup beyond what the
+player character's own turn already requires.
 
 **The GM never asks the player to decide for a companion.** Companions act on their agendas,
 including against the player's interest, and may refuse, leave, lie, or act while the player
@@ -261,11 +279,31 @@ This gives the GM a principled, visible, self-resetting licence to generate inte
 drama driven by what actually happened — and it makes the Interlude session mechanically
 worthwhile.
 
-### Bonds
+### Bonds — the positive party track
 
-Each companion's `bond` (-3..+3) to the player character modifies Tension gain, whether they follow into
-danger, and whether they tell you the truth. It moves slowly and it is the closest thing
-Wyrd has to a relationship score.
+Each companion's `bond` (-3..+3) to the player character is the closest thing Wyrd has to a
+relationship score, and it moves slowly. It is also, by design, the answer to the question
+Tension above only ever asks in one direction: whether the party is *working*
+([ADR 0034](adr/0034-bond-is-the-positive-party-track.md)).
 
-A companion at bond -3 is still travelling with you. That is more interesting than one who
-left.
+**Bond directly offsets Tension gain.** When an event would raise Tension and names a specific
+companion, it adds 1 point per point that companion's Bond sits *below* 0, and 1 point *fewer*
+(floored at 0, never negative) per point their Bond sits *above* 0:
+
+| Bond | An event that would add 1 Tension instead adds |
+|---|---|
+| +3 | 0 |
+| +1 | 0 |
+| 0 | 1 (today's baseline) |
+| -2 | 3 |
+
+A generic event that names no specific companion (the party goes hungry, unpaid, unrested) is
+unaffected by any one companion's Bond and applies at the stated rate.
+
+There is no second, positive-only track alongside this one — a well-run party's payoff is a Bond
+high enough that the same events barely move Tension at all, not a separate number rising in
+step. Bond also modifies whether a companion follows into danger and whether they tell you the
+truth, unchanged.
+
+A companion at bond -3 is still travelling with you, contributing the most Tension any single
+event can carry. That is more interesting than one who left.

@@ -75,6 +75,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0031](adr/0031-fault-line-biases-exposure-not-the-transformation-table.md) | The Fault Line biases Exposure's Taint gain, not the transformation table |
 | [0032](adr/0032-career-cap-and-the-stamina-ceiling.md) | Career caps sit at 70%, and maximum Stamina stops climbing at 10 |
 | [0033](adr/0033-standing-and-the-material-economy.md) | Standing is kept and defined; wealth reconciles with it, not beside it |
+| [0034](adr/0034-bond-is-the-positive-party-track.md) | Bond is the positive party track; no standalone Cohesion track is added |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
