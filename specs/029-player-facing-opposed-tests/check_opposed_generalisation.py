@@ -28,10 +28,16 @@ Run: python3 specs/029-player-facing-opposed-tests/check_opposed_generalisation.
 
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CLIP_LOW, CLIP_HIGH = 5, 95
+
+# Import combat's own degrees() from check_conversion.py -- so the comparison below is against
+# combat's actual function, not a second local copy of the same formula that could silently drift.
+sys.path.insert(0, str(REPO_ROOT / "specs" / "018-player-facing-combat"))
+from check_conversion import degrees as combat_degrees_fn  # noqa: E402
 
 # Same representative skill-gap span specs/012-combat-sequencing/check_mapping.py uses.
 PAIRINGS = [
@@ -139,15 +145,18 @@ def check_adr_0016_scope() -> None:
 def check_generalised_roll_matches_combat() -> None:
     """The generalised roll is the SAME computation combat already uses -- same effective%
     formula, same degrees formula. This is not a new mechanic to calibrate; it is the existing
-    one applied outside combat. Confirm it reproduces identical numbers at identical inputs."""
+    one applied outside combat. Confirm this feature's degrees() agrees with check_conversion.py's
+    own degrees() -- combat's actual function, not a second local copy of the same formula that
+    could silently drift -- at identical inputs."""
     for skill, opponent_skill in PAIRINGS:
         eff = effective_pct(skill, opponent_skill)
         for roll in (5, 25, 50, 75, 95):
-            combat_degrees = degrees(eff, roll)  # what check_conversion.py computes for combat
-            noncombat_degrees = degrees(eff, roll)  # identical call, non-combat context
-            check(f"degrees(effective%({skill},{opponent_skill})={eff}, roll={roll}) identical "
-                  "whether the test is combat or not",
-                  combat_degrees == noncombat_degrees)
+            combat_result = combat_degrees_fn(eff, roll)  # specs/018's own function
+            generalised_result = degrees(eff, roll)  # this feature's function
+            check(f"degrees(effective%({skill},{opponent_skill})={eff}, roll={roll}) agrees "
+                  "with specs/018-player-facing-combat/check_conversion.py's own degrees()",
+                  combat_result == generalised_result,
+                  f"combat={combat_result}, generalised={generalised_result}")
 
 
 def check_worked_example() -> None:
