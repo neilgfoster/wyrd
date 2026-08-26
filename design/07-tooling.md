@@ -50,6 +50,20 @@ When the CLI returns a result, the GM **narrates from it** and never recalculate
 If `wyrd roll` says failure, the model does not re-add the dice. If the tool and the prose
 disagree, the tool is right and the prose is a bug.
 
+### Checked claims about the repository itself
+
+The same principle applies to the design programme's own process, not only to play-time rules.
+Three scripts under `tools/` check a claim about the documents rather than asserting it:
+`backlog.py check` (the board's priority order is whole), `check_docs.py` (the document graph
+is reachable, linked and indexed), and `check_dangling_mechanics.py` (every mechanic named
+somewhere in `design/` is defined somewhere in `design/` — the fault that named at least six
+mechanics as authoritative before anything defined them).
+
+All three run **on demand, not in CI** — this repository has no CI workflow at all yet, so
+wiring one in for a single check would be a new commitment on its own, not a natural extension
+of an existing gate. Run them before a PR that touches `design/`, the same discipline
+`tools/check_docs.py`'s own usage note already asks for.
+
 ---
 
 ## 2. Python, stdlib only
