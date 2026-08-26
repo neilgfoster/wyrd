@@ -10,6 +10,16 @@
 journey as played content, through one configurable engine subsystem (issue #56, Stage 10 of
 the design programme)."
 
+## Clarifications
+
+### Session 2026-08-26
+
+- Q: How is a hazard's per-leg trigger chance determined? → A: Mirrors the Threat activation
+  roll (`design/05-campaign.md`) — a per-journey hazard rating × 10, rolled once per leg.
+- Q: What decides whether a leg is played (a beat) versus summarised? → A: Author-declared,
+  via the existing `mode: played | summarised` field beats already carry
+  (`design/15-arcs-and-beats.md`) — set when the journey/leg is authored or converted.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Run a journey as played content (Priority: P1)
@@ -32,9 +42,10 @@ consequences (Standing, condition, supply) reflect what happened.
    starts it, **Then** the journey produces a sequence of legs, each resolving through play
    (a beat) or through summary (elapsed time and expected-value events), matching
    `design/05-campaign.md`'s existing split.
-2. **Given** a journey in progress, **When** a hazard entry on the journey's table triggers,
-   **Then** it resolves through the core percentile roll, using an existing skill and
-   difficulty, exactly as any other test in the engine.
+2. **Given** a journey in progress, **When** a leg's hazard roll (`d100` against the
+   journey's hazard rating × 10) succeeds, **Then** the triggered hazard entry resolves
+   through the core percentile roll, using an existing skill and difficulty, exactly as any
+   other test in the engine.
 3. **Given** a journey completes, **When** the GM checks chronicle state, **Then** elapsed
    time has advanced by the journey's stated span and any consequences (harm, Standing,
    supply, thread changes) are recorded as ordinary chronicle state — no journey-specific
@@ -122,6 +133,12 @@ way any other arc's children are.
 - **FR-004**: Any hazard that triggers during a journey MUST resolve through the core
   percentile roll (`design/03-rules.md`), using an existing skill and difficulty — a journey
   introduces no bespoke resolution mechanic.
+- **FR-004a**: Each journey MUST carry a hazard rating; each leg rolls `d100` once against
+  `rating × 10` to decide whether a hazard triggers, mirroring the Threat activation roll
+  (`design/05-campaign.md`) rather than introducing a second per-leg-chance formula.
+- **FR-004b**: Each leg MUST declare its own resolution mode (`played` or `summarised`) using
+  the existing `mode:` field beats already carry (`design/15-arcs-and-beats.md`); the engine
+  does not choose a leg's mode at runtime.
 - **FR-005**: Supply and encumbrance consequences arising from a journey MUST use the
   existing material-economy abstraction (`design/03b-the-character.md` /
   standing-material-economy work) rather than a journey-specific inventory or logistics
