@@ -1,0 +1,48 @@
+{
+  "repos": [
+    {"name": "wyrd-setting-template", "visibility": "PUBLIC", "isArchived": false},
+    {"name": "wyrd-setting-hemmelfurt", "visibility": "PRIVATE", "isArchived": false},
+    {"name": "wyrd-setting-ashglass", "visibility": "PRIVATE", "isArchived": false},
+    {"name": "wyrd-setting-renamed-away", "visibility": "PRIVATE", "isArchived": true},
+    {"name": "wyrd-chronicle-template", "visibility": "PUBLIC", "isArchived": false},
+    {"name": "wyrd-chronicle-hemmelfurt", "visibility": "PRIVATE", "isArchived": false},
+    {"name": "wyrd", "visibility": "PUBLIC", "isArchived": false}
+  ],
+  "manifest": {
+    "wyrd-setting-template": [
+      {
+        "id": "001-add-voice-guide",
+        "class": "additive",
+        "sha": "aaaa000000000000000000000000000000aaaa",
+        "summary": "Add setting/voice.md skeleton",
+        "add": ["setting/voice.md"]
+      },
+      {
+        "id": "002-rename-index-dir",
+        "class": "structural",
+        "sha": "bbbb000000000000000000000000000000bbbb",
+        "summary": "Rename index/ to index/entities/",
+        "migrate": "rollout/migrations/002-rename-index-dir.md"
+      },
+      {
+        "id": "003-add-glossary",
+        "class": "additive",
+        "sha": "cccc000000000000000000000000000000cccc",
+        "summary": "Add setting/glossary.md skeleton",
+        "add": ["setting/glossary.md"]
+      }
+    ]
+  },
+  "markers": {
+    "wyrd-setting-hemmelfurt": {
+      "template_source": "wyrd-setting-template",
+      "template_sha": "cccc000000000000000000000000000000cccc",
+      "diverged_at": null
+    },
+    "wyrd-setting-ashglass": {
+      "template_source": "wyrd-setting-template",
+      "template_sha": "aaaa000000000000000000000000000000aaaa",
+      "diverged_at": null
+    }
+  }
+}
