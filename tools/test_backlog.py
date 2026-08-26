@@ -227,6 +227,34 @@ class TestWalk(unittest.TestCase):
         self.assertEqual(first, second)
 
 
+class TestRenderNotes(unittest.TestCase):
+    """`list`'s per-issue status notes. Both facts must survive when both are true."""
+
+    def test_blocked_epic_with_no_children_reports_both(self):
+        """The exact #90 regression: losing its last child must not silence `blocked by`."""
+        epic = make_issue(90, labels=("kord-epic",))  # open_children defaults to empty
+        self.assertEqual(
+            backlog.render_notes(epic, blockers=[1]),
+            ["blocked by #1", "no open children; close or decompose"],
+        )
+
+    def test_unblocked_childless_epic_reports_only_that(self):
+        epic = make_issue(90, labels=("kord-epic",))
+        self.assertEqual(backlog.render_notes(epic, blockers=[]), ["no open children; close or decompose"])
+
+    def test_blocked_non_epic_reports_only_blocked(self):
+        leaf = make_issue(2)
+        self.assertEqual(backlog.render_notes(leaf, blockers=[9]), ["blocked by #9"])
+
+    def test_ready_leaf_reports_ready(self):
+        leaf = make_issue(2)
+        self.assertEqual(backlog.render_notes(leaf, blockers=[]), ["ready"])
+
+    def test_issue_with_open_children_reports_nothing(self):
+        parent = make_issue(1, open_children=[2], labels=("kord-epic",))
+        self.assertEqual(backlog.render_notes(parent, blockers=[]), [])
+
+
 class TestEpicsAreNeverWork(unittest.TestCase):
     """An epic is a container. Handing one out as the next thing to build is a bug.
 

@@ -369,6 +369,26 @@ def report_spent(spent: list[dict]) -> None:
         print(f"  #{entry['number']} {entry['title']}  ({rank})")
 
 
+def render_notes(issue: dict, blockers: list[int]) -> list[str]:
+    """The status notes `list` prints for one issue -- pure, so both can be true at once.
+
+    Before this, an epic's "no open children" note replaced its "blocked by" note entirely
+    (an `elif`), so a childless epic that was also blocked silently stopped reporting the
+    block the moment it lost its last child -- exactly what happened to #90 ("Implement the
+    engine", `Depends on: #1`) when #31 was removed as its child: it went from showing
+    `blocked by #1` to showing only `no open children; close or decompose`, even though it was
+    still both. Both notes are independent facts about the issue and both are reported.
+    """
+    notes: list[str] = []
+    if blockers:
+        notes.append("blocked by " + ", ".join(f"#{d}" for d in blockers))
+    if issue["is_epic"] and not issue["open_children"]:
+        notes.append("no open children; close or decompose")
+    elif not blockers and not issue["open_children"]:
+        notes.append("ready")
+    return notes
+
+
 def cmd_list(args) -> int:
     issues = fetch_issues()
     board = fetch_board()
@@ -382,13 +402,8 @@ def cmd_list(args) -> int:
         prefix = "  " * depth
         marker = f"[{rank:>3}] " if rank is not None else "      "
         blockers = effective_blockers(path, issues)
-        suffix = ""
-        if issue["is_epic"] and not issue["open_children"]:
-            suffix = "  <- no open children; close or decompose"
-        elif blockers:
-            suffix = "  <- blocked by " + ", ".join(f"#{d}" for d in blockers)
-        elif not issue["open_children"]:
-            suffix = "  <- ready"
+        notes = render_notes(issue, blockers)
+        suffix = "  <- " + "; ".join(notes) if notes else ""
         print(f"{marker}{prefix}#{number} {issue['title']}{suffix}")
         for child in sorted(issue["open_children"], key=lambda c: sort_key(c, board)):
             render(child, depth + 1, path)
