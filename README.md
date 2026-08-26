@@ -99,7 +99,7 @@ Two more trees, reachable from here so nothing in the repo is orphaned:
 | | |
 |---|---|
 | [specs/](specs/) | One directory per change that added or altered a capability — spec, plan, tasks |
-| [tools/](tools/) | Repository tooling: `backlog.py` for what to work on next, `check_docs.py` for this page's own integrity |
+| [tools/](tools/) | Repository tooling: `backlog.py` for what to work on next, `check_docs.py` for this page's own integrity, `check_dangling_mechanics.py` for a mechanic named before it is defined |
 
 ## The core idea in one paragraph
 
