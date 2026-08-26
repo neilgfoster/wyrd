@@ -1,11 +1,11 @@
 # Tables
 
-The engine holds five families of table ([`02-architecture.md`](02-architecture.md)) and, until
-this document, defined none of them. Four are rolled by rules in
-[`03-rules.md`](03-rules.md) — criticals, aftermath, transformations, afflictions. The fifth,
-oracles, has no rule that rolls it yet; it is a family the architecture commits to and the ruleset
-has not reached. This document is where all five are defined: the conventions every table satisfies,
-and the index of the families themselves.
+The engine holds five families of table ([`02-architecture.md`](02-architecture.md)). Four are
+rolled by rules in [`03-rules.md`](03-rules.md) — criticals, aftermath, transformations,
+afflictions. The fifth, oracles, is rolled by the GM's own judgment of when a question needs
+settling ([`03a-5-oracle-answers.md`](03a-5-oracle-answers.md)), not by a rule that forces the
+roll. This document is where all five are defined: the conventions every table satisfies, and the
+index of the families themselves.
 
 The conventions exist so that five families written at different times behave the same way. The
 engine fixes **the row schema and how a result is looked up**. It does not fix the die — each family
@@ -30,7 +30,7 @@ there and summarised here.
 | **Aftermath** | `d100` + 5 × points below zero | repeatable | [`03a-2-aftermath.md`](03a-2-aftermath.md) |
 | **Transformations** | `1d6` | unique per character | [`03a-3-transformations.md`](03a-3-transformations.md) |
 | **Afflictions** | `1d12`, no modifier | repeatable | [`03a-4-afflictions.md`](03a-4-afflictions.md) |
-| **Oracles** | declared by the family | repeatable | `03a-5-oracles.md` — not yet written |
+| **Oracles** | `1d100` | repeatable | [`03a-5-oracle-answers.md`](03a-5-oracle-answers.md) |
 
 A family holds one table or several. Criticals hold one per damage type; a family with a single
 table needs no variant.
