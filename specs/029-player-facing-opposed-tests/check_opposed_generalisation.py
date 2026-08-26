@@ -4,8 +4,8 @@
 CLAUDE.md: where a claim can be checked by a script, check it. #69/ADR 0027 converted combat --
 and only combat -- to a single player-facing roll against effective%, leaving the door open:
 "outside combat, two-sided opposed tests still exist, and ADR 0016 still governs them." This
-script settles whether that is still true after the generalisation, so `doc/adr/0035-*.md` and
-`doc/design/03-rules.md` section 1 are written from what it finds rather than from an assumption.
+script settles whether that is still true after the generalisation, so `docs/adr/0035-*.md` and
+`docs/design/03-rules.md` section 1 are written from what it finds rather than from an assumption.
 
 What this script does NOT do: it does not recompute effective% = clip(50 + (S - O), 5, 95). That
 mapping is already calibrated (specs/012-combat-sequencing/check_mapping.py) and this script
@@ -71,7 +71,7 @@ def tens(n: int) -> int:
 
 
 def degrees(effective: int, roll: int) -> int:
-    """doc/design/03-rules.md section 1's formula, fed effective% as the skill value -- unchanged
+    """docs/design/03-rules.md section 1's formula, fed effective% as the skill value -- unchanged
     from what specs/018-player-facing-combat/check_conversion.py already established for
     combat."""
     return tens(effective) - tens(roll)
@@ -91,30 +91,30 @@ def assert_prior_mapping() -> None:
 # historical text quoting/reasoning about it -- accepted ADRs are never edited, and a citation
 # inside one is not a live use this feature has to rewrite.
 HISTORICAL_ADR_FILES = {
-    "doc/adr/0016-opposed-tests-need-a-successful-actor.md",
-    "doc/adr/0017-assistance-group-tests-and-extended-tasks.md",
-    "doc/adr/0018-combat-sequencing.md",
-    "doc/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md",
-    "doc/adr/0027-combat-rolls-belong-to-the-player.md",
-    "doc/adr/0028-the-telling-blow-threshold-and-the-damage-finding.md",
+    "docs/adr/0016-opposed-tests-need-a-successful-actor.md",
+    "docs/adr/0017-assistance-group-tests-and-extended-tasks.md",
+    "docs/adr/0018-combat-sequencing.md",
+    "docs/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md",
+    "docs/adr/0027-combat-rolls-belong-to-the-player.md",
+    "docs/adr/0028-the-telling-blow-threshold-and-the-damage-finding.md",
     # This feature's own ADR necessarily cites "opposed test" while explaining what it retires --
     # not a live use to rewrite, the record OF the retirement.
-    "doc/adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md",
+    "docs/adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md",
 }
 
-# The index entry in doc/README.md naming ADR 0016 by its title is a pointer to a historical
+# The index entry in docs/README.md naming ADR 0016 by its title is a pointer to a historical
 # record, not a live use of the mechanism -- unaffected by this feature.
-HISTORICAL_INDEX_FILES = {"doc/README.md"}
+HISTORICAL_INDEX_FILES = {"docs/README.md"}
 
-# The one live document: doc/design/03-rules.md section 1 defines the two-sided shape today and
+# The one live document: docs/design/03-rules.md section 1 defines the two-sided shape today and
 # section 1's own carve-out sentence ("where neither is [acting]...") is the
 # two-player-controlled-entities case this feature restates rather than retires.
-LIVE_MECHANISM_FILE = "doc/design/03-rules.md"
+LIVE_MECHANISM_FILE = "docs/design/03-rules.md"
 
 
 def grep_opposed_test_citations() -> dict[str, list[str]]:
     result = subprocess.run(
-        ["grep", "-rln", "opposed test", "--include=*.md", "-i", "doc/"],
+        ["grep", "-rln", "opposed test", "--include=*.md", "-i", "docs/"],
         cwd=REPO_ROOT, capture_output=True, text=True, check=False,
     )
     files = [line for line in result.stdout.splitlines() if line]

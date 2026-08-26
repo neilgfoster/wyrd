@@ -4,11 +4,11 @@
 
 ## Summary
 
-Give the Fault Line a mechanical read: `doc/design/03-rules.md` §4's Exposure route gains one
+Give the Fault Line a mechanical read: `docs/design/03-rules.md` §4's Exposure route gains one
 conditional step — when the GM judges an Exposure source runs with the grain of a character's
 Fault Line (the same fiction-grounded judgment call already used to invoke a Drive), a failed
 resistance gains Taint one tier worse (minor 1 → 2, moderate 2 → 3, major stays 3). The
-resolution roll itself is untouched; the transformation table (`doc/design/10-transformations.md`)
+resolution roll itself is untouched; the transformation table (`docs/design/10-transformations.md`)
 is untouched. A check script computes, at real Taint trajectories, how much sooner aligned
 Exposure crosses the next threshold than unaligned Exposure at the same starting Taint. Record the
 decision — and the two rejected alternatives — as an ADR.
@@ -32,15 +32,15 @@ version of this same design programme — would plausibly propose again.
 
 ## Structure
 
-- `doc/design/03-rules.md` §4 — the Exposure subsection gains the tier-worse rule, its cap (one step
+- `docs/design/03-rules.md` §4 — the Exposure subsection gains the tier-worse rule, its cap (one step
   per event), and a statement that it is independent of an Invocation drawn against the same roll.
   §4's Fault Line subsection is rewritten to point at the mechanism instead of standing alone.
-- `doc/design/10-transformations.md` — unchanged. Verified unchanged by the check script (a
+- `docs/design/10-transformations.md` — unchanged. Verified unchanged by the check script (a
   content-hash or direct diff check) so a future edit here doesn't silently reopen the table this
   feature deliberately left alone.
-- `doc/adr/00XX-*.md` — records the decision and the two rejected alternatives (transformation
+- `docs/adr/00XX-*.md` — records the decision and the two rejected alternatives (transformation
   row selection; hidden threshold bias).
-- `doc/README.md` — ADR index updated.
+- `docs/README.md` — ADR index updated.
 - `tools/check_fault_line.py` — computes, across a spread of starting Taint values and Exposure
   tiers, the number of Exposure events until the next threshold crossing under aligned vs.
   unaligned Exposure, and confirms the tier-worse step never exceeds major (3) at the ceiling case.
@@ -58,7 +58,7 @@ document edit, its computation script, and the ADR.
 - `python3 tools/check_docs.py` — reachability, links, ADR index, link policy.
 - `python3 tools/backlog.py check` — unaffected by this change; run to confirm no drift introduced.
 - `grep` across `design/` for setting/system vocabulary — no unexpected match in changed files.
-- Manual diff of `doc/design/10-transformations.md` against `main` — confirms it is untouched, per
+- Manual diff of `docs/design/10-transformations.md` against `main` — confirms it is untouched, per
   FR-006/SC-003.
 
 ## Complexity tracking

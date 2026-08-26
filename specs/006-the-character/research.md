@@ -5,7 +5,7 @@
 ## 1. The skill-list fork was already decided, and nobody re-read the table
 
 Issue #5 asks the engine to "decide whether the skill list is engine-level or setting-level". It is
-decided. [`13-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md), in the engine/setting
+decided. [`13-authoring-a-setting.md`](../../docs/design/26-authoring-a-setting.md), in the engine/setting
 contract:
 
 | Engine provides | Setting supplies |
@@ -24,7 +24,7 @@ The same file, thirty lines later, in the permitted-overrides table:
 |---|---|
 | **Extend** | add setting-specific skills, careers, talents, gear, creatures |
 
-*Extend* presupposes a base list to add to. [`07-tooling.md`](../../doc/design/20-tooling.md) agrees with
+*Extend* presupposes a base list to add to. [`07-tooling.md`](../../docs/design/20-tooling.md) agrees with
 this reading — "a data file appended **to a list** — skills, careers, gear, creatures".
 
 Both readings are internally coherent, which is exactly why neither looks wrong. This is fault class

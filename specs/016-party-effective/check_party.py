@@ -3,22 +3,22 @@
 
 CLAUDE.md: where a claim can be checked by a script, check it. Two scaling claims in this repo
 were wrong, and both were caught only by computing them -- one of them the figure this feature
-replaces, "roughly danger 2", which doc/design/24-corpus-index.md has quoted since it was written and
+replaces, "roughly danger 2", which docs/design/24-corpus-index.md has quoted since it was written and
 which was never computed from anything, because until now there was nothing to compute it from.
 
-Every figure doc/design/03-rules.md section 7 and doc/design/24-corpus-index.md publish is asserted here,
+Every figure docs/design/03-rules.md section 7 and docs/design/24-corpus-index.md publish is asserted here,
 so an edit to either that drifts from the rule fails loudly rather than reading as authoritative.
 
 From merged design documents:
 
 1. The scaling equation is danger_effective = danger x (party_effective / written_for)
-   (doc/design/03-rules.md section 7). Its shape is not changed by this feature.
+   (docs/design/03-rules.md section 7). Its shape is not changed by this feature.
 2. written_for is the head count the content was written for, a scaling input and never a gate
-   (doc/design/24-corpus-index.md). Its meaning is not changed by this feature.
+   (docs/design/24-corpus-index.md). Its meaning is not changed by this feature.
 3. The party is a query, not a roster: characters with role companion and status with-party,
-   plus the player character (doc/design/19-state.md). status has exactly five values.
+   plus the player character (docs/design/19-state.md). status has exactly five values.
 4. danger is a multiplier inside content -- a trap written Nd4 does 6d4 at danger 6, and enemy
-   counts and skill values scale from the same number (doc/design/03-rules.md section 7).
+   counts and skill values scale from the same number (docs/design/03-rules.md section 7).
 
 Decided by this feature (specs/016-party-effective/spec.md, and the ADR):
 
@@ -35,7 +35,7 @@ import math
 from fractions import Fraction
 
 # ---------------------------------------------------------------------------
-# The five status values a companion can hold (doc/design/19-state.md). Only one
+# The five status values a companion can hold (docs/design/19-state.md). Only one
 # of them puts a body in the party.
 # ---------------------------------------------------------------------------
 
@@ -365,7 +365,7 @@ def check_who_counts() -> None:
 def check_published_figures(published: dict) -> None:
     print("\nFigures the design documents publish")
 
-    # doc/design/03-rules.md section 7, the effective-size table.
+    # docs/design/03-rules.md section 7, the effective-size table.
     for bodies, expected in (
         (1, "1.000"),
         (2, "1.500"),
@@ -382,7 +382,7 @@ def check_published_figures(published: dict) -> None:
             f"{expected}.",
         )
 
-    # doc/design/03-rules.md section 7 and doc/design/24-corpus-index.md, the worked
+    # docs/design/03-rules.md section 7 and docs/design/24-corpus-index.md, the worked
     # case that replaces "roughly danger 2".
     worked = published[(2, 4, 3)]
     print(f"  danger 3, written for 4, one character and two companions: {float(worked):.2f}")
@@ -400,7 +400,7 @@ def check_published_figures(published: dict) -> None:
             f"{expected}.",
         )
 
-    # doc/design/03-rules.md section 7, the lone character's ratio against a party
+    # docs/design/03-rules.md section 7, the lone character's ratio against a party
     # of four.
     lone_ratio = ratio(1, 4)
     print(f"  a lone character against content written for 4: ratio {float(lone_ratio):.2f}")
@@ -410,7 +410,7 @@ def check_published_figures(published: dict) -> None:
         "0.48.",
     )
 
-    # doc/design/03-rules.md section 7, the worked case's ratio.
+    # docs/design/03-rules.md section 7, the worked case's ratio.
     print(f"  three bodies against content written for 4: ratio {float(ratio(3, 4)):.2f}")
     check(
         f"{float(ratio(3, 4)):.2f}" == "0.88",
@@ -418,7 +418,7 @@ def check_published_figures(published: dict) -> None:
         "0.88.",
     )
 
-    # doc/design/03-rules.md section 7, the retinue table.
+    # docs/design/03-rules.md section 7, the retinue table.
     for bodies, expected in ((1, "0.48"), (3, "0.88"), (5, "1.10"), (10, "1.41"), (20, "1.73")):
         got = f"{float(ratio(bodies, 4)):.2f}"
         print(f"  {bodies:>2} bodies against content written for 4: ratio {got}")
@@ -428,7 +428,7 @@ def check_published_figures(published: dict) -> None:
             f"{expected}.",
         )
 
-    # doc/design/03-rules.md section 7, what a companion buys, first against fifth.
+    # docs/design/03-rules.md section 7, what a companion buys, first against fifth.
     for label, gain, expected in (
         ("first", ratio(2, 4) - ratio(1, 4), "0.24"),
         ("fifth", ratio(6, 4) - ratio(5, 4), "0.08"),

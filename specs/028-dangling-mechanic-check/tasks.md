@@ -143,7 +143,7 @@ shapes, and exit codes are 0/1 respectively.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T021 [P] Add a short section to `doc/design/20-tooling.md` section 1 (or wherever the
+- [ ] T021 [P] Add a short section to `docs/design/20-tooling.md` section 1 (or wherever the
       existing `tools/backlog.py check` / `tools/check_docs.py` guidance lives) documenting
       `tools/check_dangling_mechanics.py` as the third checked-claim script, per issue #59's
       "decide whether it runs in CI or on demand, and record why" scope item — decide on-demand

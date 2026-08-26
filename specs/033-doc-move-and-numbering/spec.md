@@ -22,8 +22,8 @@
   only the literal path token in each `specs/*/*.md` reference (old file → new location),
   exactly the same posture as the ADR-link decision below — never touching a spec's prose,
   reasoning, or any non-path content.
-- Q: Target layout? → A: Nested, with ADRs promoted to a sibling: `doc/design/*.md` and
-  `doc/adr/*.md` (not `doc/design/adr/`).
+- Q: Target layout? → A: Nested, with ADRs promoted to a sibling: `docs/design/*.md` and
+  `docs/adr/*.md` (not `docs/design/adr/`).
 - Q: Flatten the `03a`/`03a-2` inserts, or formalize the hierarchy they encode? → A: Flatten
   fully to a single reading-order sequence (`01`-`30`); the annex relationship becomes ordering
   only, not filename structure.
@@ -47,20 +47,20 @@ be understood, without the filename scheme itself carrying stale artifacts of pa
 **Why this priority**: This is the actual deliverable — everything else (link rewriting, the
 check script) exists to make this safe and to keep it true.
 
-**Independent Test**: `doc/design/` contains thirty sequentially-numbered documents; reading them
+**Independent Test**: `docs/design/` contains thirty sequentially-numbered documents; reading them
 in filename order matches the intended understanding order (the corrected version of `README.md`'s
 own table).
 
 **Acceptance Scenarios**:
 
 1. **Given** the current `design/` tree, **When** the move completes, **Then** every document
-   exists under `doc/design/` (or `doc/adr/` for decision records) with a flat two-digit number,
+   exists under `docs/design/` (or `docs/adr/` for decision records) with a flat two-digit number,
    `03a-1-criticals.md` through `03a-7-systems-of-power.md` no longer carrying letter-then-number
    notation.
 2. **Given** the corrected order, **When** `README.md`'s reading-order table is read, **Then** it
    lists all thirty documents, including the three previously missing from it.
-3. **Given** `doc/adr/*.md`, **When** the move completes, **Then** every ADR exists under
-   `doc/adr/` with its original number unchanged (ADR numbers are historical identifiers, not
+3. **Given** `docs/adr/*.md`, **When** the move completes, **Then** every ADR exists under
+   `docs/adr/` with its original number unchanged (ADR numbers are historical identifiers, not
    reading-order positions, and are never renumbered).
 
 ---
@@ -79,10 +79,10 @@ grepping every open issue's cited path against the new tree finds a match.
 **Acceptance Scenarios**:
 
 1. **Given** every relative link inside the moved tree, **When** the move completes, **Then**
-   every one resolves (`git mv` preserves the tree's internal relative structure for `doc/design/`
+   every one resolves (`git mv` preserves the tree's internal relative structure for `docs/design/`
    internally, and cross-references to `../adr/...` are repaired for the new sibling layout).
 2. **Given** `README.md` and `CLAUDE.md`'s references to `design/...` paths, **When** the move
-   completes, **Then** both are rewritten to their `doc/design/...` or `doc/adr/...` equivalents.
+   completes, **Then** both are rewritten to their `docs/design/...` or `docs/adr/...` equivalents.
 3. **Given** the eighteen `design/`-referencing lines across `tools/`, **When** the move
    completes, **Then** every one is rewritten and every affected script still runs correctly.
 4. **Given** the currently-open GitHub issues citing a `design/` path (with or without a line
@@ -123,30 +123,30 @@ target or remove one ADR from the index and get a reported failure.
   `specs/*/*.md` (User Story 2, Scenario 5) — a closed issue is not read by `tools/check_docs.py`
   at all, so there is no link-rot check forcing a repair the way there is for `specs/`.
 - What happens to an open issue's citation that includes a line number
-  (`doc/design/26-authoring-a-setting.md:157`)? The path is rewritten; the line number cannot survive
+  (`docs/design/26-authoring-a-setting.md:157`)? The path is rewritten; the line number cannot survive
   a document rename with content otherwise unchanged in position, so it is flagged in the issue
   update as "line reference may have shifted" rather than silently kept or silently dropped.
 - What happens to a relative link that already lives inside an ADR and breaks because its target
   moved? Repaired, per the Clarifications' ADR-link decision — recorded as its own new ADR so the
   policy is written down, not re-litigated per broken link.
-- What happens to `doc/README.md` itself, which currently describes both `design/*.md` and
-  `doc/adr/*.md` as a pair? It moves to `doc/README.md` — the natural hub once the two
-  subtrees (`doc/design/`, `doc/adr/`) are siblings, not a design-only document — and
+- What happens to `docs/README.md` itself, which currently describes both `design/*.md` and
+  `docs/adr/*.md` as a pair? It moves to `docs/README.md` — the natural hub once the two
+  subtrees (`docs/design/`, `docs/adr/`) are siblings, not a design-only document — and
   `tools/check_docs.py`'s `ADR_INDEX` constant is retargeted there.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Every document currently under `design/*.md` MUST exist under `doc/design/` after
+- **FR-001**: Every document currently under `design/*.md` MUST exist under `docs/design/` after
   the move, renumbered to a flat, gap-free sequence reflecting the corrected reading order.
-- **FR-002**: Every document currently under `doc/adr/*.md` MUST exist under `doc/adr/` after
+- **FR-002**: Every document currently under `docs/adr/*.md` MUST exist under `docs/adr/` after
   the move, keeping its original ADR number unchanged.
-- **FR-003**: `doc/README.md` MUST move to `doc/README.md`, retaining its role as the hub
-  describing the `doc/design/` vs `doc/adr/` distinction and indexing every ADR.
+- **FR-003**: `docs/README.md` MUST move to `docs/README.md`, retaining its role as the hub
+  describing the `docs/design/` vs `docs/adr/` distinction and indexing every ADR.
 - **FR-004**: All 199 relative links internal to the moved tree MUST resolve after the move,
-  including any `design/*.md` ↔ `doc/adr/*.md` cross-reference now crossing a sibling boundary
-  (`doc/design/` ↔ `doc/adr/`) rather than a parent-child one.
+  including any `design/*.md` ↔ `docs/adr/*.md` cross-reference now crossing a sibling boundary
+  (`docs/design/` ↔ `docs/adr/`) rather than a parent-child one.
 - **FR-005**: `README.md` and `CLAUDE.md`'s references to the moved paths MUST be rewritten to
   the new locations.
 - **FR-006**: Every `design/`-referencing line in `tools/*.py` MUST be rewritten to the new
@@ -165,14 +165,14 @@ target or remove one ADR from the index and get a reported failure.
 - **FR-010**: All `git mv` operations MUST be used for the moves so file history remains
   followable by `git log --follow`.
 - **FR-011**: A link-check script MUST fail when a relative link inside `doc/` is dead, or when
-  an ADR file exists on disk with no entry in `doc/README.md`'s index — retargeting
+  an ADR file exists on disk with no entry in `docs/README.md`'s index — retargeting
   `tools/check_docs.py`'s existing checks at the new root rather than writing new ones.
 - **FR-012**: The ADR-link-repair decision (Clarifications) MUST be recorded as a new ADR.
 
 ### Key Entities
 
-- **Design document**: one file under `doc/design/`, identified by its flat sequence number.
-- **Decision record (ADR)**: one file under `doc/adr/`, identified by its historical number,
+- **Design document**: one file under `docs/design/`, identified by its flat sequence number.
+- **Decision record (ADR)**: one file under `docs/adr/`, identified by its historical number,
   independent of reading-order position.
 - **Reference**: a citation of a `design/...` path in `README.md`, `CLAUDE.md`, `tools/`, or an
   open issue body — the set this feature updates. A citation in `specs/` or a closed issue is
@@ -182,13 +182,13 @@ target or remove one ADR from the index and get a reported failure.
 
 ### Measurable Outcomes
 
-- **SC-001**: `doc/design/` holds thirty flatly-numbered documents and `doc/adr/` holds every
+- **SC-001**: `docs/design/` holds thirty flatly-numbered documents and `docs/adr/` holds every
   ADR under its original number; nothing remains under the old `design/` path.
 - **SC-002**: `tools/check_docs.py`, retargeted at `doc/`, reports zero dead links and a complete
   ADR index in one run.
 - **SC-003**: Every currently-open issue citing a `design/` path resolves to the correct new file
   after the update.
-- **SC-004**: A `git log --follow doc/design/<any file>` on any moved document reaches its
+- **SC-004**: A `git log --follow docs/design/<any file>` on any moved document reaches its
   pre-move history.
 - **SC-005**: A grep for common substitution-corruption patterns (mangled words) across every
   file this feature touches finds none.
@@ -205,4 +205,4 @@ target or remove one ADR from the index and get a reported failure.
   (`03a-5-oracle-answers.md`, `03a-6-oracle-prompts.md`, `04a-out-of-character-mode.md`) are
   slotted into the flattened sequence by their filename's implied position, confirmed with the
   operator during specification.
-- `doc/README.md`'s move to `doc/README.md` is itself a `git mv`, preserving its history.
+- `docs/README.md`'s move to `docs/README.md` is itself a `git mv`, preserving its history.

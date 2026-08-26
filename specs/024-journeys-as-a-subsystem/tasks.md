@@ -5,7 +5,7 @@
 
 ## Phase 1 — Design document: the journey shape (US1)
 
-- [X] T001 Write `doc/design/30-journeys.md`: define a journey as a `scale: journey` arc
+- [X] T001 Write `docs/design/30-journeys.md`: define a journey as a `scale: journey` arc
   (`id`/`type`/`scale`/`name`/`from`/`to`/`pace`/`hazard_rating`/`hazards`/`roles`/`children`,
   per `data-model.md`), and a leg as an ordinary arc/beat child that declares `mode`. State
   each field's default when omitted. [FR-001, FR-003, FR-006]
@@ -32,12 +32,12 @@
 
 ## Phase 2 — Cross-references from the documents journeys extend (US1, US2)
 
-- [X] T007 In `doc/design/18-campaign.md`'s elapsed-time section, add one cross-reference line to
+- [X] T007 In `docs/design/18-campaign.md`'s elapsed-time section, add one cross-reference line to
   `17-journeys.md` for the played-journey case, changing no other prose in that section. [FR-002,
   FR-006, SC-002]
-- [X] T008 In `doc/design/28-arcs-and-beats.md`, add one cross-reference noting `scale: journey` as
+- [X] T008 In `docs/design/28-arcs-and-beats.md`, add one cross-reference noting `scale: journey` as
   a recognised arc scale, pointing to `17-journeys.md` for its fields. [FR-001, SC-001]
-- [X] T009 In `doc/design/26-authoring-a-setting.md`'s worked example, update the "Journeys as a
+- [X] T009 In `docs/design/26-authoring-a-setting.md`'s worked example, update the "Journeys as a
   played mechanic — an engine gap" row to point at `17-journeys.md` now that the gap is closed;
   leave the permitted/not-permitted "engine gap" framing itself untouched (it is still true in
   general — checked, not assumed). [FR-009, SC-004]
@@ -58,7 +58,7 @@
 - [X] T013 Compute the hazard-roll worked example (T002) against the Threat activation table's
   own worked numbers in `05-campaign.md` and confirm they agree in shape (percent-per-unit =
   rating × 10). [CLAUDE.md — "check the maths"]
-- [X] T014 Diff `doc/design/18-campaign.md`'s elapsed-time section before/after T007 and confirm the
+- [X] T014 Diff `docs/design/18-campaign.md`'s elapsed-time section before/after T007 and confirm the
   only change is the added cross-reference line — no rewritten prose. [SC-002]
 - [X] T015 `grep` the touched files for setting/system vocabulary; confirm none. [CLAUDE.md]
 - [X] T016 Run `python3 tools/check_docs.py` — must pass.

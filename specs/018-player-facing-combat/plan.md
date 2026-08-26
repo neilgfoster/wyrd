@@ -84,12 +84,12 @@ re-deriving them from scratch.
 
 | Document | Change |
 |---|---|
-| `doc/design/03-rules.md` §1 | the two-sided opposed-test description is narrowed or removed per FR-007's answer; degrees' formula is unchanged in wording but its worked commentary updated for the new input |
-| `doc/design/03-rules.md` §2 | the exchange rewritten: one attack roll, one defence roll, the opponent never rolls; telling-blow threshold updated to the computed figure; starting-Stamina table updated if changed |
-| `doc/adr/0016-*.md` | left untouched (accepted ADRs are never edited) |
-| `doc/adr/0027` (new) | supersedes ADR 0016 for combat's single-roll structure; states what, if anything, still uses a two-sided opposed test |
-| `doc/adr/0028` (new) | the telling-blow threshold and the damage-multiplier finding, computed rather than asserted |
-| `doc/README.md` | updated only if a new document is added (none currently planned — this is a rewrite of existing documents plus two ADRs) |
+| `docs/design/03-rules.md` §1 | the two-sided opposed-test description is narrowed or removed per FR-007's answer; degrees' formula is unchanged in wording but its worked commentary updated for the new input |
+| `docs/design/03-rules.md` §2 | the exchange rewritten: one attack roll, one defence roll, the opponent never rolls; telling-blow threshold updated to the computed figure; starting-Stamina table updated if changed |
+| `docs/adr/0016-*.md` | left untouched (accepted ADRs are never edited) |
+| `docs/adr/0027` (new) | supersedes ADR 0016 for combat's single-roll structure; states what, if anything, still uses a two-sided opposed test |
+| `docs/adr/0028` (new) | the telling-blow threshold and the damage-multiplier finding, computed rather than asserted |
+| `docs/README.md` | updated only if a new document is added (none currently planned — this is a rewrite of existing documents plus two ADRs) |
 
 ## The order of work
 

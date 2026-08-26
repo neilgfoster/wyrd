@@ -4,10 +4,10 @@
 
 ## Summary
 
-Write ADR 0012 recording the reset and the consolidation rule, update `doc/README.md`'s lifecycle
+Write ADR 0012 recording the reset and the consolidation rule, update `docs/README.md`'s lifecycle
 table to describe it, and extend `tools/check_docs.py` so a stale ADR reference cannot go unnoticed.
 
-The foundation review found no fault in `doc/design/01-principles.md`, so that document is not touched.
+The foundation review found no fault in `docs/design/01-principles.md`, so that document is not touched.
 The finding is recorded in [research.md](./research.md) instead.
 
 ## The consolidation rule
@@ -15,7 +15,7 @@ The finding is recorded in [research.md](./research.md) instead.
 The shape, decided here and recorded in the ADR:
 
 ```
-doc/adr/
+docs/adr/
   0001-….md                Accepted           ← live set, renumbered once, in Stage 13
   0005-….md                Accepted
   superseded/
@@ -27,7 +27,7 @@ Four parts:
 1. **Marking.** A superseded record's `**Status:**` line becomes `Superseded by ADR NNNN`, and the
    superseding record carries `**Supersedes:** ADR NNNN`. Nothing else in a superseded record is
    ever edited — its reasoning is the thing being preserved.
-2. **Location.** Superseded records move to `doc/adr/superseded/`.
+2. **Location.** Superseded records move to `docs/adr/superseded/`.
 3. **Numbering.** The archive keeps original numbers **permanently**. The live set is renumbered into
    a clean sequence. So a reference to a superseded decision always resolves; only references to
    records that stayed live and changed number need rewriting.
@@ -44,7 +44,7 @@ revisited decision simply takes the next free number.
 `ADR 0005`, of which there are 11 — resolves to nothing and nothing notices.
 
 ```
-ADR 0005  →  doc/adr/0005-*.md   or   doc/adr/superseded/0005-*.md
+ADR 0005  →  docs/adr/0005-*.md   or   docs/adr/superseded/0005-*.md
 ```
 
 Matching on the number rather than the slug is deliberate: a record's slug may be improved during
@@ -70,7 +70,7 @@ What it cannot fix: 12 commit messages. Recorded in the ADR as an accepted, perm
 
 1. `research.md` — the foundation review finding and the deferred tone knob.
 2. ADR 0012 — the reset and the consolidation rule.
-3. `doc/README.md` — lifecycle table, and the archive convention.
+3. `docs/README.md` — lifecycle table, and the archive convention.
 4. `check_docs.py` — the ADR reference check, resolving against live set and archive.
 5. Tests — construct a stale reference, a valid one, and one resolving into `superseded/`.
 6. Run; confirm the repo is clean.

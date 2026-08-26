@@ -26,7 +26,7 @@ drifts, and the drift is invisible.
 
 *Alignment* is unusable: it is a specific published system's term and would fail the naming rule in
 `CLAUDE.md` on sight. *Creed* was considered and rejected as leaning religious, which is a register,
-and registers belong to settings ([ADR 0004](../../doc/adr/0004-tone-belongs-to-the-setting.md)).
+and registers belong to settings ([ADR 0004](../../docs/adr/0004-tone-belongs-to-the-setting.md)).
 
 **Loyalty** is plain, unused, carries no genre, and covers both the chosen kind (a sworn servant) and
 the imposed kind (born to a side). Settings rename it anyway; renames are presentation-only.

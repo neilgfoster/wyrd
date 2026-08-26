@@ -74,11 +74,11 @@ threshold and degrees distribution from `check_conversion.py`) rather than re-de
 
 | Document | Change |
 |---|---|
-| `doc/design/03-rules.md` §1 | "Opposed tests" rewritten to the player-facing shape (generalised from §2's wording); the two-player-controlled-entities carve-out restated explicitly as its own rule |
-| `doc/design/03-rules.md` §2 | unchanged in substance; its "Combat does not use this shape" cross-reference to §1 is revisited since §1 no longer describes a different shape |
-| `doc/adr/0016-*.md` | left untouched (accepted ADRs are never edited) |
-| `doc/adr/0035` (new) | supersedes ADR 0016 in full (pending Step 1's grep confirming no live scope survives) |
-| `doc/README.md` | updated only if a new document is added (none planned — this is a rewrite of an existing document plus one ADR) |
+| `docs/design/03-rules.md` §1 | "Opposed tests" rewritten to the player-facing shape (generalised from §2's wording); the two-player-controlled-entities carve-out restated explicitly as its own rule |
+| `docs/design/03-rules.md` §2 | unchanged in substance; its "Combat does not use this shape" cross-reference to §1 is revisited since §1 no longer describes a different shape |
+| `docs/adr/0016-*.md` | left untouched (accepted ADRs are never edited) |
+| `docs/adr/0035` (new) | supersedes ADR 0016 in full (pending Step 1's grep confirming no live scope survives) |
+| `docs/README.md` | updated only if a new document is added (none planned — this is a rewrite of an existing document plus one ADR) |
 
 ## The order of work
 
@@ -110,7 +110,7 @@ Wyrd rules feature, e.g. `specs/018-player-facing-combat`)
 **Constraints**: no setting/system vocabulary in `design/`; an accepted ADR is never edited;
 rule changes apply forward only
 
-**Scale/Scope**: one section of `doc/design/03-rules.md` rewritten in place, one new ADR, one check
+**Scale/Scope**: one section of `docs/design/03-rules.md` rewritten in place, one new ADR, one check
 script
 
 ## Constitution Check
@@ -156,7 +156,7 @@ by the check script itself, not by research.
 design/
 └── 03-rules.md              # §1 rewritten in place
 
-doc/adr/
+docs/adr/
 └── 0035-*.md                # new: supersedes ADR 0016 in full
 
 specs/029-player-facing-opposed-tests/

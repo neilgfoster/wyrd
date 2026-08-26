@@ -4,9 +4,9 @@
 
 ## Summary
 
-`git mv design/*.md` (renumbered flat, per data-model.md's mapping) into `doc/design/`;
-`git mv doc/adr/` into `doc/adr/` (numbers unchanged); `git mv doc/README.md` to
-`doc/README.md`. Rewrite every relative link inside the moved tree (parsed and substituted via a
+`git mv design/*.md` (renumbered flat, per data-model.md's mapping) into `docs/design/`;
+`git mv docs/adr/` into `docs/adr/` (numbers unchanged); `git mv docs/README.md` to
+`docs/README.md`. Rewrite every relative link inside the moved tree (parsed and substituted via a
 mapping table, never blind find-and-replace) plus `README.md`, `CLAUDE.md`, and every
 `design/`-referencing line in `tools/*.py`. Update every currently-open GitHub issue citing a
 `design/` path. Retarget `tools/check_docs.py`'s `HUB`/`ADR_INDEX` constants at the new root.
@@ -40,7 +40,7 @@ across `README.md`/`CLAUDE.md`/`tools/` rewritten; 24 open issues updated
 - **Nothing unpublishable** — pure reorganization of already-public design prose. **Pass.**
 - **No setting or system names in `design/`/`README.md`** — this feature renames files and
   rewrites paths; it does not touch prose content. **Pass.**
-- **Deterministic over inference** (`doc/design/20-tooling.md` — soon `doc/design/20-tooling.md`) —
+- **Deterministic over inference** (`docs/design/20-tooling.md` — soon `docs/design/20-tooling.md`) —
   the old→new mapping is a fixed table (data-model.md), substitution is scripted and verified by
   grep, not asserted by eye. **Pass.**
 - **Accepted ADRs never edited** — this feature's own Clarifications settle that a *path inside*
@@ -67,7 +67,7 @@ specs/033-doc-move-and-numbering/
 
 ```text
 doc/
-├── README.md                    # was doc/README.md
+├── README.md                    # was docs/README.md
 ├── design/
 │   ├── 01-principles.md         # ... through 30-journeys.md, per data-model.md's mapping
 │   └── ...
@@ -76,14 +76,14 @@ doc/
     ├── ...
     └── superseded/
 
-README.md                        # rewritten: design/... -> doc/design/... or doc/adr/...
+README.md                        # rewritten: design/... -> docs/design/... or docs/adr/...
 CLAUDE.md                        # same
 tools/check_docs.py              # HUB/ADR_INDEX retargeted at doc/
 tools/*.py                       # every other design/ reference rewritten
-doc/adr/0038-...-adr-link-repair.md   # new ADR recording the link-repair policy (FR-012)
+docs/adr/0038-...-adr-link-repair.md   # new ADR recording the link-repair policy (FR-012)
 ```
 
-**Structure Decision**: `design/` is retired entirely; `doc/design/` and `doc/adr/` are its
+**Structure Decision**: `design/` is retired entirely; `docs/design/` and `docs/adr/` are its
 replacement, siblings under a new `doc/` root. No new script is written — `tools/check_docs.py`
 is retargeted, per research.md's decision not to duplicate an existing checked mechanism.
 

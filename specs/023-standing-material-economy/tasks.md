@@ -20,51 +20,51 @@
 
 ## Phase 2 — Design document: Standing (US1)
 
-- [X] T005 Add **Standing** to the engine-label table at the top of `doc/design/03-rules.md`,
+- [X] T005 Add **Standing** to the engine-label table at the top of `docs/design/03-rules.md`,
   alongside Taint/Trauma/Strain/Resolve/Fate: what it measures (social position), that it is an
   open-ended count like the other tracks (not a percentile, not a capped band). [FR-001, FR-008]
-- [X] T006 In `doc/design/03-rules.md` (near the other tracks, §4-5's neighbourhood), state what
-  raises and lowers Standing in play, and cross-reference `doc/design/23-diegesis.md` for how it is
+- [X] T006 In `docs/design/03-rules.md` (near the other tracks, §4-5's neighbourhood), state what
+  raises and lowers Standing in play, and cross-reference `docs/design/23-diegesis.md` for how it is
   rendered to the player (diegetic status, never a raw number). [FR-001, FR-002]
-- [X] T007 Rewrite `doc/design/16-session.md:112`'s Upkeep line in place: "lose 1 Standing, or spend
+- [X] T007 Rewrite `docs/design/16-session.md:112`'s Upkeep line in place: "lose 1 Standing, or spend
   coin equal to Standing" now resolves against the definitions from T005/T006 and the coin
   definition from T009 — no dangling forward reference. State what losing Standing costs the
   character concretely (not only that the number changes). [FR-001, FR-002, SC-001, SC-003]
 
 ## Phase 3 — Design document: wealth and gear (US2)
 
-- [X] T008 Expand `doc/design/26-authoring-a-setting.md:19`'s `gear.yaml` line into the field list
+- [X] T008 Expand `docs/design/26-authoring-a-setting.md:19`'s `gear.yaml` line into the field list
   from `data-model.md` (weapon and armour schemas), and note `tools/check_gear.py` as its
   validator, mirroring how the adversary block's line points at `check_bestiary.py`. [FR-003,
   FR-004, SC-002]
-- [X] T009 In `doc/design/03-rules.md` §2, add the wealth (coin) definition: a small stated count, no
+- [X] T009 In `docs/design/03-rules.md` §2, add the wealth (coin) definition: a small stated count, no
   transaction ledger, and its explicit reconciliation with Standing (Standing is owed by
   position, coin is on hand; Upkeep is where they convert). [FR-005]
 
 ## Phase 4 — Design document: encumbrance and casual/martial (US3, US4)
 
-- [X] T010 In `doc/design/23-diegesis.md`'s "Inventory — realistic, not logistic" section, extend the
+- [X] T010 In `docs/design/23-diegesis.md`'s "Inventory — realistic, not logistic" section, extend the
   existing "what is missing" framing to state the encumbrance question explicitly ("can this
   plausibly be carried") as the same kind of GM judgment call, with no numeric mechanism added.
   [FR-006, SC-004]
-- [X] T011 In `doc/design/03-rules.md` §2, next to the existing casual/martial sentence, state the
+- [X] T011 In `docs/design/03-rules.md` §2, next to the existing casual/martial sentence, state the
   concrete Standing consequence (and, where the GM judges it, an encounter trigger) for a martial
   weapon seen somewhere restricted — replacing the current social-framing-only sentence. [FR-007]
 
 ## Phase 5 — Decision record
 
-- [X] T012 Write `doc/adr/0033-standing-and-the-material-economy.md`: Standing kept and
+- [X] T012 Write `docs/adr/0033-standing-and-the-material-economy.md`: Standing kept and
   defined (rejecting removal); Standing as an open count (rejecting a percentile or capped band);
   coin as a stated total (rejecting both pure abstraction and a full ledger); encumbrance as GM
   judgment (rejecting a weight table or a roll); the casual/martial consequence routed through
   Standing (rejecting a new parallel mechanism). Each with its rejected alternative.
-- [X] T013 Add ADR 0033 to `doc/README.md`'s index.
+- [X] T013 Add ADR 0033 to `docs/README.md`'s index.
 
 ## Phase 6 — Verification
 
 - [X] T014 `grep -rn "Standing" design/` and confirm every hit resolves within a document that
   also defines the term — no remaining dangling reference. [SC-001]
-- [X] T015 Read `doc/design/16-session.md`'s Upkeep step cold, with no other document open; confirm
+- [X] T015 Read `docs/design/16-session.md`'s Upkeep step cold, with no other document open; confirm
   every term it uses resolves within `design/`. [SC-003]
 - [X] T016 `grep` the touched files for setting/system vocabulary and tonal register; confirm
   none. [FR-008]

@@ -15,11 +15,11 @@ rules-with-a-schema feature. No separate contract/integration test suite applies
 
 ## Phase 2: Foundational
 
-- [ ] T002 Write `doc/adr/0036-one-configurable-power-mechanism.md` recording the load-bearing
+- [ ] T002 Write `docs/adr/0036-one-configurable-power-mechanism.md` recording the load-bearing
       fork: one configurable system-of-power schema vs. a closed set of engine-side mechanism
       shapes, decided in favour of one schema, with the rejected alternative and its reasoning
       (mirrors plan.md's "The load-bearing decision" section and the existing ADR format, e.g.
-      `doc/adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md`).
+      `docs/adr/0035-opposed-tests-generalise-to-the-player-facing-roll.md`).
 
 **Checkpoint**: ADR 0036 exists and is internally consistent with plan.md before any schema or
 document work depends on it.
@@ -32,11 +32,11 @@ it.
 **Independent Test**: run `tools/check_power_systems.py` against its own embedded fixtures and
 confirm it accepts a well-formed declaration and rejects a missing/unrecognised field.
 
-- [ ] T003 [US1] Write `doc/design/14-systems-of-power.md`: the schema table (`id`, `name`,
+- [ ] T003 [US1] Write `docs/design/14-systems-of-power.md`: the schema table (`id`, `name`,
       `skill`, `strain_cost`, `requires_training` required; `resolve_cost`, `ill_omen_taint`,
       `description` optional), the unrecognised-field rejection rule (mirroring
       `13-authoring-a-setting.md`'s bestiary/gear wording), and a worked example declaration.
-- [ ] T004 [US1] Add a link to `doc/design/14-systems-of-power.md` from `doc/README.md`'s index
+- [ ] T004 [US1] Add a link to `docs/design/14-systems-of-power.md` from `docs/README.md`'s index
       so `tools/check_docs.py`'s reachability check passes.
 - [ ] T005 [US1] Write `tools/check_power_systems.py`: the restricted YAML reader (reused/adapted
       from `tools/check_bestiary.py`'s pattern), `REQUIRED_FIELDS`/`OPTIONAL_FIELDS` per T003's
@@ -58,18 +58,18 @@ system of power.
 **Goal**: Casting resolves as the engine's ordinary d100 test, with the declared Strain/Resolve
 cost paid on resolution and the training gate enforced.
 
-**Independent Test**: read `doc/design/14-systems-of-power.md`'s resolution section against
-`doc/design/03-rules.md` §1 and confirm no new dice mechanism, difficulty rule, or assistance rule is
+**Independent Test**: read `docs/design/14-systems-of-power.md`'s resolution section against
+`docs/design/03-rules.md` §1 and confirm no new dice mechanism, difficulty rule, or assistance rule is
 introduced — the only new behaviour is cost application and the training gate.
 
-- [ ] T008 [US2] Add the resolution section to `doc/design/14-systems-of-power.md`: invocation is
+- [ ] T008 [US2] Add the resolution section to `docs/design/14-systems-of-power.md`: invocation is
       an ordinary d100 test against the declared `skill` (difficulty, declaration, assistance
       unchanged from `03-rules.md` §1); the declared `strain_cost` is paid on resolution
       regardless of outcome; the declared `resolve_cost`, if present, is paid identically;
       `requires_training: true` removes the untrained attempt entirely, mirroring the existing
       untrained-skill rule.
-- [ ] T009 [US2] Add a one-line cross-reference at the end of `doc/design/03-rules.md` §1 pointing to
-      `doc/design/14-systems-of-power.md`, matching how other consequence chains are
+- [ ] T009 [US2] Add a one-line cross-reference at the end of `docs/design/03-rules.md` §1 pointing to
+      `docs/design/14-systems-of-power.md`, matching how other consequence chains are
       cross-referenced elsewhere in that document.
 - [ ] T010 [US2] Extend `tools/check_power_systems.py`'s worked examples to show the resolution
       trace (skill test → cost applied) for both fixtures from T006, asserting the cost figures
@@ -83,12 +83,12 @@ fully specified and consistent with `03-rules.md` §1.
 **Goal**: A power test's Ill Omen applies the declared Taint gain through the existing
 transformation-threshold path, with no new table and correct behaviour when Taint is disabled.
 
-**Independent Test**: read the Ill Omen section against `doc/design/10-transformations.md` and
+**Independent Test**: read the Ill Omen section against `docs/design/10-transformations.md` and
 confirm the Taint gain routes through the same accrual path Exposure/the Bargain already use, and
 that disabling Taint (`overrides.disable: [taint]`) suppresses it without affecting the base roll
 or the Strain/Resolve costs.
 
-- [ ] T011 [US3] Add the Ill Omen section to `doc/design/14-systems-of-power.md`: on Ill Omen, the
+- [ ] T011 [US3] Add the Ill Omen section to `docs/design/14-systems-of-power.md`: on Ill Omen, the
       caster gains the declared `ill_omen_taint` (default 1) via the engine's existing
       Taint-accrual path, a transformation-table roll follows immediately if a threshold is
       crossed, and disabling Taint suppresses this consequence entirely while leaving the base
@@ -102,14 +102,14 @@ specified and reuses the existing consequence chain.
 
 ## Phase 6: Polish & cross-cutting concerns
 
-- [ ] T013 [P] Run `python3 tools/check_docs.py` and confirm `doc/design/14-systems-of-power.md` is
+- [ ] T013 [P] Run `python3 tools/check_docs.py` and confirm `docs/design/14-systems-of-power.md` is
       reachable from `README.md` and the ADR index picks up ADR 0036.
 - [ ] T014 [P] Run `python3 tools/check_dangling_mechanics.py` and confirm no dangling reference
       is introduced by the new document.
 - [ ] T015 [P] Run `python3 tools/backlog.py check` and confirm no drift.
 - [ ] T016 Run `ruff check . && ruff format --check . && python3 -m pytest -q` and confirm the
       repo-wide suite is green.
-- [ ] T017 Re-read `doc/design/14-systems-of-power.md` end to end for the recurring fault classes in
+- [ ] T017 Re-read `docs/design/14-systems-of-power.md` end to end for the recurring fault classes in
       `CLAUDE.md`'s checklist (setting vocabulary, tone baked into a mechanic, staleness against
       `03-rules.md`/`03a-3-transformations.md`) before raising the PR.
 

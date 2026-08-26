@@ -8,7 +8,7 @@ the moved files, using the mapping as its only source of truth. Run once, then d
 
 **Rationale**: This move happens exactly once — the whole point of settling the numbering
 convention is that it does not need doing again. A permanent script for a one-time migration
-would be dead code the moment it finishes, and `doc/design/20-tooling.md`'s "stdlib only" principle
+would be dead code the moment it finishes, and `docs/design/20-tooling.md`'s "stdlib only" principle
 governs *engine* tooling, not a throwaway repo-surgery script. `tools/check_docs.py`, which does
 need to keep running, is retargeted rather than replaced.
 
@@ -28,18 +28,18 @@ doesn't appear in the mapping is left untouched and flagged for manual review.
 against a closed, known mapping cannot produce a partial-word match the way a regex substitution
 over raw text can.
 
-**Alternatives considered**: `sed -i 's#design/#doc/design/#g'` (rejected outright — this is
+**Alternatives considered**: `sed -i 's#design/#docs/design/#g'` (rejected outright — this is
 exactly the operation CLAUDE.md's incident log warns against, and it can't handle the ADR
 renumbering-free-but-directory-change or the design-doc renumbering at all).
 
 ## Decision: open-issue line-number citations are flagged, not silently rewritten
 
-**Decision**: An open issue citing `doc/design/26-authoring-a-setting.md:157` gets its path rewritten
-to `doc/design/26-authoring-a-setting.md` but the update explicitly notes the line number may no
+**Decision**: An open issue citing `docs/design/26-authoring-a-setting.md:157` gets its path rewritten
+to `docs/design/26-authoring-a-setting.md` but the update explicitly notes the line number may no
 longer point at the same content, rather than either stripping it or assuming it still holds.
 
 **Rationale**: This move renumbers files but does not touch their content, so most line numbers
-probably still hold -- but "probably" is not "computed," and doc/design/20-tooling.md's own
+probably still hold -- but "probably" is not "computed," and docs/design/20-tooling.md's own
 deterministic-over-inference principle says not to assert what wasn't checked. Flagging costs one
 sentence per issue; asserting a wrong line number costs someone's trust in the citation.
 
@@ -73,15 +73,15 @@ tokens directly).
 
 ## Decision: the ADR-link-repair policy becomes its own ADR, not a footnote
 
-**Decision**: FR-012 -- a new `doc/adr/0038-....md` records "an ADR's reasoning is immutable; a
+**Decision**: FR-012 -- a new `docs/adr/0038-....md` records "an ADR's reasoning is immutable; a
 relative path inside it is repaired like any other link" as a permanent, citable policy.
 
 **Rationale**: The issue itself calls this "the load-bearing decision in this issue" and notes it
-"has not been asked before." `doc/README.md`'s own rule (an ADR earns its record when a real
+"has not been asked before." `docs/README.md`'s own rule (an ADR earns its record when a real
 alternative was rejected and someone would plausibly propose it again) applies exactly here --
 CLAUDE.md's own "never edited" rule is the rejected-alternative-if-taken-literally case, and
 future path repairs (the next time something moves) would otherwise re-ask this exact question.
 
 **Alternatives considered**: a note in `CLAUDE.md` instead (rejected -- `CLAUDE.md` governs how
 Wyrd is built, not why a specific tension in its own rules resolved one way; this is precisely
-what `doc/README.md`'s ADR criteria describes).
+what `docs/README.md`'s ADR criteria describes).

@@ -2,20 +2,20 @@
 """Check that the documents hold together: reachable from the hub, linked, indexed, on-policy.
 
 Every index in this repo had gone stale silently before this existed. The README's reading
-order was missing the Aftermath family, doc/README.md's decision-record index was three
+order was missing the Aftermath family, docs/README.md's decision-record index was three
 records behind, the repositories table named a convention no repo had used for days, and the
 status section linked a directory that did not exist while asserting the design was complete.
 None of that was found by reading. All of it was found by script in ten minutes.
 
-So the hub is a checked invariant rather than a courtesy (doc/adr/0011, and
-doc/design/20-tooling.md section 1: where a claim can be checked, check it).
+So the hub is a checked invariant rather than a courtesy (docs/adr/0011, and
+docs/design/20-tooling.md section 1: where a claim can be checked, check it).
 
 Four checks:
 
-1. **Reachable** -- every doc/design/**.md is reachable from README.md by some chain of
+1. **Reachable** -- every docs/design/**.md is reachable from README.md by some chain of
    relative links. A document nothing links to is a document nobody reads.
 2. **Linked** -- every relative link target exists on disk, anywhere in the repo.
-3. **Indexed** -- every file in doc/adr/ appears in doc/README.md.
+3. **Indexed** -- every file in docs/adr/ appears in docs/README.md.
 4. **On policy** -- no [[wikilink]] in prose. Prose links like GitHub, data links like
    Obsidian; the rule is only worth having if something enforces it.
 
@@ -23,7 +23,7 @@ Usage:
     python3 tools/check_docs.py
     python3 tools/check_docs.py --format json
 
-Python 3.11+, standard library only (doc/design/20-tooling.md). Reads the filesystem, nothing
+Python 3.11+, standard library only (docs/design/20-tooling.md). Reads the filesystem, nothing
 else.
 """
 
@@ -36,10 +36,10 @@ import re
 import sys
 
 HUB = "README.md"
-ADR_DIR = "doc/adr"
-ADR_INDEX = "doc/README.md"
-ADR_ARCHIVE = "doc/adr/superseded"
-ADR_ARCHIVE_INDEX = "doc/adr/superseded/README.md"
+ADR_DIR = "docs/adr"
+ADR_INDEX = "docs/README.md"
+ADR_ARCHIVE = "docs/adr/superseded"
+ADR_ARCHIVE_INDEX = "docs/adr/superseded/README.md"
 
 # Trees that are not ours to police: vendored substrates, tooling caches, git internals.
 SKIP_PARTS = {".git", ".specify", ".claude", ".pytest_cache", "node_modules", "__pycache__"}
@@ -49,7 +49,7 @@ SKIP_PREFIXES = (".github/ISSUE_TEMPLATE",)
 # a spec is the record of one past change rather than current design, so an index entry per
 # spec file would be noise -- and noise is how an index stops being read. specs/ is still
 # reachable as a directory, and its links are still checked for rot.
-REACHABLE_REQUIRED = ("doc/design/", "doc/adr/")
+REACHABLE_REQUIRED = ("docs/design/", "docs/adr/")
 
 MD_LINK = re.compile(r"\[([^\]]*)\]\(\s*<?([^)>\s]+)>?\s*\)")
 # A prose reference to a decision record: "ADR 0005". These are NOT links, so the link check
@@ -84,7 +84,7 @@ def markdown_files(root: pathlib.Path) -> list[pathlib.Path]:
 def strip_code(text: str) -> str:
     """Remove fenced blocks and inline spans.
 
-    Wikilinks legitimately appear in doc/design/27-entities.md, 19-state.md, 20-tooling.md and
+    Wikilinks legitimately appear in docs/design/27-entities.md, 19-state.md, 20-tooling.md and
     08-maintenance.md -- always inside a YAML example or an inline span describing the
     convention. Allowing them exactly there, and nowhere else, is checkable without an
     allowlist of filenames that would itself go stale.
@@ -233,7 +233,7 @@ def check_adr_references(root: pathlib.Path) -> list[Problem]:
 
 
 def check_link_policy(root: pathlib.Path) -> list[Problem]:
-    """No wikilinks in prose (doc/adr/0011). GitHub renders them as literal text."""
+    """No wikilinks in prose (docs/adr/0011). GitHub renders them as literal text."""
     problems = []
     for path in markdown_files(root):
         rel = path.relative_to(root).as_posix()
@@ -241,7 +241,7 @@ def check_link_policy(root: pathlib.Path) -> list[Problem]:
         for match in WIKILINK.findall(text):
             problems.append(Problem(
                 f"{rel} uses {match} in prose; prose links with markdown so it renders on "
-                "GitHub (doc/adr/0011). Wikilinks belong in entity data."
+                "GitHub (docs/adr/0011). Wikilinks belong in entity data."
             ))
     return problems
 

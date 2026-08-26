@@ -14,7 +14,7 @@ gate wastes 61-84% of a player's rolls) is not unique to combat. Any two-sided o
 one side is an NPC/opponent has the same shape — the acting side must succeed, then beat the
 resisting side's degrees — and the same waste.
 
-`check_opposed_generalisation.py` grepped `doc/design/` for every citation of "opposed test" as a
+`check_opposed_generalisation.py` grepped `docs/design/` for every citation of "opposed test" as a
 mechanism, excluding ADR 0016's own historical definition and every other accepted ADR's
 historical text quoting or reasoning about it (accepted ADRs are never edited, and a citation
 inside one is not a live use to rewrite). Exactly one live file remained:
@@ -47,7 +47,7 @@ exactly as combat already does. The opponent's dice are never consulted.**
    but still no NPC/opponent side, and no design rationale distinguishes the two cases.
 
 **ADR 0016 is retired in full, not further narrowed.** `check_opposed_generalisation.py`'s grep
-found no remaining live use of the two-sided roll-both shape anywhere in `doc/design/` outside ADR
+found no remaining live use of the two-sided roll-both shape anywhere in `docs/design/` outside ADR
 0016's own historical text and other ADRs' historical references to it. ADR 0027 had already
 carved combat out; this record carves out everything ADR 0027 left open, and nothing was left for
 ADR 0016 to still govern.

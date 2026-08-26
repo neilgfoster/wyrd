@@ -13,7 +13,7 @@ rolls against, attacking and defending alike.
 ## Why this exists
 
 **Combat is a double gate, and no skill escapes it.** An attack is an opposed test
-([`03-rules.md`](../../doc/design/03-rules.md) §1, [ADR 0016](../../doc/adr/0016-opposed-tests-need-a-successful-actor.md)):
+([`03-rules.md`](../../docs/design/03-rules.md) §1, [ADR 0016](../../docs/adr/0016-opposed-tests-need-a-successful-actor.md)):
 the attacker must succeed, then beat the defender's degrees. Computed across realistic pairings,
 **61-84% of the player's rolls do nothing at all** — the roll that was meant to be the moment of
 play most often resolves to nothing happening. Alternatives that keep the two-roll structure
@@ -68,7 +68,7 @@ to two-sided opposed tests, and the knock-on decisions #44 named — not the map
   0016 computed the opposed-test rate rather than asserting it. Rejected: inventing a new margin
   measure (e.g. reading margin from the raw skill gap rather than from degrees) — that would be a
   second measure of the same quantity the degree scale already provides
-  ([ADR 0001](../../doc/adr/0001-resolution.md)), which is the drift class this repo is
+  ([ADR 0001](../../docs/adr/0001-resolution.md)), which is the drift class this repo is
   corrected for most often.
 - **Q: Does the assistance rule (§1, a helper's bonus of up to +10) apply to the new defence roll
   the same way it applies to an attack?** → **Yes, identically.** Nothing in the assistance rule is
@@ -83,7 +83,7 @@ to two-sided opposed tests, and the knock-on decisions #44 named — not the map
 ### User Story 1 - A player attacks, and the opponent never rolls (Priority: P1)
 
 A player declares an attack. They roll once, against a single percentage derived from their attack
-skill and the opponent's relevant skill (or `baseline`, [`03d-the-adversary.md`](../../doc/design/06-the-adversary.md)
+skill and the opponent's relevant skill (or `baseline`, [`03d-the-adversary.md`](../../docs/design/06-the-adversary.md)
 §3). The opponent's dice never come out.
 
 **Why this priority**: This is the conversion. Nothing else in the feature is meaningful until an
@@ -192,7 +192,7 @@ opposed-test distribution it replaces.
 - **FR-007**: The design MUST state whether two-sided opposed tests survive outside combat (a
   contest where both parties genuinely act, e.g. a tug-of-war of wills) or whether the conversion
   removes two-sided opposed tests from the engine entirely.
-- **FR-008**: [ADR 0016](../../doc/adr/0016-opposed-tests-need-a-successful-actor.md)'s status
+- **FR-008**: [ADR 0016](../../docs/adr/0016-opposed-tests-need-a-successful-actor.md)'s status
   MUST be resolved: reaffirmed as still governing whatever opposed tests remain, or superseded by a
   new ADR — never edited in place.
 - **FR-009**: Starting Stamina MUST be re-settled or explicitly reaffirmed, computed against the
@@ -209,7 +209,7 @@ opposed-test distribution it replaces.
   both the player's attack roll and their new defence roll — nothing in its wording is
   attack-specific, and combat MUST NOT become the one place assistance behaves differently by
   which of the two rolls a player is making.
-- **FR-013**: `doc/design/03-rules.md` §1 and §2 MUST be updated in place to describe the player-facing
+- **FR-013**: `docs/design/03-rules.md` §1 and §2 MUST be updated in place to describe the player-facing
   mechanic as the current rule; the two-sided opposed test description is removed or narrowed to
   match FR-007's decision, and the spec is not left as the only record of current behaviour.
 - **FR-014**: The calibration and any newly computed thresholds (telling blow, damage-multiplier

@@ -23,7 +23,7 @@ because it was the only way to test the `mortality` design, and it rejected the 
 
 ## Path Conventions
 
-Design documentation at `design/`, decision records at `doc/adr/`. No source tree is touched:
+Design documentation at `design/`, decision records at `docs/adr/`. No source tree is touched:
 `engine/` does not exist and is not created here.
 
 ---
@@ -33,10 +33,10 @@ Design documentation at `design/`, decision records at `doc/adr/`. No source tre
 **Purpose**: Fix the document's shape before any rows go into it, so the stories below fill
 independent sections rather than negotiating structure.
 
-- [x] T001 Create `doc/design/09-aftermath.md` with its title, a one-paragraph statement of what the
+- [x] T001 Create `docs/design/09-aftermath.md` with its title, a one-paragraph statement of what the
       family is and when it is rolled, and its section headings only. Sections: the roll; when it is
       rolled; the table; the lasting wound; the recurring wound; closing the death rows; companions;
-      what a setting may replace. Present tense, no changelog (`doc/README.md`).
+      what a setting may replace. Present tense, no changelog (`docs/README.md`).
 
 **Checkpoint**: the document exists and its shape is fixed.
 
@@ -47,11 +47,11 @@ independent sections rather than negotiating structure.
 **Purpose**: the family's declaration and the trigger have to be settled before rows can be written
 against them — every row's range depends on the roll, and the whole table depends on when it fires.
 
-- [x] T002 [US1] Write the **family declaration** section of `doc/design/09-aftermath.md` from
+- [x] T002 [US1] Write the **family declaration** section of `docs/design/09-aftermath.md` from
       [contracts/aftermath-table.md](./contracts/aftermath-table.md): key `aftermath`; roll
       `d100 + (5 × points below zero)`; lowest possible total 6, showing the arithmetic; last row
       open at the top and why (the modifier is unbounded); **repeatable**, with an explicit note that
-      the exhaustion clause of `doc/design/07-tables.md` does not apply because the family is not
+      the exhaustion clause of `docs/design/07-tables.md` does not apply because the family is not
       unique; **no extra row fields**, stating that no rule reads a severity for this family
       (FR-002, FR-003, FR-006, FR-007).
 
@@ -73,7 +73,7 @@ document does not cover.
 **Independent test**: take a character who dropped to −3 Stamina, roll, and follow the document alone
 to one row, one applied effect, one recorded outcome.
 
-- [x] T004 [US1] Write the **table** into `doc/design/09-aftermath.md`: all eight rows, each carrying
+- [x] T004 [US1] Write the **table** into `docs/design/09-aftermath.md`: all eight rows, each carrying
       range, effect and description, exactly as fixed in
       [contracts/aftermath-table.md](./contracts/aftermath-table.md). Effects stated so they can be
       applied without reading the prose; descriptions carrying no tonal register (FR-004, FR-005,
@@ -81,7 +81,7 @@ to one row, one applied effect, one recorded outcome.
 
 - [x] T005 [US1] Add the **reading procedure and the recorded outcome**: roll, apply the modifier,
       find the row, apply the effect, say the description, record with the table key — per
-      `doc/design/07-tables.md`. Include the log shape from [data-model.md](./data-model.md) §6,
+      `docs/design/07-tables.md`. Include the log shape from [data-model.md](./data-model.md) §6,
       including `fate_spent` (US1 scenarios 2–4).
 
 - [x] T006 [US1] Add the **weighting** paragraph, quoting the computed figures from
@@ -106,19 +106,19 @@ to one row, one applied effect, one recorded outcome.
 **Independent test**: apply a lasting-wound result, write the record, confirm a recovery rule could
 key on it.
 
-- [x] T008 [US2] Write the **lasting wound** section of `doc/design/09-aftermath.md` from
+- [x] T008 [US2] Write the **lasting wound** section of `docs/design/09-aftermath.md` from
       [data-model.md](./data-model.md) §2: what a wound record is, its fields, and the closed set of
       effects (`stamina_max`, `skill`, `dread`). State that an effect naming an unknown mechanic is a
       load error rather than a row quietly ignored (FR-011, FR-012).
 
 - [x] T009 [US2] State explicitly that the record carries **no healing field, no duration and no
       severity**, and why: whether a wound heals is R1.2's decision, and a field shaped for one
-      answer would prejudge it. Adding one later is additive under `doc/design/22-evolution.md`
+      answer would prejudge it. Adding one later is additive under `docs/design/22-evolution.md`
       (FR-013, SC-008).
 
-- [x] T010 [US2] Amend `doc/design/19-state.md`: give the existing `wounds: []` field its record shape,
-      in place, present tense, no changelog. Cross-link to `doc/design/09-aftermath.md`. Add the
-      diegetic-rendering note pointing at `doc/design/23-diegesis.md` — a wound is "the knee never set
+- [x] T010 [US2] Amend `docs/design/19-state.md`: give the existing `wounds: []` field its record shape,
+      in place, present tense, no changelog. Cross-link to `docs/design/09-aftermath.md`. Add the
+      diegetic-rendering note pointing at `docs/design/23-diegesis.md` — a wound is "the knee never set
       right", never `skill: -10` (FR-011, FR-023, US2 scenario 2).
 
 **Checkpoint**: R1.2 has something to give a fate to.
@@ -135,7 +135,7 @@ unambiguous outcome.
 > Sequenced before US3 despite the lower story number: US3's recurring wound is the row a closed
 > death result lands on, so this section fixes what that row has to bear.
 
-- [x] T011 [US4] Write the **closing the death rows** section of `doc/design/09-aftermath.md`: one
+- [x] T011 [US4] Write the **closing the death rows** section of `docs/design/09-aftermath.md`: one
       mechanism, two things that invoke it — a spent Fate point, and `mortality: low`. Deterministic
       re-read on the worst non-death row; no second roll, no GM judgement. State that Fate may be
       spent **only** against a `death` result and never to improve another row (FR-016, FR-020).
@@ -144,15 +144,15 @@ unambiguous outcome.
       everyone; `standard` and `high` read the table as written. Note that `mortality` does not
       modify the roll, and why — [research.md](./research.md) D2, where making it a `±10` adjustment
       broke the range contract at `low` and let a drop of 1 kill at `high`. This honours the claim
-      `doc/design/01-principles.md` already makes about `mortality` (FR-020).
+      `docs/design/01-principles.md` already makes about `mortality` (FR-020).
 
-- [x] T013 [US4] Write `doc/adr/0009-fate-closes-the-death-rows.md`: the decision that Fate closes
+- [x] T013 [US4] Write `docs/adr/0009-fate-closes-the-death-rows.md`: the decision that Fate closes
       the death rows rather than suppressing the roll, the rejected alternatives (suppress entirely;
       declare before rolling), and why — a suppressed roll makes "survives and is not better off"
       prose with no mechanism under it. Note that `mortality: low` reuses the same mechanism.
       Numbered and dated; an accepted ADR is never edited afterwards (FR-027).
 
-- [x] T014 [US4] Confirm against `doc/design/03-rules.md` §3 that nothing here contradicts Fate's
+- [x] T014 [US4] Confirm against `docs/design/03-rules.md` §3 that nothing here contradicts Fate's
       existing boundaries: Fate buys against dice and never against agendas; a companion is saved
       only when the player is present and able to act; declining to spend is recorded. Fix the new
       document if it drifts, not `03-rules.md` (US4 scenarios 1–3).
@@ -173,7 +173,7 @@ fires each time with no per-fight judgement.
       that fight; imposes nothing between fights; persists for the rest of the chronicle unless a
       later rule says otherwise; stacks, because the family is repeatable (FR-014, US3 scenarios 1–2).
 
-- [x] T016 [US3] State **why `−10` and not a new number**: `doc/design/03-rules.md` §1 already publishes
+- [x] T016 [US3] State **why `−10` and not a new number**: `docs/design/03-rules.md` §1 already publishes
       `−10` as the Challenging step, and already establishes that difficulty modifies the skill and
       never the roll — so the recurring wound leaves the Wyrd die clean. Record that a Strain-based
       version was rejected because the ruleset never says what Strain does ([research.md](./research.md)
@@ -197,7 +197,7 @@ transfers.
       the ruleset already has (FR-017).
 
 - [x] T018 [US5] State the **state changes** for a companion outcome, using only values
-      `doc/design/19-state.md` already declares: `status: dead` on an unsaved death, `status: away` while
+      `docs/design/19-state.md` already declares: `status: dead` on an unsaved death, `status: away` while
       captured. Do not invent a status value (US5 scenario 3).
 
 **Checkpoint**: US5 complete.
@@ -206,23 +206,23 @@ transfers.
 
 ## Phase 8: Entities and the remaining outcome shapes
 
-**Purpose**: two rows create things in the world; both must reuse the shapes `doc/design/27-entities.md`
+**Purpose**: two rows create things in the world; both must reuse the shapes `docs/design/27-entities.md`
 already fixes rather than recording free text.
 
 - [x] T019 [P] Write the **new enemy** clause: the `new-enemy` row creates a `character` entity with
       `role: nemesis`, `disposition: hostile`, and a populated `objective` block — required, because
       an enemy without an objective is a note rather than a character that acts while the player is
-      elsewhere. Link `doc/design/27-entities.md` (FR-018).
+      elsewhere. Link `docs/design/27-entities.md` (FR-018).
 
 - [x] T020 [P] Write the **capture** clause: the `taken` row opens a `thread` entity, the type
-      `doc/design/27-entities.md` already has for an open loop the chronicle carries. Say what ends it is
+      `docs/design/27-entities.md` already has for an open loop the chronicle carries. Say what ends it is
       the chronicle's business, not the table's.
 
 - [x] T021 [P] Write the **disfigurement** clause: the `disfigured` row's wound has effect
       `dread: +1`, feeding the existing Dread track. State that no second social-consequence mechanic
       is introduced, because Dread already is one (FR-019).
 
-- [x] T022 State that **Trauma is unchanged** by this table: `doc/design/03-rules.md` §5 already awards
+- [x] T022 State that **Trauma is unchanged** by this table: `docs/design/03-rules.md` §5 already awards
       1 Trauma per critical taken, and awarding more here would double-count the same blow
       ([data-model.md](./data-model.md) §5). This is the kind of interaction that silently
       double-counts if nobody writes it down.
@@ -233,21 +233,21 @@ already fixes rather than recording free text.
 
 **Purpose**: two documents currently describe a table that does not exist. Both must stop.
 
-- [x] T023 Amend `doc/design/03-rules.md` §2: link `03a-2-aftermath.md`, and stop describing the table as
+- [x] T023 Amend `docs/design/03-rules.md` §2: link `03a-2-aftermath.md`, and stop describing the table as
       a promise. The five outcome shapes now live in the table, so the sentence names the mechanism
       and points at it rather than enumerating what the table will contain. Present tense, in place,
       no "previously" note (FR-021, FR-023).
 
-- [x] T024 Complete the **Aftermath row** of the index in `doc/design/07-tables.md`: roll
+- [x] T024 Complete the **Aftermath row** of the index in `docs/design/07-tables.md`: roll
       `d100 + 5 × points below zero`, uniqueness `repeatable`, and replace "not yet written" with a
       link to `03a-2-aftermath.md`. Check every cell against
       [contracts/aftermath-table.md](./contracts/aftermath-table.md) rather than against memory
       (FR-022, SC-007).
 
 - [x] T025 Grep for **anywhere else** that describes Aftermath as undefined or future —
-      `doc/design/01-principles.md`, `doc/design/16-session.md`, `doc/design/20-tooling.md`,
-      `doc/design/26-authoring-a-setting.md`, `doc/design/29-chronicle-bootstrap.md`,
-      `doc/design/22-evolution.md`. Update in place where the description is now wrong; leave alone where
+      `docs/design/01-principles.md`, `docs/design/16-session.md`, `docs/design/20-tooling.md`,
+      `docs/design/26-authoring-a-setting.md`, `docs/design/29-chronicle-bootstrap.md`,
+      `docs/design/22-evolution.md`. Update in place where the description is now wrong; leave alone where
       it is merely a reference (FR-023).
 
 - [x] T026 Write the **what a setting may replace** section: rows via `overrides.tables:`, keyed
@@ -271,8 +271,8 @@ already fixes rather than recording free text.
       understand, or a description carrying a register the setting should own (FR-024, FR-025,
       SC-006).
 
-- [x] T030 Run quickstart step 7 — read `doc/design/03-rules.md` §2 and §3 against
-      `doc/design/09-aftermath.md` and confirm each of the four interactions resolves to exactly one
+- [x] T030 Run quickstart step 7 — read `docs/design/03-rules.md` §2 and §3 against
+      `docs/design/09-aftermath.md` and confirm each of the four interactions resolves to exactly one
       reading. This is `CLAUDE.md` fault class 3 and no script finds it (SC-005).
 
 - [x] T031 Walk the four manual cases in [quickstart.md](./quickstart.md) using the finished document
@@ -302,12 +302,12 @@ already fixes rather than recording free text.
 
 - T019, T020, T021 — different clauses, no shared state.
 - T013 (the ADR) is a separate file and may be written any time after T011 fixes the decision.
-- T010 (`doc/design/19-state.md`) touches a different file from the rest of Phase 4.
+- T010 (`docs/design/19-state.md`) touches a different file from the rest of Phase 4.
 
 ## Implementation strategy
 
 **MVP** is Phases 1–3: the table exists, is declared, and resolves a dropped combatant. Everything
-after that closes a promise `doc/design/03-rules.md` has already made, and R1.2 needs Phase 4.
+after that closes a promise `docs/design/03-rules.md` has already made, and R1.2 needs Phase 4.
 
 The one non-negotiable is Phase 10. `CLAUDE.md` records that this repository's probability claims
 have been wrong twice and that both were caught only by computing them — and `check_aftermath.py`

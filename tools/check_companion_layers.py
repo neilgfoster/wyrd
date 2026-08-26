@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify the companion two-layer split, against the shipped design documents themselves.
 
-doc/design/16-session.md defines a companion's narrative layer (who they are; never read by a
+docs/design/16-session.md defines a companion's narrative layer (who they are; never read by a
 resolution rule) and mechanical layer (what a resolution rule reads; closed at five fields). This
 script parses the companion YAML example and the layer-comment lines out of the document itself
 -- not a hand-copied literal that could drift from it unnoticed (CLAUDE.md: "where a claim can be
@@ -10,7 +10,7 @@ checked by a script, check it") -- and asserts:
 1. The mechanical layer is exactly the five fields the design commits to: career, bond, taint,
    strain, wounds. No sixth field has crept in, and none of the five is missing.
 2. No field name appears on both layers.
-3. doc/design/03-rules.md's companion-and-succession passage names no mechanical field absent from
+3. docs/design/03-rules.md's companion-and-succession passage names no mechanical field absent from
    that same five-field set.
 4. The party-size bound this feature's spec claims (5 companions x 5 fields = 25 tracked values)
    is computed, not asserted by eye.
@@ -24,13 +24,13 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SESSION_DOC = REPO_ROOT / "doc" / "design" / "16-session.md"
-RULES_DOC = REPO_ROOT / "doc" / "design" / "03-rules.md"
+SESSION_DOC = REPO_ROOT / "docs" / "design" / "16-session.md"
+RULES_DOC = REPO_ROOT / "docs" / "design" / "03-rules.md"
 
 EXPECTED_MECHANICAL = {"career", "bond", "taint", "strain", "wounds"}
 EXPECTED_NARRATIVE = {"objective", "flaw", "secret", "arc"}
 MAX_COMPANIONS = (
-    5  # doc/design/03-rules.md's effective-size table: up to 5 companions + the PC
+    5  # docs/design/03-rules.md's effective-size table: up to 5 companions + the PC
 )
 
 
@@ -38,7 +38,7 @@ def extract_companion_block(text: str) -> str:
     m = re.search(r"```yaml\nrole: companion\n.*?\n```", text, re.DOTALL)
     if not m:
         raise SystemExit(
-            "could not find the companion YAML example in doc/design/16-session.md"
+            "could not find the companion YAML example in docs/design/16-session.md"
         )
     return m.group(0)
 
@@ -95,7 +95,7 @@ def main() -> int:
     if overlap:
         errors.append(f"field(s) appear on both layers: {sorted(overlap)}")
 
-    # doc/design/03-rules.md's companion/succession passage must name no mechanical field absent
+    # docs/design/03-rules.md's companion/succession passage must name no mechanical field absent
     # from the closed set above.
     succession_section_match = re.search(
         r"### Companions and succession\n(.*?)\n---", rules_text, re.DOTALL

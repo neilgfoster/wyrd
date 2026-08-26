@@ -116,7 +116,7 @@ output names it specifically enough to locate and fix without further investigat
   file (and, where practical, the line or section) where the dangling reference was found, so
   a contributor can act on it without reading the check's source.
 - **FR-004**: The check MUST be implemented as stdlib-only Python in `tools/`, following the
-  existing pattern of `tools/backlog.py` and `tools/check_docs.py` (doc/design/20-tooling.md
+  existing pattern of `tools/backlog.py` and `tools/check_docs.py` (docs/design/20-tooling.md
   section 2: no third-party dependencies, no daemon, auditable top to bottom).
 - **FR-005**: The check's own test suite MUST include a fixture-based reproduction of each of
   the six historical dangling-mechanic instances named in issue #59 (engine characteristics in

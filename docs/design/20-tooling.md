@@ -56,12 +56,12 @@ The same principle applies to the design programme's own process, not only to pl
 Three scripts under `tools/` check a claim about the documents rather than asserting it:
 `backlog.py check` (the board's priority order is whole), `check_docs.py` (the document graph
 is reachable, linked and indexed), and `check_dangling_mechanics.py` (every mechanic named
-somewhere in `doc/design/` is defined somewhere in `doc/design/` — the fault that named at least six
+somewhere in `docs/design/` is defined somewhere in `docs/design/` — the fault that named at least six
 mechanics as authoritative before anything defined them).
 
 All three run **on demand, not in CI** — this repository has no CI workflow at all yet, so
 wiring one in for a single check would be a new commitment on its own, not a natural extension
-of an existing gate. Run them before a PR that touches `doc/design/`, the same discipline
+of an existing gate. Run them before a PR that touches `docs/design/`, the same discipline
 `tools/check_docs.py`'s own usage note already asks for.
 
 ---

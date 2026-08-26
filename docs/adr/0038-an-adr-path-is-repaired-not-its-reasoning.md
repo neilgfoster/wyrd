@@ -5,21 +5,21 @@
 
 ## Context
 
-`doc/README.md`'s own rule for a decision record is unambiguous about the record's *reasoning*:
+`docs/README.md`'s own rule for a decision record is unambiguous about the record's *reasoning*:
 "its reasoning is never edited; a later record supersedes it." CLAUDE.md states the same rule
 for the repository as a whole: "An accepted ADR is never edited."
 
-#38 (moving every design document from `design/` to `doc/design/`, and every decision record
-from `design/adr/` to `doc/adr/`, with every design document also renumbered) makes this
+#38 (moving every design document from `design/` to `docs/design/`, and every decision record
+from `design/adr/` to `docs/adr/`, with every design document also renumbered) makes this
 concrete rather than abstract for the first time: every ADR that names another document by its
 relative path — thirty-seven of them do, at least once — now has a link that would resolve to
-nothing, purely because the file it points at moved. Neither `CLAUDE.md` nor `doc/README.md`
+nothing, purely because the file it points at moved. Neither `CLAUDE.md` nor `docs/README.md`
 had ever been asked whether repairing that link counts as "editing" the record. Read literally,
 "never edited" forbids touching the file at all, which would leave every one of those links
-permanently dead the first time anything in `doc/design/` or `doc/adr/` is ever renamed or
+permanently dead the first time anything in `docs/design/` or `docs/adr/` is ever renamed or
 moved again — and #38 will not be the last such move.
 
-This is exactly the shape of decision `doc/README.md` says earns a record: a real alternative
+This is exactly the shape of decision `docs/README.md` says earns a record: a real alternative
 (leave every such link dead forever) was rejected, and the question — may a path inside an
 accepted ADR ever be touched — will plausibly be asked again the next time a document moves.
 
@@ -28,7 +28,7 @@ accepted ADR ever be touched — will plausibly be asked again the next time a d
 **An ADR's reasoning is immutable. A relative path inside it is repaired like any other link in
 the repository when the file it points at moves.**
 
-Concretely: if `doc/design/09-aftermath.md` is later renamed or moved, every ADR linking to it
+Concretely: if `docs/design/09-aftermath.md` is later renamed or moved, every ADR linking to it
 gets that one link's target updated to match, in the same pass that performs the move — the
 same mechanical, mapping-driven, verified repair `tools/check_docs.py` already exists to
 validate. Nothing else in the ADR changes: not its Context, Decision, Alternatives rejected, or
@@ -70,7 +70,7 @@ prefers scripted and verified over asserted case by case.
 
 ## Consequences
 
-- `tools/check_docs.py`'s existing link-resolution check applies to `doc/adr/*.md` exactly as it
+- `tools/check_docs.py`'s existing link-resolution check applies to `docs/adr/*.md` exactly as it
   does to any other document; a dead link there is always a bug to fix, never a policy the check
   must work around.
 - Every future document move or rename (#38 will not be the last) repairs every ADR's affected

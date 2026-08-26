@@ -8,9 +8,9 @@
 
 Give the engine a single-character trigger (`?`) that switches the handling of one player
 message to out-of-character (OOC): the diegetic contract of
-[`doc/design/23-diegesis.md`](../../doc/design/23-diegesis.md) is suspended for that response (raw
+[`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md) is suspended for that response (raw
 numbers on request), the exchange never enters the chronicle as fiction, and the response
-carries an unmistakable textual marker. This is [ADR 0037](../../doc/adr/0037-out-of-character-mode-is-a-prefix-trigger.md)'s
+carries an unmistakable textual marker. This is [ADR 0037](../../docs/adr/0037-out-of-character-mode-is-a-prefix-trigger.md)'s
 load-bearing fork (a one-character prefix over a slash command), made concrete as a new design
 document.
 
@@ -39,12 +39,12 @@ validator-checked schema — this is a GM-contract/session-flow change, not a da
 
 | Document | Change |
 |---|---|
-| `doc/design/17-out-of-character-mode.md` (new) | the trigger, what suspends, what's logged, the marker, the "would my character know this" answer shape |
-| `doc/adr/0037-out-of-character-mode-is-a-prefix-trigger.md` (new) | records the load-bearing fork |
-| `doc/README.md` | links the new document so `tools/check_docs.py` finds it reachable |
-| `doc/design/01-principles.md` | one-line cross-reference at the point that currently implies everything typed is in-character speech and action |
-| `doc/design/23-diegesis.md` | one-line cross-reference at "Mechanical detail is always available on request", pointing to the new document as where the *request mechanism* is specified |
-| `doc/design/16-session.md` | one-line cross-reference near "The player never hears the words beat, rally or arc" / session-flow section, noting OOC mode as the escape hatch that does not itself become part of a beat |
+| `docs/design/17-out-of-character-mode.md` (new) | the trigger, what suspends, what's logged, the marker, the "would my character know this" answer shape |
+| `docs/adr/0037-out-of-character-mode-is-a-prefix-trigger.md` (new) | records the load-bearing fork |
+| `docs/README.md` | links the new document so `tools/check_docs.py` finds it reachable |
+| `docs/design/01-principles.md` | one-line cross-reference at the point that currently implies everything typed is in-character speech and action |
+| `docs/design/23-diegesis.md` | one-line cross-reference at "Mechanical detail is always available on request", pointing to the new document as where the *request mechanism* is specified |
+| `docs/design/16-session.md` | one-line cross-reference near "The player never hears the words beat, rally or arc" / session-flow section, noting OOC mode as the escape hatch that does not itself become part of a beat |
 
 ## Technical Context
 
@@ -98,11 +98,11 @@ pointer), not a separate constitution file:
 - **No setting or system names in `design/` or `README.md`.** The new document and ADR use
   "out-of-character mode", "trigger", "marker" — descriptive English throughout. Pass.
 - **Capability change → Spec Kit cycle, `specs/` committed.** This plan is that cycle. Pass.
-- **Tone is a setting property, never baked into a mechanic** ([ADR 0004](../../doc/adr/0004-tone-belongs-to-the-setting.md)).
+- **Tone is a setting property, never baked into a mechanic** ([ADR 0004](../../docs/adr/0004-tone-belongs-to-the-setting.md)).
   The new document specifies mechanism (trigger, suspension, marker), not voice; the OOC
   marker's exact wording is left to the same rename/presentation layer every other engine
   label uses. Pass.
-- **Deterministic over inference** ([ADR 0005](../../doc/adr/0005-deterministic-over-inference.md)).
+- **Deterministic over inference** ([ADR 0005](../../docs/adr/0005-deterministic-over-inference.md)).
   There is no numeric claim in this feature to compute — it is a mode switch, not a probability
   or a threshold — so this gate does not apply; no claim is asserted that a script could check
   instead. Pass (vacuously).

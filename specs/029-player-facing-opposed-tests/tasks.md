@@ -29,21 +29,21 @@
   player-controlled entities with no NPC/opponent side — reusing ADR 0016's existing "GM names an
   actor, or two ordinary tests" carve-out, per the plan's load-bearing decision, unless T002 turns
   up a reason it does not fit (FR-004, US2).
-- [x] T007 Write `doc/adr/0035-*.md`, superseding ADR 0016 — in full if T002 confirms no live
+- [x] T007 Write `docs/adr/0035-*.md`, superseding ADR 0016 — in full if T002 confirms no live
   scope survives outside combat and the two-player-controlled-entities carve-out, in part if T002
   turns up a genuine surviving use of the two-sided shape. Records T006's answer. ADR 0016 itself is
   left untouched (FR-008).
 
 ## The rules
 
-- [x] T008 `doc/design/03-rules.md` §1 — rewrite "Opposed tests" to the player-facing shape, generalised
+- [x] T008 `docs/design/03-rules.md` §1 — rewrite "Opposed tests" to the player-facing shape, generalised
   from §2's combat wording rather than duplicated from it: single player roll against `effective%`
   wherever one side is an NPC/opponent, opponent's dice never consulted, failure simply fails the
   action (FR-001, FR-002, FR-003, FR-006).
-- [x] T009 `doc/design/03-rules.md` §1 — state T006's answer for the two-player-controlled-entities case
+- [x] T009 `docs/design/03-rules.md` §1 — state T006's answer for the two-player-controlled-entities case
   explicitly, replacing the implicit "where neither is acting" framing with the resolved rule
   (FR-004).
-- [x] T010 `doc/design/03-rules.md` §2 — revisit the "Combat does not use this shape" cross-reference to
+- [x] T010 `docs/design/03-rules.md` §2 — revisit the "Combat does not use this shape" cross-reference to
   §1, since §1 no longer describes a different shape from what §2 already does (FR-006).
 - [x] T011 Confirm no other document under `design/` is left describing or depending on the retired
   two-sided shape — resolve every citation T002 found that needed rewriting (FR-007).

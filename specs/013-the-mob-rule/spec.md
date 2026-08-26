@@ -12,14 +12,14 @@ and the critical tables (Stage 6, #45); setting-specific crowd content.
 
 ## Context
 
-The mob rule in `doc/design/03-rules.md` §2 was one sentence:
+The mob rule in `docs/design/03-rules.md` §2 was one sentence:
 
 > Each round a character also clears petty opponents weaker than themselves, so one character plus
 > companions can face a crowd without a roll per body.
 
 It carries no numbers, and it defines neither *petty* nor *weaker* — the two terms the whole rule
 turns on. As written it cannot be applied without the GM inventing the missing half at the table,
-which is what [`doc/design/20-tooling.md`](../../doc/design/20-tooling.md) and ADR 0005 exist to prevent.
+which is what [`docs/design/20-tooling.md`](../../docs/design/20-tooling.md) and ADR 0005 exist to prevent.
 
 Two further silences are load-bearing and were not named in the issue. **The rule says nothing about
 what the crowd does back** — and a crowd that cannot hurt anyone is scenery, which makes the rule
@@ -147,7 +147,7 @@ recorded. Prefer playing a rule over arguing about it.
 
 ### FR-12 — The design document, not the spec, is left as the record
 
-`doc/design/03-rules.md` §2 is rewritten in place, with no "previously we…" note. An ADR records the
+`docs/design/03-rules.md` §2 is rewritten in place, with no "previously we…" note. An ADR records the
 decision and the workable alternatives rejected.
 
 ## Constraints
@@ -171,7 +171,7 @@ decision and the workable alternatives rejected.
 ## Success criteria
 
 - **SC-001**: Given any group and any opposing side, a reader determines whether the rule applies
-  from `doc/design/03-rules.md` alone, exercising no judgement.
+  from `docs/design/03-rules.md` alone, exercising no judgement.
 - **SC-002**: The rule states how many bodies are cleared, by whom, and at what cost.
 - **SC-003**: The crowd's own attacks are resolvable in one roll per engaged character.
 - **SC-004**: Every number in the rule is reproducible by running one script.
@@ -181,7 +181,7 @@ decision and the workable alternatives rejected.
 
 ## Acceptance criteria
 
-- [x] `doc/design/03-rules.md` states the crowd rule with concrete numbers, not prose alone.
+- [x] `docs/design/03-rules.md` states the crowd rule with concrete numbers, not prose alone.
 - [x] The qualifying threshold is defined on a creature's own statistics.
 - [x] *Weaker* is defined by a checkable comparison against the opposing side.
 - [x] Whether the rule applies is a lookup, not a judgement call.

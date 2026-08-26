@@ -7,20 +7,20 @@
 **Status**: Draft
 
 **Input**: Issue [#19](https://github.com/neilgfoster/wyrd/issues/19) — define the affliction
-table (`doc/design/11-afflictions.md`): the test at 6+ Trauma, a table large enough to survive a
+table (`docs/design/11-afflictions.md`): the test at 6+ Trauma, a table large enough to survive a
 chronicle measured in years, what happens on a repeat draw, the Taint-threshold route, and the
 sawtooth rate computed at real accrual figures.
 
 ## Why this exists
 
-`doc/design/03-rules.md` §5 specifies the Affliction *track* precisely (test on every Trauma point at
+`docs/design/03-rules.md` §5 specifies the Affliction *track* precisely (test on every Trauma point at
 6+, lose 6 Trauma on a failure, sawtooths across years) and its *contents* not at all — no table,
 no named test, no target number. It also carries the engine's sharpest presentation constraint for
 this family: "an Affliction is never described as an Affliction — it is described as behaviour," so
 a row phrased as a diagnosis is a defect, not a style choice.
 
 The body-versus-mind collision §4 used to read ("a Transformation (body) or an Affliction (mind)"
-at a Taint threshold) is already resolved: `doc/design/10-transformations.md` (#18, merged) states
+at a Taint threshold) is already resolved: `docs/design/10-transformations.md` (#18, merged) states
 that a Taint threshold always forces a Transformation and never an Affliction, and that Afflictions
 are Trauma's business alone. This feature does not reopen that; it inherits it and defines the
 Trauma-side table the resolution promised.
@@ -142,9 +142,9 @@ document states that computed figure rather than an intuited round number.
 - **FR-006**: The design MUST compute, by a committed script, the sawtooth rate at the accrual
   rates §5 already specifies (1 Trauma per critical, 1 per failed Terror test), and state the
   resulting figure — flagged as a finding if implausibly frequent or rare.
-- **FR-007**: `doc/design/03-rules.md` §5 MUST be updated in place to match, without changelog
+- **FR-007**: `docs/design/03-rules.md` §5 MUST be updated in place to match, without changelog
   language.
-- **FR-008**: `doc/design/07-tables.md`'s index MUST carry the affliction family's row, no longer
+- **FR-008**: `docs/design/07-tables.md`'s index MUST carry the affliction family's row, no longer
   marked "not yet written".
 - **FR-009**: No setting or system name may appear anywhere the change touches in `design/`,
   verified by grep. No row may bake in a tonal register or presume a particular moral reading of

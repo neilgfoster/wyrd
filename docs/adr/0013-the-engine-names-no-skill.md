@@ -69,7 +69,7 @@ through.
 
 **A setting-agnostic engine becomes literally true rather than aspirational.** No engine document can
 name a skill, because there is nothing to name. A setting of swordsmen and a setting of void-pilots
-need no mapping table between them, and the "no setting vocabulary in `doc/design/`" rule stops depending
+need no mapping table between them, and the "no setting vocabulary in `docs/design/`" rule stops depending
 on vigilance for the one category most likely to leak.
 
 **#33's dangling reference is closed by deletion rather than by definition.** The conversion

@@ -12,7 +12,7 @@ mechanically, not just in how the Fault Line is described.
 
 ## Why this exists
 
-`doc/design/03-rules.md` §4 names the Fault Line — "each character has a Fault Line derived at
+`docs/design/03-rules.md` §4 names the Fault Line — "each character has a Fault Line derived at
 creation from their Drives and Misfortune. It names *how* they fall — the direction, not only the
 quantity" — and stops there. Nothing reads it, checks it, or lets it change an outcome. Two
 characters at the same Taint with different Fault Lines currently play identically, which makes
@@ -24,11 +24,11 @@ carrying all of Taint's texture alone.
 **What the Fault Line modifies.** Three candidates were on the table: which transformation is
 rolled, how a threshold reads, or how Taint accrues. The first two both require restructuring or
 biasing an existing roll or table — either a direction-keyed rework of
-`doc/design/10-transformations.md`'s six rows, or a skew on the secretly-rolled hidden threshold
+`docs/design/10-transformations.md`'s six rows, or a skew on the secretly-rolled hidden threshold
 that stays invisible to the player by design, sitting awkwardly against the issue's own acceptance
-criteria. The chosen answer keeps the transformation table exactly as `doc/design/10-transformations.md`
+criteria. The chosen answer keeps the transformation table exactly as `docs/design/10-transformations.md`
 already defines it — untouched, no duplicate table — and instead extends the mechanism
-`doc/design/03-rules.md` §1 already uses for Drives ("against the character's established nature, the
+`docs/design/03-rules.md` §1 already uses for Drives ("against the character's established nature, the
 GM may invoke a Drive for −20") to Exposure: when an Exposure source runs with the grain of a
 character's Fault Line (the GM's call, grounded in the fiction, the same judgment call a Drive
 invocation already is), the Taint gained is one tier worse. This stays out of the resolution die
@@ -103,7 +103,7 @@ Invocation.
 
 ### Functional Requirements
 
-- **FR-001**: `doc/design/03-rules.md` §4 MUST state that the Fault Line has a mechanical effect on
+- **FR-001**: `docs/design/03-rules.md` §4 MUST state that the Fault Line has a mechanical effect on
   Taint gained from Exposure, not only a descriptive one.
 - **FR-002**: When an Exposure source's fiction runs with the grain of a character's Fault Line —
   the GM's call, grounded in the fiction, the same judgment already used to invoke a Drive — a
@@ -117,7 +117,7 @@ Invocation.
   document must state plainly that one changes the Taint gained on failure and the other changes
   the difficulty of the roll, and that applying both to the same event does not compound either
   effect beyond its own stated step.
-- **FR-006**: `doc/design/10-transformations.md` MUST remain unchanged in its roll, thresholds, and
+- **FR-006**: `docs/design/10-transformations.md` MUST remain unchanged in its roll, thresholds, and
   row contents — the Fault Line's effect must not duplicate or fork that table.
 - **FR-007**: A check script MUST compute, at real Taint trajectories, how much sooner a character
   facing aligned Exposure crosses the next transformation threshold compared with one facing
@@ -127,10 +127,10 @@ Invocation.
 
 ### Key Entities
 
-- **Fault Line**: an existing field on the player character (`fault_line` in `doc/design/19-state.md`),
+- **Fault Line**: an existing field on the player character (`fault_line` in `docs/design/19-state.md`),
   prose naming the direction a character's Taint is taking them. This feature does not change how
   it is set at creation — only that it is now read at Exposure time.
-- **Exposure**: the existing Taint-gain route (`doc/design/03-rules.md` §4) — a resisted test with a
+- **Exposure**: the existing Taint-gain route (`docs/design/03-rules.md` §4) — a resisted test with a
   stated base Taint (minor 1, moderate 2, major 3) reduced by degrees of success. This feature adds
   one conditional step to its failure case.
 
@@ -138,12 +138,12 @@ Invocation.
 
 ### Measurable Outcomes
 
-- **SC-001**: Reading `doc/design/03-rules.md` §4 alone, a GM can determine, for any failed Exposure
+- **SC-001**: Reading `docs/design/03-rules.md` §4 alone, a GM can determine, for any failed Exposure
   test, exactly what Taint the character gains, without consulting any other document.
 - **SC-002**: Two characters at identical starting Taint, one facing Fault-Line-aligned Exposure
   and one facing unaligned Exposure of the same base tier, provably diverge in Taint after one
   failed test — computed, not asserted, by the feature's check script.
-- **SC-003**: `doc/design/10-transformations.md` requires zero edits to its roll, table, or
+- **SC-003**: `docs/design/10-transformations.md` requires zero edits to its roll, table, or
   threshold content as a result of this feature.
 
 ## Assumptions
