@@ -129,6 +129,11 @@ running Wyrd.
   [`03-rules.md`](03-rules.md)) — but for specificity and being in character, never for
   length. Terse play must stay viable.
 - roll before narrating, and abide by the result
+- **settle an unresolved question of fact with an oracle roll, not invention** — a yes/no (or
+  more/less likely) question the fiction hasn't already answered, whose answer could plausibly be
+  asked again ([`03a-5-oracle-answers.md`](03a-5-oracle-answers.md)). An answer invented once and
+  invented differently later is the exact failure [ADR 0005](adr/0005-deterministic-over-inference.md)
+  exists to close; this is that principle held to at the table, not a separate rule.
 - write state before narrating
 - play companions as people with their own agendas, including against the player's interest
 - let named characters act on their objectives between sessions
