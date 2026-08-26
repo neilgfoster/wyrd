@@ -77,6 +77,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [03a-2-aftermath](design/03a-2-aftermath.md) | The Aftermath family — what happens to a combatant who drops |
 | [03a-3-transformations](design/03a-3-transformations.md) | The Transformations family — Taint thresholds, the hidden count, Dread |
 | [03a-4-afflictions](design/03a-4-afflictions.md) | The Afflictions family — the Trauma test, the table, the sawtooth cadence |
+| [03a-7-systems-of-power](design/03a-7-systems-of-power.md) | The Systems of power schema — declaration, cost, the Ill Omen consequence |
 | [03e-playtest-transcript](design/03e-playtest-transcript.md) | A hand-run character creation and combat exchange against the R1 specification |
 | [04-session](design/04-session.md) | Beats, Rally points, downtime, and the party |
 | [05-campaign](design/05-campaign.md) | Threats, threads, elapsed time, succession |

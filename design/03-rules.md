@@ -223,6 +223,11 @@ scene worth writing is not an extended task; it is a single test, or it simply h
 A percentage the player *may choose* to test to dodge a misfortune or break a tie. Testing
 Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's choice.
 
+**Invoking a system of power** — a setting's declared mechanism for supernatural or extraordinary
+effort — is an ordinary test governed entirely by this section; see
+[`03a-7-systems-of-power.md`](03a-7-systems-of-power.md) for the schema, the cost a setting
+declares, and the Ill Omen consequence.
+
 ---
 
 ## 2. Combat
