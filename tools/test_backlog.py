@@ -146,12 +146,15 @@ class TestWalk(unittest.TestCase):
         has to apply transitively, not just to the issue that states it.
         """
         issues = {
-            1: make_issue(1, title="design programme", labels=("kord-epic",)),
+            # #1 is a stand-in for "the design programme, still open" -- unlabeled so it is
+            # not itself visited as a root (this test is about #31 inheriting #90's
+            # dependency, not about #1's own spent-epic status).
+            1: make_issue(1, title="design programme", labels=()),
             90: make_issue(90, title="implement the engine", children=[31],
                             open_children=[31], depends_on=[1], labels=("kord-epic",)),
             31: make_issue(31, title="fleet rollout", parent=90),
         }
-        board = {1: {"rank": 10}, 90: {"rank": 20}}
+        board = {90: {"rank": 20}}
         chosen, blocked = backlog.walk(issues, board)
         self.assertIsNone(chosen)
         self.assertEqual([b["number"] for b in blocked], [31])
@@ -303,18 +306,47 @@ class TestEpicsAreNeverWork(unittest.TestCase):
         self.assertEqual(chosen["number"], 1)
         self.assertEqual(spent, [])
 
-    def test_a_spent_epic_is_reported_even_when_it_is_blocked(self):
-        """Its dependencies are irrelevant: it is not work either way."""
+    def test_a_finished_epic_is_closeable_regardless_of_its_own_dependency(self):
+        """A finished epic's own Depends on: gated the work, not the bookkeeping of closing
+        it -- the work is already done, so it is reported actionable ("close") either way.
+        The walk still finds real ready work elsewhere (#2 itself is a root leaf); the point
+        is that #1 is reported alongside it, not that nothing is chosen.
+        """
         issues = {
             1: make_issue(1, labels=("kord-epic",), children=[9], open_children=[],
                           depends_on=[2]),
             2: make_issue(2, title="blocker"),
         }
         board = {1: {"rank": 10}, 2: {"rank": 20}}
-        _, blocked = backlog.walk(issues, board)
+        chosen, blocked = backlog.walk(issues, board)
         spent = backlog.spent_epics(issues, board)
+        self.assertEqual(chosen["number"], 2)
         self.assertEqual([e["number"] for e in spent], [1])
-        self.assertEqual(blocked, [])
+        self.assertEqual([(e["number"], e["action"]) for e in blocked], [(1, "close")])
+
+    def test_a_never_decomposed_epic_is_not_offered_while_its_own_dependency_is_open(self):
+        """#90's shape exactly: Depends on: #1, zero children ever. Decomposing it must wait,
+        same as any other prerequisite -- unlike a finished epic, there is no work behind it
+        yet to have already satisfied that dependency.
+        """
+        issues = {
+            # #1 is a stand-in for "the design programme, still open" -- unlabeled so it is
+            # not itself visited as a root; this test is only about #90's own dependency.
+            1: make_issue(1, title="design programme", labels=()),
+            90: make_issue(90, title="implement the engine", labels=("kord-epic",),
+                            depends_on=[1]),
+        }
+        board = {90: {"rank": 20}}
+        chosen, blocked = backlog.walk(issues, board)
+        self.assertIsNone(chosen)
+        self.assertEqual([(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [1])])
+
+    def test_a_never_decomposed_epic_is_offered_once_unblocked(self):
+        issues = {90: make_issue(90, title="implement the engine", labels=("kord-epic",))}
+        board = {90: {"rank": 20}}
+        chosen, blocked = backlog.walk(issues, board)
+        self.assertIsNone(chosen)
+        self.assertEqual([(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [])])
 
 
 class TestAgainstCapturedBoard(unittest.TestCase):
@@ -365,6 +397,80 @@ class TestAgainstCapturedBoard(unittest.TestCase):
     def test_ranks_are_unique(self):
         ranks = [self.board[n]["rank"] for n in backlog.roots(self.issues)]
         self.assertEqual(len(ranks), len(set(ranks)))
+
+
+def blocked_entry(number, *, action="blocked", blocked_by=(), rank=None, title="t"):
+    return {
+        "number": number, "title": title, "url": f"https://example.invalid/{number}",
+        "path": [number], "rank": rank, "blocked_by": list(blocked_by), "action": action,
+    }
+
+
+class TestLifecycleActionOutranking(unittest.TestCase):
+    """#31 was picked up from under blocked #90 partly because a higher-ranked spent epic
+    (#49/#51, finished but never closed) was buried in a disconnected footer instead of being
+    weighed against the ready leaf `next` actually chose. This is the fix.
+    """
+
+    def test_a_higher_ranked_finished_epic_outranks_a_lower_ranked_ready_leaf(self):
+        chosen = blocked_entry(97, rank=30)
+        blocked = [blocked_entry(49, action="close", rank=10)]
+        preferred = backlog.lifecycle_action_outranking(chosen, blocked)
+        self.assertEqual(preferred["number"], 49)
+
+    def test_a_lower_ranked_lifecycle_action_does_not_outrank_a_real_leaf(self):
+        chosen = blocked_entry(97, rank=10)
+        blocked = [blocked_entry(90, action="decompose", rank=30)]
+        self.assertIsNone(backlog.lifecycle_action_outranking(chosen, blocked))
+
+    def test_a_still_blocked_decompose_candidate_is_never_preferred(self):
+        chosen = blocked_entry(97, rank=30)
+        blocked = [blocked_entry(90, action="decompose", blocked_by=[1], rank=10)]
+        self.assertIsNone(backlog.lifecycle_action_outranking(chosen, blocked))
+
+    def test_a_close_candidate_is_preferred_even_with_its_own_blockers(self):
+        chosen = blocked_entry(97, rank=30)
+        blocked = [blocked_entry(49, action="close", blocked_by=[1], rank=10)]
+        preferred = backlog.lifecycle_action_outranking(chosen, blocked)
+        self.assertEqual(preferred["number"], 49)
+
+    def test_nothing_chosen_still_prefers_the_best_actionable_lifecycle_entry(self):
+        blocked = [
+            blocked_entry(90, action="decompose", blocked_by=[1], rank=10),
+            blocked_entry(49, action="close", rank=20),
+        ]
+        preferred = backlog.lifecycle_action_outranking(None, blocked)
+        self.assertEqual(preferred["number"], 49)
+
+    def test_no_candidates_returns_none(self):
+        chosen = blocked_entry(97, rank=30)
+        blocked = [blocked_entry(2, action="blocked", blocked_by=[9], rank=10)]
+        self.assertIsNone(backlog.lifecycle_action_outranking(chosen, blocked))
+
+    def test_a_spent_epic_nested_two_levels_deep_still_outranks_a_lower_rank_leaf(self):
+        """The rule is not just "a root's direct child" -- an epic finished deep inside a
+        higher-ranked root's tree must surface the same way #49 (a direct child of #1) does.
+        `walk()` recurses uniformly regardless of depth; this exercises the whole pipeline
+        (walk -> blocked -> outranking) against a two-level nesting to prove it, rather than
+        asserting it only holds for the one depth #49 happens to sit at.
+        """
+        issues = {
+            1: make_issue(1, title="root epic", children=[40], open_children=[40],
+                          labels=("kord-epic",)),
+            40: make_issue(40, title="mid-level epic", parent=1, children=[49],
+                            open_children=[49], labels=("kord-epic",)),
+            49: make_issue(49, title="finished, two levels deep", parent=40,
+                            children=[26, 56], open_children=[], labels=("kord-epic",)),
+            91: make_issue(91, title="other root", children=[97], open_children=[97],
+                            labels=("kord-epic",)),
+            97: make_issue(97, title="ready leaf", parent=91),
+        }
+        board = {1: {"rank": 10}, 91: {"rank": 30}}
+        chosen, blocked = backlog.walk(issues, board)
+        self.assertEqual(chosen["number"], 97)
+        self.assertEqual([(e["number"], e["action"], e["rank"]) for e in blocked], [(49, "close", 10)])
+        preferred = backlog.lifecycle_action_outranking(chosen, blocked)
+        self.assertEqual(preferred["number"], 49)
 
 
 class TestDriftDetection(unittest.TestCase):
