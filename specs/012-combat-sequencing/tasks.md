@@ -31,7 +31,7 @@
 
 - [x] T017 ADR 0018 — the sequencing decision, and the rejected alternatives: an initiative roll, named range bands, free disengagement, and surprise as a modifier rather than a lost round.
 - [x] T018 Name the mutual-encounter fallback in the ADR as the metagame compromise it is, rather than leaving it to be discovered.
-- [x] T019 Add the ADR 0018 row to the index in `design/README.md`.
+- [x] T019 Add the ADR 0018 row to the index in `doc/README.md`.
 - [x] T020 Raise the sibling issue under #44 for the player-facing conversion, carrying `check_mapping.py`'s slope and 5–95% clip (FR-11b).
 
 ## The gates

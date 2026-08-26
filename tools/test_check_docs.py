@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for tools/check_docs.py.
 
-stdlib unittest, no pytest (design/07-tooling.md section 6). No fixtures on disk: each failure
+stdlib unittest, no pytest (doc/design/07-tooling.md section 6). No fixtures on disk: each failure
 class is built in a temporary tree, so the tests exercise the real check functions rather than
 restating their logic. A guard whose tests reimplement it cannot fail when it is wrong -- a
 fault already fixed twice in this repo (8864357, and the rank check in #60).
@@ -43,32 +43,32 @@ class TreeCase(unittest.TestCase):
 
 class TestReachability(TreeCase):
     def test_linked_document_is_reachable(self):
-        self.write("README.md", "[rules](design/03-rules.md)")
-        self.write("design/03-rules.md", "# Rules")
+        self.write("README.md", "[rules](doc/design/03-rules.md)")
+        self.write("doc/design/03-rules.md", "# Rules")
         self.assertEqual(self.problems(), [])
 
     def test_orphan_design_document_is_caught(self):
-        self.write("README.md", "[rules](design/03-rules.md)")
-        self.write("design/03-rules.md", "# Rules")
-        self.write("design/04-session.md", "# Session")
+        self.write("README.md", "[rules](doc/design/03-rules.md)")
+        self.write("doc/design/03-rules.md", "# Rules")
+        self.write("doc/design/04-session.md", "# Session")
         found = self.problems()
         self.assertTrue(any("04-session.md is not reachable" in p for p in found), found)
 
     def test_reachability_is_transitive(self):
         """Two hops. This is how the decision records are reached."""
-        self.write("README.md", "[index](design/README.md)")
-        self.write("design/README.md", "[a record](adr/0001-x.md)")
-        self.write("design/adr/0001-x.md", "# A record")
+        self.write("README.md", "[index](doc/README.md)")
+        self.write("doc/README.md", "[a record](adr/0001-x.md)")
+        self.write("doc/adr/0001-x.md", "# A record")
         self.assertEqual([p for p in self.problems() if "reachable" in p], [])
 
     def test_directory_link_does_not_reach_its_contents(self):
         """Linking a folder is not linking what is in it.
 
-        This is precisely why design/README.md's record index is load-bearing: README links
+        This is precisely why doc/README.md's record index is load-bearing: README links
         the adr/ directory, and that alone must not count as reaching each record.
         """
-        self.write("README.md", "[records](design/adr/)")
-        self.write("design/adr/0001-x.md", "# A record")
+        self.write("README.md", "[records](doc/adr/)")
+        self.write("doc/adr/0001-x.md", "# A record")
         found = self.problems()
         self.assertTrue(any("0001-x.md is not reachable" in p for p in found), found)
 
@@ -79,8 +79,8 @@ class TestReachability(TreeCase):
         self.assertEqual(self.problems(), [])
 
     def test_anchor_is_stripped_before_resolving(self):
-        self.write("README.md", "[rules](design/03-rules.md#resolution)")
-        self.write("design/03-rules.md", "# Rules")
+        self.write("README.md", "[rules](doc/design/03-rules.md#resolution)")
+        self.write("doc/design/03-rules.md", "# Rules")
         self.assertEqual(self.problems(), [])
 
 
@@ -106,18 +106,18 @@ class TestDeadLinks(TreeCase):
 class TestAdrIndex(TreeCase):
     def test_unindexed_record_is_caught(self):
         """The real instance: the index stopped at 0008 while 0009 and 0010 existed."""
-        self.write("README.md", "[index](design/README.md)")
-        self.write("design/README.md", "[0008](adr/0008-a.md)")
-        self.write("design/adr/0008-a.md", "# 8")
-        self.write("design/adr/0009-b.md", "# 9")
+        self.write("README.md", "[index](doc/README.md)")
+        self.write("doc/README.md", "[0008](adr/0008-a.md)")
+        self.write("doc/adr/0008-a.md", "# 8")
+        self.write("doc/adr/0009-b.md", "# 9")
         found = self.problems()
         self.assertTrue(any("0009-b.md is not listed" in p for p in found), found)
 
     def test_fully_indexed_passes(self):
-        self.write("README.md", "[index](design/README.md)")
-        self.write("design/README.md", "[0008](adr/0008-a.md) [0009](adr/0009-b.md)")
-        self.write("design/adr/0008-a.md", "# 8")
-        self.write("design/adr/0009-b.md", "# 9")
+        self.write("README.md", "[index](doc/README.md)")
+        self.write("doc/README.md", "[0008](adr/0008-a.md) [0009](adr/0009-b.md)")
+        self.write("doc/adr/0008-a.md", "# 8")
+        self.write("doc/adr/0009-b.md", "# 9")
         self.assertEqual(self.problems(), [])
 
 
@@ -125,34 +125,34 @@ class TestAdrReferences(TreeCase):
     """Prose references, which the link check cannot see. See ADR 0012."""
 
     def scaffold(self):
-        self.write("README.md", "[index](design/README.md)")
-        self.write("design/README.md", "[0005](adr/0005-determinism.md)")
-        self.write("design/adr/0005-determinism.md", "# 5")
+        self.write("README.md", "[index](doc/README.md)")
+        self.write("doc/README.md", "[0005](adr/0005-determinism.md)")
+        self.write("doc/adr/0005-determinism.md", "# 5")
 
     def test_reference_to_an_existing_record_passes(self):
         self.scaffold()
-        self.write("design/03-rules.md", "Computed rather than inferred (ADR 0005).")
-        self.write("design/README.md", "[0005](adr/0005-determinism.md) [rules](03-rules.md)")
+        self.write("doc/design/03-rules.md", "Computed rather than inferred (ADR 0005).")
+        self.write("doc/README.md", "[0005](adr/0005-determinism.md) [rules](design/03-rules.md)")
         self.assertEqual(self.problems(), [])
 
     def test_reference_to_a_missing_record_is_caught(self):
         """What renumbering breaks, and what nothing noticed before this check."""
         self.scaffold()
-        self.write("design/README.md",
-                   "[0005](adr/0005-determinism.md) [rules](03-rules.md)")
-        self.write("design/03-rules.md", "As set out in ADR 0099.")
+        self.write("doc/README.md",
+                   "[0005](adr/0005-determinism.md) [rules](design/03-rules.md)")
+        self.write("doc/design/03-rules.md", "As set out in ADR 0099.")
         found = self.problems()
         self.assertTrue(any("ADR 0099, which does not exist" in p for p in found), found)
 
     def test_a_superseded_record_still_satisfies_a_reference(self):
         """The archive keeps its numbers so old references keep resolving (ADR 0012)."""
         self.scaffold()
-        self.write("design/README.md",
-                   "[0005](adr/0005-determinism.md) [rules](03-rules.md) "
+        self.write("doc/README.md",
+                   "[0005](adr/0005-determinism.md) [rules](design/03-rules.md) "
                    "[archive](adr/superseded/README.md)")
-        self.write("design/adr/superseded/README.md", "[0003](0003-old.md)")
-        self.write("design/adr/superseded/0003-old.md", "# 3, superseded")
-        self.write("design/03-rules.md", "The earlier position was ADR 0003.")
+        self.write("doc/adr/superseded/README.md", "[0003](0003-old.md)")
+        self.write("doc/adr/superseded/0003-old.md", "# 3, superseded")
+        self.write("doc/design/03-rules.md", "The earlier position was ADR 0003.")
         self.assertEqual(self.problems(), [])
 
     def test_absent_archive_is_not_an_error(self):
@@ -162,18 +162,18 @@ class TestAdrReferences(TreeCase):
 
     def test_archive_index_must_list_its_records(self):
         self.scaffold()
-        self.write("design/README.md",
+        self.write("doc/README.md",
                    "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
-        self.write("design/adr/superseded/README.md", "nothing listed here")
-        self.write("design/adr/superseded/0003-old.md", "# 3")
+        self.write("doc/adr/superseded/README.md", "nothing listed here")
+        self.write("doc/adr/superseded/0003-old.md", "# 3")
         found = self.problems()
         self.assertTrue(any("0003-old.md is not listed" in p for p in found), found)
 
     def test_archive_readme_is_not_itself_treated_as_a_record(self):
         self.scaffold()
-        self.write("design/README.md",
+        self.write("doc/README.md",
                    "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
-        self.write("design/adr/superseded/README.md", "*(none yet)*")
+        self.write("doc/adr/superseded/README.md", "*(none yet)*")
         self.assertEqual(self.problems(), [])
 
 
@@ -184,7 +184,7 @@ class TestLinkPolicy(TreeCase):
         self.assertTrue(any("[[03-rules]]" in p and "in prose" in p for p in found), found)
 
     def test_wikilink_in_a_fenced_block_is_allowed(self):
-        """design/14-entities.md's YAML examples are full of these, legitimately."""
+        """doc/design/14-entities.md's YAML examples are full of these, legitimately."""
         self.write("README.md", "Entities link like this:\n\n```yaml\nparent: [[the-river-city]]\n```\n")
         self.assertEqual(self.problems(), [])
 
@@ -207,7 +207,7 @@ class TestAgainstTheRealRepo(unittest.TestCase):
 
     def test_every_design_document_is_reachable(self):
         seen = check_docs.reachable_from_hub(REPO)
-        for path in (REPO / "design").rglob("*.md"):
+        for path in (REPO / "doc" / "design").rglob("*.md"):
             self.assertIn(path.resolve(), seen, f"{path.name} unreachable from README")
 
     def test_every_adr_reference_in_the_repo_resolves(self):

@@ -4,7 +4,7 @@
 
 ## Summary
 
-Define `design/03a-4-afflictions.md` as the affliction table family required by
+Define `doc/design/11-afflictions.md` as the affliction table family required by
 `03a-tables.md`'s conventions: the test fired on every Trauma point past 6, a table of behaviour
 rows large enough to survive a chronicle measured in years, the repeat-draw rule, the (already
 settled) restatement that Taint thresholds never produce an Affliction, and the sawtooth cadence
@@ -15,7 +15,7 @@ index in place, and record the repeatable-family and test-shape decisions as an 
 
 **The Trauma test is an ordinary §1 skill test, skill chosen by the GM to fit the specific strain
 — the same shape as Exposure's "resist with a test" (§4), not a new mechanic.** The engine names
-no skill ([ADR 0013](../../design/adr/0013-the-engine-names-no-skill.md)); inventing a universal
+no skill ([ADR 0013](../../doc/adr/0013-the-engine-names-no-skill.md)); inventing a universal
 "Willpower" here would be exactly the kind of borrowed vocabulary `CLAUDE.md` rules out, and §4
 already establishes the pattern of a fiction-chosen skill resisting a mental/moral pressure. Only
 pass/fail matters — degrees are not read, matching how the transformation table's roll reads no
@@ -45,15 +45,15 @@ combination, flagged if any combination gives an implausible cadence.
 
 ## Structure
 
-- `design/03a-4-afflictions.md` — new. The test, the table, repeat draws, the Taint/Trauma
+- `doc/design/11-afflictions.md` — new. The test, the table, repeat draws, the Taint/Trauma
   restatement, the cadence.
-- `design/03-rules.md` §5 — rewritten in place to name the test and point at the new document.
-- `design/03a-tables.md` — index row updated from "not yet written" to the real file, roll, and
+- `doc/design/03-rules.md` §5 — rewritten in place to name the test and point at the new document.
+- `doc/design/07-tables.md` — index row updated from "not yet written" to the real file, roll, and
   link.
 - `README.md` — hub row added for reachability, matching the transformation table's precedent.
-- `design/adr/00XX-*.md` — records the repeatable-family and fiction-chosen-test decisions and
+- `doc/adr/00XX-*.md` — records the repeatable-family and fiction-chosen-test decisions and
   their rejected alternatives.
-- `design/README.md` — ADR index updated.
+- `doc/README.md` — ADR index updated.
 - `tools/check_affliction.py` — computes the sawtooth cadence across the assumption spread;
   asserts it stays within a plausible band or reports the finding explicitly if not.
 

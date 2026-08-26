@@ -9,13 +9,13 @@
   events versus unaligned-Exposure events it takes to cross the next transformation threshold
   (every multiple of 3, per `03a-3-transformations.md`), and confirm the tier-worse step never
   exceeds 3 at the major-tier ceiling case. [FR-007, SC-002]
-- [ ] T002 In the same script, diff-check `design/03a-3-transformations.md` against its content at
+- [ ] T002 In the same script, diff-check `doc/design/10-transformations.md` against its content at
   the start of this branch and fail loudly if it changed. [FR-006, SC-003]
 - [ ] T003 Run the script and capture its output for the design document. [FR-007]
 
 ## Phase 2 — Design document
 
-- [ ] T004 Update `design/03-rules.md` §4's Exposure subsection in place: state the tier-worse step
+- [ ] T004 Update `doc/design/03-rules.md` §4's Exposure subsection in place: state the tier-worse step
   (minor 1 → 2, moderate 2 → 3, major stays 3), the fiction-grounded GM judgment call that gates
   it (mirroring Drive invocation), the one-step-per-event cap, and its independence from an
   Invocation drawn against the same roll. [FR-002, FR-003, FR-004, FR-005]
@@ -28,14 +28,14 @@
 
 - [ ] T007 Write the ADR recording the Taint-accrual-bias decision, naming both rejected
   alternatives (transformation row selection; hidden threshold bias) and why each was set aside.
-- [ ] T008 Add the new ADR to `design/README.md`'s index.
+- [ ] T008 Add the new ADR to `doc/README.md`'s index.
 
 ## Phase 4 — Verification
 
 - [ ] T009 `grep` the touched files for setting/system vocabulary; confirm none.
 - [ ] T010 Run `python3 tools/check_docs.py` — must pass.
 - [ ] T011 Run `python3 tools/backlog.py check` — must pass.
-- [ ] T012 Confirm `design/03a-3-transformations.md` is unchanged in the diff against `main`, per
+- [ ] T012 Confirm `doc/design/10-transformations.md` is unchanged in the diff against `main`, per
   FR-006/SC-003.
 
 ## Dependencies

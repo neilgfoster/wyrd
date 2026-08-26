@@ -1,13 +1,13 @@
 # Quickstart: validating the journeys subsystem
 
 This is a design-document feature — "running" it means reading the finished
-`design/17-journeys.md` cold and confirming a journey resolves end to end using only what's
+`doc/design/30-journeys.md` cold and confirming a journey resolves end to end using only what's
 written, per the spec's Success Criteria.
 
 ## Prerequisites
 
-- `design/17-journeys.md` written, linked from `README.md`'s design table.
-- Cross-references added to `design/05-campaign.md` and `design/15-arcs-and-beats.md`.
+- `doc/design/30-journeys.md` written, linked from `README.md`'s design table.
+- Cross-references added to `doc/design/18-campaign.md` and `doc/design/28-arcs-and-beats.md`.
 - `settings.yaml`'s `tor` note checked against the finished document and updated.
 
 ## Validation scenario: run a journey end to end (SC-001, User Story 1)
@@ -31,7 +31,7 @@ required inventing a rule not on the page.
 
 ## Validation scenario: unconfigured setting shows no change (SC-002, User Story 2)
 
-1. Diff `design/05-campaign.md`'s elapsed-time section before and after this feature lands.
+1. Diff `doc/design/18-campaign.md`'s elapsed-time section before and after this feature lands.
 2. Confirm the only change is an added cross-reference line — no rewritten prose, no new
    required field, no altered `wyrd advance-time` behaviour.
 

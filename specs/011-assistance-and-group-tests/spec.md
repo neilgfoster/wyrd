@@ -98,7 +98,7 @@ the Wyrd die independent (ADR 0001).
 
 ### FR-9 — The design documents are updated, not merely the spec
 
-`design/03-rules.md` carries the rules as the engine's description; the ADR carries the rejected
+`doc/design/03-rules.md` carries the rules as the engine's description; the ADR carries the rejected
 alternatives. The spec is not left as the only record.
 
 ## Constraints

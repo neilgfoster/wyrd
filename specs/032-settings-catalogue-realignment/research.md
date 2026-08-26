@@ -47,10 +47,10 @@ once it actually builds something that consumes it).
 fleet, PyYAML-free reader for `settings.yaml` (reuses the same restricted-subset approach
 `tools/fleet_rollout.py` introduced, since `settings.yaml`'s shape is a simple list of flat
 mappings), reports repos missing from the catalogue and catalogue entries naming a repo that
-doesn't exist, on demand rather than in CI (`design/07-tooling.md` §1: this repo has no CI yet).
+doesn't exist, on demand rather than in CI (`doc/design/20-tooling.md` §1: this repo has no CI yet).
 
 **Alternatives considered**: extending `tools/backlog.py` itself with a new subcommand
 (rejected — `backlog.py`'s docstring and purpose are specifically the board/issue graph; a
 settings-catalogue check is a different concern with a different data source, and bolting it on
 would blur what each script is for, the opposite of the "MCP-shaped, one tool per concern"
-structure `design/07-tooling.md` §3 asks for even in the zero-backend tooling case).
+structure `doc/design/20-tooling.md` §3 asks for even in the zero-backend tooling case).

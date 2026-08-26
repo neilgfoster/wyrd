@@ -4,11 +4,11 @@
 
 ## Summary
 
-Define Standing where Upkeep already spends it (`design/04-session.md`), give it a place among
-the other open-ended tracks in `design/03-rules.md`, and specify the gear schema
-`design/13-authoring-a-setting.md` has promised since it first named `gear.yaml`. Wealth (coin)
+Define Standing where Upkeep already spends it (`doc/design/16-session.md`), give it a place among
+the other open-ended tracks in `doc/design/03-rules.md`, and specify the gear schema
+`doc/design/26-authoring-a-setting.md` has promised since it first named `gear.yaml`. Wealth (coin)
 is reconciled with Standing rather than modelled as a second parallel resource. Encumbrance stays
-a GM judgment call, matching `design/10-diegesis.md`'s existing "realistic, not logistic" rule —
+a GM judgment call, matching `doc/design/23-diegesis.md`'s existing "realistic, not logistic" rule —
 no new numeric mechanism. The casual/martial distinction gets a concrete consequence path through
 Standing rather than a second, unrelated mechanic. Record the decisions as an ADR, and validate
 the gear schema with a script in the shape of `tools/check_bestiary.py`.
@@ -49,20 +49,20 @@ precedent rather than inventing a new validation shape.
 
 ## Structure
 
-- `design/04-session.md` — Upkeep's "lose 1 Standing, or spend coin equal to Standing" line
+- `doc/design/16-session.md` — Upkeep's "lose 1 Standing, or spend coin equal to Standing" line
   rewritten against the defined terms; no more forward reference to an undefined mechanic.
-- `design/03-rules.md` — Standing added to the engine-label table (§ top) alongside Taint,
+- `doc/design/03-rules.md` — Standing added to the engine-label table (§ top) alongside Taint,
   Trauma, Strain, Resolve, Fate; §2 gains the wealth/coin definition, the encumbrance rule, and
   the casual/martial consequence, next to the existing weapon/armour/damage material it already
   depends on.
-- `design/13-authoring-a-setting.md` — the `gear.yaml` line expanded into the field list a setting
+- `doc/design/26-authoring-a-setting.md` — the `gear.yaml` line expanded into the field list a setting
   author needs: weapon fields (damage, damage type, casual/martial, price,
   availability/legality) and armour fields (rank, price, availability/legality).
-- `design/adr/0033-standing-and-the-material-economy.md` — records: Standing kept and defined
+- `doc/adr/0033-standing-and-the-material-economy.md` — records: Standing kept and defined
   (not removed); Standing as an open count, not a percentile; coin as a stated total, not a
   ledger; encumbrance as GM judgment, not a roll; the casual/martial consequence routed through
   Standing. Each with its rejected alternative.
-- `design/README.md` — ADR index updated.
+- `doc/README.md` — ADR index updated.
 - `tools/check_gear.py` — validates a setting's `gear.yaml` against the schema: required/optional
   fields, closed armour-rank and damage-type vocabularies (reusing the same closed sets
   `check_bestiary.py` already encodes), casual/martial as a closed two-value field, price as a
@@ -87,7 +87,7 @@ to extend.
 - `python3 tools/check_docs.py` — reachability, dead links, ADR index, link policy.
 - `python3 tools/backlog.py check` — confirms no drift introduced.
 - `grep` across changed files in `design/` for setting/system vocabulary — no unexpected match.
-- Read Upkeep (`design/04-session.md`) cold against only `design/` — every term it uses resolves
+- Read Upkeep (`doc/design/16-session.md`) cold against only `design/` — every term it uses resolves
   (SC-003 from the spec).
 
 ## Complexity tracking

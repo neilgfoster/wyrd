@@ -1,13 +1,13 @@
 # Phase 1 data model: Two-layer companions and a positive party track
 
 This feature has no application data store — it defines terminology and field grouping inside an
-existing design document (`design/04-session.md`'s companion record, `design/06-state.md`'s state
+existing design document (`doc/design/16-session.md`'s companion record, `doc/design/19-state.md`'s state
 schema). This document is the authoritative field list `tools/check_companion_layers.py` checks
 against.
 
 ## Companion record — the two layers
 
-The existing companion record (`design/04-session.md`) is unchanged in its field set. This
+The existing companion record (`doc/design/16-session.md`) is unchanged in its field set. This
 feature groups those fields into two named layers and adds nothing new except Bond's positive
 mechanical effect.
 
@@ -67,7 +67,7 @@ from one number the design already tracks. A generic event that does not name a 
 companion (e.g. "the party goes hungry") is unaffected by any single companion's Bond and applies
 at the stated rate, matching today's behaviour.
 
-## ADR: `design/adr/0034-bond-is-the-positive-party-track.md`
+## ADR: `doc/adr/0034-bond-is-the-positive-party-track.md`
 
 Records the rejected alternative (a standalone Cohesion-style track mirroring Tension) and the
 reasoning above, per `CLAUDE.md`'s ADR criteria (a real alternative rejected; a future contributor
@@ -75,7 +75,7 @@ would plausibly propose it again).
 
 ## Confirmed, unchanged: companion advancement and succession
 
-`design/03-rules.md`'s existing sentences are confirmed against this model with one added
+`doc/design/03-rules.md`'s existing sentences are confirmed against this model with one added
 cross-reference, no substantive change:
 
 - "Companions advance rarely and simply — one competence gained or limitation lost at a downtime"

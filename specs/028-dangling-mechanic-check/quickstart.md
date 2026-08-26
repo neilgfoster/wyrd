@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Python 3.11+ (stdlib only, no install step — `design/07-tooling.md` section 2)
+- Python 3.11+ (stdlib only, no install step — `doc/design/20-tooling.md` section 2)
 - A checkout of this repo with `design/` present
 
 ## Run the check

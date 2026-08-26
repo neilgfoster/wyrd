@@ -17,7 +17,7 @@
 - [x] T005 `README.md` design index gains `03a-2-aftermath`.
 - [x] T006 `README.md` repositories table uses `wyrd-setting-<name>`.
 - [x] T007 `README.md` Status: remove the dead `playtest/` link and the false "Design complete".
-- [x] T008 `design/README.md` ADR index gains 0009 and 0010.
+- [x] T008 `doc/README.md` ADR index gains 0009 and 0010.
 - [x] T009 `README.md` links `specs/` and `tools/` so the tree is discoverable.
 
 ## Phase 4 — The guard

@@ -15,11 +15,11 @@ chosen and justified afterwards.
 ## The load-bearing decisions
 
 **An adversary is a thin block, and a named antagonist is that block inside a person.** The
-character model ([`03b-the-character.md`](../../design/03b-the-character.md)) carries Taint, Trauma,
+character model ([`03b-the-character.md`](../../doc/design/04-the-character.md)) carries Taint, Trauma,
 Strain, Resolve, Fate, Luck, a career, a career history, a Loyalty and an advancement economy. None
 of that exists for the thing a character kills in a corridor, and giving it all of that would mean
 running an advancement economy for a wolf. The block carries only what a published rule reads. A
-nemesis is not a second model: it is a `character` entity ([`14-entities.md`](../../design/14-entities.md)
+nemesis is not a second model: it is a `character` entity ([`14-entities.md`](../../doc/design/27-entities.md)
 already says a nemesis is a `character` with `role: nemesis`) that *also* carries an adversary block.
 One description of an opponent, reached two ways. The alternative — adversaries as full characters —
 is the rejected option in the ADR, and it is not a straw man: it is what most percentile systems do,
@@ -38,7 +38,7 @@ into the default way fights resolve.
 **Traits come from a closed vocabulary.** A trait is a display name plus an effect the engine
 defines, acting only on difficulty, damage, Stamina, armour or the Wyrd die. This is the line
 between *retune* and *add a mechanism*
-([`13-authoring-a-setting.md`](../../design/13-authoring-a-setting.md)), and it is a line the
+([`13-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md)), and it is a line the
 validator can hold, which free text is not. The vocabulary is small on purpose and is allowed to grow
 later by an engine change, which is the correct cost.
 
@@ -50,7 +50,7 @@ properties are non-negotiable, and the third is the one that decides the shape:
 
 1. **Additive**, in the engine's own units.
 2. **Exactly +0 when the party matches `written_for`**, or the identity case that
-   [ADR 0024](../../design/adr/0024-a-party-is-worth-less-than-its-head-count.md) exists to protect
+   [ADR 0024](../../doc/adr/0024-a-party-is-worth-less-than-its-head-count.md) exists to protect
    is lost on the second of the two quantities §7 scales.
 3. **Bounded inside the difficulty ladder.** The ladder is the engine's entire vocabulary for how
    much harder a thing can get. An adjustment that runs past it is describing a difficulty the
@@ -101,7 +101,7 @@ sets. It takes a `bestiary.yaml` path, and:
 - rejects an **unrecognised field** rather than ignoring it — the quiet path by which a setting adds
   a mechanism;
 - rejects an **out-of-range value**: an armour rank outside the published set, a damage type outside
-  the closed four ([ADR 0022](../../design/adr/0022-four-damage-types-named-for-the-wound.md)), a
+  the closed four ([ADR 0022](../../doc/adr/0022-four-damage-types-named-for-the-wound.md)), a
   percentage outside the scale in `03b-the-character.md` §2;
 - rejects a **trait effect outside the closed vocabulary**;
 - exits non-zero on any failure, and reports **every** failure rather than the first.
@@ -121,14 +121,14 @@ scaling and the skill adjustment are visible in one place rather than described 
 
 | Document | Change |
 |---|---|
-| `design/03d-the-adversary.md` | **new**: the adversary block, the baseline, the trait vocabulary, what an opponent does on a turn, what happens when one drops |
-| `design/03b-the-character.md` §4 | rewritten in place — it currently says the adversary model "is not yet decided" |
-| `design/03-rules.md` §7 | the skill-value half of the scaling made explicit: the adjustment, the identity case, the bound. §7's claim stands; what is added is how it is evaluated |
-| `design/13-authoring-a-setting.md` | `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use |
-| `design/14-entities.md` | the `creature` row says what a creature carries; the nemesis note says a `character` used as opposition carries an adversary block |
-| `design/README.md` | the new document linked from the hub, or `check_docs.py` fails |
-| `design/adr/0025` | the thin adversary block, against the full character model |
-| `design/adr/0026` | the skill adjustment: additive, identity-exact, ladder-bounded, against multiplying the percentage |
+| `doc/design/06-the-adversary.md` | **new**: the adversary block, the baseline, the trait vocabulary, what an opponent does on a turn, what happens when one drops |
+| `doc/design/04-the-character.md` §4 | rewritten in place — it currently says the adversary model "is not yet decided" |
+| `doc/design/03-rules.md` §7 | the skill-value half of the scaling made explicit: the adjustment, the identity case, the bound. §7's claim stands; what is added is how it is evaluated |
+| `doc/design/26-authoring-a-setting.md` | `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use |
+| `doc/design/27-entities.md` | the `creature` row says what a creature carries; the nemesis note says a `character` used as opposition carries an adversary block |
+| `doc/README.md` | the new document linked from the hub, or `check_docs.py` fails |
+| `doc/adr/0025` | the thin adversary block, against the full character model |
+| `doc/adr/0026` | the skill adjustment: additive, identity-exact, ladder-bounded, against multiplying the percentage |
 
 ## The order of work
 
@@ -159,5 +159,5 @@ Evaluated against `CLAUDE.md` and the accepted ADRs, per `.specify/memory/consti
 ### One gate worth naming explicitly
 
 **A new design document must be reachable from `README.md`.** Four indexes went stale silently
-before `check_docs.py` existed. `design/03d-the-adversary.md` is linked from the hub in the same
+before `check_docs.py` existed. `doc/design/06-the-adversary.md` is linked from the hub in the same
 commit that creates it, and the check is run rather than assumed.

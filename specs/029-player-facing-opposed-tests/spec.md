@@ -92,14 +92,14 @@ without contradicting the retired two-sided shape.
 - **FR-005**: Assistance, declaration and the untrained-10% rule MUST compose with the generalised
   roll exactly as they already compose with combat's attack/defence rolls — no new or divergent
   composition rule.
-- **FR-006**: `design/03-rules.md` §1's "Opposed tests" subsection MUST be rewritten to the
+- **FR-006**: `doc/design/03-rules.md` §1's "Opposed tests" subsection MUST be rewritten to the
   player-facing shape, generalised from §2's combat wording, rather than duplicating combat's
   prose or leaving both a live two-sided description and a live player-facing one.
 - **FR-007**: Every place in `design/` that cites "opposed test" as a live mechanism (not merely
   its historical definition in an ADR) MUST either be updated to the generalised shape or
   confirmed to already route through it — none may be left depending on the retired two-sided
   shape.
-- **FR-008**: [ADR 0016](../../design/adr/0016-opposed-tests-need-a-successful-actor.md)'s
+- **FR-008**: [ADR 0016](../../doc/adr/0016-opposed-tests-need-a-successful-actor.md)'s
   remaining scope (already narrowed once by ADR 0027) MUST be resolved explicitly — either a new
   ADR supersedes it entirely, or a new ADR states precisely what scope (if any) still needs
   two-sided resolution. ADR 0016 itself is never edited.
@@ -139,7 +139,7 @@ without contradicting the retired two-sided shape.
   already named for the "neither is acting" carve-out — an ordinary test or the GM naming an
   actor — not a new mechanic; this feature decides which, it does not invent a third resolution
   shape.
-- No new engine vocabulary is introduced; this feature edits `design/03-rules.md` §1 in place and
+- No new engine vocabulary is introduced; this feature edits `doc/design/03-rules.md` §1 in place and
   adds one ADR (superseding or narrowing ADR 0016), per the project's existing ADR/design-document
   conventions.
 - Out of scope, per the source issue: anything specific to combat itself (already settled by

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Python 3.11+, standard library only (`design/07-tooling.md`).
+Python 3.11+, standard library only (`doc/design/20-tooling.md`).
 
 ## Validate a gear file
 
@@ -25,7 +25,7 @@ Expected: non-zero exit, one reported error per planted fault, each naming its e
 
 ## Read Upkeep cold
 
-Open `design/04-session.md`'s Downtime → Upkeep step with no other document open. Every term it
+Open `doc/design/16-session.md`'s Downtime → Upkeep step with no other document open. Every term it
 uses (Standing, coin) should resolve within `design/` — grep confirms no dangling reference:
 
 ```bash

@@ -149,6 +149,6 @@ pass; temporarily edit one `repo:` value to a nonexistent name and get a reporte
   blocking the related-settings feature (#36) from building the actual grouping behavior later.
 - The drift check follows `tools/backlog.py`'s existing precedent: stdlib-only, `gh`-CLI-driven,
   read-only, run on demand rather than in CI (this repository has no CI workflow yet, per
-  `design/07-tooling.md`).
+  `doc/design/20-tooling.md`).
 - `wyrd-research`, `wyrd-chronicle-template`, and `wyrd-chronicle-<name>` repositories are out of
   scope for this catalogue — it lists settings only, matching its existing purpose.

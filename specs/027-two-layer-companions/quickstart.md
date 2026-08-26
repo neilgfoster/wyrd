@@ -30,13 +30,13 @@ read a specific published book, per `CLAUDE.md`.
 
 ## Manual review checklist
 
-1. Read `design/04-session.md`'s companion section end to end. Confirm exactly one mechanism is
+1. Read `doc/design/16-session.md`'s companion section end to end. Confirm exactly one mechanism is
    presented as "what a well-functioning party earns" (SC-002) — Bond's completed positive
    effect — with no second competing candidate left standing.
-2. Read `design/03-rules.md`'s companion/succession passage and `design/04-session.md`'s
+2. Read `doc/design/03-rules.md`'s companion/succession passage and `doc/design/16-session.md`'s
    companion record side by side. Confirm every field name is used in the same sense in both
    (SC-004).
-3. Confirm `design/adr/0034-bond-is-the-positive-party-track.md` exists, is dated, and states the
+3. Confirm `doc/adr/0034-bond-is-the-positive-party-track.md` exists, is dated, and states the
    rejected alternative.
 4. Confirm no new numeric competence/capability field was introduced for companions anywhere in
    the diff (`git diff main -- design/ | grep -i companion`).

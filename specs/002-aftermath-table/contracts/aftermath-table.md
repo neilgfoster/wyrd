@@ -2,7 +2,7 @@
 
 **Feature**: 002-aftermath-table | **Date**: 2026-08-22
 
-What `design/03a-2-aftermath.md` must declare, in the form `design/03a-tables.md` requires of every
+What `doc/design/09-aftermath.md` must declare, in the form `doc/design/07-tables.md` requires of every
 family. This is the checkable surface: a table file that fails any clause here does not load.
 
 ---

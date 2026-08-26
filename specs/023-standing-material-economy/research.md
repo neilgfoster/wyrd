@@ -8,7 +8,7 @@ document records why each precedent applies.
 
 **Decision**: open-ended count, not a percentile or a fixed 0–N band.
 
-**Rationale**: `design/03-rules.md`'s engine-label table already lists Taint, Trauma, Strain,
+**Rationale**: `doc/design/03-rules.md`'s engine-label table already lists Taint, Trauma, Strain,
 Resolve as accruing tracks with no stated ceiling; none of them are percentiles, and none are
 tested against a roll the way a skill is. Standing moves by exactly 1 at Upkeep and is compared
 only to itself (coin spent "equal to Standing"), so it needs no bounded scale to function.
@@ -23,7 +23,7 @@ against, so the same bound doesn't transfer).
 **Decision**: a small numeric count the player can state a total for, no itemized transactions.
 
 **Rationale**: Upkeep's "spend coin equal to Standing" is a numeric comparison, which rules out a
-pure narrative abstraction (there would be nothing to compare). But `design/10-diegesis.md`
+pure narrative abstraction (there would be nothing to compare). But `doc/design/23-diegesis.md`
 already rejects a numeric item list for inventory, and a full transaction ledger would reintroduce
 exactly the logistics that document rules out for gear generally.
 
@@ -36,7 +36,7 @@ that granularity).
 
 **Decision**: a GM judgment call against the fiction, no roll, no weight table.
 
-**Rationale**: `design/10-diegesis.md` §"Inventory — realistic, not logistic" already resolves
+**Rationale**: `doc/design/23-diegesis.md` §"Inventory — realistic, not logistic" already resolves
 the adjacent question — what a character is carrying, and what's missing — the same way: asked of
 the fiction, not computed. Encumbrance is the same question asked in the other direction ("can
 this plausibly be carried") and inherits the same answer shape.
@@ -47,7 +47,7 @@ inventing one); a weight-and-slot table (rejected — explicitly what `10-dieges
 
 ## Gear schema shape: novel format vs. adversary-block precedent
 
-**Decision**: mirror `design/03d-the-adversary.md`'s closed-field, closed-vocabulary schema and
+**Decision**: mirror `doc/design/06-the-adversary.md`'s closed-field, closed-vocabulary schema and
 `tools/check_bestiary.py`'s validator shape.
 
 **Rationale**: gear reads into the same mechanical fields combat already depends on (damage,

@@ -31,7 +31,7 @@ description: "Task list for settings catalogue realignment (issue #35)"
 - [X] T006 [P] [US3] Implement a minimal `settings.yaml` reader in
   `tools/check_settings_catalogue.py`: parses the `settings:` list of flat mappings (id, title,
   repo, visibility, status, optional group) — no third-party YAML dependency
-  (`design/07-tooling.md` §2)
+  (`doc/design/20-tooling.md` §2)
 - [X] T007 [US3] Implement `live_setting_repos()`: `gh repo list neilgfoster --json name` filtered
   to `wyrd-setting-*` (excluding `wyrd-setting-template`, which is the skeleton, not a setting)
 - [X] T008 [US3] Implement `compute_drift(catalogue_entries, live_repos)` — pure function

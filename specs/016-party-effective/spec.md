@@ -8,16 +8,16 @@
 
 **Input**: Issue [#8](https://github.com/neilgfoster/wyrd/issues/8) — define `party_effective`
 precisely enough to implement as a pure function, verify the resulting danger at the party sizes a
-real chronicle has, and update [`design/03-rules.md`](../../design/03-rules.md) §7 in place.
+real chronicle has, and update [`doc/design/03-rules.md`](../../doc/design/03-rules.md) §7 in place.
 
 ## Why this exists
 
-[`design/03-rules.md`](../../design/03-rules.md) §7 publishes the engine's only scaling equation:
+[`doc/design/03-rules.md`](../../doc/design/03-rules.md) §7 publishes the engine's only scaling equation:
 
 > `danger_effective = danger × (party_effective / written_for)`
 
 `written_for` is defined — it is a field on a corpus record
-([`design/11-corpus-index.md`](../../design/11-corpus-index.md)), the party size the content was
+([`doc/design/24-corpus-index.md`](../../doc/design/24-corpus-index.md)), the party size the content was
 written for. `danger` is defined — intrinsic difficulty as written. `party_effective` is not
 defined anywhere. The nearest thing to a definition is one sentence in `11-corpus-index.md`:
 
@@ -61,7 +61,7 @@ This feature therefore carries a decision, not a transcription: **what a compani
   was at least 1. Rounding once, up front, throws away precision that the later multiplications
   need. Rejected: rounding `danger_effective` itself to an integer, either half-up or down.
 - **Q: Which companions count?** → **Those with `status: with-party`, and no others.** The party is
-  already a query on exactly that predicate ([`design/06-state.md`](../../design/06-state.md)); a
+  already a query on exactly that predicate ([`doc/design/19-state.md`](../../doc/design/19-state.md)); a
   companion who is `away`, `dead`, `lost` or `departed` contributes nothing. Presence in a
   particular room is not consulted — scaling is a preparation-time computation, not a per-scene one.
 - **Q: What if `written_for` is missing or zero?** → **The content runs as written** — the ratio is
@@ -83,7 +83,7 @@ run at, with no judgement call, before any dice are built from it.
 evaluated at all. Nothing else in this feature matters if this does not resolve.
 
 **Independent Test**: Given a party composition and a record's `danger`/`written_for`, the effective
-danger is determinable from `design/03-rules.md` §7 alone, and two readers computing it
+danger is determinable from `doc/design/03-rules.md` §7 alone, and two readers computing it
 independently get the same integer.
 
 **Acceptance Scenarios**:
@@ -110,7 +110,7 @@ counts is the roster, the people on this journey, or the bodies in this room, an
 count is taken.
 
 **Why this priority**: Companions leave and return constantly — `status` already has five values
-([`design/06-state.md`](../../design/06-state.md)) precisely because this happens. A definition that
+([`doc/design/19-state.md`](../../doc/design/19-state.md)) precisely because this happens. A definition that
 does not say which statuses count is undefined in practice even if it names a fraction.
 
 **Independent Test**: Given a set of `character` entities with `role: companion` and their statuses,
@@ -123,7 +123,7 @@ the count is derivable from the entity data alone, with no query to the GM.
 2. **Given** a companion joins between two beats of the same arc, **When** the next beat is scaled,
    **Then** the rule for when a scaled danger is recomputed versus held is stated, and does not
    require recomputing anything already played
-   ([`design/09-evolution.md`](../../design/09-evolution.md)).
+   ([`doc/design/22-evolution.md`](../../doc/design/22-evolution.md)).
 
 ---
 
@@ -183,10 +183,10 @@ against a record written for four.
   the same function, so that a party of as many bodies as `written_for` runs content exactly as
   written.
 - **FR-006**: The engine MUST state its behaviour when `written_for` is missing or zero.
-- **FR-007**: `design/03-rules.md` §7 MUST contain no undefined term after this change, and MUST be
+- **FR-007**: `doc/design/03-rules.md` §7 MUST contain no undefined term after this change, and MUST be
   rewritten in place rather than appended to.
-- **FR-008**: The sentence in `design/11-corpus-index.md` that describes `party_effective`, and the
-  worked figure it quotes, MUST agree with `design/03-rules.md` §7 — one description of one thing.
+- **FR-008**: The sentence in `doc/design/24-corpus-index.md` that describes `party_effective`, and the
+  worked figure it quotes, MUST agree with `doc/design/03-rules.md` §7 — one description of one thing.
 - **FR-009**: A committed script MUST compute the scaled danger for the party compositions a real
   chronicle has, and MUST assert agreement with every figure any design document quotes, so a later
   edit that drifts from the numbers fails rather than reads plausibly.
@@ -196,14 +196,14 @@ against a record written for four.
 
 - **Party**: not an entity — a query over `character` entities with `role: companion` and a
   qualifying `status`, plus the player character
-  ([`design/06-state.md`](../../design/06-state.md)). This feature does not introduce a
+  ([`doc/design/19-state.md`](../../doc/design/19-state.md)). This feature does not introduce a
   `party.yaml`.
 - **Companion**: a `character` entity whose mechanical layer is deliberately thin — presence, bond,
   a competence or two, and no numeric capability score. Any definition of `party_effective` that
   needs a companion's power level would have to invent that data.
 - **Beat/arc record**: carries `danger` and `written_for`
-  ([`design/11-corpus-index.md`](../../design/11-corpus-index.md),
-  [`design/15-arcs-and-beats.md`](../../design/15-arcs-and-beats.md)). Neither field is changed by
+  ([`doc/design/24-corpus-index.md`](../../doc/design/24-corpus-index.md),
+  [`doc/design/28-arcs-and-beats.md`](../../doc/design/28-arcs-and-beats.md)). Neither field is changed by
   this feature.
 
 ## Success Criteria *(mandatory)*
@@ -211,14 +211,14 @@ against a record written for four.
 ### Measurable Outcomes
 
 - **SC-001**: Two readers given the same party composition and the same record compute the same
-  integer `danger_effective`, from `design/03-rules.md` §7 alone, without consulting each other.
+  integer `danger_effective`, from `doc/design/03-rules.md` §7 alone, without consulting each other.
 - **SC-002**: Scaled danger is shown for every party a real chronicle has — one player character
   with zero, one, two, three and four companions — against records written for four and for six, as
   computed output rather than as prose, and again out to a retinue large enough to show the curve
   flattening.
 - **SC-003**: Every numeric claim about scaling that appears in any design document is asserted by
   the committed script; changing the rule without changing the documents fails the script.
-- **SC-004**: No term in `design/03-rules.md` §7 is undefined, and no reader has to consult
+- **SC-004**: No term in `doc/design/03-rules.md` §7 is undefined, and no reader has to consult
   `11-corpus-index.md` to evaluate the equation.
 - **SC-005**: The shape of the danger formula — `danger` times a ratio of party sizes — and the
   meaning of `written_for` as a head count are both unchanged by this feature. What is new is only
@@ -231,9 +231,9 @@ against a record written for four.
   into a usable number, are open.
 - Companions carry no numeric capability, and this feature does not add one — the thin companion
   layer is a stated design position
-  ([`design/06-state.md`](../../design/06-state.md), [`design/04-session.md`](../../design/04-session.md)).
+  ([`doc/design/19-state.md`](../../doc/design/19-state.md), [`doc/design/16-session.md`](../../doc/design/16-session.md)).
 - Scaling is a preparation-time computation, not a per-roll one. Rules changes apply forward only
-  ([`design/09-evolution.md`](../../design/09-evolution.md)), so nothing already played is
+  ([`doc/design/22-evolution.md`](../../doc/design/22-evolution.md)), so nothing already played is
   recomputed.
 - Hired help and other non-companion bodies are outside this feature; `needs_capability` already
   covers what they are for.

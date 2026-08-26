@@ -4,5 +4,8 @@
   "alwaysUpdateLinks": true,
   "attachmentFolderPath": "./",
   "showUnsupportedFiles": true,
-  "strictLineBreaks": false
+  "strictLineBreaks": false,
+  "userIgnoreFilters": [
+    "specs/"
+  ]
 }

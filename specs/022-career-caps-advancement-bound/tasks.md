@@ -19,7 +19,7 @@
 
 ## Phase 2 — Design document
 
-- [X] T005 Update `design/03-rules.md` §6 in place: state the 70% career cap applied uniformly to
+- [X] T005 Update `doc/design/03-rules.md` §6 in place: state the 70% career cap applied uniformly to
   every skill a career grants (FR-001, FR-002, FR-003), the illegal-advance rule (FR-004), no
   changelog language. [US1]
 - [X] T006 In the same section, state the completion trigger (every granted skill at the cap,
@@ -33,10 +33,10 @@
 
 ## Phase 3 — Decision record
 
-- [X] T009 Write `design/adr/0032-career-cap-and-the-stamina-ceiling.md`: the flat-70%-cap
+- [X] T009 Write `doc/adr/0032-career-cap-and-the-stamina-ceiling.md`: the flat-70%-cap
   decision (rejecting a per-skill cap table) and the computed-Stamina-ceiling decision (rejecting
   an unbounded gain), each with its rejected alternative.
-- [X] T010 Add ADR 0032 to `design/README.md`'s index.
+- [X] T010 Add ADR 0032 to `doc/README.md`'s index.
 
 ## Phase 4 — Verification
 

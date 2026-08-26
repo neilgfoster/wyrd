@@ -6,7 +6,7 @@
 
 State the career cap (70%, the top of the *expert* band), the career-completion grant (+1
 maximum Stamina and one Mark, per career-instance), and a computed ceiling on maximum Stamina, in
-`design/03-rules.md` §6 where "career's cap" and "completing a career" already live but are never
+`doc/design/03-rules.md` §6 where "career's cap" and "completing a career" already live but are never
 bounded. Justify the ceiling with a script, `tools/check_advancement.py`, that runs the numbers for
 a character completing careers back-to-back across a long chronicle — the same treatment
 `check_creation.py` already gave Stamina's starting value of 6. Record the cap value and the
@@ -44,12 +44,12 @@ the same section.
 
 ## Structure
 
-- `design/03-rules.md` §6 — rewritten in place: the cap value, the completion trigger and grant,
+- `doc/design/03-rules.md` §6 — rewritten in place: the cap value, the completion trigger and grant,
   and the Stamina ceiling, replacing the current unbounded "career's cap" / "completing a career"
   language with the resolved numbers.
-- `design/adr/0032-*.md` — records the 70%-cap and computed-Stamina-ceiling decisions and their
+- `doc/adr/0032-*.md` — records the 70%-cap and computed-Stamina-ceiling decisions and their
   rejected alternatives (e.g., a per-skill cap table, an unbounded Stamina gain).
-- `design/README.md` — ADR index updated.
+- `doc/README.md` — ADR index updated.
 - `tools/check_advancement.py` — computes, for a character completing careers back-to-back over a
   chronicle of 10+ career-instances: the Stamina value at each completion, the ceiling that value
   converges to, and a scan confirming no skill exceeds 100% under the 70%-cap rule. Asserts the

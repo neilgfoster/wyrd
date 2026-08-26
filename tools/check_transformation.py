@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Prove the transformation re-roll loop terminates.
 
-design/03-rules.md section 4: crossing a Taint threshold forces a roll on the
-transformation table (design/03a-3-transformations.md). The result consumes Taint
+doc/design/03-rules.md section 4: crossing a Taint threshold forces a roll on the
+transformation table (doc/design/10-transformations.md). The result consumes Taint
 equal to its severity; if Taint is still at or over the threshold just crossed, roll
 again. This script computes, rather than asserts, how many re-rolls that loop takes
 at the Taint values a real character reaches.
@@ -10,10 +10,10 @@ at the Taint values a real character reaches.
 Two independent guarantees are checked:
 
 1. Severity arithmetic terminates the loop on its own, given the threshold spacing
-   (every 3 points, starting at 3 -- design/03a-3-transformations.md) and the
+   (every 3 points, starting at 3 -- doc/design/10-transformations.md) and the
    severity distribution on the six-row table (1, 1, 2, 2, 3, 4).
 2. Even if it did not, the table is finite and unique-per-character
-   (design/03a-tables.md): six rows bound the loop at six re-rolls before the
+   (doc/design/07-tables.md): six rows bound the loop at six re-rolls before the
    *exhaustion* clause fires (the character is lost), which is a second, independent
    termination guarantee.
 
@@ -23,7 +23,7 @@ from itertools import product
 
 SEVERITIES = [1, 1, 2, 2, 3, 4]  # one per table row, d6
 THRESHOLD_SPACING = 3            # thresholds at 3, 6, 9, 12, ...
-MAX_SINGLE_GAIN = 3              # largest single Exposure/Bargain gain (design/03-rules.md s4)
+MAX_SINGLE_GAIN = 3              # largest single Exposure/Bargain gain (doc/design/03-rules.md s4)
 
 
 def thresholds_up_to(n):

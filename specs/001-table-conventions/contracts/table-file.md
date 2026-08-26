@@ -3,10 +3,10 @@
 **Feature**: `001-table-conventions` | **Date**: 2026-08-22
 
 The interface this feature exposes is a file format — what a sibling author writes and what a
-setting author replaces. This is the contract `design/03a-tables.md` publishes. It is not an
+setting author replaces. This is the contract `doc/design/07-tables.md` publishes. It is not an
 implementation of a parser; `tables.py` is R4 of epic #1 (FR-014).
 
-The example below uses a family that already exists in `design/03-rules.md` and deliberately
+The example below uses a family that already exists in `doc/design/03-rules.md` and deliberately
 invents no content: the rows are placeholders showing shape, not a table anyone should ship.
 
 ## Shape
@@ -80,7 +80,7 @@ overrides:
 The replacement file carries `rows:` and nothing else — `roll`, `modifier`, `uniqueness`,
 `exhausted` and `extra_fields` belong to the family and come from the engine. A replacement that
 sets any of them is a load error, because changing one is changing a mechanism, and a setting that
-needs a new mechanism files an engine gap instead (`design/13-authoring-a-setting.md`).
+needs a new mechanism files an engine gap instead (`doc/design/26-authoring-a-setting.md`).
 
 Rules 1–6 apply to a replacement exactly as to an engine table. A setting cannot ship a table with a
 gap in it.

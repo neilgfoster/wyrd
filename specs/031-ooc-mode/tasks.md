@@ -16,11 +16,11 @@ applies.
 
 ## Phase 2: Foundational
 
-- [X] T002 Write `design/adr/0037-out-of-character-mode-is-a-prefix-trigger.md` recording the
+- [X] T002 Write `doc/adr/0037-out-of-character-mode-is-a-prefix-trigger.md` recording the
       load-bearing fork: a one-character prefix trigger (`?`) vs. a slash command (`/ooc`),
       decided in favour of the prefix, with the rejected alternative and its reasoning (mirrors
       plan.md's "The load-bearing decision" section and the existing ADR format, e.g.
-      `design/adr/0036-one-configurable-power-mechanism.md`).
+      `doc/adr/0036-one-configurable-power-mechanism.md`).
 
 **Checkpoint**: ADR 0037 exists and is internally consistent with plan.md before the design
 document depends on it.
@@ -35,23 +35,23 @@ spec's Acceptance Scenarios 1.1-1.2 and confirm both are satisfied by the writte
 gap between "the response gives the number" and "nothing about the exchange enters the
 chronicle."
 
-- [X] T003 [US1] Create `design/04a-out-of-character-mode.md`: state the `?` trigger (FR-001,
+- [X] T003 [US1] Create `doc/design/17-out-of-character-mode.md`: state the `?` trigger (FR-001,
       one character, prepended to the message), the suspension of the diegetic contract for
       that one response (FR-002, raw numbers on request — cross-referencing
-      `design/10-diegesis.md`'s existing "on request" line), and the chronicle-exclusion rule
+      `doc/design/23-diegesis.md`'s existing "on request" line), and the chronicle-exclusion rule
       (FR-003) with the exact wording "nothing said out-of-character becomes established
       fiction" carried over from the issue's Definition of Done.
-- [X] T004 [US1] Add the per-message scope rule to `design/04a-out-of-character-mode.md`
+- [X] T004 [US1] Add the per-message scope rule to `doc/design/17-out-of-character-mode.md`
       (FR-006): OOC handling applies to the triggered message and the GM's one response; the
       next untriggered message returns to in-character handling automatically — no
       session-wide toggle.
-- [X] T005 [US1] Add the separate-logging rule to `design/04a-out-of-character-mode.md`
+- [X] T005 [US1] Add the separate-logging rule to `doc/design/17-out-of-character-mode.md`
       (FR-007, FR-008): OOC exchanges are excluded from the session's in-character narrative
       output and from the chronicle's fictional record, but are logged somewhere the player and
       GM can refer back to, distinct from that record; note the concrete storage location is an
       implementation decision deferred to whichever system later realises session logging (per
       plan.md's Technical Context).
-- [X] T006 [US1] Add a worked example to `design/04a-out-of-character-mode.md` walking through
+- [X] T006 [US1] Add a worked example to `doc/design/17-out-of-character-mode.md` walking through
       the spec's own scenario: player sends `?what's my stamina`, GM responds with the exact
       number and the OOC marker (forward reference to T009), player's next message resumes the
       scene with no reference to the exchange.
@@ -66,21 +66,21 @@ the character's in-fiction knowledge from the player's own knowledge of the narr
 
 **Independent Test**: read the answer-shape section against the spec's Acceptance Scenarios
 2.1-2.2 and confirm both the "no, and here is what they'd believe instead" case and the "yes, at
-their competence" case are covered, with the latter cross-referencing `design/10-diegesis.md`'s
+their competence" case are covered, with the latter cross-referencing `doc/design/23-diegesis.md`'s
 existing knowledge-source rule rather than restating it.
 
 - [X] T007 [US2] Add the "would my character know this?" section to
-      `design/04a-out-of-character-mode.md` (FR-004): the answer distinguishes the character's
+      `doc/design/17-out-of-character-mode.md` (FR-004): the answer distinguishes the character's
       in-fiction knowledge from the player's own knowledge of the narration; where the character
       would not know something, the response says so and states what the character would
       believe or assume instead where answerable; where the character would know it, the answer
-      is given at the character's scaled competence per `design/10-diegesis.md`'s "the character
+      is given at the character's scaled competence per `doc/design/23-diegesis.md`'s "the character
       as a knowledge source" section (cross-referenced, not restated).
     - [X] T007a [US2] In the same section, add the "never shown" boundary case: where the
       honest answer would reveal engine-hidden state or another character's information the
       player's own character has no path to (e.g. a hidden threshold, another character's
       motive), the response says plainly the answer isn't available, per
-      `design/10-diegesis.md`'s "never shown" visibility class — it does not fabricate an
+      `doc/design/23-diegesis.md`'s "never shown" visibility class — it does not fabricate an
       in-fiction justification.
 
 **Checkpoint**: User Story 2 is independently complete — the knowledge-question answer shape is
@@ -92,26 +92,26 @@ fully specified and consistent with the existing diegetic knowledge-source rule.
 does.
 
 **Independent Test**: read the marker section against the spec's Acceptance Scenarios 3.1-3.2 and
-`design/01-principles.md`'s "no engine scaffolding in narration" rule, confirming the marker is
+`doc/design/01-principles.md`'s "no engine scaffolding in narration" rule, confirming the marker is
 distinguishable without being narrative-breaking scaffolding *within* in-character prose (it only
 ever appears on an OOC response, never inside one).
 
 - [X] T008 [US3] Investigate whether Claude Code exposes a hook or mechanism to change UI chrome
       (e.g. input box colour) from within a conversation turn, per the issue's "visible mode
       indication" acceptance criterion. Record the finding directly in
-      `design/04a-out-of-character-mode.md` — if no such hook exists, say so plainly, matching
+      `doc/design/17-out-of-character-mode.md` — if no such hook exists, say so plainly, matching
       the issue's own instruction to "say so plainly and fall back to an unmistakable textual
       marker."
-- [X] T009 [US3] Add the textual-marker rule to `design/04a-out-of-character-mode.md` (FR-005):
+- [X] T009 [US3] Add the textual-marker rule to `doc/design/17-out-of-character-mode.md` (FR-005):
       every GM response to an OOC-triggered message opens with an unmistakable textual marker
       (e.g. a leading `[OOC]` line); no in-character response ever carries it. Note this is
       mechanism, not voice — the exact wording is available to a setting's `rename:` block like
       any other engine label, per `CLAUDE.md`'s engine-labels rule.
-- [X] T010 [US3] Add the edge-case handling to `design/04a-out-of-character-mode.md` covering the
+- [X] T010 [US3] Add the edge-case handling to `doc/design/17-out-of-character-mode.md` covering the
       spec's Edge Cases: a bare `?` with no question prompts for what the player wants to know
       (still OOC-marked, never falling through to in-character play); an untriggered
       in-character knowledge question ("what do I know about this place?") is unaffected by this
-      feature and continues to be answered in character per `design/10-diegesis.md`; OOC mode is
+      feature and continues to be answered in character per `doc/design/23-diegesis.md`; OOC mode is
       explicitly not a rewind/undo mechanism for established fiction (out of scope, per the
       issue).
 
@@ -120,16 +120,16 @@ all times, and the feature's boundaries (what it does not do) are explicit.
 
 ## Phase 6: Polish & cross-cutting concerns
 
-- [X] T011 [P] Add a one-line cross-reference in `design/01-principles.md` at the point that
+- [X] T011 [P] Add a one-line cross-reference in `doc/design/01-principles.md` at the point that
       currently implies everything typed is in-character speech and action, pointing to
-      `design/04a-out-of-character-mode.md`.
-- [X] T012 [P] Add a one-line cross-reference in `design/10-diegesis.md` at "Mechanical detail is
-      always available on request", pointing to `design/04a-out-of-character-mode.md` as where
+      `doc/design/17-out-of-character-mode.md`.
+- [X] T012 [P] Add a one-line cross-reference in `doc/design/23-diegesis.md` at "Mechanical detail is
+      always available on request", pointing to `doc/design/17-out-of-character-mode.md` as where
       the request mechanism is specified.
-- [X] T013 [P] Add a one-line cross-reference in `design/04-session.md` noting OOC mode as the
+- [X] T013 [P] Add a one-line cross-reference in `doc/design/16-session.md` noting OOC mode as the
       escape hatch that does not itself become part of a beat, pointing to
-      `design/04a-out-of-character-mode.md`.
-- [X] T014 [P] Add a link to `design/04a-out-of-character-mode.md` from `design/README.md`'s
+      `doc/design/17-out-of-character-mode.md`.
+- [X] T014 [P] Add a link to `doc/design/17-out-of-character-mode.md` from `doc/README.md`'s
       index so `tools/check_docs.py`'s reachability check passes.
 - [X] T015 [P] Run `python3 tools/check_docs.py` and confirm the new document is reachable and
       the ADR index picks up ADR 0037.
@@ -138,7 +138,7 @@ all times, and the feature's boundaries (what it does not do) are explicit.
 - [X] T017 [P] Run `python3 tools/backlog.py check` and confirm no drift.
 - [X] T018 Run `ruff check . && ruff format --check . && python3 -m pytest -q` and confirm the
       repo-wide suite is green.
-- [X] T019 Re-read `design/04a-out-of-character-mode.md` end to end for the recurring fault
+- [X] T019 Re-read `doc/design/17-out-of-character-mode.md` end to end for the recurring fault
       classes in `CLAUDE.md`'s checklist (setting vocabulary, tone baked into a mechanic, a
       stale claim against `01-principles.md`/`10-diegesis.md`) before raising the PR.
 
@@ -159,7 +159,7 @@ all times, and the feature's boundaries (what it does not do) are explicit.
 ## Parallel execution examples
 
 - Phase 4 (US2) and Phase 5 (US3) can proceed in parallel once Phase 3 is complete, provided
-  edits to `design/04a-out-of-character-mode.md` are sequenced to avoid conflicting writes to the
+  edits to `doc/design/17-out-of-character-mode.md` are sequenced to avoid conflicting writes to the
   same file.
 - Within Phase 6: T011, T012, T013, T014 (cross-references, different files) and T015, T016, T017
   (independent read-only checks) can all run in parallel with each other; T018 and T019 should

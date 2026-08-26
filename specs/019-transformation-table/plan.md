@@ -4,7 +4,7 @@
 
 ## Summary
 
-Define `design/03a-3-transformations.md` as the transformation table family required by
+Define `doc/design/10-transformations.md` as the transformation table family required by
 `03a-tables.md`'s conventions: a `1d6` table with a severity per row, concrete Taint threshold
 values, a computed proof the re-roll loop terminates, the resolved body-versus-mind statement, the
 hidden threshold's mechanics, and Dread. Update `03-rules.md` §4 and `03a-tables.md`'s index in
@@ -15,7 +15,7 @@ place, and record the threshold-spacing/severity-reuse decision as ADR 0029.
 **Thresholds at every 3 Taint, starting at 3.** Extends the two values `03-rules.md` §1's Wyrd-die
 bands already anchor (3 and 6) at the same interval indefinitely, rather than leaving Taint's upper
 range without thresholds or inventing an unmotivated second interval. See
-[ADR 0029](../../design/adr/0029-transformation-thresholds-at-every-three-taint.md) for the
+[ADR 0029](../../doc/adr/0029-transformation-thresholds-at-every-three-taint.md) for the
 rejected alternatives.
 
 **Six-row `1d6` table, severities 1/1/2/2/3/4.** Large enough that a single-event threshold
@@ -41,16 +41,16 @@ per the issue's own instruction.
 
 ## Structure
 
-- `design/03a-3-transformations.md` — new. Thresholds, body/mind, the roll, the table, termination,
+- `doc/design/10-transformations.md` — new. Thresholds, body/mind, the roll, the table, termination,
   hidden threshold, Dread.
-- `design/03-rules.md` §4 — rewritten in place to state the resolved thresholds and body/mind split,
+- `doc/design/03-rules.md` §4 — rewritten in place to state the resolved thresholds and body/mind split,
   and to point at the new document for detail.
-- `design/03a-tables.md` — index row updated from "not yet written" to the real file, roll, and
+- `doc/design/07-tables.md` — index row updated from "not yet written" to the real file, roll, and
   link.
 - `README.md` — hub row added for reachability.
-- `design/adr/0029-*.md` — records the threshold-spacing and Dread-reuse decisions and their
+- `doc/adr/0029-*.md` — records the threshold-spacing and Dread-reuse decisions and their
   rejected alternatives.
-- `design/README.md` — ADR index updated.
+- `doc/README.md` — ADR index updated.
 - `tools/check_transformation.py` — computes worst-case and expected re-roll counts; asserts the
   hard bound.
 

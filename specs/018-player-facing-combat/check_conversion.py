@@ -14,13 +14,13 @@ Everything below is derived from numbers already merged, not invented here:
    (specs/012-combat-sequencing/check_mapping.py). This script asserts agreement with that table
    before computing anything new -- it is a prior figure, not re-derived.
 2. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 through
-   (design/03-rules.md section 2), reused from specs/017-adversary-model/check_adversary.py by
+   (doc/design/03-rules.md section 2), reused from specs/017-adversary-model/check_adversary.py by
    construction, not re-modelled.
-3. **A starting character has Stamina 6** (design/03c-character-creation.md).
-4. **Degrees are tens(skill) - tens(roll)** (design/03-rules.md section 1); this script feeds
+3. **A starting character has Stamina 6** (doc/design/05-character-creation.md).
+4. **Degrees are tens(skill) - tens(roll)** (doc/design/03-rules.md section 1); this script feeds
    the formula the new input, effective%, rather than a raw skill.
 5. **Today's telling blow: win by 3 or more degrees, damage doubles before armour**
-   (design/03-rules.md section 2).
+   (doc/design/03-rules.md section 2).
 
 What this script settles that no prior issue did:
 
@@ -331,7 +331,7 @@ def fight_outcome(player_stamina: int, opponent_stamina: int,
 
 def rounds_summary(player_stamina: int, opponent_stamina: int, player_skill: int,
                     opponent_skill: int, threshold: int):
-    """The figures design/03-rules.md section 2's road-back table already publishes at starting
+    """The figures doc/design/03-rules.md section 2's road-back table already publishes at starting
     Stamina: expected Stamina lost by the time the player wins (Rallies to full), and the round
     count. One skill per side, for both attack and defence, matching the convention specs/012 and
     specs/017 already use."""
@@ -347,7 +347,7 @@ def rounds_summary(player_stamina: int, opponent_stamina: int, player_skill: int
 
 
 def wyrd_die_uniform(eff: int) -> bool:
-    """Units digit of the natural roll (design/03-rules.md section 1) is read from 1-100
+    """Units digit of the natural roll (doc/design/03-rules.md section 1) is read from 1-100
     regardless of eff; the clip only changes which percentage the roll is compared against, not
     the roll itself. Uniform within both the success set (1..eff) and the failure set
     (eff+1..100) whenever each set's size is a multiple of 10, and at worst off by the partial
@@ -408,7 +408,7 @@ def main() -> int:
     print(f"  range: {float(lo):.2f}x - {float(hi):.2f}x  (issue #69 stated 1.4x-3.1x)")
 
     print("\nT005 -- Stamina lost when the player wins (Rallies to full), starting Stamina 6")
-    print("  (design/03-rules.md section 2 today publishes: even 4.6-4.9, +20 advantage 2.2-3.3)")
+    print("  (doc/design/03-rules.md section 2 today publishes: even 4.6-4.9, +20 advantage 2.2-3.3)")
     for label, (s, o) in [("even", (40, 40)), ("+20 advantage", (60, 40))]:
         p_drop, o_drop, rounds, stamina_lost = rounds_summary(
             STARTING_STAMINA, STARTING_STAMINA, s, o, threshold)

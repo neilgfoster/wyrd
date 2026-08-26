@@ -16,10 +16,10 @@ The repo is read in two places that want different things. On github.com it is a
 design documents; in Obsidian it should be a navigable graph. The two are compatible, but only if
 the link policy is chosen deliberately.
 
-**Wikilinks are already a Wyrd convention — for data, not prose.** `design/14-entities.md` describes
+**Wikilinks are already a Wyrd convention — for data, not prose.** `doc/design/27-entities.md` describes
 the world mesh as "human-editable, diff-legible, and — because they link with `[[wikilinks]]` — a
-working graph"; `design/07-tooling.md` says state is YAML with `[[wikilink]]` frontmatter parsed by a
-small internal reader; `design/08-maintenance.md` runs a referential-integrity check over `[[link]]`.
+working graph"; `doc/design/20-tooling.md` says state is YAML with `[[wikilink]]` frontmatter parsed by a
+small internal reader; `doc/design/21-maintenance.md` runs a referential-integrity check over `[[link]]`.
 So the *entity model* is already an Obsidian graph by design.
 
 **But GitHub does not render `[[wikilinks]]`.** This repo is intended public. A wikilink degrades to
@@ -38,7 +38,7 @@ because every index in the repo has already rotted silently:
 | Index or claim | Verified state |
 |---|---|
 | `README.md` "Read in this order" | **missing `03a-2-aftermath.md`** |
-| `design/README.md` ADR index | **stops at 0008**; 0009 and 0010 exist on disk |
+| `doc/README.md` ADR index | **stops at 0008**; 0009 and 0010 exist on disk |
 | `README.md` repositories table | says `wyrd-<setting>`; actual repos are `wyrd-setting-<name>` |
 | `README.md` Status section | **links to `playtest/`, which does not exist** — the repo's only dead link |
 | `README.md` Status section | asserts **"Design complete; no implementation yet"** — the design programme (#1) exists because it is not |
@@ -84,7 +84,7 @@ A stdlib script that fails on:
 
 - a markdown document under `design/` not reachable from `README.md`
 - a relative link resolving to nothing, anywhere in the repo
-- an ADR on disk missing from `design/README.md`'s index
+- an ADR on disk missing from `doc/README.md`'s index
 - a `[[wikilink]]` appearing in a prose document rather than in entity-data illustration
 
 The last one guards the policy itself, which otherwise erodes the first time someone edits in
@@ -96,7 +96,7 @@ Both audiences are real. Nothing may render worse on github.com than it does tod
 
 ## Constraints
 
-- Python 3.11+, stdlib only (`design/07-tooling.md` §2). `unittest`, not pytest (§6).
+- Python 3.11+, stdlib only (`doc/design/20-tooling.md` §2). `unittest`, not pytest (§6).
 - Committed vault config must be machine-independent — no absolute paths, no personal preferences.
 - Nothing unpublishable: a vault config is not a place for library paths.
 - No file under `.kord/`, `.specify/` or `.github/ISSUE_TEMPLATE/` is touched.
@@ -108,7 +108,7 @@ Both audiences are real. Nothing may render worse on github.com than it does tod
 - [ ] `.gitignore` keeps per-machine workspace state out.
 - [ ] An ADR records the link policy and its rejected alternative.
 - [ ] Every `design/**.md` is reachable from `README.md`.
-- [ ] `design/README.md` indexes 0009 and 0010.
+- [ ] `doc/README.md` indexes 0009 and 0010.
 - [ ] `README.md` lists `03a-2-aftermath.md`, names repos `wyrd-setting-<name>`, has no dead link,
       and no longer claims the design is complete.
 - [ ] `python3 tools/check_docs.py` exits non-zero on each failure class in FR-5 and zero on the

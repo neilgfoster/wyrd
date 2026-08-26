@@ -14,7 +14,7 @@ than something to remember.
 
 ## Technical Context
 
-**Language**: Python 3.11+, stdlib only. `unittest` (`design/07-tooling.md` §6).
+**Language**: Python 3.11+, stdlib only. `unittest` (`doc/design/20-tooling.md` §6).
 
 **Placement**: `tools/check_docs.py`, beside `tools/backlog.py`. Same shape: a `check` that prints
 what is wrong and exits non-zero.
@@ -36,9 +36,9 @@ what is wrong and exits non-zero.
 ### The reachability model
 
 ```
-README.md  ──links──►  design/01..16, design/README.md, settings.yaml, specs/
+README.md  ──links──►  design/01..16, doc/README.md, settings.yaml, specs/
                             │
-              design/README.md ──links──► every design/adr/NNNN-*.md
+              doc/README.md ──links──► every doc/adr/NNNN-*.md
 ```
 
 Reachability is transitive from `README.md`. A document is reachable if some chain of relative
@@ -55,10 +55,10 @@ Dead-link checking, by contrast, applies everywhere including `specs/`.
 1. **Unreachable** — a `design/**.md` no chain from `README.md` reaches.
 2. **Dead link** — a relative target that does not exist on disk. Anchors are stripped before
    resolving; external schemes are skipped.
-3. **Unindexed ADR** — a file in `design/adr/` absent from `design/README.md`.
+3. **Unindexed ADR** — a file in `doc/adr/` absent from `doc/README.md`.
 4. **Wikilink in prose** — `[[...]]` in a document that is not illustrating entity data.
 
-Check 4 needs care: `design/14-entities.md`, `06-state.md`, `07-tooling.md` and `08-maintenance.md`
+Check 4 needs care: `doc/design/27-entities.md`, `06-state.md`, `07-tooling.md` and `08-maintenance.md`
 legitimately contain wikilinks, either inside fenced YAML examples or as inline code describing the
 convention. So the rule is **wikilinks are allowed inside fenced code blocks and inline code spans,
 and nowhere else** — which is exactly where they appear today, and is checkable without an allowlist
@@ -79,7 +79,7 @@ Three small files, all machine-independent:
 
 1. `.obsidian/` config; extend `.gitignore`.
 2. ADR 0011 — the link policy.
-3. Repair `README.md` (four faults) and `design/README.md` (ADR index).
+3. Repair `README.md` (four faults) and `doc/README.md` (ADR index).
 4. `tools/check_docs.py`.
 5. `tools/test_check_docs.py` — `unittest`, against a temporary tree so each failure class is
    constructed rather than restated.

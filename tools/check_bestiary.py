@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """Validate a setting's bestiary against the adversary block.
 
-design/13-authoring-a-setting.md named `setting/bestiary.yaml` as a setting file for as long as
+doc/design/26-authoring-a-setting.md named `setting/bestiary.yaml` as a setting file for as long as
 that document has existed, and never said what went in it. So a setting author had no contract to
 fill, and five separate rules had been reading fields off an opponent that belonged to no schema
--- most sharply the crowd rule (design/adr/0019), which calls itself "a lookup, and nothing else"
+-- most sharply the crowd rule (doc/adr/0019), which calls itself "a lookup, and nothing else"
 over three of them.
 
-This is the validator for design/03d-the-adversary.md. It fails loudly on four classes:
+This is the validator for doc/design/06-the-adversary.md. It fails loudly on four classes:
 
 1. **A missing required field.** The block is what the ruleset reads; a block missing a field is
    an opponent the GM has to improvise, which is the fault the block exists to remove.
 2. **An unrecognised field.** Rejected rather than ignored. A setting may extend, retune, rename
-   or disable, and may never add a mechanism (design/13-authoring-a-setting.md); an unrecognised
+   or disable, and may never add a mechanism (doc/design/26-authoring-a-setting.md); an unrecognised
    field is the quiet path by which one gets added anyway.
 3. **A value outside the range the ruleset can absorb** -- an armour rank outside the published
-   set, a damage type outside the closed four (design/adr/0022), a percentage off the scale.
+   set, a damage type outside the closed four (doc/adr/0022), a percentage off the scale.
 4. **A trait effect outside the closed vocabulary**, for the same reason as 2.
 
 Every failure is reported, not just the first, and every one names the entry and the field.
@@ -24,7 +24,7 @@ Usage:
     python3 tools/check_bestiary.py <path-to-bestiary.yaml> [...]
     python3 tools/check_bestiary.py --format json <path>
 
-Python 3.11+, standard library only (design/07-tooling.md section 2). YAML is read by the small
+Python 3.11+, standard library only (doc/design/20-tooling.md section 2). YAML is read by the small
 internal reader below, for the restricted subset Wyrd uses -- there is deliberately no
 third-party YAML dependency.
 """
@@ -36,16 +36,16 @@ import json
 import pathlib
 import re
 
-# --- The block, from design/03d-the-adversary.md ----------------------------
+# --- The block, from doc/design/06-the-adversary.md ----------------------------
 
 REQUIRED_FIELDS = {"id", "name", "baseline", "stamina_max", "armour", "skills"}
 OPTIONAL_FIELDS = {"damage", "damage_type", "ranged", "traits", "notes"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-ARMOUR_RANKS = ("none", "light", "modest", "heavy")        # design/03-rules.md section 2
-DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # design/adr/0022, closed
+ARMOUR_RANKS = ("none", "light", "modest", "heavy")        # doc/design/03-rules.md section 2
+DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # doc/adr/0022, closed
 
-# design/03b-the-character.md section 2: a percentage is what the engine rolls against. 0 is
+# doc/design/04-the-character.md section 2: a percentage is what the engine rolls against. 0 is
 # legal -- section 7's scaling floor reaches it -- and nothing rolls above 100.
 SKILL_MIN, SKILL_MAX = 0, 100
 STAMINA_MIN = 1
@@ -60,7 +60,7 @@ TRAIT_EFFECTS = {
     "wyrd": "widens the Ill Omen or Fair Omen band on tests against this opponent",
 }
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")            # design/14-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")            # doc/design/27-entities.md: kebab-case
 DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
 
 

@@ -65,7 +65,7 @@ Resolved with the operator before specification:
   single-select: buckets leave ties, and a tie is exactly the judgement call this removes.
 - **What is ranked** — root-level issues only (no parent issue). Children already carry a
   dependency order; ranking them too would be a second ordering of the same work.
-- **The read path** — a script in this repo, following `design/07-tooling.md`. Not raised upstream
+- **The read path** — a script in this repo, following `doc/design/20-tooling.md`. Not raised upstream
   to kord as a prerequisite, so Wyrd is not blocked on another repo.
 
 ## Requirements
@@ -123,7 +123,7 @@ rank visible rather than silent.
   by `kord-install`.
 - **Cross-repo.** The board spans `wyrd`, `wyrd-<setting>` and `wyrd-research`; nothing may assume
   a single repository.
-- **Python 3.11+, stdlib only** (`design/07-tooling.md` §2). GitHub access shells out to `gh`.
+- **Python 3.11+, stdlib only** (`doc/design/20-tooling.md` §2). GitHub access shells out to `gh`.
 - **Read-only.** The reporting tool never mutates an issue, a field or the board.
 - **Publishable.** Nothing derived from a copyrighted source.
 

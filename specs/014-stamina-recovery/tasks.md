@@ -33,7 +33,7 @@
 
 - [x] T019 ADR 0020 — Stamina recovery: the decision, and the rejected alternatives (full at every Rally, downtime only, Stamina as a Recover undertaking, a fraction of maximum on waking).
 - [x] T020 ADR 0021 — mending: stepping rather than closing outright, the recurring wound's exemption, and the rejected alternative that wounds never mend at all.
-- [x] T021 Add both ADR rows to the index in `design/README.md`.
+- [x] T021 Add both ADR rows to the index in `doc/README.md`.
 
 ## The gates
 

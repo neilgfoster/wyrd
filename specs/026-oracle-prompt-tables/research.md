@@ -5,8 +5,8 @@
 **Rationale**: The issue names four candidates already present in the existing design: an NPC's
 real objective, why a situation is not as presented, what a thread turns on, what complicates a
 scene. Each corresponds to a place the design already has a structure that would otherwise be
-filled by unconstrained LLM invention: `design/04-session.md`'s companion objectives, a scene's
-presented-vs-actual state, `design/05-campaign.md`/`design/15-arcs-and-beats.md`'s thread turns,
+filled by unconstrained LLM invention: `doc/design/16-session.md`'s companion objectives, a scene's
+presented-vs-actual state, `doc/design/18-campaign.md`/`doc/design/28-arcs-and-beats.md`'s thread turns,
 and ordinary scene complication. Four families is the minimum that covers all four named gaps
 without inventing a fifth nothing in the design currently needs.
 
@@ -18,7 +18,7 @@ problem from the escalation risk this family exists to close.
 
 ## Decision: each family is a single table, keyed `oracle-prompt-<family>`
 
-**Rationale**: `design/03a-tables.md`'s naming convention is `<family>-<variant>` where a family
+**Rationale**: `doc/design/07-tables.md`'s naming convention is `<family>-<variant>` where a family
 holds several tables. Prompts are a variant of the existing `oracles` family (spec
 Clarifications), so each prompt family gets its own key under that umbrella, e.g.
 `oracle-prompt-npc-objective`, `oracle-prompt-situation-truth`, `oracle-prompt-thread-turn`,
@@ -26,16 +26,16 @@ Clarifications), so each prompt family gets its own key under that umbrella, e.g
 
 **Alternatives considered**: One combined table with a family selector column — rejected. It would
 mean the roll to *pick* a family and the roll to *read a row within it* are conflated into one
-die, which breaks `design/03a-tables.md`'s rule that a family declares its own die: the four
+die, which breaks `doc/design/07-tables.md`'s rule that a family declares its own die: the four
 prompt families do not obviously want the same table size, and forcing them into one table would
 either waste rows or crowd them.
 
 ## Decision: `1d100`, no modifier, reused from the resolution die — same choice as the answer table
 
-**Rationale**: As with `design/03a-5-oracle-answers.md`, `design/03-rules.md` §1 already commits
+**Rationale**: As with `doc/design/12-oracle-answers.md`, `doc/design/03-rules.md` §1 already commits
 the ruleset to `d100`. A prompt table with, say, 12-20 rows fits comfortably within contiguous
 `1d100` ranges without needing single-digit precision, and reusing the existing die avoids adding
-a second die vocabulary purely for this family (`design/03a-tables.md`'s "declared by the family"
+a second die vocabulary purely for this family (`doc/design/07-tables.md`'s "declared by the family"
 clause exists to let a family diverge when it needs to, not to invite divergence by default).
 
 **Alternatives considered**: `1d20` or `1d12` per family, matching row count more tightly —
@@ -63,7 +63,7 @@ itself is not.
 
 ## Decision: a prompt roll is obligatory when the GM is about to invent one of the four gaps and no answer is already established
 
-**Rationale**: Mirrors the answer-oracle's obligation shape (`design/03a-5-oracle-answers.md`),
+**Rationale**: Mirrors the answer-oracle's obligation shape (`doc/design/12-oracle-answers.md`),
 adapted to prompts: the GM rolls instead of inventing whenever the fiction needs one of the four
 scoped things (an NPC's real objective, why a situation isn't as presented, a thread's turn, a
 scene's complication) and it hasn't already been established by an earlier roll, a companion's
@@ -72,16 +72,16 @@ same way an oracle answer is, and is never re-rolled to get a different answer t
 question.
 
 **Alternatives considered**: Making the roll optional/advisory — rejected for the same reason
-`design/03a-5-oracle-answers.md` rejects it: an oracle nobody is obliged to consult constrains
+`doc/design/12-oracle-answers.md` rejects it: an oracle nobody is obliged to consult constrains
 nothing, because a GM under narrative pressure reaches for it only when the invented answer
 already feels risky, which is exactly the case that needs it least.
 
 ## Decision: generated content maps onto existing structures rather than introducing new state
 
 **Rationale**: An NPC-objective row's output becomes the value the companion/objective machinery
-in `design/04-session.md` already holds (it does not add a new field — it fills an existing one
+in `doc/design/16-session.md` already holds (it does not add a new field — it fills an existing one
 that was previously the GM's private invention). A thread-turn row's output becomes a state
-transition the thread/threat tracking in `design/05-campaign.md` and `design/15-arcs-and-beats.md`
+transition the thread/threat tracking in `doc/design/18-campaign.md` and `doc/design/28-arcs-and-beats.md`
 already accepts. This keeps the family additive to existing content layers instead of duplicating
 them with a parallel "generated content" store.
 
@@ -92,21 +92,21 @@ to two records of the same NPC's objective.
 
 ## Decision: setting extension reuses the existing `extend:` override category, applied to tables
 
-**Rationale**: `design/13-authoring-a-setting.md` already names two distinct override shapes:
+**Rationale**: `doc/design/26-authoring-a-setting.md` already names two distinct override shapes:
 **extend** (add careers, talents, gear, creatures — additive, on top of the engine's own list) and
 **retune** (replace a table wholesale, e.g. `overrides.tables:`). Prompt tables want the *extend*
 shape, not the *retune* one, but `extend:` today only covers list-like content, not rollable
-tables. This feature closes that gap the way `design/13-authoring-a-setting.md`'s own "not
+tables. This feature closes that gap the way `doc/design/26-authoring-a-setting.md`'s own "not
 permitted: adding a subsystem the engine does not know about" rule requires — a setting needing a
 mechanism the engine lacks is an engine gap, generalised in the engine so every table family gets
 it, not a special case invented for prompts alone. Concretely: `extend:` gains the ability to name
 a table key, whose rows are appended to the engine's own after the last engine row, keeping engine
 ranges untouched and giving the setting's rows a contiguous range slice above them (the *additive*
-kind of table change `design/03a-tables.md`'s own versioning section already names, as distinct
+kind of table change `doc/design/07-tables.md`'s own versioning section already names, as distinct
 from *tuning*).
 
 **Alternatives considered**: A prompt-specific extension mechanism, scoped to this family only —
-rejected. `design/13-authoring-a-setting.md`'s override set is closed and generalised on purpose;
+rejected. `doc/design/26-authoring-a-setting.md`'s override set is closed and generalised on purpose;
 a mechanism that only works for prompt tables would be exactly the kind of special case that rule
 exists to prevent, and every other repeatable table family (afflictions, oracle answers) would
 plausibly want the same additive path later.
