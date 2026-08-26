@@ -712,16 +712,20 @@ One of each per session at most.
 |---|---|
 | 1 | **+5%** to a skill your career grants, to that career's cap |
 | 1 | **open** a new skill your career grants, at 25% |
-| 1 | **change career**, to a legal exit, given a fictional reason |
+| 1 | **change career**, to any entry career, or to a non-entry career whose prerequisites you satisfy, given a fictional reason |
 
 That is the entire economy. No talent trees, no feats — their absence is deliberate
 ([ADR 0002](../adr/0002-source-material.md)).
 
 ### Careers
 
-Careers form a **directed graph**: each declares its entries and exits
-([`27-entities.md`](27-entities.md)). You may only move to a legal exit, so a career history
-is a biography, and the engine cannot grant a career your past does not permit.
+Careers form a **directed graph** — each entry career is choosable freely, and each non-entry
+career declares the prerequisite career(s) completing any one of grants eligibility for it
+([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). **Changing career is a free choice of
+any entry career, or a legal move to a non-entry career you are currently eligible for** — a
+character's own history of what they completed shapes what a non-entry career they can reach,
+but never traps them: abandoning a career path entirely and starting over from a fresh entry
+point is always legal, and the engine cannot grant a non-entry career your past does not permit.
 
 **Every career caps its skills at 70%** — the top of the *expert* band ([`23-diegesis.md`](23-diegesis.md))
 — one figure applied to every skill that career grants. No advance may raise a skill past its
@@ -732,8 +736,8 @@ career's cap; a career alone never buys the 75%+ band, "it is part of who you ar
 later career. Depth is rewarded over breadth, and this is the whole power curve. Completion is
 tracked **per career-instance**: a character who leaves a career unfinished and re-enters it
 later starts a fresh instance and grants nothing for the one abandoned, but a career finished
-twice across a lifetime — legal, since the career graph may loop — grants its Stamina and Mark
-each time.
+twice across a lifetime — legal, since eligibility for a career, once earned, never expires —
+grants its Stamina and Mark each time.
 
 **Maximum Stamina stops climbing at 10.** Creation fixes the starting value at 6 because a further
 +1 there is a 16.7% gain, and states directly that "much above 10 [...] the sentence stops being

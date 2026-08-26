@@ -15,7 +15,7 @@ wyrd-<name>/
 ├─ setting.yaml       # identity, engine compatibility, version
 ├─ setting/
 │  ├─ voice.md        # THE most important file. See below.
-│  ├─ careers.yaml    # the career graph — nodes with entries and exits
+│  ├─ careers.yaml    # the career graph — entry careers, and prerequisites for the rest
 │  ├─ gear.yaml       # weapons, armour, prices, what is legal to carry where
 │  ├─ bestiary.yaml   # adversary blocks (a lookup table) — see below
 │  ├─ deities.yaml    # or creeds, or powers, or nothing
@@ -227,7 +227,7 @@ The engine guarantees, and a setting may rely on:
 | Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called*, what causes them, and **whether they exist at all** |
-| Career graph mechanics — entries, exits, advance triggers | the graph itself |
+| Career graph mechanics — entry careers, prerequisites, advance triggers | the graph itself |
 | Beats, Rally, downtime, party tension | what downtime looks like here |
 | Loyalty, and the strained/irreconcilable relations | **which Loyalties exist, what they are called, and which pairs are strained or irreconcilable** ([`16-session.md`](16-session.md)) |
 | Threats, threads, elapsed time, succession | who the Threats are |
