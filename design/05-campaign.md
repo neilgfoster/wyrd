@@ -148,6 +148,10 @@ wyrd advance-time <game-days>
 Deterministic, and it writes its results. It is called **when the fiction says time passed**
 — most often at the end of a downtime phase — not at the start of a session.
 
+A journey's summarised legs advance the clock this same way — see
+[`17-journeys.md`](17-journeys.md) for the setting-configurable subsystem that plays travel
+rather than only narrating it.
+
 ### Returning after a long absence
 
 A real-world gap changes nothing about the world. It changes what the **recap** has to do:

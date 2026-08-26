@@ -58,6 +58,5 @@ settings:
     repo: wyrd-tor
     visibility: private
     status: stub
-    note: "Known engine gap — needs the journey subsystem the core does not yet have."
 
 # Candidates, unstarted: D6 Star Wars, Maelstrom, Mordheim, Stars Without Number.

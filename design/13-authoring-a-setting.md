@@ -329,7 +329,7 @@ Useful because it is unlike the settings already built, so it tests the boundary
 | A hope/despair balance | **already engine** — Taint and Resolve |
 | Fault Line derived from a culture rather than a Drive | **retune** — a mapping table; the mechanism already exists |
 | A downtime phase | **already engine** |
-| Journeys as a played mechanic | **an engine gap** — see below |
+| Journeys as a played mechanic | **an engine gap, since closed** — see below |
 | Beasts and named powers | `bestiary.yaml`, and `organisation` entities |
 | A world in decline | **the tone contract** — `victory`, `scale_drift`, `power_curve` |
 | The register | `voice.md` — elegiac, where another line might be dry or brutal |
@@ -337,13 +337,13 @@ Useful because it is unlike the settings already built, so it tests the boundary
 Most of it lands in data, which is the point — the exercise is meant to find what does not.
 
 **And it found one.** A setting built around travel needs journeys *played* rather than
-narrated, and Wyrd has no travel subsystem: the engine assumes travel is summarised
-([`04-session.md`](04-session.md)).
+narrated, and at the time this example was run Wyrd had no travel subsystem: the engine assumed
+travel was always summarised ([`05-campaign.md`](05-campaign.md)).
 
-That is a **new mechanism**, so by the hard rule above the setting may not add it. It is an
-engine gap, and the correct response is to build a travel subsystem **in the core**,
-generalised — which every setting may then configure or leave off. A setting that quietly
-implemented its own would fork the engine, and the next setting wanting journeys would find
+That was a **new mechanism**, so by the hard rule above no setting was permitted to add it
+itself. It went into the core instead, generalised, and every setting may now configure it or
+leave it off — see [`17-journeys.md`](17-journeys.md). A setting that had quietly implemented
+its own would have forked the engine, and the next setting wanting journeys would have found
 nothing to reuse.
 
 This is the worked example doing its job: the value of running an unfamiliar setting through
