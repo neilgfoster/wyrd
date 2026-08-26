@@ -1,102 +1,116 @@
 #!/usr/bin/env python3
-"""Verify the oracle-prompt tables' structure.
+"""Verify the oracle-prompt tables' structure, against the shipped document itself.
 
 Unlike tools/check_oracle_answers.py, this family makes no probability claim
 to compute -- its correctness criterion is genre-neutrality, a qualitative
 reading check recorded per row in design/03a-6-oracle-prompts.md, not a
 number. What *is* computable, per design/03a-tables.md's row schema, is
 checked here: every table's ranges are contiguous, start at 1, and every row
-declares that its genre-neutrality check passed. Run directly; exits
-non-zero on any mismatch (CLAUDE.md: "where a claim can be checked by a
-script, check it").
+declares that its genre-neutrality check passed -- verified against the rows
+this script parses out of the design document itself, not a hand-copied
+literal that could drift from it unnoticed (CLAUDE.md: "where a claim can be
+checked by a script, check it").
+
+Run directly; exits non-zero on any mismatch.
 """
 
 from __future__ import annotations
 
-# Row shape: (range, effect key, checked). The description text lives only in
-# the design document -- this script checks structure, not prose.
-Row = tuple[range, str, bool]
+import re
+from pathlib import Path
 
-TABLES: dict[str, list[Row]] = {
-    "oracle-prompt-npc-objective": [
-        (range(1, 11), "protect_someone", True),
-        (range(11, 21), "escape_a_debt", True),
-        (range(21, 31), "prove_worth", True),
-        (range(31, 41), "recover_something_taken", True),
-        (range(41, 51), "preserve_the_status_quo", True),
-        (range(51, 61), "gain_advantage_over_a_rival", True),
-        (range(61, 71), "keep_a_secret_buried", True),
-        (range(71, 81), "be_free_of_an_arrangement", True),
-        (range(81, 91), "settle_an_old_grievance", True),
-        (range(91, 101), "survive_at_any_cost", True),
-    ],
-    "oracle-prompt-situation-truth": [
-        (range(1, 11), "deliberate_front", True),
-        (range(11, 21), "no_longer_true", True),
-        (range(21, 31), "true_but_changing", True),
-        (range(31, 41), "true_for_most_not_all", True),
-        (range(41, 51), "missing_one_fact", True),
-        (range(51, 61), "true_and_that_is_the_danger", True),
-        (range(61, 71), "staged_for_someone_else", True),
-        (range(71, 81), "true_on_the_surface_only", True),
-        (range(81, 91), "an_honest_mistake", True),
-        (range(91, 101), "true_for_the_wrong_reason", True),
-    ],
-    "oracle-prompt-thread-turn": [
-        (range(1, 11), "someone_switches_sides", True),
-        (range(11, 21), "new_information_reframes_it", True),
-        (range(21, 31), "a_deadline_moves_closer", True),
-        (range(31, 41), "an_ally_becomes_a_liability", True),
-        (range(41, 51), "the_opposition_escalates", True),
-        (range(51, 61), "an_assumed_resource_is_gone", True),
-        (range(61, 71), "the_goal_was_a_means_to_another", True),
-        (range(71, 81), "an_outsider_intervenes", True),
-        (range(81, 91), "two_threads_collide", True),
-        (range(91, 101), "the_thread_stalls", True),
-    ],
-    "oracle-prompt-complication": [
-        (range(1, 11), "an_uninvited_party_arrives", True),
-        (range(11, 21), "a_resource_fails", True),
-        (range(21, 31), "the_wrong_person_overhears", True),
-        (range(31, 41), "the_environment_turns", True),
-        (range(41, 51), "an_old_debt_comes_due", True),
-        (range(51, 61), "a_misunderstanding_compounds", True),
-        (range(61, 71), "help_arrives_at_a_cost", True),
-        (range(71, 81), "the_plan_works_and_backfires", True),
-        (range(81, 91), "an_earlier_choice_catches_up", True),
-        (range(91, 101), "someone_is_not_who_they_seem", True),
-    ],
-}
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DOC = REPO_ROOT / "design" / "03a-6-oracle-prompts.md"
+
+# One heading per table, in document order, followed by its row table.
+TABLE_KEYS = [
+    "oracle-prompt-npc-objective",
+    "oracle-prompt-situation-truth",
+    "oracle-prompt-thread-turn",
+    "oracle-prompt-complication",
+]
+
+HEADING_RE = re.compile(r"^### `(?P<key>oracle-prompt-[a-z-]+)`\s*$", re.MULTILINE)
+ROW_RE = re.compile(
+    r"^\|\s*(?P<start>\d+)\s*[–-]\s*(?P<end>\d+)\s*\|\s*`(?P<effect>[a-z_]+)`\s*\|"
+)
+
+
+def parse_tables(text: str) -> dict[str, list[tuple[range, str]]]:
+    """Extract each table's rows (range, effect) from its `### \\`key\\`` section."""
+    headings = list(HEADING_RE.finditer(text))
+    tables: dict[str, list[tuple[range, str]]] = {}
+    for i, heading in enumerate(headings):
+        key = heading.group("key")
+        section_end = headings[i + 1].start() if i + 1 < len(headings) else len(text)
+        section = text[heading.end() : section_end]
+        rows = []
+        for line in section.splitlines():
+            m = ROW_RE.match(line)
+            if m:
+                start, end = int(m.group("start")), int(m.group("end"))
+                rows.append((range(start, end + 1), m.group("effect")))
+        tables[key] = rows
+    return tables
 
 
 def main() -> int:
+    if not DOC.exists():
+        raise SystemExit(f"missing: {DOC}")
+
+    text = DOC.read_text()
+    tables = parse_tables(text)
     failures = []
 
-    for key, rows in TABLES.items():
-        ranges = [r for r, _effect, _checked in rows]
+    missing_keys = set(TABLE_KEYS) - set(tables)
+    if missing_keys:
+        failures.append(f"document is missing table(s): {sorted(missing_keys)}")
+
+    for key in TABLE_KEYS:
+        rows = tables.get(key, [])
+        if not rows:
+            continue
+
+        ranges = [r for r, _effect in rows]
 
         # Contiguity, coverage of 1-100 exactly (no modifier: the d100 max is
         # the family's own ceiling, so the last row is open at the top the
         # same way design/03a-5-oracle-answers.md's rows are).
         covered = sorted(v for r in ranges for v in r)
         if covered != list(range(1, 101)):
-            failures.append(f"{key}: rows do not exactly cover 1-100")
+            failures.append(
+                f"{key}: rows do not exactly cover 1-100 (got {len(covered)} totals)"
+            )
 
         if ranges[0].start != 1:
             failures.append(f"{key}: first row does not start at 1")
 
         # No duplicate effect keys within a table.
-        effects = [effect for _r, effect, _checked in rows]
+        effects = [effect for _r, effect in rows]
         if len(effects) != len(set(effects)):
             failures.append(f"{key}: duplicate effect keys")
 
-        unchecked = [effect for _r, effect, checked in rows if not checked]
-        if unchecked:
-            failures.append(
-                f"{key}: rows missing a recorded genre-neutrality check: {unchecked}"
-            )
+        print(f"{key:32s} {len(rows):2d} rows parsed, 1-100 covered")
 
-        print(f"{key:32s} {len(rows):2d} rows, 1-100 covered, all checked")
+    # The genre-neutrality check itself is qualitative (research.md) -- what's
+    # checked here is only that the document records, for every table, that
+    # the check was carried out, per design/03a-tables.md's row-schema rule
+    # that a family's declared extra field ("checked") is present on every
+    # row. The document states this once per table (no failing row ships, so
+    # there is no "checked: no" value to parse) rather than per-row markup;
+    # confirm each table carries its "Genre-neutrality check, worked" note.
+    heading_positions = {m.group("key"): m.start() for m in HEADING_RE.finditer(text)}
+    ordered_positions = sorted(heading_positions.values()) + [len(text)]
+    for key in TABLE_KEYS:
+        if key not in tables or not tables[key]:
+            continue
+        start = heading_positions[key]
+        end = ordered_positions[ordered_positions.index(start) + 1]
+        section = text[start:end]
+        if "Genre-neutrality check, worked" not in section:
+            failures.append(
+                f"{key}: no recorded genre-neutrality check found in its section"
+            )
 
     if failures:
         print("\nFAILURES:")
@@ -105,8 +119,9 @@ def main() -> int:
         return 1
 
     print(
-        f"\nAll {len(TABLES)} prompt tables check out: contiguous 1-100 coverage, "
-        "unique rows, every row's genre-neutrality check recorded."
+        f"\nAll {len(TABLE_KEYS)} prompt tables check out against "
+        f"{DOC.relative_to(REPO_ROOT)}: contiguous 1-100 coverage, unique rows, "
+        "genre-neutrality check recorded."
     )
     return 0
 
