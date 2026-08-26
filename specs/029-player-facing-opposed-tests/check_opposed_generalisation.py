@@ -114,7 +114,7 @@ LIVE_MECHANISM_FILE = "doc/design/03-rules.md"
 
 def grep_opposed_test_citations() -> dict[str, list[str]]:
     result = subprocess.run(
-        ["grep", "-rln", "opposed test", "--include=*.md", "-i", "design/"],
+        ["grep", "-rln", "opposed test", "--include=*.md", "-i", "doc/"],
         cwd=REPO_ROOT, capture_output=True, text=True, check=False,
     )
     files = [line for line in result.stdout.splitlines() if line]

@@ -8,7 +8,7 @@
 
 **Input**: Issue [#54](https://github.com/neilgfoster/wyrd/issues/54) — decide how an opponent is
 represented, give the setting file that holds them a schema and a validator, and update
-[`design/`](../../design/) in place so combat has something defined on the other side of the roll.
+[`design/`](../../doc/design/) in place so combat has something defined on the other side of the roll.
 
 ## Why this exists
 
