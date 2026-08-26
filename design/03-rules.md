@@ -737,11 +737,15 @@ A character ten years in is not harder to kill. They are harder to replace.
 
 ### Companions and succession
 
-Companions advance rarely and simply — one competence gained or limitation lost at a
-downtime. No career graph, no Marks.
+A companion's mechanical layer ([`04-session.md`](04-session.md)) advances rarely and simply —
+one competence gained or limitation lost at a downtime, landing on that layer (typically `career`
+widening what a test legally covers, or a wound's effect lessening — Mend already covers that
+case). No career graph, no Marks.
 
 A successor inherits none of the competence and all of the position
-([`05-campaign.md`](05-campaign.md)).
+([`05-campaign.md`](05-campaign.md)): the new companion's mechanical layer starts at its own
+baseline (no `wounds`, `bond: 0`, `taint: 0`, `strain: 0`) and their narrative layer is written
+fresh, same as any new companion.
 
 ---
 
