@@ -2,7 +2,7 @@
 """Check that settings.yaml agrees with the live wyrd-setting-* fleet.
 
 CLAUDE.md: settings.yaml went stale twice -- a naming convention it recorded stopped being the
-one in use, and six of sixteen live setting repos were entirely absent from it. Both read as
+one in use, and six of the fourteen live setting repos were entirely absent from it. Both read as
 authoritative and were not (fault class 4, and the exact reason CLAUDE.md warns that tables are
 where staleness hides). This script is the drift check specs/032-settings-catalogue-realignment
 asked for, in tools/backlog.py's shape: read-only, stdlib-only, checked rather than asserted.
