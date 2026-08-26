@@ -28,7 +28,7 @@ there and summarised here.
 |---|---|---|---|
 | **Criticals** | `1d6` + points below zero | repeatable | [`03a-1-criticals.md`](03a-1-criticals.md) |
 | **Aftermath** | `d100` + 5 × points below zero | repeatable | [`03a-2-aftermath.md`](03a-2-aftermath.md) |
-| **Transformations** | declared by the family | unique per character | `03a-3-transformations.md` — not yet written |
+| **Transformations** | `1d6` | unique per character | [`03a-3-transformations.md`](03a-3-transformations.md) |
 | **Afflictions** | declared by the family | unique per character | `03a-4-afflictions.md` — not yet written |
 | **Oracles** | declared by the family | repeatable | `03a-5-oracles.md` — not yet written |
 
