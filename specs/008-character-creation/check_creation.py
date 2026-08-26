@@ -9,7 +9,7 @@ this script finds the values that satisfy all four.
 The constraints, none of them invented here:
 
 1. **A completed career grants +1 maximum Stamina** and that is "the only durable toughening"
-   (design/03-rules.md section 6). If starting Stamina were 20, +1 would be noise and the
+   (doc/design/03-rules.md section 6). If starting Stamina were 20, +1 would be noise and the
    sentence would be false.
 2. **"A character ten years in is not harder to kill"** (same section). Stamina barely grows,
    so its starting value is close to its lifetime value.
@@ -18,10 +18,10 @@ The constraints, none of them invented here:
    distribution table is built on it. Overshoot is bounded by how much damage exceeds
    remaining Stamina, so this is really a statement about Stamina's size.
 4. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
-   (design/03-rules.md section 2). These are engine numbers and fix the scale that weapon
+   (doc/design/03-rules.md section 2). These are engine numbers and fix the scale that weapon
    damage must live on.
 
-Weapon damage is *setting* data (design/13-authoring-a-setting.md), so it is modelled across
+Weapon damage is *setting* data (doc/design/26-authoring-a-setting.md), so it is modelled across
 a band rather than assumed. A starting Stamina worth shipping has to hold across the whole
 band, not at one convenient point.
 
@@ -31,7 +31,7 @@ Run: python3 specs/008-character-creation/check_creation.py
 from fractions import Fraction
 from itertools import product
 
-# Armour, as design/03-rules.md section 2 defines it. (label, dice) where dice is a list of
+# Armour, as doc/design/03-rules.md section 2 defines it. (label, dice) where dice is a list of
 # face counts: modest 1d6 is [6], heavy 2d6 is [6, 6].
 ARMOUR = [("none", []), ("light", [3]), ("modest", [6]), ("heavy", [6, 6])]
 
@@ -188,7 +188,7 @@ def main() -> int:
         print(f"  {stamina:>7}   {pct(share):>13}   {num(length):>10} hits   "
               f"{'; '.join(note)}")
     print()
-    print("  Success criterion 5 (design/01-principles.md) requires a session to be playable")
+    print("  Success criterion 5 (doc/design/01-principles.md) requires a session to be playable")
     print("  in twenty minutes on a phone, and a fight running 7+ exchanges does not fit.")
     print("  6 is the largest value where +1 is unambiguously meaningful and an armoured")
     print("  exchange still resolves quickly.")
@@ -196,7 +196,7 @@ def main() -> int:
     print()
     print("Luck — a percentage that erodes 1 per test, for the rest of the arc")
     print("-" * 64)
-    print("  design/03-rules.md section 1. Starting value must survive an arc's worth of")
+    print("  doc/design/03-rules.md section 1. Starting value must survive an arc's worth of")
     print("  testing while the erosion stays visible.")
     print()
     print("  start   after 5 tests   after 10 tests   expected passes in 10 tests")
@@ -213,10 +213,10 @@ def main() -> int:
     print()
     print("Creation spends advances; it does not open skills for free")
     print("-" * 64)
-    print("  design/03-rules.md section 6 has exactly three doors: open a career skill at")
+    print("  doc/design/03-rules.md section 6 has exactly three doors: open a career skill at")
     print("  25%, raise one by +5%, or change career. Opening every career skill for free is")
     print("  not one of them, and doing so left a starting character holding 5-9 skills at")
-    print("  25% -- which design/10-diegesis.md calls 'never really done this'. A character")
+    print("  25% -- which doc/design/23-diegesis.md calls 'never really done this'. A character")
     print("  guessing at their own profession. Creation uses the same doors play uses.")
     print()
     OPEN_COST, RAISE, OPENS_AT_PCT = 1, 5, 25
@@ -247,7 +247,7 @@ def main() -> int:
     print("-" * 64)
     print("  Every career-granted skill opens at 25%. A pool of free advances is then spent")
     print("  inside that career, and how it is spent IS the character's background. Bounded")
-    print("  by the skill bands in design/10-diegesis.md:")
+    print("  by the skill bands in doc/design/23-diegesis.md:")
     print()
     print("    <=25 guessing | 30-40 trained | 45-55 practised | 60-70 expert | 75+ definitive")
     print()
@@ -306,7 +306,7 @@ def main() -> int:
     if UNTRAINED > GUESSING_TOP:
         failures.append(
             f"untrained {UNTRAINED}% is outside the <={GUESSING_TOP}% guessing band in "
-            "design/10-diegesis.md"
+            "doc/design/23-diegesis.md"
         )
     if UNTRAINED + (-30) > 0:
         failures.append(
@@ -330,7 +330,7 @@ def main() -> int:
     if share < Fraction(1, 10):
         failures.append(
             f"at starting Stamina {chosen}, a completed career's +1 is {pct(share)} — "
-            "design/03-rules.md calls it the only durable toughening, which would be false"
+            "doc/design/03-rules.md calls it the only durable toughening, which would be false"
         )
     print(f"  +1 from a completed career is {pct(share)} of a new character   "
           f"[{'ok' if share >= Fraction(1, 10) else 'FAIL'}]")
@@ -350,7 +350,7 @@ def main() -> int:
     # The WORST case -- a martial weapon, telling blow, no armour -- must stay inside the
     # range check_aftermath.py actually models. It is allowed to be grim: a martial weapon is
     # illegal in most civilised places precisely because of what it does to an unarmoured
-    # person (design/03-rules.md section 2).
+    # person (doc/design/03-rules.md section 2).
     worst = overshoot_from_full(chosen, damage_through([6, 6], [], True))
     if worst > 12:
         failures.append(
@@ -384,11 +384,11 @@ def main() -> int:
     # Two advances open two skills; the remaining pool-2 can all pile onto one of them.
     # A career is not one skill -- someone who has soldiered knows more than one soldierly
     # thing -- and without the minimum, 8 advances on a single skill opens at 60%, which
-    # design/10-diegesis.md calls expert. Beginning expert is what a chronicle is for.
+    # doc/design/23-diegesis.md calls expert. Beginning expert is what a chronicle is for.
     peak = 25 + 5 * (pool - MIN_OPENED)
     if peak >= 60:
         failures.append(
-            f"a pool of {pool} advances peaks at {peak}%, which design/10-diegesis.md "
+            f"a pool of {pool} advances peaks at {peak}%, which doc/design/23-diegesis.md "
             "calls expert — a chronicle should be what gets you there"
         )
     print(f"  {pool} advances, {MIN_OPENED} skills minimum, peak {peak}% — practised   "
@@ -401,7 +401,7 @@ def main() -> int:
     if min(three) <= 25:
         failures.append(
             f"a pool of {pool} leaves a skill at {min(three)}% when three are opened — "
-            "design/10-diegesis.md calls that guessing, in the character's own career"
+            "doc/design/23-diegesis.md calls that guessing, in the character's own career"
         )
     print(f"  opening 3, the weakest sits at {min(three)}% — trained, not guessing  "
           f"[{'ok' if min(three) > 25 else 'FAIL'}]")

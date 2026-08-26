@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate a setting's systems-of-power declarations against the schema.
 
-design/03a-7-systems-of-power.md defines the schema a setting fills in to declare a system of
+doc/design/14-systems-of-power.md defines the schema a setting fills in to declare a system of
 power: what skill it tests, what it costs, whether it requires training, and what an Ill Omen
 costs on top. ADR 0036 decided this is one configurable mechanism rather than a set of
 engine-defined mechanism shapes -- the unrecognised-field rejection below is what actually
@@ -23,7 +23,7 @@ Usage:
     python3 tools/check_power_systems.py --format json <path>
     python3 tools/check_power_systems.py            # runs the embedded self-test only
 
-Python 3.11+, standard library only (design/07-tooling.md section 2). YAML is read by the same
+Python 3.11+, standard library only (doc/design/20-tooling.md section 2). YAML is read by the same
 small internal reader tools/check_bestiary.py uses, for the restricted subset Wyrd uses -- there
 is deliberately no third-party YAML dependency.
 """
@@ -36,13 +36,13 @@ import pathlib
 import re
 import tempfile
 
-# --- The schema, from design/03a-7-systems-of-power.md ----------------------
+# --- The schema, from doc/design/14-systems-of-power.md ----------------------
 
 REQUIRED_FIELDS = {"id", "name", "skill", "strain_cost", "requires_training"}
 OPTIONAL_FIELDS = {"resolve_cost", "ill_omen_taint", "description"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # design/14-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # doc/design/27-entities.md: kebab-case
 
 DEFAULT_ILL_OMEN_TAINT = 1
 
@@ -223,9 +223,9 @@ def check_file(path: pathlib.Path, known_skills: set[str] | None = None) -> list
 
 
 # --- Resolution trace ---------------------------------------------------------
-# Confirms, for a given entry, exactly what design/03a-7-systems-of-power.md claims: cost is
+# Confirms, for a given entry, exactly what doc/design/14-systems-of-power.md claims: cost is
 # applied on resolution regardless of outcome, and the declared ill_omen_taint (or the default)
-# is what an Ill Omen applies. This does not touch design/03-rules.md section 1's own resolution
+# is what an Ill Omen applies. This does not touch doc/design/03-rules.md section 1's own resolution
 # maths (difficulty, degrees, the Wyrd die) -- nothing about a power test perturbs it, so this
 # script makes no claim about it and imports nothing from check_mapping.py.
 
@@ -325,7 +325,7 @@ def self_test() -> None:
         assert set(ember_data) <= ALL_FIELDS | {"id"}
         assert set(signal_data) <= ALL_FIELDS | {"id"}
 
-        # Resolution trace: cost applied on resolution, matching design/03a-7-systems-of-power.md.
+        # Resolution trace: cost applied on resolution, matching doc/design/14-systems-of-power.md.
         ember_trace = resolution_trace(ember_data)
         assert ember_trace == {"strain_paid": 2, "resolve_paid": 1, "ill_omen_taint": 1}
         signal_trace = resolution_trace(signal_data)

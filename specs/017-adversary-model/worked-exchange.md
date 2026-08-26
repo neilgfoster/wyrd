@@ -30,7 +30,7 @@ inventing anything, and this is the only place every rule that reads an opponent
 ```
 
 Ten fields, six of them required. Every one is read by a published rule, and the table in
-[`design/03d-the-adversary.md`](../../design/03d-the-adversary.md) names which.
+[`doc/design/06-the-adversary.md`](../../doc/design/06-the-adversary.md) names which.
 
 ---
 
@@ -71,12 +71,12 @@ totals run **2 to 11**, mean **5.12**, and the whole distribution's mass equals 
 opponent dropped at all.
 
 The lowest reachable total is 2, which is exactly where the critical tables' first row starts
-([`03a-1-criticals.md`](../../design/03a-1-criticals.md)) — a blow that drops someone is at least one
+([`03a-1-criticals.md`](../../doc/design/08-criticals.md)) — a blow that drops someone is at least one
 point below zero, and the die adds at least one more. The table has no row for 1 because no roll can
 produce one.
 
 **The Aftermath table is not rolled here.** It is rolled once per *character or companion* who
-dropped ([`03-rules.md`](../../design/03-rules.md) §2), and an adversary is neither — the same rule
+dropped ([`03-rules.md`](../../doc/design/03-rules.md) §2), and an adversary is neither — the same rule
 §2 already states for a crowd. A named antagonist is a `character` entity and so does roll, but not
 because it is important: because it is a character, which is the test the rule already applies.
 
@@ -84,7 +84,7 @@ because it is important: because it is a character, which is the test the rule a
 
 ## The crowd lookup, against the same schema
 
-[ADR 0019](../../design/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) calls itself
+[ADR 0019](../../doc/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) calls itself
 "a lookup, and nothing else". Here it is, resolving entirely from declared fields:
 
 | opponent | character | skill tested | result | deciding field |
@@ -136,7 +136,7 @@ three 45% opponents is still three fights a solo character loses.
 
 The worked fight is allowed to expose a missing field, and it exposed one. **`ranged` had been
 optional** in the first draft of the block, on the grounds that most opponents are not archers. But
-[`03-rules.md`](../../design/03-rules.md) §2's engagement rule branches on it every time an opponent
+[`03-rules.md`](../../doc/design/03-rules.md) §2's engagement rule branches on it every time an opponent
 is not in close engagement — *closing costs the closing combatant their action* only matters if the
 answer to "can it shoot instead?" is known. An absent `ranged` is a question the GM has to answer,
 which is the fault the block exists to remove. It stays optional in the schema, but it **defaults to

@@ -14,7 +14,7 @@ data, specific enough that casting has real mechanical weight.
 
 The engine has no concept of magic or the supernatural at all — grepping `design/` and
 `README.md` finds nothing. Every catalogued setting has practitioners of some kind, and
-`design/13-authoring-a-setting.md`'s hard rule forbids a setting adding its own mechanism: *"A
+`doc/design/26-authoring-a-setting.md`'s hard rule forbids a setting adding its own mechanism: *"A
 setting may extend, retune or disable what the engine provides. It may never add a mechanism the
 engine does not have."* Magic cannot be left for a setting to invent without that rule being
 broken by every setting that has tried.
@@ -26,7 +26,7 @@ every open question in it has a reasonable default resolvable from the engine's 
 conventions:
 
 - **The load-bearing fork** (one configurable mechanism vs. a closed set of mechanism shapes) is
-  resolved as *one mechanism* — see [ADR 0036](../../design/adr/0036-one-configurable-power-mechanism.md).
+  resolved as *one mechanism* — see [ADR 0036](../../doc/adr/0036-one-configurable-power-mechanism.md).
   The engine's whole pattern for setting texture (`bestiary.yaml`, `gear.yaml`, the career graph)
   is one schema instantiated with data, never a menu of engine-side shapes to pick between; a
   closed set of shapes would itself be several mechanisms wearing one name, and

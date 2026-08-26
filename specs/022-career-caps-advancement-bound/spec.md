@@ -177,7 +177,7 @@ Stamina at 6 ("much above 10 and the sentence stops being true").
   to a stated ceiling (not growing linearly with career count) and no skill exceeding 100%,
   matching the "harder to replace, not harder to kill" claim in §6 with numbers rather than
   assertion.
-- **SC-005**: `design/03-rules.md` states the cap value, the completion trigger, and the
+- **SC-005**: `doc/design/03-rules.md` states the cap value, the completion trigger, and the
   Stamina ceiling in the same place the existing "career's cap" and "completing a career" language
   already lives, so a reader never has to consult the spec to know current behaviour.
 

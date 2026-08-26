@@ -30,7 +30,7 @@ The script holds the rows separately from the prose, so they can drift. Confirm 
 
 ```bash
 # The document's ranges. They are bold, so the pattern must expect that.
-grep -oE '^\| \*\*[0-9]+(–[0-9]+|\+)\*\*' design/03a-2-aftermath.md | tr -d '|* '
+grep -oE '^\| \*\*[0-9]+(–[0-9]+|\+)\*\*' doc/design/09-aftermath.md | tr -d '|* '
 
 # The script's ranges.
 grep -oE '^    \([0-9]+, (None|[0-9]+)' specs/002-aftermath-table/check_aftermath.py \
@@ -47,13 +47,13 @@ staleness `CLAUDE.md` says tables breed.
 
 ## 3. Every promised outcome shape has a row
 
-`design/03-rules.md` promises five shapes plus death. Each must be findable:
+`doc/design/03-rules.md` promises five shapes plus death. Each must be findable:
 
 ```bash
 for key in out-of-action lasting-wound left-for-dead new-enemy taken \
            disfigured recurring-wound death; do
   printf '%-18s ' "$key"
-  if grep -qF "$key" design/03a-2-aftermath.md \
+  if grep -qF "$key" doc/design/09-aftermath.md \
   && grep -qF "$key" specs/002-aftermath-table/check_aftermath.py; then
     echo present
   else
@@ -70,14 +70,14 @@ is the same drift step 2 checks for, from the other direction.
 A denylist of system names would be the obvious check and is the weaker one: it only catches the
 names whoever wrote the list thought of, and it puts a list of other people's game titles into a
 repository that is intended public. The **allowlist** is stronger — every capitalised mechanic in the
-new document must be a label `design/03-rules.md` already publishes.
+new document must be a label `doc/design/03-rules.md` already publishes.
 
 ```bash
 # Labels the ruleset publishes, plus the ordinary vocabulary of a design document.
-grep -oE '\*\*[A-Z][a-zA-Z ]+\*\*' design/03-rules.md | tr -d '*' | sort -u > /tmp/wyrd-labels
+grep -oE '\*\*[A-Z][a-zA-Z ]+\*\*' doc/design/03-rules.md | tr -d '*' | sort -u > /tmp/wyrd-labels
 
 # Capitalised terms in the new document that are not sentence-initial.
-grep -oE '[a-z,] [A-Z][a-z]+' design/03a-2-aftermath.md \
+grep -oE '[a-z,] [A-Z][a-z]+' doc/design/09-aftermath.md \
   | sed -E 's/^[a-z,] //' | sort -u
 ```
 
@@ -91,7 +91,7 @@ setting should own.
 ## 5. The index no longer says "not yet written"
 
 ```bash
-grep -n 'Aftermath' design/03a-tables.md
+grep -n 'Aftermath' doc/design/07-tables.md
 ```
 
 The row must name the roll (`d100 + 5 × points below zero`), the uniqueness (`repeatable`), and link
@@ -101,7 +101,7 @@ against [contracts/aftermath-table.md](./contracts/aftermath-table.md), not agai
 ## 6. `03-rules.md` no longer describes an undefined table
 
 ```bash
-sed -n '/Death is deferred/,/^---/p' design/03-rules.md
+sed -n '/Death is deferred/,/^---/p' doc/design/03-rules.md
 ```
 
 It must link to `03a-2-aftermath.md`, and must not still enumerate the five outcome shapes as a
@@ -112,7 +112,7 @@ promise — the table is where they live now. No changelog, no "previously".
 The check no script performs, and the fault class `CLAUDE.md` ranks hardest to see: two documents
 describing one thing differently, both internally coherent.
 
-Read `design/03-rules.md` §2 and §3 against `design/03a-2-aftermath.md`, and confirm each of these
+Read `doc/design/03-rules.md` §2 and §3 against `doc/design/09-aftermath.md`, and confirm each of these
 resolves to exactly one reading:
 
 - when the Aftermath roll happens, relative to the fight and to the critical
@@ -135,4 +135,4 @@ cover.
 | Dropped by 7, rolled 90, Fate spent | +35 | 125 | `recurring-wound` — survives, not better off |
 
 The last two are the same roll. That is the point: Fate changes which row is applied and never what
-was rolled, which is what keeps `design/03-rules.md`'s natural roll rule intact.
+was rolled, which is what keeps `doc/design/03-rules.md`'s natural roll rule intact.

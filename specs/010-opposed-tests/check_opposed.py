@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check how an opposed test actually behaves, at the skills characters really have.
 
-design/03-rules.md carried opposed tests as one sentence: "both roll; the higher degree of
+doc/design/03-rules.md carried opposed tests as one sentence: "both roll; the higher degree of
 success wins; ties to the defender." It reads complete and leaves two questions unanswered,
 and the answers change the game noticeably:
 
@@ -29,11 +29,11 @@ FACES = 100
 # cap is not yet set (#12, Stage 9), so the upper end is where a practised character sits.
 REALISTIC = [25, 30, 35, 40, 55]
 
-TELLING_BLOW_MARGIN = 3   # design/03-rules.md section 2
+TELLING_BLOW_MARGIN = 3   # doc/design/03-rules.md section 2
 
 
 def degrees(skill: int, roll: int) -> int:
-    """Tens digit of the skill minus tens digit of the roll (design/03-rules.md section 1)."""
+    """Tens digit of the skill minus tens digit of the roll (doc/design/03-rules.md section 1)."""
     return skill // 10 - roll // 10
 
 
@@ -149,7 +149,7 @@ def main() -> int:
 
     print()
     print("FINDING FOR STAGE 5 — not asserted here, because the threshold is not this")
-    print("feature's to set. design/03-rules.md section 2 makes a telling blow a win by 3+")
+    print("feature's to set. doc/design/03-rules.md section 2 makes a telling blow a win by 3+")
     print("degrees, and that is combat's number (#44).")
     print()
     print("    A    D   telling blows, as a share of successful attacks")

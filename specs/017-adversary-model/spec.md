@@ -17,10 +17,10 @@ return no matches across every design document.
 
 Two documents gesture at it and neither delivers:
 
-- [`design/13-authoring-a-setting.md`](../../design/13-authoring-a-setting.md) lists
+- [`doc/design/26-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md) lists
   `setting/bestiary.yaml` in the setting layout with the parenthetical "creature stat blocks (a
   lookup table)". No schema, no example, no field list.
-- [`design/14-entities.md`](../../design/14-entities.md) lists `creature` as an entity type —
+- [`doc/design/27-entities.md`](../../doc/design/27-entities.md) lists `creature` as an entity type —
   "a stat block — a kind of thing, not an individual". It says what a creature *is not* and never
   says what it carries.
 
@@ -28,12 +28,12 @@ Meanwhile the ruleset has been reading fields off an opponent for four stages:
 
 | Rule | Reads from the opponent |
 |---|---|
-| the exchange ([`03-rules.md`](../../design/03-rules.md) §2) | a skill to resist an attack with; a weapon's damage to roll |
+| the exchange ([`03-rules.md`](../../doc/design/03-rules.md) §2) | a skill to resist an attack with; a weapon's damage to roll |
 | armour subtracts dice | an armour rank |
 | the critical rule | current and maximum Stamina, and the damage type of its blows |
-| the crowd rule ([ADR 0019](../../design/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md)) | **maximum Stamina**, **armour**, and **its relevant skill** — all three, as an explicit lookup |
+| the crowd rule ([ADR 0019](../../doc/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md)) | **maximum Stamina**, **armour**, and **its relevant skill** — all three, as an explicit lookup |
 | ranged attacks | whether it can attack at range at all |
-| Aftermath ([`03a-2-aftermath.md`](../../design/03a-2-aftermath.md)) | whether it is a character or companion, or neither |
+| Aftermath ([`03a-2-aftermath.md`](../../doc/design/09-aftermath.md)) | whether it is a character or companion, or neither |
 
 The crowd rule is the sharp case. It is stated as *"a lookup, and nothing else"* over three fields,
 and none of those three fields is defined anywhere as belonging to anything. A rule whose entire
@@ -59,12 +59,12 @@ engine**.
   10% at everything off its short list. It also breaks the crowd rule from underneath: the
   skill-gap test is *ahead by 20 or more*, so against a 10% fallback a merely competent character
   clears almost anything for free. A baseline that can sit above 30 keeps that test doing the work
-  [ADR 0019](../../design/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) gave it.
+  [ADR 0019](../../doc/adr/0019-a-crowd-is-defined-by-one-blow-and-a-skill-gap.md) gave it.
   Rejected also: requiring the block to enumerate every skill it could be tested on, which makes a
   stat block scale with the setting's skill count and turns an unlisted skill into an authoring bug
   rather than a rule.
 - **Q: Does danger scale an opponent's own skill percentages, or only how many appear?** → **Both,
-  as [`03-rules.md`](../../design/03-rules.md) §7 already publishes.** Enemy counts scale *and* skill
+  as [`03-rules.md`](../../doc/design/03-rules.md) §7 already publishes.** Enemy counts scale *and* skill
   values scale. §7's sentence stands and is not corrected. Rejected: counts only, which would have
   made the published sentence wrong and required correcting it in place — leaner, and it keeps a
   stat block meaning exactly one thing, but it also leaves the engine with one lever where the
@@ -85,9 +85,9 @@ engine**.
   Rejected: no traits, which is leaner and unpoliceable-proof but makes every monster a man with
   different numbers. Rejected: free-text traits the GM interprets, which is the one option under
   which a setting can add a mechanism —
-  [`13-authoring-a-setting.md`](../../design/13-authoring-a-setting.md) forbids that outright — and
+  [`13-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md) forbids that outright — and
   which is inference where a rule could be deterministic
-  ([ADR 0005](../../design/adr/0005-deterministic-over-inference.md)).
+  ([ADR 0005](../../doc/adr/0005-deterministic-over-inference.md)).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -113,7 +113,7 @@ and get a pass. Then remove each required field in turn and get a specific, name
    the field and the entry, and exits non-zero.
 3. **Given** an opponent carrying a field the engine does not define, **When** the validator runs,
    **Then** it fails rather than ignoring it — an unrecognised field is how a setting quietly adds a
-   mechanism ([`design/13-authoring-a-setting.md`](../../design/13-authoring-a-setting.md) forbids
+   mechanism ([`doc/design/26-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md) forbids
    exactly that).
 
 ---
@@ -174,7 +174,7 @@ and confirm each lands on the side the fiction expects, with the deciding field 
 A piece of content written for a party of four is run by a party of three. The opposition it
 contains must scale by the published equation
 (`danger_effective = danger × (party_effective / written_for)`,
-[`03-rules.md`](../../design/03-rules.md) §7) and by nothing else.
+[`03-rules.md`](../../doc/design/03-rules.md) §7) and by nothing else.
 
 **Why this priority**: The issue's fifth scope item. It is also where a second, competing difficulty
 mechanism would get in — and §7 currently claims something about opponents that no rule delivers.
@@ -204,7 +204,7 @@ exactly.
   resisting a shove, spotting a liar, chasing a fleeing party. The block cannot list every skill a
   setting declares, so the fallback is published: it tests at its declared **baseline**.
 - **An opponent that is a person.** A nemesis is already a `character` entity with `role: nemesis`
-  ([`14-entities.md`](../../design/14-entities.md)), not a `creature`. Both must be runnable as
+  ([`14-entities.md`](../../doc/design/27-entities.md)), not a `creature`. Both must be runnable as
   opposition without two schemas describing one thing differently — recurring fault class 3.
 - **An opponent with no attack at all** — something that is dangerous by being present, or purely an
   obstacle. Damage must be optional without leaving the exchange undefined.
@@ -225,7 +225,7 @@ exactly.
   reads off an opponent — and MUST state, for each field, which published rule consumes it. A field
   no rule reads does not belong in the block.
 - **FR-002**: The adversary block MUST be a deliberately thinner record than the player character's
-  ([`03b-the-character.md`](../../design/03b-the-character.md)), and the design MUST state which
+  ([`03b-the-character.md`](../../doc/design/04-the-character.md)), and the design MUST state which
   parts of the character model an adversary does *not* carry and why. This is a rejected alternative
   with a working competitor and MUST be recorded as an ADR.
 - **FR-003**: The block MUST carry, at minimum, the three fields the crowd rule already reads as a
@@ -233,10 +233,10 @@ exactly.
   the design MUST be the ones the crowd rule cites, so the rule and the record cannot drift apart.
 - **FR-004**: The block MUST specify what the opponent rolls (skill percentages under setting-owned
   names), what it survives (Stamina, armour), and what it does on a turn — the last expressed
-  entirely within the closed action list in [`03-rules.md`](../../design/03-rules.md) §2, never as a
+  entirely within the closed action list in [`03-rules.md`](../../doc/design/03-rules.md) §2, never as a
   new action.
 - **FR-005**: The block MUST declare the **damage** an attack deals and its **damage type**, drawn
-  from the closed set of four ([ADR 0022](../../design/adr/0022-four-damage-types-named-for-the-wound.md)),
+  from the closed set of four ([ADR 0022](../../doc/adr/0022-four-damage-types-named-for-the-wound.md)),
   so the critical table is selected without a judgement call. An opponent with no attack MUST be
   expressible, and the exchange MUST remain defined when one is present.
 - **FR-006**: The block MUST carry a **baseline** percentage, and the engine MUST publish that an
@@ -244,7 +244,7 @@ exactly.
   field: an opponent with no baseline is an opponent the GM has to improvise, which is the fault
   this feature exists to remove.
 - **FR-007**: The block MUST state whether the opponent can attack at range, because
-  [`03-rules.md`](../../design/03-rules.md) §2's ranged table and engagement rule both branch on it.
+  [`03-rules.md`](../../doc/design/03-rules.md) §2's ranged table and engagement rule both branch on it.
 - **FR-008**: The engine MUST state what happens when an opponent that is neither a character nor a
   companion drops below 0 Stamina — whether a critical is rolled, and whether Aftermath is — and it
   MUST agree with §2's existing statement that Aftermath is not rolled for a crowd.
@@ -256,13 +256,13 @@ exactly.
   fields rather than ignoring them.
 - **FR-011**: The validator MUST reject any value outside the bounds the ruleset can absorb —
   armour ranks outside the published set, a damage type outside the closed four, a skill percentage
-  outside the scale in [`03b-the-character.md`](../../design/03b-the-character.md) §2.
+  outside the scale in [`03b-the-character.md`](../../doc/design/04-the-character.md) §2.
 - **FR-012**: The block MAY carry **traits**. A trait is a display name plus an effect drawn from a
   **closed engine vocabulary**, and the engine MUST publish that vocabulary in full. Every effect in
   it MUST act on a mechanism that already exists — difficulty, damage, Stamina, armour, the Wyrd die
   — and none may introduce one. The validator MUST reject any effect outside the vocabulary. A
   setting may extend, retune, rename or disable, and may **never add a mechanism**
-  ([`13-authoring-a-setting.md`](../../design/13-authoring-a-setting.md)); an unbounded trait is
+  ([`13-authoring-a-setting.md`](../../doc/design/26-authoring-a-setting.md)); an unbounded trait is
   precisely how that rule gets circumvented.
 - **FR-013**: Opposition MUST scale to the party present through §7's equation and through no other
   mechanism. Per the clarification, §7 stands as published: **both the count of opponents and their
@@ -275,7 +275,7 @@ exactly.
   percentage.
 - **FR-013b**: The adjustment MUST be **exactly zero when `party_effective` equals the effective
   size of `written_for`** — the identity case that makes §7 a ratio rather than a discount
-  ([ADR 0024](../../design/adr/0024-a-party-is-worth-less-than-its-head-count.md)). Content written
+  ([ADR 0024](../../doc/adr/0024-a-party-is-worth-less-than-its-head-count.md)). Content written
   for four, run by four bodies, meets opponents at their written percentages.
 - **FR-013c**: The adjustment MUST be **bounded so that no opponent leaves the difficulty ladder**,
   and the bound MUST be **computed before it is written down** — derived from the party sizes,
@@ -285,15 +285,15 @@ exactly.
   the extreme where the computed adjustment would push a skill past the ladder's top or below zero.
 - **FR-014**: A **worked exchange** MUST be published — one written opponent, one written character,
   a complete fight resolved from the rules as written — and every figure in it MUST be computed by a
-  script rather than asserted, per [ADR 0005](../../design/adr/0005-deterministic-over-inference.md).
+  script rather than asserted, per [ADR 0005](../../doc/adr/0005-deterministic-over-inference.md).
 - **FR-015**: That script MUST assert agreement with the figures earlier issues already computed
   and published, so a change here cannot silently contradict them: the crowd rule's one-blow band
   (**67% to 100%** at Stamina 1 unarmoured, **11%** in the lightest armour, **33%** at Stamina 2),
   the free clear's **1.25× to 1.82×** discount, and the drop rates at **14.8%** and **48.6%** in §2.
 - **FR-016**: Every affected design document MUST be rewritten in place to describe the present —
-  including [`03b-the-character.md`](../../design/03b-the-character.md) §4, which currently states
+  including [`03b-the-character.md`](../../doc/design/04-the-character.md) §4, which currently states
   that how an adversary is represented "is not yet decided", and
-  [`14-entities.md`](../../design/14-entities.md)'s `creature` row.
+  [`14-entities.md`](../../doc/design/27-entities.md)'s `creature` row.
 - **FR-017**: Every engine label introduced MUST be descriptive English, and no setting or system
   name may appear in any document this feature touches under `design/` or in `README.md`.
 
@@ -305,7 +305,7 @@ exactly.
 - **`bestiary.yaml` entry**: a `creature` — a kind of thing, not an individual. One adversary block
   plus the identity fields a lookup table needs. Many instances of one entry appear in one fight.
 - **`character` entity used as opposition**: an individual — a nemesis, a rival, a hostile
-  companion. Carries the person layer already defined in [`04-session.md`](../../design/04-session.md)
+  companion. Carries the person layer already defined in [`04-session.md`](../../doc/design/16-session.md)
   *and* an adversary block, so the same rules read the same fields.
 - **Encounter opposition**: what a piece of content declares it contains — which entries, how many,
   at what `danger` and `written_for`. §7 scales the count and the skill percentages the opponents
@@ -344,20 +344,20 @@ exactly.
   character model, including the tracks, a career and advancement — is still recorded as the
   rejected option in the ADR, per FR-002.
 - **The person layer already exists and is not re-specified here.** A named antagonist's objective,
-  bond, secret and arc are defined in [`04-session.md`](../../design/04-session.md). This feature
+  bond, secret and arc are defined in [`04-session.md`](../../doc/design/16-session.md). This feature
   adds the adversary block to such a character; it does not redesign what a character entity is.
 - **Skills stay setting-owned and engine-agnostic.** An adversary's skills are names the setting
   supplies and percentages the engine understands, exactly as for a character
-  ([ADR 0013](../../design/adr/0013-the-engine-names-no-skill.md)). No engine rule introduced here
+  ([ADR 0013](../../doc/adr/0013-the-engine-names-no-skill.md)). No engine rule introduced here
   may name a skill.
 - **Armour ranks are the published four** — none, light `1d3`, modest `1d6`, heavy `2d6`, with a
-  shield raising one rank ([`03-rules.md`](../../design/03-rules.md) §2). This feature does not add
+  shield raising one rank ([`03-rules.md`](../../doc/design/03-rules.md) §2). This feature does not add
   a rank.
-- **No new entity type.** `creature` already exists ([`14-entities.md`](../../design/14-entities.md))
+- **No new entity type.** `creature` already exists ([`14-entities.md`](../../doc/design/27-entities.md))
   and a new type is explicitly an engine change; this feature fills the existing type in rather than
   adding one.
 - **The baseline is one number, not a second skill list.** It is what the opponent tests any
   unlisted skill at — it does not become a floor under its listed skills, and a listed skill below
   the baseline stays where it was written.
-- **Tooling stays stdlib-only** ([`design/07-tooling.md`](../../design/07-tooling.md)), so the
+- **Tooling stays stdlib-only** ([`doc/design/20-tooling.md`](../../doc/design/20-tooling.md)), so the
   validator and the check script use the standard library and the repo's existing conventions.

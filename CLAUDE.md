@@ -3,7 +3,7 @@
 Ground rules for contributing to this repository.
 
 **This is not the GM contract.** That governs how the engine behaves *at play time* and lives
-in [`design/01-principles.md`](design/01-principles.md). This file governs how Wyrd itself
+in [`doc/design/01-principles.md`](doc/design/01-principles.md). This file governs how Wyrd itself
 gets built.
 
 ---
@@ -25,7 +25,7 @@ material. If it derives from someone else's book, it belongs in research.
 
 ## Decisions are recorded
 
-Significant decisions become **ADRs** in [`design/adr/`](design/adr/), numbered and dated.
+Significant decisions become **ADRs** in [`doc/adr/`](doc/adr/), numbered and dated.
 
 A decision earns a record when **both** hold:
 
@@ -42,7 +42,7 @@ not append changelogs or leave "previously we…" notes in them. Git holds the h
 
 ## The engine is setting-agnostic
 
-- **No setting or system names** in `design/` or `README.md` — not in prose, not in examples,
+- **No setting or system names** in `doc/design/` or `README.md` — not in prose, not in examples,
   not in a table row.
 - **Engine labels are descriptive English**, never a term borrowed from a source system. If a
   label only makes sense to someone who has read a particular book, it belongs in a setting's
@@ -96,7 +96,7 @@ belong in a design document.
 
 kord records a dependency order inside an epic and no priority order anywhere. Wyrd's priority
 order is a numeric **`Rank`** field on the board, on **root-level items only** — issues with no
-parent ([`design/adr/0010`](design/adr/0010-backlog-order-lives-on-the-board.md)). Children are
+parent ([`design/adr/0010`](doc/adr/0010-backlog-order-lives-on-the-board.md)). Children are
 not ranked; they already carry `Depends on: #N`, and a second ordering of the same work is the
 drift this repo keeps being corrected for.
 
@@ -123,21 +123,21 @@ two items is one number, not a renumbering. Two things to know:
 ### The documents are a checked graph
 
 The repo is an Obsidian vault. **Prose links with markdown, entity data links with
-`[[wikilinks]]`** ([`design/adr/0011`](design/adr/0011-markdown-links-in-prose-wikilinks-in-data.md)) —
+`[[wikilinks]]`** ([`design/adr/0011`](doc/adr/0011-markdown-links-in-prose-wikilinks-in-data.md)) —
 GitHub does not render wikilinks and this repo is read there.
 
 ```bash
 python3 tools/check_docs.py     # reachability, dead links, ADR index, link policy
 ```
 
-Every document under `design/` must be reachable from `README.md`, directly or through an index it
+Every document under `doc/design/` must be reachable from `README.md`, directly or through an index it
 links to. Adding a design document means linking it from the hub; the check fails otherwise. Four
 indexes had already gone stale silently before this existed, so treat it the same way as
 `backlog.py check` — run it, do not assume.
 
 ## Deterministic over inference
 
-The rule the engine follows ([`design/07-tooling.md`](design/07-tooling.md)) applies to the
+The rule the engine follows ([`doc/design/20-tooling.md`](doc/design/20-tooling.md)) applies to the
 work as well. Where a claim can be checked by a script, check it — do not assert it.
 
 Concretely, and from experience:
@@ -182,4 +182,4 @@ over arguing about it.** Where a mechanic is uncertain, run the numbers at the v
 character actually has, not at the midpoint.
 
 Rules changes apply **forward only**. History is never recomputed
-([`design/09-evolution.md`](design/09-evolution.md)).
+([`doc/design/22-evolution.md`](doc/design/22-evolution.md)).

@@ -7,12 +7,12 @@
 **Status**: Draft
 
 **Input**: Issue [#18](https://github.com/neilgfoster/wyrd/issues/18) — define the transformation
-table (`design/03a-3-transformations.md`): the Taint thresholds, a severity per row, proof the
+table (`doc/design/10-transformations.md`): the Taint thresholds, a severity per row, proof the
 threshold re-roll loop terminates, the body-versus-mind split, the hidden threshold, and Dread.
 
 ## Why this exists
 
-`design/03-rules.md` §4 makes Transformation the entire consequence layer of Taint and defines
+`doc/design/03-rules.md` §4 makes Transformation the entire consequence layer of Taint and defines
 none of it: no threshold values, no table, no severities. Severity is load-bearing in a way most
 tables are not — it is what terminates the re-roll loop when a threshold is crossed, and a wrong
 severity would not look wrong on the page (`CLAUDE.md`'s fault class 4). Section 4 also reads as
@@ -31,7 +31,7 @@ None raised — the issue's acceptance criteria, `03-rules.md` §1's Wyrd-die ba
 `03a-tables.md`'s conventions (#15, already merged) together bound every open question this
 feature needed to answer. Where the issue left a numeric scheme unspecified (the exact threshold
 spacing, the severity distribution, Dread's magnitude), a concrete choice is made and recorded in
-[ADR 0029](../../design/adr/0029-transformation-thresholds-at-every-three-taint.md) rather than
+[ADR 0029](../../doc/adr/0029-transformation-thresholds-at-every-three-taint.md) rather than
 raised as a clarification question, because a reasonable default existed and the issue asked for a
 computed, defensible scheme rather than for a specific one.
 
@@ -126,9 +126,9 @@ modifier in the engine is.
   state once and never re-rolled, and what happens to the chronicle when it is exhausted.
 - **FR-006**: The design MUST specify Dread's magnitude per Transformation and its effect when a
   transformed character is seen.
-- **FR-007**: `design/03-rules.md` §4 MUST be updated in place to match, without changelog
+- **FR-007**: `doc/design/03-rules.md` §4 MUST be updated in place to match, without changelog
   language.
-- **FR-008**: `design/03a-tables.md`'s index MUST carry the transformation family's row, no longer
+- **FR-008**: `doc/design/07-tables.md`'s index MUST carry the transformation family's row, no longer
   marked "not yet written".
 - **FR-009**: No setting or system name may appear anywhere the change touches in `design/`,
   verified by grep. No row may bake in a tonal register.
@@ -157,7 +157,7 @@ modifier in the engine is.
   the issue's own instruction that "whichever lands first should own it."
 - A concrete threshold-spacing and severity scheme is this feature's to choose, since the issue
   asks for *a* defensible numeric scheme, not a specific one; the choice is recorded in
-  [ADR 0029](../../design/adr/0029-transformation-thresholds-at-every-three-taint.md).
+  [ADR 0029](../../doc/adr/0029-transformation-thresholds-at-every-three-taint.md).
 - No engine code exists yet for this family (the engine is design-first, per `07-tooling.md`); this
   feature's deliverable is the design document, its script, and the ADR, matching the shape of
   prior table-family issues (#15's conventions, #17's adversary model).

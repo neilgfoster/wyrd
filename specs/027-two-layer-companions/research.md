@@ -10,7 +10,7 @@ rather than invented fresh.
 **Decision**: The companion mechanical layer is exactly `career`, `bond`, `taint`, `strain`, and
 `wounds` — no new field, no new competence rating.
 
-**Rationale**: `design/03-rules.md` already states, twice, that a companion's mechanical
+**Rationale**: `doc/design/03-rules.md` already states, twice, that a companion's mechanical
 substance is deliberately thin: "the engine holds no capability score for a companion" (danger
 scaling) and "Companions have no Fate of their own; their mechanical layer is deliberately thin"
 (Fate section). Every value a resolution actually touches for a companion is already one of these

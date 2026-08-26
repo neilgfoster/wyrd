@@ -6,13 +6,13 @@
 
 ## Summary
 
-Write `design/03a-5-oracle-answers.md`: define what an oracle is, when the GM must use one, and
+Write `doc/design/12-oracle-answers.md`: define what an oracle is, when the GM must use one, and
 the `oracle-answer` table — five likelihood bands over a reused `1d100` roll, each with an
 Exceptional Yes / Yes / No / Exceptional No degree, whose odds are computed and checked by script
 rather than asserted. State the oracle roll's relationship to the existing Wyrd die (reused
 verbatim, no new mechanism) and what an oracle roll records to the beat log. Amend
-`design/01-principles.md` so the GM contract states the same obligation. Update
-`design/03a-tables.md`'s index row, and `design/02-architecture.md` / `design/07-tooling.md` if
+`doc/design/01-principles.md` so the GM contract states the same obligation. Update
+`doc/design/07-tables.md`'s index row, and `doc/design/02-architecture.md` / `doc/design/20-tooling.md` if
 their file-layout mentions need it.
 
 ## Technical Context
@@ -44,8 +44,8 @@ tables that a future rules engine reads.
 documents rewritten in place, no changelog prose (`CLAUDE.md`).
 
 **Scale/Scope**: One new design document, three existing documents amended
-(`design/01-principles.md`, `design/03a-tables.md`'s index row, and `design/02-architecture.md` /
-`design/07-tooling.md` if their filename mentions go stale), one verification script. No engine
+(`doc/design/01-principles.md`, `doc/design/07-tables.md`'s index row, and `doc/design/02-architecture.md` /
+`doc/design/20-tooling.md` if their filename mentions go stale), one verification script. No engine
 data file — the engine implementation (and `engine/tables/*.yaml`) does not exist yet for any of
 the four already-defined families either; each family's document is the sole deliverable until
 Stage 13 builds the engine that reads it.
@@ -63,8 +63,8 @@ This repo has no `.specify/memory/constitution.md`; its governing document is `C
 - **Deterministic over inference / compute the maths** — every probability claim is computed by
   `check_oracle_answer.py`, not asserted. Gate: satisfied — see `research.md`, whose numbers this
   script already reproduces.
-- **Design documents rewritten in place, no changelogs** — `design/01-principles.md`,
-  `design/03a-tables.md`, `design/02-architecture.md`, `design/07-tooling.md` are edited to
+- **Design documents rewritten in place, no changelogs** — `doc/design/01-principles.md`,
+  `doc/design/07-tables.md`, `doc/design/02-architecture.md`, `doc/design/20-tooling.md` are edited to
   describe the present state only.
 - **Capability change goes through the Spec Kit cycle, `specs/` committed** — this plan.
 
@@ -85,7 +85,7 @@ specs/025-oracle-answer-tables/
 
 No `contracts/` — this feature has no external interface (API, CLI surface, wire format); it is a
 design document and a data table read by the engine's own table-loading rules, already specified
-in `design/03a-tables.md`.
+in `doc/design/07-tables.md`.
 
 ### Source Code (repository root)
 
@@ -102,7 +102,7 @@ tools/
 ```
 
 **Structure Decision**: Follows the existing pattern set by the four already-defined table
-families (`design/03a-1-criticals.md` through `03a-4-afflictions.md`, each with a matching
+families (`doc/design/08-criticals.md` through `03a-4-afflictions.md`, each with a matching
 `tools/check_<family>.py`) — this feature adds the fifth in the same shape, plus the
 design-document amendments the issue's scope names. None of the four existing families has an
 `engine/tables/*.yaml` file yet either (the engine implementation is future work, Stage 13), so

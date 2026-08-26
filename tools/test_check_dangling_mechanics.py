@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for tools/check_dangling_mechanics.py.
 
-stdlib unittest, no pytest (design/07-tooling.md section 6). No fixtures on disk: each
+stdlib unittest, no pytest (doc/design/20-tooling.md section 6). No fixtures on disk: each
 failure class is built in a temporary tree, so the tests exercise the real check functions
 rather than restating their logic (tools/test_check_docs.py's own reasoning: "a guard whose
 tests reimplement it cannot fail when it is wrong").
@@ -42,18 +42,18 @@ class TreeCase(unittest.TestCase):
 class TestDanglingReference(TreeCase):
     def test_reference_with_no_definition_is_caught(self):
         self.write(
-            "design/01-example.md",
+            "doc/design/01-example.md",
             "# Example\n\nThis document uses the Fictional Widget without defining it.\n",
         )
         problems = self.problems()
         self.assertEqual(len(problems), 1)
         self.assertIn("Fictional Widget", problems[0])
-        self.assertIn("design/01-example.md:3", problems[0])
+        self.assertIn("doc/design/01-example.md:3", problems[0])
 
     def test_defined_and_referenced_mechanic_is_clean(self):
-        self.write("design/01-define.md", "## Fictional Widget\n\nWhat it is.\n")
+        self.write("doc/design/01-define.md", "## Fictional Widget\n\nWhat it is.\n")
         self.write(
-            "design/02-use.md",
+            "doc/design/02-use.md",
             "Elsewhere, the Fictional Widget is used again.\n",
         )
         self.assertEqual(self.problems(), [])
@@ -72,7 +72,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_engine_characteristics_referenced_before_defined(self):
         self.write(
-            "design/03-conversion.md",
+            "doc/design/03-conversion.md",
             "## Conversion contract\n\nConvert the Might Score, Grit Score and Wit Score from "
             "the source system.\n",
         )
@@ -81,7 +81,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_standing_referenced_in_upkeep_before_defined(self):
         self.write(
-            "design/12-upkeep.md",
+            "doc/design/12-upkeep.md",
             "## Upkeep\n\nUpkeep cost is paid against the Standing Track each cycle.\n",
         )
         problems = self.problems()
@@ -89,7 +89,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_party_effective_referenced_in_danger_formula_before_defined(self):
         self.write(
-            "design/10-danger.md",
+            "doc/design/10-danger.md",
             "## Danger\n\nDanger scales against party_effective for the encounter.\n",
         )
         problems = self.problems()
@@ -97,7 +97,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_damage_type_critical_tables_referenced_before_defined(self):
         self.write(
-            "design/15-combat.md",
+            "doc/design/15-combat.md",
             "## Combat\n\nOn a telling blow, roll on the Piercing Wound table.\n",
         )
         problems = self.problems()
@@ -105,7 +105,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_skill_list_referenced_before_defined(self):
         self.write(
-            "design/04-character.md",
+            "doc/design/04-character.md",
             "## Character\n\nEach test is rolled against a skill from the Skill List.\n",
         )
         problems = self.problems()
@@ -113,7 +113,7 @@ class TestHistoricalInstances(TreeCase):
 
     def test_wound_schema_referenced_before_defined(self):
         self.write(
-            "design/16-aftermath.md",
+            "doc/design/16-aftermath.md",
             "## Aftermath\n\nRecord the injury using the Wound Schema fields.\n",
         )
         problems = self.problems()
@@ -124,7 +124,7 @@ class TestHistoricalInstances(TreeCase):
         # no cross-test coupling: this test just re-confirms one representative case runs
         # standalone without any of the others' fixtures present.
         self.write(
-            "design/10-danger.md",
+            "doc/design/10-danger.md",
             "## Danger\n\nDanger scales against party_effective for the encounter.\n",
         )
         problems = self.problems()
@@ -135,42 +135,42 @@ class TestHistoricalInstances(TreeCase):
 class TestDefinitionForms(TreeCase):
     def test_table_row_definition_is_recognized(self):
         self.write(
-            "design/06-skills.md",
+            "doc/design/06-skills.md",
             "| Skill | Governs |\n|---|---|\n| Fictional Craft | making things |\n",
         )
-        self.write("design/07-use.md", "A test against Fictional Craft is called.\n")
+        self.write("doc/design/07-use.md", "A test against Fictional Craft is called.\n")
         self.assertEqual(self.problems(), [])
 
     def test_glossary_entry_definition_is_recognized(self):
         self.write(
-            "design/08-glossary.md",
+            "doc/design/08-glossary.md",
             "**Fictional Term**: a thing that means something.\n",
         )
-        self.write("design/09-use.md", "Fictional Term appears again here.\n")
+        self.write("doc/design/09-use.md", "Fictional Term appears again here.\n")
         self.assertEqual(self.problems(), [])
 
 
 class TestExemptions(TreeCase):
     def test_code_span_reference_is_not_flagged(self):
         self.write(
-            "design/01-example.md",
+            "doc/design/01-example.md",
             "# Example\n\nSee `Fictional Widget` in the schema example.\n",
         )
         self.assertEqual(self.problems(), [])
 
     def test_fenced_code_block_reference_is_not_flagged(self):
         self.write(
-            "design/01-example.md",
+            "doc/design/01-example.md",
             "# Example\n\n```\nFictional Widget: true\n```\n",
         )
         self.assertEqual(self.problems(), [])
 
     def test_multi_line_code_span_reference_is_not_flagged(self):
         # A code span split across a line break (e.g. a formula wrapped for line length), as
-        # in design/03-rules.md's own attack/defence formulas -- both identifiers must be
+        # in doc/design/03-rules.md's own attack/defence formulas -- both identifiers must be
         # exempt even though the opening and closing backtick land on different lines.
         self.write(
-            "design/01-example.md",
+            "doc/design/01-example.md",
             "# Example\n\n"
             "The roll is `attack_skill −\ndefender_skill`, an even match is a coin flip.\n",
         )
@@ -186,13 +186,13 @@ class TestExemptions(TreeCase):
 
 class TestCLI(TreeCase):
     def test_exit_code_zero_on_clean_tree(self):
-        self.write("design/01-example.md", "# Example\n\nNothing undefined here.\n")
+        self.write("doc/design/01-example.md", "# Example\n\nNothing undefined here.\n")
         code = cdm.main(["--root", str(self.root)])
         self.assertEqual(code, 0)
 
     def test_exit_code_one_on_dangling_reference(self):
         self.write(
-            "design/01-example.md",
+            "doc/design/01-example.md",
             "# Example\n\nThis document uses the Fictional Widget without defining it.\n",
         )
         code = cdm.main(["--root", str(self.root)])

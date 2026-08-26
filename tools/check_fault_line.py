@@ -2,16 +2,16 @@
 """Compute the Fault Line's effect on Taint accrual, and guard the table it deliberately
 does not touch.
 
-design/03-rules.md section 4: when an Exposure source runs with the grain of a
+doc/design/03-rules.md section 4: when an Exposure source runs with the grain of a
 character's Fault Line (the GM's fiction-grounded call, the same shape as invoking a
 Drive), a failed resistance gains Taint one tier worse than the source's stated base
 (minor 1 -> 2, moderate 2 -> 3, major 3 stays 3). This script computes, rather than
 asserts, how many fewer Exposure events it takes an aligned character to cross the
-next transformation threshold (every multiple of 3 -- design/03a-3-transformations.md)
+next transformation threshold (every multiple of 3 -- doc/design/10-transformations.md)
 compared with an unaligned character starting at the same Taint, across a spread of
 realistic starting values and all three Exposure tiers. It also confirms the
 tier-worse step never exceeds the major ceiling, and that
-design/03a-3-transformations.md is untouched by this feature.
+doc/design/10-transformations.md is untouched by this feature.
 
 Run: python3 tools/check_fault_line.py
 """
@@ -20,10 +20,10 @@ import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-TRANSFORMATIONS_DOC = REPO_ROOT / "design" / "03a-3-transformations.md"
+TRANSFORMATIONS_DOC = REPO_ROOT / "doc" / "design" / "10-transformations.md"
 
 BASE_TIERS = {"minor": 1, "moderate": 2, "major": 3}
-THRESHOLD_SPACING = 3  # every multiple of 3 -- design/03a-3-transformations.md
+THRESHOLD_SPACING = 3  # every multiple of 3 -- doc/design/10-transformations.md
 
 # Starting Taint values a real character plausibly reaches: just crossed a threshold
 # (0, freshly reset), mid-band, and just below the next one.
@@ -31,7 +31,7 @@ STARTING_TAINT_VALUES = [0, 1, 2, 4, 5, 7, 8, 10, 11]
 
 
 def tier_worse(base):
-    """One tier worse, capped at major (3) -- design/03-rules.md s4, FR-002/FR-003."""
+    """One tier worse, capped at major (3) -- doc/design/03-rules.md s4, FR-002/FR-003."""
     return min(base + 1, BASE_TIERS["major"])
 
 
@@ -57,14 +57,14 @@ def check_ceiling():
 
 
 def check_transformations_doc_untouched():
-    """This feature must not edit design/03a-3-transformations.md (FR-006, SC-003). Compare
+    """This feature must not edit doc/design/10-transformations.md (FR-006, SC-003). Compare
     the working tree's copy against main; report drift rather than silently passing if git
     is unavailable."""
     if not TRANSFORMATIONS_DOC.exists():
         raise SystemExit(f"missing: {TRANSFORMATIONS_DOC}")
     try:
         main_content = subprocess.run(
-            ["git", "show", f"main:design/{TRANSFORMATIONS_DOC.name}"],
+            ["git", "show", f"main:doc/design/{TRANSFORMATIONS_DOC.name}"],
             cwd=REPO_ROOT, capture_output=True, text=True, check=True,
         ).stdout
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:

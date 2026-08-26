@@ -23,7 +23,7 @@ than just adding more fields to the existing single layer. Without a small, clos
 set, every future feature that touches companions re-litigates what a companion is made of.
 
 **Independent Test**: Given a companion record as currently defined
-([`04-session.md`](../../design/04-session.md)) plus whatever this feature adds, the mechanical
+([`04-session.md`](../../doc/design/16-session.md)) plus whatever this feature adds, the mechanical
 fields alone (excluding narrative prose fields) can be listed and counted, and that count stays
 small enough to run three or four companions at once without consulting a separate sheet per
 companion.
@@ -61,7 +61,7 @@ design names a concrete, observable difference in play from a chronicle where th
 **Acceptance Scenarios**:
 
 1. **Given** the reconciliation with Bond is complete, **When** a GM reads
-   [`04-session.md`](../../design/04-session.md) end to end, **Then** exactly one mechanism is
+   [`04-session.md`](../../doc/design/16-session.md) end to end, **Then** exactly one mechanism is
    named as the party's positive expression, with no second, overlapping one left implied.
 2. **Given** a functioning party over several sessions, **When** the GM checks what that
    investment has bought, **Then** the answer is traceable to a specific, defined effect — not a
@@ -176,7 +176,7 @@ the same meaning in both.
   a candidate that "may already be the positive track under another name" — this spec does not
   presuppose the answer, but the reconciliation requirement (FR-005) is written expecting Bond to
   be seriously considered before any new track is invented.
-- This feature is design-only: it changes `design/03-rules.md`, `design/04-session.md`, and
+- This feature is design-only: it changes `doc/design/03-rules.md`, `doc/design/16-session.md`, and
   possibly adds an ADR, plus a check script under `tools/` or `specs/027-two-layer-companions/`.
   It does not touch any setting repository or add runtime code beyond a verification script, in
   keeping with the engine/setting separation in `CLAUDE.md`.

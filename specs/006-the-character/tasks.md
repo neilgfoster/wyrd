@@ -14,7 +14,7 @@
 
 ## Phase 3 — The document
 
-- [x] T005 `design/03b-the-character.md`: the model, the scale, the skill contract.
+- [x] T005 `doc/design/04-the-character.md`: the model, the scale, the skill contract.
 - [x] T006 State how engine rules refer to a skill without naming one.
 - [x] T007 Cite the diegetic bands rather than restating them.
 
@@ -27,7 +27,7 @@
 
 ## Phase 5 — Wire up and verify
 
-- [x] T012 `README.md` reading order; `design/README.md` ADR index.
+- [x] T012 `README.md` reading order; `doc/README.md` ADR index.
 - [x] T013 `check_docs.py` green; `backlog.py check` green; grep for `characteristic` as a mechanic.
 
 ## Phase 6 — Ship

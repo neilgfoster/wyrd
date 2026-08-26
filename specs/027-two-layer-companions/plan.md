@@ -6,7 +6,7 @@
 
 ## Summary
 
-Amend `design/04-session.md`'s companion record so it is explicitly split into a **narrative
+Amend `doc/design/16-session.md`'s companion record so it is explicitly split into a **narrative
 layer** (`objective`, `flaw`, `secret`, `arc` — who this person is) and a **mechanical layer**
 (`career`, `bond`, `taint`, `strain`, `wounds` — what resolution actually consumes), stating the
 mechanical layer as closed and small. Resolve the positive-party-track gap by reconciling it with
@@ -14,7 +14,7 @@ mechanical layer as closed and small. Resolve the positive-party-track gap by re
 would, so the fix is to give Bond an explicit positive *mechanical* effect (not just narrative
 colour) rather than invent a second track that would duplicate it — recorded as an ADR since a
 real alternative (a standalone positive Tension-mirror track) is rejected. Confirm
-`design/03-rules.md`'s companion-advancement and succession passage against the completed split
+`doc/design/03-rules.md`'s companion-advancement and succession passage against the completed split
 (advancement lands on the mechanical layer only; a successor starts a fresh mechanical layer,
 narrative layer written fresh). Add a verification script checking the mechanical layer's field
 count against the party-size bound and that no duplicate-track language survives.
@@ -30,10 +30,10 @@ existing `tools/*.py` / `specs/*/check_*.py` convention in this repo).
 **Storage**: N/A — this feature produces design prose, not application state or a data file.
 
 **Testing**: `tools/check_companion_layers.py` — checks that the mechanical-layer field list
-named in `design/04-session.md` is a fixed, enumerable set (asserts the exact list this plan
+named in `doc/design/16-session.md` is a fixed, enumerable set (asserts the exact list this plan
 records in `data-model.md`, so a future edit that quietly grows it fails the check rather than
 drifting unnoticed); that no field appears in both the narrative-layer and mechanical-layer lists;
-and that `design/03-rules.md`'s companion/succession passage does not name a mechanical field
+and that `doc/design/03-rules.md`'s companion/succession passage does not name a mechanical field
 absent from that same list. Plus the repo-wide checks this change must keep green:
 `tools/check_docs.py` (reachability) and a grep for setting/system vocabulary (`CLAUDE.md`).
 
@@ -46,13 +46,13 @@ future rules engine (Stage 13).
 
 **Constraints**: No setting or system name anywhere in `design/` (`CLAUDE.md`); every mechanic
 named must be defined where introduced, not merely referenced; companions must not gain a
-capability score (`design/03-rules.md`'s existing "the engine holds no capability score for a
+capability score (`doc/design/03-rules.md`'s existing "the engine holds no capability score for a
 companion" rule, danger-scaling section) — the mechanical layer's fields are all fields the design
 already uses elsewhere (career cap, taint, strain, wounds, bond), not a new competence rating;
 design documents rewritten in place, no changelog prose (`CLAUDE.md`).
 
-**Scale/Scope**: Two existing documents amended (`design/04-session.md` for the two-layer split
-and Bond's new positive effect; `design/03-rules.md` for the confirmed advancement/succession
+**Scale/Scope**: Two existing documents amended (`doc/design/16-session.md` for the two-layer split
+and Bond's new positive effect; `doc/design/03-rules.md` for the confirmed advancement/succession
 passage), one new ADR (Bond as the positive track, rejecting a standalone mirror of Tension), one
 verification script. No new design document — this is a refinement of an existing one, unlike the
 oracle-table features which each opened a new file.
@@ -67,17 +67,17 @@ This repo has no `.specify/memory/constitution.md`; its governing document is `C
 - **Setting-agnostic engine** — no setting/system name in `design/`. Gate: satisfied by
   construction; every field name used already exists in the engine's own vocabulary. Verified by
   grep (`quickstart.md`) before this feature is done.
-- **No capability score for a companion** (`design/03-rules.md`) — Gate: the mechanical layer
+- **No capability score for a companion** (`doc/design/03-rules.md`) — Gate: the mechanical layer
   adds no new numeric rating; it names fields the design already defines elsewhere. Verified by
-  `tools/check_companion_layers.py` cross-checking the field list against `design/03-rules.md`'s
+  `tools/check_companion_layers.py` cross-checking the field list against `doc/design/03-rules.md`'s
   own statement of that rule.
 - **A decision earns an ADR only if a real alternative was rejected and someone would plausibly
   propose it again** (`CLAUDE.md`) — the Bond-vs-new-track choice qualifies: a standalone positive
   track mirroring Tension is a workable alternative that produces a different engine (two tracks
   answering the same question), and it is exactly the kind of thing a future contributor would
   propose again having forgotten Bond already covers it. Gate: satisfied — see the ADR.
-- **Design documents rewritten in place, no changelogs** — `design/04-session.md` and
-  `design/03-rules.md` are edited to describe the present state only.
+- **Design documents rewritten in place, no changelogs** — `doc/design/16-session.md` and
+  `doc/design/03-rules.md` are edited to describe the present state only.
 - **Capability change goes through the Spec Kit cycle, `specs/` committed** — this plan.
 
 No violations requiring the Complexity Tracking table below.
@@ -96,8 +96,8 @@ specs/027-two-layer-companions/
 ```
 
 No `contracts/` — this feature has no external interface (API, CLI surface, wire format); it
-amends existing design prose and entity fields already governed by `design/06-state.md` /
-`design/14-entities.md`.
+amends existing design prose and entity fields already governed by `doc/design/19-state.md` /
+`doc/design/27-entities.md`.
 
 ### Source Code (repository root)
 
@@ -116,9 +116,9 @@ tools/
 ```
 
 **Structure Decision**: No new top-level design document — companions and Party Tension already
-have a home (`design/04-session.md`), and this feature refines that document rather than opening
+have a home (`doc/design/16-session.md`), and this feature refines that document rather than opening
 a sixth one, unlike the table-family features which each introduced a new file under a shared
-index row. The ADR number is assigned at write time from the next free slot in `design/adr/`.
+index row. The ADR number is assigned at write time from the next free slot in `doc/adr/`.
 
 ## Complexity Tracking
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for tools/backlog.py.
 
-stdlib unittest, no pytest (design/07-tooling.md section 6). No network: the walk and the
+stdlib unittest, no pytest (doc/design/20-tooling.md section 6). No network: the walk and the
 parser are exercised against tools/fixtures/board.json, captured from the live board on
 2026-08-25, plus small synthetic graphs for the cases the real board does not yet contain.
 

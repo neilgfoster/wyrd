@@ -81,16 +81,16 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
 ### Functional Requirements
 
 - **FR-001**: The document MUST define what an oracle is, in terms of the engine's determinism
-  principle ([ADR 0005](../../design/adr/0005-deterministic-over-inference.md)), distinguishing it
+  principle ([ADR 0005](../../doc/adr/0005-deterministic-over-inference.md)), distinguishing it
   from an ordinary GM narrative decision.
 - **FR-002**: The document MUST state which class of in-fiction question is oracle-bound — the GM
   is obliged to roll rather than invent — and which the GM continues to simply decide.
-- **FR-003**: `design/01-principles.md` MUST agree with this obligation; if the existing GM
+- **FR-003**: `doc/design/01-principles.md` MUST agree with this obligation; if the existing GM
   contract does not already state it, this change amends that document rather than leaving the two
   in disagreement.
 - **FR-004**: The document MUST define at least one answer table, addressed by the key
   `oracle-answer`, following the row schema and roll-declaration conventions of
-  [`design/03a-tables.md`](../../design/03a-tables.md).
+  [`doc/design/07-tables.md`](../../doc/design/07-tables.md).
 - **FR-005**: The table MUST support more than one likelihood band, so a GM's judgment that a
   question is more or less likely than even changes the odds of a "yes" outcome.
 - **FR-006**: The table MUST express degrees of yes/no (e.g. a plain outcome and an extreme one)
@@ -98,15 +98,15 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
 - **FR-007**: Every outcome's probability, at every likelihood band, MUST be computed and shown in
   the document as a table of numbers, not asserted in prose.
 - **FR-008**: The document MUST state explicitly whether an oracle roll also reads the Wyrd die
-  (§1 of [`design/03-rules.md`](../../design/03-rules.md)), and if it adds any complication
+  (§1 of [`doc/design/03-rules.md`](../../doc/design/03-rules.md)), and if it adds any complication
   mechanism of its own, MUST say why that is not simply the Wyrd die.
 - **FR-009**: The document MUST state what an oracle roll records to state and where, consistent
-  with the versioning and recording conventions in `design/03a-tables.md` and
-  [`design/06-state.md`](../../design/06-state.md), so the same question resolves the same way if
+  with the versioning and recording conventions in `doc/design/07-tables.md` and
+  [`doc/design/19-state.md`](../../doc/design/19-state.md), so the same question resolves the same way if
   asked again.
-- **FR-010**: `design/03a-tables.md`'s index row for oracles MUST be updated to link the finished
+- **FR-010**: `doc/design/07-tables.md`'s index row for oracles MUST be updated to link the finished
   document and state its roll, in place of "not yet written".
-- **FR-011**: `design/02-architecture.md` and `design/07-tooling.md` MUST be updated if the
+- **FR-011**: `doc/design/02-architecture.md` and `doc/design/20-tooling.md` MUST be updated if the
   document's filename or the family's file layout differs from what those documents currently say.
 - **FR-012**: No table row, example question, or label in the document MAY name a specific
   setting, a source system, or bake in a tonal register — verified by grep, per `CLAUDE.md`.
@@ -114,7 +114,7 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
 ### Key Entities
 
 - **Oracle**: a table family the GM rolls to answer a question the fiction has not yet settled,
-  rather than inventing the answer, per [ADR 0005](../../design/adr/0005-deterministic-over-inference.md).
+  rather than inventing the answer, per [ADR 0005](../../doc/adr/0005-deterministic-over-inference.md).
 - **Likelihood band**: a GM-declared judgment of how plausible a "yes" is before rolling, which
   shifts the table's odds without changing the roll or the table structure.
 - **Oracle roll record**: the state entry an oracle roll writes, keyed so the same question
@@ -132,21 +132,21 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
   asserted prose.
 - **SC-003**: Grepping `design/` for setting or system vocabulary introduced by this change returns
   nothing.
-- **SC-004**: A second GM reading only `design/01-principles.md` and this document, with no other
+- **SC-004**: A second GM reading only `doc/design/01-principles.md` and this document, with no other
   context, can state correctly whether a given example question obliges an oracle roll.
 
 ## Assumptions
 
 - The answer table reuses the Wyrd die as its complication channel rather than inventing a second
-  one, consistent with `design/03-rules.md` §1's framing of the Wyrd die as the general "what else
+  one, consistent with `doc/design/03-rules.md` §1's framing of the Wyrd die as the general "what else
   happened" channel; the document will state this explicitly per FR-008, and may reverse this
   assumption if reuse turns out to conflict with the table's own roll convention once the odds are
   computed.
-- The table's die and modifier are declared by the family, per `design/03a-tables.md`'s convention
+- The table's die and modifier are declared by the family, per `doc/design/07-tables.md`'s convention
   that the roll is a per-family choice, not fixed by the engine.
 - Likelihood bands are a fixed, small named set (not an arbitrary numeric slider) so the GM's
   choice at the table is bounded and auditable, matching how difficulty bands already work in
-  `design/03-rules.md` §1.
-- The document lives at `design/03a-5-oracle-answers.md` per the issue's stated goal; the tables
+  `doc/design/03-rules.md` §1.
+- The document lives at `doc/design/12-oracle-answers.md` per the issue's stated goal; the tables
   index's placeholder name `03a-5-oracles.md` is corrected to match once this document exists,
   since prompt oracles (#21) will need their own, separate file.

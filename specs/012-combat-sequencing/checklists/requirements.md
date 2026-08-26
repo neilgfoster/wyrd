@@ -34,7 +34,7 @@
 - The spec follows this repository's house shape (Context / Requirements / Constraints /
   Assumptions / Success criteria / Acceptance criteria) rather than the stock Spec Kit user-story
   template, matching `specs/010-*` and `specs/011-*`. The engine's "user" is a GM reading
-  `design/03-rules.md`, so a requirement *is* the scenario.
+  `doc/design/03-rules.md`, so a requirement *is* the scenario.
 - The player-facing mapping's slope is now settled by computation in `check_mapping.py` (slope 1,
   clipped 5-95%) and recorded as FR-11a -- a finding handed to #44, not a conversion performed here.
 - Clarify session 2026-08-25 asked and answered five questions, settling the scope boundary against

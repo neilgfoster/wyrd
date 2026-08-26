@@ -9,16 +9,16 @@ over three fields that belonged to no schema.
 Everything below is derived from numbers already merged, not invented here:
 
 1. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
-   (design/03-rules.md section 2).
-2. **A starting character has Stamina 6** (design/03c-character-creation.md), and a critical
-   happens when damage takes a combatant below 0 (design/03a-1-criticals.md).
-3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (design/03-rules.md section 1,
-   design/03b-the-character.md).
+   (doc/design/03-rules.md section 2).
+2. **A starting character has Stamina 6** (doc/design/05-character-creation.md), and a critical
+   happens when damage takes a combatant below 0 (doc/design/08-criticals.md).
+3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (doc/design/03-rules.md section 1,
+   doc/design/04-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
-   (design/03-rules.md section 1, ADR 0016).
+   (doc/design/03-rules.md section 1, ADR 0016).
 5. **The k-th body is worth 1/k**, so a party of p bodies has effective size H(p), and both sides
-   of the danger ratio are read through that function (design/03-rules.md section 7, ADR 0024).
-6. **The difficulty ladder** runs +20 to -40 in rungs of 10 (design/03-rules.md section 1).
+   of the danger ratio are read through that function (doc/design/03-rules.md section 7, ADR 0024).
+6. **The difficulty ladder** runs +20 to -40 in rungs of 10 (doc/design/03-rules.md section 1).
 7. **The recorded player-facing mapping** is effective% = 50 + (player_skill - opponent_skill),
    clipped to 5-95 (specs/012-combat-sequencing, for #69 to adopt). Every claim here is computed
    under BOTH the opposed test as it stands today and that mapping, because the adversary block
@@ -26,7 +26,7 @@ Everything below is derived from numbers already merged, not invented here:
 
 The one thing this script DERIVES rather than reuses is the skill adjustment: the points added to
 an opponent's percentage when content is prepared for a party other than the one it was written
-for. design/03-rules.md section 7 has always claimed that danger scales "enemy counts and skill
+for. doc/design/03-rules.md section 7 has always claimed that danger scales "enemy counts and skill
 values"; the count half was settled by #8, and the skill half was never evaluable because a
 percentage cannot be multiplied by a ratio. The coefficient is fitted from the achievable ratio
 range, not chosen -- see section T005/T006 below.
@@ -47,7 +47,7 @@ from itertools import product
 # ---------------------------------------------------------------------------
 
 ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
-ARMOUR_RANKS = ["none", "light", "modest", "heavy"]      # design/03-rules.md section 2
+ARMOUR_RANKS = ["none", "light", "modest", "heavy"]      # doc/design/03-rules.md section 2
 MIN_THROUGH = 1
 WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 ORDINARY_WEAPON = [6]
@@ -56,10 +56,10 @@ ORDINARY_ARMOUR = "modest"
 DAMAGE_TYPES = ["slashing", "piercing", "blunt", "searing"]   # ADR 0022, closed
 UNTRAINED = 10
 SKILL_OPENS_AT = 25
-SKILL_STEP = 5                     # design/03-rules.md section 6: an advance is +5
+SKILL_STEP = 5                     # doc/design/03-rules.md section 6: an advance is +5
 STARTING_STAMINA = 6
 
-LADDER = [20, 0, -10, -20, -30, -40]     # design/03-rules.md section 1
+LADDER = [20, 0, -10, -20, -30, -40]     # doc/design/03-rules.md section 1
 LADDER_TOP = max(LADDER)                 # +20, the ladder's whole positive extent
 
 REAL_SKILLS = [25, 35, 45, 55]
@@ -77,7 +77,7 @@ CROWD_MAX_ARMOUR = "none"
 CROWD_SKILL_GAP = 20
 
 # The closed trait vocabulary. Every effect names a mechanism that already exists; a setting may
-# retune through these and may never add one (design/13-authoring-a-setting.md).
+# retune through these and may never add one (doc/design/26-authoring-a-setting.md).
 TRAIT_EFFECTS = {
     "difficulty": "shifts the difficulty of a named class of test, in ladder rungs",
     "damage": "adds or removes damage dice on this opponent's blows",
@@ -170,7 +170,7 @@ HIT_MODELS = [("opposed", p_opposed_win), ("mapped", p_mapped)]
 ORDINARY_HIT = damage_through(ORDINARY_WEAPON, ARMOUR[ORDINARY_ARMOUR])
 
 # The critical table rows run from 2 (1d6 plus at least 1 point below zero) to 22+
-# (design/03a-1-criticals.md). One table per damage type; the block picks which.
+# (doc/design/08-criticals.md). One table per damage type; the block picks which.
 CRITICAL_FIRST_ROW = 2
 CRITICAL_DIE = 6
 
@@ -298,7 +298,7 @@ def fit_coefficient(max_bodies: int = MAX_BODIES) -> float:
 
 COEFFICIENT = fit_coefficient()
 
-# What design/03-rules.md section 7 actually prints. A GM reads the published number, not the
+# What doc/design/03-rules.md section 7 actually prints. A GM reads the published number, not the
 # fitted one, so the published number is what has to reproduce the published table -- otherwise
 # the document carries a plausible round figure that nothing checks, which is the fault class
 # CLAUDE.md lists fourth.
@@ -306,7 +306,7 @@ PUBLISHED_COEFFICIENT = 15.5
 
 
 def round_to(x: float, step: int) -> int:
-    """Round half up, the rule design/03-rules.md section 7 already applies everywhere."""
+    """Round half up, the rule doc/design/03-rules.md section 7 already applies everywhere."""
     return int(math.floor(x / step + 0.5)) * step
 
 
@@ -322,7 +322,7 @@ def adjustment(party: int, written_for: int, step: int = SKILL_STEP) -> int:
 
 def adjusted_skill(skill: int, party: int, written_for: int) -> int:
     """The opponent's percentage as it is actually tested. Floored at 0: a percentage is not a
-    negative number, and design/03-rules.md section 1 already says what a test at or below zero
+    negative number, and doc/design/03-rules.md section 1 already says what a test at or below zero
     is -- it is not attempted. Flooring states where the track stops; it adds no rule."""
     return max(0, skill + adjustment(party, written_for))
 

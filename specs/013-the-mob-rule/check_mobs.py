@@ -4,24 +4,24 @@
 CLAUDE.md: where a claim can be checked by a script, check it. The rule this replaces was one
 sentence -- "each round a character also clears petty opponents weaker than themselves" -- and it
 carried no numbers at all. Neither *petty* nor *weaker* was defined, so whether the rule applied
-was a judgement call, which is exactly what design/07-tooling.md exists to prevent.
+was a judgement call, which is exactly what doc/design/20-tooling.md exists to prevent.
 
 Everything below is derived from numbers already merged, not invented here:
 
 1. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
-   (design/03-rules.md section 2).
-2. **A starting character has Stamina 6** (design/03c-character-creation.md), and a critical
+   (doc/design/03-rules.md section 2).
+2. **A starting character has Stamina 6** (doc/design/05-character-creation.md), and a critical
    happens when damage takes a combatant below 0.
-3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (design/03-rules.md section 1,
-   design/03b-the-character.md).
+3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (doc/design/03-rules.md section 1,
+   doc/design/04-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
-   (design/03-rules.md section 1, ADR 0016).
+   (doc/design/03-rules.md section 1, ADR 0016).
 5. **The recorded player-facing mapping** is effective% = 50 + (player_skill - opponent_skill),
    clipped to 5-95 (specs/012-combat-sequencing, for #44 to adopt). Every claim here is computed
    under BOTH the opposed test as it stands today and that mapping, because the rule must survive
    the conversion.
 
-Weapon damage is setting data (design/13-authoring-a-setting.md), so it is modelled across the
+Weapon damage is setting data (doc/design/26-authoring-a-setting.md), so it is modelled across the
 same plausible band specs/008-character-creation/check_creation.py used, and no conclusion is
 allowed to hold at only one point of it.
 
@@ -39,16 +39,16 @@ ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
 MIN_THROUGH = 1
 WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 
-# The ORDINARY pairing, in the sense design/03c-character-creation.md already uses: a mid-band
+# The ORDINARY pairing, in the sense doc/design/05-character-creation.md already uses: a mid-band
 # weapon against modest armour. It is 1.56 points through and 4.5 hits to drop a starting
 # character -- the figures #44 corrected this repo to and specs/012 is calibrated against. A
 # crowd's blows are modelled on it rather than on the band mean, because the band mean includes
 # a martial weapon in every hand, which is not what a crowd is.
 ORDINARY_WEAPON = [6]
 
-UNTRAINED = 10          # design/03-rules.md section 1
-SKILL_OPENS_AT = 25     # design/03b-the-character.md section 2
-STARTING_STAMINA = 6    # design/03c-character-creation.md section 2
+UNTRAINED = 10          # doc/design/03-rules.md section 1
+SKILL_OPENS_AT = 25     # doc/design/04-the-character.md section 2
+STARTING_STAMINA = 6    # doc/design/05-character-creation.md section 2
 
 # The skills a character actually has in a real fight: newly opened, a few advances in,
 # competent, and practised. Not a midpoint -- CLAUDE.md is explicit about that.
@@ -306,7 +306,7 @@ def main() -> int:
             "Nobody would ever use the rule."
         )
     # A free clear above 1 per round would exceed a character's own action, which is one
-    # thing per turn (design/03-rules.md section 2).
+    # thing per turn (doc/design/03-rules.md section 2).
     if CLEARED_PER_ROUND > 1:
         failures.append(
             "A character does one thing on their turn. Clearing more than one body for free "
@@ -478,7 +478,7 @@ def main() -> int:
             "specs/012-combat-sequencing/check_mapping.py computed and recorded for #44."
         )
 
-    # -- 7. The figures design/03-rules.md publishes --------------------------
+    # -- 7. The figures doc/design/03-rules.md publishes --------------------------
     # Tables are where staleness hides (CLAUDE.md): each row reads as a small factual claim
     # and nothing about a wrong one looks wrong. Every number the rule states in prose is
     # asserted here, so changing the model here fails rather than silently disagreeing with
@@ -499,7 +499,7 @@ def main() -> int:
         ("six bodies drop a modest-armoured character in",
          rounds_to_drop_character(6, REAL_SKILLS[2], p_mapped, "modest"), Fraction(129, 10)),
     ]
-    print("The figures design/03-rules.md publishes")
+    print("The figures doc/design/03-rules.md publishes")
     print("-" * 74)
     for label, computed, stated in published:
         agrees = abs(computed - stated) <= abs(stated) / 100
@@ -507,7 +507,7 @@ def main() -> int:
               f"{'ok' if agrees else 'DRIFT'}")
         if not agrees:
             failures.append(
-                f"design/03-rules.md states {float(stated):.2f} for {label}; this script "
+                f"doc/design/03-rules.md states {float(stated):.2f} for {label}; this script "
                 f"computes {float(computed):.2f}. One of the two is stale."
             )
     print()

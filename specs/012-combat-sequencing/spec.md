@@ -12,13 +12,13 @@ which is #13 and depends on this landing; harm, recovery and the critical tables
 
 ## Context
 
-**The word *initiative* appears in no design document.** `design/03-rules.md` §2 specifies what an
+**The word *initiative* appears in no design document.** `doc/design/03-rules.md` §2 specifies what an
 attack *is* — an opposed test, armour subtracting dice, a telling blow, a critical below zero
 Stamina — and says nothing about when anyone does it. There is no round, no turn order, no
 statement of who swings first. There is no ranged combat at all. There is no fleeing, no
 disengaging, no surprise and no ambush.
 
-Per [`design/07-tooling.md`](../../design/07-tooling.md), a gap here is not a neutral silence. Every
+Per [`doc/design/20-tooling.md`](../../doc/design/20-tooling.md), a gap here is not a neutral silence. Every
 question the rules decline to answer becomes a judgement call at play time, made differently each
 session, by an engine whose whole premise is that anything with a correct answer is computed rather
 than inferred. An unsequenced exchange is a rule delegated to improvisation.
@@ -227,7 +227,7 @@ probability claims in this repo have been wrong, and both were caught only by co
 
 ### FR-15 — The design documents are updated, not merely the spec
 
-`design/03-rules.md` §2 carries the rules as the engine's description, rewritten in place with no
+`doc/design/03-rules.md` §2 carries the rules as the engine's description, rewritten in place with no
 "previously we…" notes. An ADR records any decision with a workable rejected alternative. The spec
 is not left as the only record of current behaviour.
 
@@ -254,7 +254,7 @@ is not left as the only record of current behaviour.
 
 ## Success criteria
 
-- **SC-001**: A reader can run a complete exchange start to finish from `design/03-rules.md` alone,
+- **SC-001**: A reader can run a complete exchange start to finish from `doc/design/03-rules.md` alone,
   making no judgement call about who acts when.
 - **SC-002**: Turn order for a round of any size is determined with zero rolls.
 - **SC-003**: A ranged attack is resolvable from one bit of spatial state — engaged or not — with
