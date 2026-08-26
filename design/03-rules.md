@@ -15,6 +15,8 @@ Every label here is a **default**. A setting renames or disables what it likes
 | **Transformation** | the permanent change at a Taint threshold | Mutation · Gift · Mark |
 | **Affliction** | the lasting condition at a Trauma threshold | Derangement · Disorder |
 | **Dread** | how frightening your changes make you to others | Fear points |
+| **Standing** | an open-ended count of social position — what a character is owed by who they
+  are and who they know | Reputation · Renown · Rank |
 | **Ill Omen / Fair Omen** | the two Wyrd-die faces | Chaos Star / Comet · Peril / Grace |
 
 ---
@@ -259,7 +261,37 @@ each field — is in [`03d-the-adversary.md`](03d-the-adversary.md).
   ends, like every other death in this ruleset
   ([ADR 0023](adr/0023-a-critical-never-kills-during-the-fight.md)).
 - Weapons are **casual** or **martial**. Martial weapons mark the bearer and are illegal in
-  most civilised places — a social constraint that does real work.
+  most civilised places, and being seen carrying one there **costs 1 Standing** the moment it
+  becomes visible in a scene — not a fine, not automatic violence, a real and immediate social
+  cost. Where the fiction supports it, the GM may also treat it as a trigger for an encounter (a
+  patrol, a challenge) rather than a Standing loss, but not both for the same sighting.
+
+### Gear and coin
+
+A setting's `gear.yaml` declares what a weapon or armour piece is
+([`13-authoring-a-setting.md`](13-authoring-a-setting.md)), validated against a closed schema
+([`check_gear.py`](../tools/check_gear.py)): a weapon states its damage, damage type,
+casual/martial class, price and availability; armour states its rank, price and availability.
+
+**Wealth is coin: a small number the player can state a total for, not a ledger.** Nothing in
+this ruleset asks a player to itemize what they bought or when. A character has some coin; they
+spend it against a `gear.yaml` price, or at Upkeep ([`04-session.md`](04-session.md)), and the
+total simply changes.
+
+**Standing and coin are two sides of one material position, not one resource.** Standing is what
+a character is *owed* by their position — who they are, who they know, what door that opens.
+Coin is what they *have on hand*. Upkeep is the one place they convert: away from home, a
+character pays in whichever one they still have. Standing also moves outside Upkeep, as a direct
+consequence of a scene — the martial-weapon rule above is one such case, and the GM may apply
+others where the fiction plainly calls for it, the same way Taint or Trauma can move outside
+their own triggers.
+
+**Encumbrance is a question asked of the fiction, not a number.** There is no weight table and no
+carrying-capacity score — consistent with [`10-diegesis.md`](10-diegesis.md)'s existing "realistic,
+not logistic" rule for inventory generally. When it matters whether a character is plausibly
+carrying something, the GM asks the same question that document already asks about what a
+character has and what's missing, and answers it from the fiction: what they're wearing, where
+they came from, what they've said they packed.
 
 ### Rounds and turn order
 

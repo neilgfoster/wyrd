@@ -97,6 +97,11 @@ carrying the way a person does — the things that matter, in the order they mat
 
 The character also knows what is **missing** without being told, because people do.
 
+**Encumbrance is the same question asked the other way round.** There is no weight table and no
+carrying-capacity score ([`03-rules.md`](03-rules.md) §2). When it matters whether a character is
+plausibly carrying something, the GM asks it of the fiction the same way — what they're wearing,
+where they came from, what they've said they packed — and answers from that, not from a sum.
+
 ---
 
 ## The character as a knowledge source
