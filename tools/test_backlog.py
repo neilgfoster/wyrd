@@ -137,6 +137,26 @@ class TestWalk(unittest.TestCase):
         self.assertEqual(chosen["path"], [1, 2])
         self.assertEqual(blocked, [])
 
+    def test_a_leaf_under_a_blocked_epic_is_not_ready(self):
+        """A child inherits its ancestor's own Depends on:, even with no dependency of its own.
+
+        The exact fault this guards: #90 ("Implement the engine") declares `Depends on: #1`
+        while #1 is still open. #31, a child of #90 with no `Depends on:` line of its own,
+        read as ready and was picked up before this fix -- CLAUDE.md's "dependency wins" rule
+        has to apply transitively, not just to the issue that states it.
+        """
+        issues = {
+            1: make_issue(1, title="design programme", labels=("kord-epic",)),
+            90: make_issue(90, title="implement the engine", children=[31],
+                            open_children=[31], depends_on=[1], labels=("kord-epic",)),
+            31: make_issue(31, title="fleet rollout", parent=90),
+        }
+        board = {1: {"rank": 10}, 90: {"rank": 20}}
+        chosen, blocked = backlog.walk(issues, board)
+        self.assertIsNone(chosen)
+        self.assertEqual([b["number"] for b in blocked], [31])
+        self.assertEqual(blocked[0]["blocked_by"], [1])
+
     def test_dependency_beats_priority(self):
         """FR-3. The top-ranked root's only leaf is blocked, so a lower-ranked root wins."""
         issues = {
@@ -205,6 +225,34 @@ class TestWalk(unittest.TestCase):
         first, _ = backlog.walk(issues, board)
         second, _ = backlog.walk(issues, board)
         self.assertEqual(first, second)
+
+
+class TestRenderNotes(unittest.TestCase):
+    """`list`'s per-issue status notes. Both facts must survive when both are true."""
+
+    def test_blocked_epic_with_no_children_reports_both(self):
+        """The exact #90 regression: losing its last child must not silence `blocked by`."""
+        epic = make_issue(90, labels=("kord-epic",))  # open_children defaults to empty
+        self.assertEqual(
+            backlog.render_notes(epic, blockers=[1]),
+            ["blocked by #1", "no open children; close or decompose"],
+        )
+
+    def test_unblocked_childless_epic_reports_only_that(self):
+        epic = make_issue(90, labels=("kord-epic",))
+        self.assertEqual(backlog.render_notes(epic, blockers=[]), ["no open children; close or decompose"])
+
+    def test_blocked_non_epic_reports_only_blocked(self):
+        leaf = make_issue(2)
+        self.assertEqual(backlog.render_notes(leaf, blockers=[9]), ["blocked by #9"])
+
+    def test_ready_leaf_reports_ready(self):
+        leaf = make_issue(2)
+        self.assertEqual(backlog.render_notes(leaf, blockers=[]), ["ready"])
+
+    def test_issue_with_open_children_reports_nothing(self):
+        parent = make_issue(1, open_children=[2], labels=("kord-epic",))
+        self.assertEqual(backlog.render_notes(parent, blockers=[]), [])
 
 
 class TestEpicsAreNeverWork(unittest.TestCase):
