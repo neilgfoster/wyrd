@@ -76,7 +76,11 @@ in another skill "has tried it exactly twice, both times badly".
 | 9+ | you are no longer the only one deciding |
 
 **The hidden threshold is never rendered at all**, in any form. Not even as unease. The player finds
-out where it was when it runs out.
+out where it was when it runs out. Taint itself is Diegetic-only, not Never-shown ("Three
+visibility classes" above): "never as a score" describes the default, in-fiction narration — the
+general on-request rule still applies, the same as Stamina or a skill
+([`04a-out-of-character-mode.md`](04a-out-of-character-mode.md)). Only the hidden threshold is
+withheld even then.
 
 ### Trauma and Strain
 
