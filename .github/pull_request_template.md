@@ -1,7 +1,9 @@
 <!--
-Title: say what changed, not where it lives. "Move the design documents under docs/ and settle
-numbering (closes #38)" -- not the branch name, not a ticket ID with nothing else. If the title
-would read the same with every word after the issue number deleted, it isn't a title yet.
+Title: concise, and says what changed, not where it lives. "Move the design documents under
+docs/ and settle numbering (closes #38)" -- not the branch name, not a ticket ID with nothing
+else, and not a paragraph of detail crammed into the title (that belongs in Summary below).
+Include the issue number when this PR relates to one: "(closes #N)" if it closes it, "(#N)" if
+it only advances it. No fabricated number when there's genuinely no linked issue.
 -->
 
 ## Summary
