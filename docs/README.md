@@ -87,6 +87,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0044](adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md) | A telling blow via a failed defence roll is computed by the same symmetric procedure the damage-multiplier modelling already assumed |
 | [0046](adr/0046-reroll-resources-stack-unbounded-on-one-roll.md) | Reroll resources stack unbounded on one roll, deliberately |
 | [0047](adr/0047-strain-threshold-crossing-checks-cumulative-strain.md) | The Strain-threshold Trauma check reads cumulative Strain, not a per-invocation delta |
+| [0048](adr/0048-system-of-power-costs-paid-only-on-failure.md) | System-of-power costs (Strain, Resolve) are paid only on a failed invocation |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
