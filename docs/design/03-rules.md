@@ -28,6 +28,19 @@ particular book, it belongs in that setting's `rename:` block, not here.
 
 ---
 
+**One shared shape, used twice.** Taint/Resolve and Fate/Fortune are the same mechanism, applied
+to two different domains: a scarce or near-permanent resource, paired with a renewable
+counterweight that spends against it. Taint accrues and only falls when a Transformation spends
+it down; Resolve is the spendable counterweight, renewing at a Rally and a downtime, capped by
+how much Taint there currently is to counter. Fate is spent, rarely, to buy off the worst
+possible outcome and does not come back; Fortune is its daily-renewable counterweight, spent far
+more freely, on smaller stakes. Neither pair was designed as an instance of the other — they were
+each settled on their own terms, for corruption and for mortality respectively — but the shape
+underneath is identical, and naming it here means a third instance of the same pattern, if one is
+ever added, reads as completing something already established rather than inventing a new idea.
+
+---
+
 **Before the ruleset uses them: Skill and Stamina.** Two terms this document assumes from its
 first line, defined in full in [`10-the-character.md`](10-the-character.md) —
 
