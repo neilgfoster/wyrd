@@ -281,9 +281,105 @@ run one character through creation and one exchange through to its resolution wi
 rule at the table.
 
 **It does not prove** every rule in `docs/design/` is complete — only the ones this run actually
-exercised: creation steps 1–9, ordinary (non-surprise, non-ranged, non-crowd) sequencing, the
+exercised: creation steps 1–8, ordinary (non-surprise, non-ranged, non-crowd) sequencing, the
 player-facing attack/defence roll, armour, the telling blow (never triggered, so its threshold was
 read but not crossed), a single critical, and the adversary's non-participation in Trauma and
 Aftermath. Surprise, ranged attacks, crowds, breaking off, Fate spent against a death result,
 Transformations, Afflictions and the advancement economy were not exercised here, and remain
-untested by this document.
+untested by this document. §6 below runs a deeper, dedicated pass over ordinary resolution and
+opposed tests specifically — the shape of roll this section's combat exchange only exercised in
+combat's own two-sided form.
+
+---
+
+## 6. Resolution and opposed tests: a deeper pass
+
+Part of #134 (the autonomous playtest epic), #147. Where §3 exercised resolution *inside* combat's
+fixed two-sided shape, this section exercises the ordinary test — the shape every non-combat roll
+in the game actually uses — across the difficulty ladder, declaration, assistance, untrained
+attempts, and the player-facing opposed-test shape §1 describes for a non-combat contest.
+
+Every roll below is a real `d100` draw from Python's `random`, seeded `20260827`, drawn in the
+exact order presented, one call per attempt — and **no roll is drawn for an attempt already
+impossible before the die is thrown** (Very Hard on an untrained or barely-trained skill, Hard
+untrained), matching §3's own discipline that no die drawn here is thrown away, and none is
+skipped either. **Degrees are read only on a success**, per §1's own convention (already
+established in §3's combat exchange: "No degrees (degrees only exist on a success)") — a failure's
+Wyrd die is still read from the same natural roll, independently.
+
+Senna Vask (§1) again: `tracking: 35`, `blade: 35`, `evasion: 30`.
+
+### The difficulty ladder — tracking, brief declaration
+
+| Difficulty | Effective% | Roll | Result | Wyrd die |
+|---|---|---|---|---|
+| Very Hard (−40) | −5 | *(impossible — not rolled)* | — | — |
+| Hard (−30) | 5 | 68 | fail | — |
+| Difficult (−20) | 15 | 100 | fail | **Ill Omen** |
+| Challenging (−10) | 25 | 20 | **success**, 0 degrees | **Ill Omen** |
+| Average (+0) | 35 | 73 | fail | — |
+| Easy (+20) | 55 | 80 | fail | **Ill Omen** |
+
+Challenging succeeding at 0 degrees, played: Senna finds the trail again, but only just — the sign
+is nearly gone. The natural 100 at Difficult confirms §1's rule needs no special case for it: "at
+or under" already fails a 100 against any skill under 100, and the units digit (0) reads as an Ill
+Omen exactly like any other 0, with no exception the doc would need to state.
+
+### Declaration bonus stacking — tracking, Average difficulty
+
+| Declaration | Effective% | Roll | Result | Wyrd die |
+|---|---|---|---|---|
+| Brief | 35 | 31 | **success**, 0 degrees | — |
+| Specific and in character (+10) | 45 | 53 | fail | — |
+| Specific *and* leveraging (+20) | 55 | 1 | **success**, 5 degrees | — |
+
+The roll of **1** at 55% lands 5 degrees — the highest-magnitude success this pass drew — on the
+best-declared attempt, which is the shape the rule is meant to reward: specificity buys a wider
+margin, not a guaranteed one (the brief attempt at 35% also succeeded, just narrowly).
+
+### Untrained attempts — the #139 table, played
+
+| Attempting | Base | Difficulty | Declaration | Effective% | Roll | Result |
+|---|---|---|---|---|---|---|
+| average, brief | 10 | +0 | — | 10 | 65 | fail |
+| easy, brief | 10 | +20 | — | 30 | 86 | fail |
+| easy, specific and leveraging | 10 | +20 | +20 | 50 | 49 | **success**, 1 degree |
+| hard | 10 | −30 | — | −20 | *(impossible — not rolled)* | — |
+
+Matches the reworked table in #139/03-rules.md exactly: the 50% row is the same two +20 bonuses
+stacking on the 10% base, and it played out as a genuine near-coin-flip success (roll 49 against
+50), not a certainty.
+
+### Assistance — blade, one helper (evasion 30% → +3)
+
+Effective% `35 + 3 = 38`. Roll **6** — **success**, `tens(38) − tens(6) = 3 − 0 = 3` degrees. The
+helper's own skill (30%, a tenth rounded down is 3, per §1's assistance table) matched the
+published figure exactly.
+
+### Player-facing opposed test — evasion vs. a baseline-40 opponent
+
+`effective% = clip(50 + (30 − 40), 5, 95) = 40`. Roll **52** — fail: the opposed action simply
+fails, no resisting-side roll, per §1's opposed-test shape. Played: Senna tries to slip past a
+suspicious gatekeeper on evasion; the gatekeeper's attention holds, and she's stopped at the gate.
+
+### The two-player-controlled-entities edge case
+
+Not rolled — by design. §1 states this shape (a contest between the player character and a
+companion, or two companions, with no NPC/opponent side) is resolved as one ordinary test on
+whichever side the GM names as acting, or as two separate ordinary tests — not a special roll of
+its own. Played through in the fiction (Senna and a hypothetical companion disagreeing on which
+road to take at a fork) confirms the rule as written needs nothing further: the GM naming Senna as
+the acting side and calling one Average tracking test (already exercised above) resolves it with no
+new mechanism required.
+
+### Findings
+
+**No fault found.** Every attempt resolved against §1's stated formulas without a judgement call:
+the natural 100 needed no special case, the assistance bonus matched its published table exactly,
+the untrained table's stacked bonuses played out as the reworked #139 table describes, and the
+two-player-controlled-entities edge case resolved with the ordinary-test shape §1 already names,
+with nothing further to invent.
+
+**What this pass does not prove**: extended tasks (§1's interval-based work), the Bargain (Taint
+route via a failed roll), and Fortune spent to reroll, defend again, act sooner, dodge a
+misfortune, or break a tie — none were exercised here and remain untested by this document.
