@@ -1399,3 +1399,137 @@ sequences specifically.
 **No new design decision beyond the correction itself.** ADR 0047 changes only how the crossing
 is detected — failure-only gating, the maximum-Stamina modulus, the remainder-carry-forward
 shape, and the disabled-track degradation are all unchanged from ADR 0045.
+
+---
+
+## 17. Correcting §10/§14/§15/§16 again: cost is now paid only on a failure (ADR 0048)
+
+#180, part of #134. Discussing §16's own correction — Trauma now correctly catches up on
+whatever a run of successes silently carried Strain past — surfaced a further question: should a
+success ever have been building that backlog at all? `03-rules.md` §5 defines Strain generically
+as failure-driven ("today — from failed mental tests, terror, exhaustion"); systems of power was
+the only mechanism in the engine paying cost "regardless of outcome." **Resolved in
+[ADR 0048](../adr/0048-system-of-power-costs-paid-only-on-failure.md): both `strain_cost` and
+`resolve_cost` are now paid only when an invocation fails.** `resolve_cost` follows `strain_cost`
+rather than the two fields diverging. **The original §7/§8/§10/§14/§15/§16 text is not edited**
+— this section states what changes under the corrected timing.
+
+### §10/§14/§16's major-tier sequence, corrected again (seed `20260842`)
+
+| # | Roll | Result | Strain | Ill Omen | Taint | Trauma |
+|---|---|---|---|---|---|---|
+| 1 | 73 | fail | 2 | no | 0 | 1 |
+| 2 | 32 | fail | 4 | no | 0 | 2 |
+| 3 | 84 | fail | 6 | no | 0 | 3 |
+| 4 | 51 | fail | 2 | no | 0 | 5 (+2) |
+| 5 | 44 | fail | 4 | no | 0 | 6 |
+| 6 | 19 | fail | 6 | no | 0 | 7 |
+| 7 | 19 | fail | 2 | no | 0 | 3 (+2, Affliction) |
+| 8 | 5 | **success** | 2 | no | 0 | 3 |
+| 9 | 7 | **success** | 2 | no | 0 | 3 |
+| 10 | 33 | fail | 4 | no | 0 | 4 |
+| 11 | 17 | fail | 6 | no | 0 | 5 |
+| 12 | 2 | **success** | 6 | no | 0 | 5 |
+| 13 | 63 | fail | 2 | no | 0 | 7 (+2) |
+| 14 | 68 | fail | 4 | no | 0 | 2 (+1, Affliction) |
+| 15 | 19 | fail | 6 | no | 0 | 3 |
+| 16 | 72 | fail | 2 | no | 0 | 5 (+2) |
+| 17 | 91 | fail | 4 | no | 0 | 6 |
+| 18 | 43 | fail | 6 | no | 0 | 7 |
+| 19 | 22 | fail | 2 | no | 0 | 3 (+2, Affliction) |
+| 20 | 39 | fail | 4 | no | 0 | 4 |
+| 21 | 63 | fail | 6 | no | 0 | 5 |
+| 22 | 14 | fail | 2 | no | 0 | 7 (+2) |
+| 23 | 6 | **success** | 2 | no | 0 | 7 |
+| 24 | 25 | fail | 4 | no | 0 | 8 |
+| 25 | 17 | fail | 6 | no | 0 | 3 (+1, Affliction) |
+| 26 | 30 | fail | 2 | **YES** | 4 | 5 (+2) |
+
+**22 of 26 fail — a different count from §16's own 23/26, because the corrected cost timing
+changes when the Affliction sawtooth's own test rolls fire, which shifts every subsequent draw
+from the same seed; not a discrepancy, the same kind of RNG-stream divergence a changed rule
+always produces past its first point of difference.** Final: Strain 2, Taint 4, Trauma 5 — four
+Afflictions rolled along the way (attempts 7, 14, 19, 25). Taint lands lower than §16's corrected
+figure (4 vs. 12) for the same reason: only 22 rolls now feed the Ill Omen path with a materially
+different Trauma/Affliction history interacting with the die-bending widening.
+
+### §15/§16's minor-tier sequence, corrected again (seed `20260850`)
+
+| # | Roll | Result | Strain | Trauma |
+|---|---|---|---|---|
+| 1 | 1 | success | 0 | 0 |
+| 2 | 57 | fail | 2 | 0 |
+| 3 | 5 | success | 2 | 0 |
+| 4 | 84 | fail | 4 | 0 |
+| 5 | 19 | success | 4 | 0 |
+| 6 | 42 | success | 4 | 0 |
+| 7 | 81 | fail | 6 | 0 |
+| 8 | 45 | success | 6 | 0 |
+| 9 | 13 | success | 6 | 0 |
+| 10 | 3 | success | 6 | 0 |
+| 11 | 96 | fail | 2 | 1 (+1) |
+| 12 | 87 | fail | 4 | 1 |
+| 13 | 21 | success | 4 | 1 |
+| 14 | 62 | fail | 6 | 1 |
+| 15 | 35 | success | 6 | 1 |
+| 16 | 37 | success | 6 | 1 |
+| 17 | 44 | success | 6 | 1 |
+| 18 | 16 | success | 6 | 1 |
+| 19 | 19 | success | 6 | 1 |
+| 20 | 37 | success | 6 | 1 |
+| 21 | 26 | success | 6 | 1 |
+| 22 | 46 | success | 6 | 1 |
+| 23 | 26 | success | 6 | 1 |
+| 24 | 39 | success | 6 | 1 |
+| 25 | 41 | success | 6 | 1 |
+| 26 | 58 | fail | 2 | 2 (+1) |
+
+**Same 7/26 fail as §15/§16 — the roll sequence is identical here because no Affliction test
+fired in this particular run to shift the RNG stream (Trauma never exceeds 6), unlike the
+major-tier sequence above.** Final: Strain 2, Trauma 2 — matching `check_spam_brake.py`'s own
+computed figure exactly. Strain, held between attempts 8 and 26 by fourteen consecutive
+successes that never touch it at all, simply **stays at exactly 6 — visible, stable, and legible
+at the table** — rather than climbing invisibly to 26 the way §15's original win-or-lose run did.
+The attempt-26 case that motivated ADR 0047 (a failure landing far above the threshold, built
+mostly by successes) can no longer arise through `strain_cost` at all: Strain now only ever
+grows from an actual failure, so its value at any moment already tells a GM exactly how many
+recent failures it represents.
+
+### The "ordinary use" worked example, corrected (rolls `26`, `25`, `66`, `eff. 50`)
+
+Two successes, then a failure — the same three rolls §10's own "ordinary use" table used.
+ADR 0048 changes this: **attempt 1 (roll 26, success) costs nothing. Attempt 2 (roll 25, success) costs
+nothing. Attempt 3 (roll 66, fail) costs the full 2 Strain.** Where the original example showed
+Strain climbing on every attempt (`2 → 4 → 6`), it now only moves once, on the one attempt that
+actually failed (`0 → 0 → 2`) — the same three rolls, a materially different, and more legible,
+Strain history.
+
+### The Resolve recurrence, replayed to an actual failure (seed `20260841`, continued)
+
+§14's replay of this gap used Kester's very first invocation (roll `17`, success) to show
+`resolve_cost: 1` paying cleanly after a Rally — under ADR 0048, a success no longer pays
+anything, so that same roll now demonstrates nothing about `resolve_cost` at all. Continuing the
+same seeded sequence, honestly, to an actual failure:
+
+- Attempt 1: roll `17` — success. `resolve_cost` NOT paid (nothing to demonstrate here now).
+- Attempt 2: roll `58` — **fails.** `resolve_cost: 1` paid: Resolve `1 → 0`.
+
+Pays exactly as ADR 0048 states, on the first invocation that actually fails — one attempt later
+than §14's own replay needed, since that one no longer qualifies.
+
+### Findings
+
+**No new gap.** Every property `check_spam_brake.py` already verified for ADR 0047 (real Trauma
+on spam, zero on ordinary play, immunity to the #172 rotation exploit) is re-verified under the
+corrected cost timing and holds. The new comparison the script adds — failure-only accrual never
+gives *more* Trauma than the superseded win-or-lose rule on the same rolls, and gives materially
+less on a mostly-successful sequence (major tier: 34 → 30 raw; minor tier: 8 → 2 raw, matching
+ADR 0048's own quantified figures exactly) — is confirmed against the exact sequences already on
+record, not a fresh sample chosen to look favourable.
+
+**The core complaint this change answers is now visibly gone.** §15's own attempt 26 — a failure
+landing at 6.3× maximum Stamina, built almost entirely by successes, correctly charging a large
+one-time debt only after ADR 0047's fix — cannot recur through `strain_cost` at all once cost is
+failure-only: there is no backlog for a success to build, because a success never touches Strain.
+ADR 0047's cumulative check remains adopted regardless, as general-purpose correctness the
+Trauma-threshold rule doesn't depend on any one cost-timing decision to need.

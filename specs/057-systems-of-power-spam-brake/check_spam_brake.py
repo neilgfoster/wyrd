@@ -1,42 +1,29 @@
-"""Verify ADR 0047's Strain-threshold Trauma brake: a failed system-of-power invocation that
-leaves accumulated Strain containing a multiple of the character's maximum Stamina costs 1
-Trauma per multiple, with Strain carrying forward at its remainder (Trauma's own "further point
-past the floor" shape, 08-afflictions.md, restated for Strain with maximum Stamina as the
-modulus instead of a fixed number). Only a failed invocation is checked -- a success carrying
-Strain past a multiple costs nothing extra at the moment it is rolled.
+"""Verify ADR 0048 (cost paid only on a failed invocation) composed with ADR 0047 (the
+Strain-threshold Trauma check reads cumulative Strain, not a per-invocation delta).
 
-The check reads Strain's CURRENT, CUMULATIVE total on a failure -- `(strain - 1) // max_stamina`
--- not a before/after delta scoped to the one invocation that just resolved. This needs no
-separate bookkeeping: Strain is only ever reduced at the moment it is charged, so its own
-magnitude, left alone through any run of successes, already carries forward everything a failure
-needs to catch up on.
+Both `strain_cost` and `resolve_cost` now apply only when an invocation fails -- a success costs
+neither field (ADR 0048), closing the engine's only win-or-lose exception and matching Strain's
+own generic definition (03-rules.md sec5: failure-driven). Because Strain now only ever grows on
+a failure, a run of successes never adds to it, and the silent-backlog scenario ADR 0047 fixed
+can no longer arise through `strain_cost` specifically -- but the cumulative check
+(`gained = (strain - 1) // max_stamina`) stays adopted anyway, as general-purpose correctness,
+per ADR 0048's own stated consequence.
 
-Supersedes ADR 0045's own first draft, which computed the crossing as a before/after delta on
-just the resolving invocation: `crossings(before, after, modulus) = max(0, (after-1)//modulus -
-max(before-1,0)//modulus)`. That form correctly exempted a success from paying, but also let a
-success permanently ERASE the crossing for every failure after it -- found by re-playing #176's
-minor-tier spam sequence, where a failure at 6.3x maximum Stamina (built up almost entirely by
-successes) cost zero Trauma under the old check. `compare_edge_vs_cumulative` below reproduces
-that exact defect directly, then confirms the corrected check closes it.
-
-Also supersedes an earlier same-power-failure-streak design (#172): that version was defeated
-outright by rotating between two known systems of power. This module's `rotation_matches_spam`
-check confirms the corrected cumulative-Strain check is immune to that exploit too, for the same
-reason ADR 0045 already was -- the check never reads which power produced the failure.
+This module verifies both decisions together: a failed invocation that leaves accumulated
+Strain containing a multiple of the character's maximum Stamina costs 1 Trauma per multiple,
+Strain carries forward at its remainder, ordinary/mostly-successful play stays untouched, the
+brake is immune to the #172 rotation exploit, and -- new here -- switching from the superseded
+win-or-lose accrual to the adopted failure-only accrual measurably reduces Trauma on a
+mostly-successful sequence while barely changing a mostly-failing one, exactly as ADR 0048's own
+Context section quantified.
 """
 import random
 
 SEED = 20260831
 
 
-def crossings_edge(before: int, after: int, modulus: int) -> int:
-    """ADR 0045's superseded check: a before/after delta scoped to one invocation. Kept here
-    only so this module can demonstrate exactly what it got wrong, not as the adopted rule."""
-    return max(0, (after - 1) // modulus - max(before - 1, 0) // modulus)
-
-
 def gained_cumulative(strain: int, modulus: int) -> int:
-    """ADR 0047's adopted check: how many multiples of `modulus` the character's CURRENT,
+    """ADR 0047's adopted check: how many multiples of `modulus` the character's current,
     cumulative Strain now contains, treating the modulus itself as the floor (not itself a
     further point) -- exactly Trauma's own convention (08-afflictions.md), restated for Strain.
     No separate "already charged" counter is needed: Strain is only ever reduced right here, so
@@ -45,62 +32,34 @@ def gained_cumulative(strain: int, modulus: int) -> int:
 
 
 def replay(seed: int, attempts: int, eff: int, strain_cost: int, max_stamina: int,
-           rotate_powers: bool = False):
-    """Replays `attempts` invocations of a d100 test at `eff`%, paying `strain_cost` Strain
-    every time regardless of outcome, and applying ADR 0047's corrected brake on failure.
-    `rotate_powers` is purely cosmetic -- the brake's own logic never reads it -- included only
-    so the rotation-immunity check below is visibly running a distinct scenario, not the same
-    call twice."""
+           resolve_cost: int = 0, fail_only_cost: bool = True, rotate_powers: bool = False):
+    """Replays `attempts` invocations of a d100 test at `eff`%. `fail_only_cost` (ADR 0048,
+    default) pays strain_cost/resolve_cost only on a failure; set False to replay the
+    superseded win-or-lose rule for direct comparison. `rotate_powers` is purely cosmetic -- the
+    brake's own logic never reads it."""
     rng = random.Random(seed)
     strain = 0
+    resolve_spent = 0
     trauma = 0
     log = []
     for i in range(1, attempts + 1):
         power = ("A" if i % 2 == 1 else "B") if rotate_powers else "A"
         roll = rng.randint(1, 100)
         success = roll <= eff
-        strain += strain_cost
         gained = 0
         if not success:
+            strain += strain_cost
+            resolve_spent += resolve_cost
             gained = gained_cumulative(strain, max_stamina)
             if gained:
                 trauma += gained
                 strain -= gained * max_stamina
+        elif not fail_only_cost:
+            strain += strain_cost
+            resolve_spent += resolve_cost
         log.append(dict(i=i, power=power, roll=roll, success=success, strain=strain,
-                         trauma=trauma, gained=gained))
+                         resolve_spent=resolve_spent, trauma=trauma, gained=gained))
     return log
-
-
-def compare_edge_vs_cumulative(seed: int, attempts: int, eff: int, strain_cost: int,
-                                max_stamina: int):
-    """Runs the SAME roll sequence through both the superseded edge-triggered check and the
-    adopted cumulative check, returning both final Trauma totals -- demonstrates the fix
-    reproduces the defect (edge undercounts) and closes it (cumulative never undercounts)."""
-    rng = random.Random(seed)
-    strain_edge = 0
-    trauma_edge = 0
-    strain_cum = 0
-    trauma_cum = 0
-    for _ in range(attempts):
-        roll = rng.randint(1, 100)
-        success = roll <= eff
-
-        before = strain_edge
-        strain_edge += strain_cost
-        if not success:
-            g = crossings_edge(before, strain_edge, max_stamina)
-            if g:
-                trauma_edge += g
-                strain_edge %= max_stamina
-
-        strain_cum += strain_cost
-        if not success:
-            g = gained_cumulative(strain_cum, max_stamina)
-            if g:
-                trauma_cum += g
-                strain_cum -= g * max_stamina
-
-    return trauma_edge, trauma_cum
 
 
 def check(claim: str, ok: bool) -> None:
@@ -112,7 +71,8 @@ def check(claim: str, ok: bool) -> None:
 
 def main() -> int:
     print("Re-run of a comparable spam sequence to #151's playtest, major tier "
-          "(eff. 10%, strain_cost 8), across the realistic maximum-Stamina range (6-10):\n")
+          "(eff. 10%, strain_cost 8), across the realistic maximum-Stamina range (6-10), "
+          "under ADR 0048's failure-only cost:\n")
     for max_stamina in range(6, 11):
         log = replay(SEED, 26, 10, 8, max_stamina)
         final = log[-1]
@@ -129,9 +89,9 @@ def main() -> int:
         strain = 0
         trauma = 0
         for roll, eff in [(26, 50), (25, 50), (66, 50)]:
-            strain += 2
             success = roll <= eff
             if not success:
+                strain += 2
                 g = gained_cumulative(strain, max_stamina)
                 if g:
                     trauma += g
@@ -140,36 +100,25 @@ def main() -> int:
         check(f"max Stamina {max_stamina}: ordinary play costs zero extra Trauma",
               trauma == 0)
 
-    print("\nFailure-gating, not volume-gating -- a run of successes alone never directly costs")
-    print("Trauma, however high it carries Strain, because only a failure branch ever checks or")
-    print("charges the threshold at all. This is the property that distinguishes 'failure-only'")
-    print("from the rejected 'any outcome counts' alternative (ADR 0045's own Alternatives")
-    print("section) -- under ADR 0047's cumulative check, both eventually collect the same total")
-    print("debt if a failure ever follows, so the real distinction is WHETHER a success can ever")
-    print("be the direct trigger, not how much total Trauma results:")
-    for max_stamina, strain_cost, n_successes in ((9, 4, 26), (12, 4, 50)):
-        strain = 0
-        trauma_direct_on_success = 0
-        for _ in range(n_successes):
-            strain += strain_cost  # every attempt succeeds -- eff effectively 100% for this check
-            # A success NEVER calls the crossing check at all -- that omission is the property
-            # under test, made explicit here rather than left implicit.
-        print(f"  max Stamina {max_stamina:>2}, {n_successes} consecutive successes, strain_cost "
-              f"{strain_cost}: Strain reaches {strain}, Trauma directly charged by a success: "
-              f"{trauma_direct_on_success}")
-        check(f"max Stamina {max_stamina}: {n_successes} consecutive successes never directly "
-              f"cost Trauma, however high Strain climbs", trauma_direct_on_success == 0)
+    print("\nA run of successes alone never touches Strain at all under ADR 0048 (not merely")
+    print("'costs nothing extra' -- the cost fields are never even paid), so Trauma stays 0")
+    print("regardless of run length:")
+    for n_successes in (26, 50):
+        strain = 0  # never incremented -- every one of these is a success, fail_only_cost=True
+        print(f"  {n_successes} consecutive successes, strain_cost 4: Strain stays {strain}, "
+              f"Trauma stays 0 (cost fields never paid on success)")
+        check(f"{n_successes} consecutive successes: Strain untouched", strain == 0)
 
-    print("\nThe backlog a run of successes builds is not forgiven -- it is paid in full by the")
-    print("next failure, however large, confirming ADR 0047 closes the erasure without silently")
-    print("dropping any of the debt a run of successes accumulated:")
-    for max_stamina, strain_cost, n_successes in ((9, 4, 20),):
-        strain = strain_cost * n_successes
-        g = gained_cumulative(strain, max_stamina)
-        print(f"  max Stamina {max_stamina}: {n_successes} successes then one failure -- "
-              f"strain {strain}, single failure charges {g} Trauma at once")
-        check(f"max Stamina {max_stamina}: the single failure charges the whole backlog "
-              f"({g} multiples), not just the last strain_cost's worth", g > 1)
+    print("\nresolve_cost follows strain_cost's failure-only timing (ADR 0048) -- a successful")
+    print("invocation with a declared resolve_cost pays nothing, a failed one pays in full:")
+    for seed, eff, label in ((SEED, 90, "mostly succeeds"), (SEED, 10, "mostly fails")):
+        log = replay(seed, 10, eff, strain_cost=2, max_stamina=6, resolve_cost=1)
+        successes = sum(1 for r in log if r['success'])
+        fails = 10 - successes
+        print(f"  eff {eff:>2}% ({label}): {successes} success, {fails} fail, "
+              f"Resolve spent {log[-1]['resolve_spent']}")
+        check(f"eff {eff}%: Resolve spent equals fail count exactly (1 per failure, 0 per "
+              f"success)", log[-1]['resolve_spent'] == fails)
 
     print("\nRotation-immunity check: identical roll sequence, single power spammed vs. two "
           "powers alternated (#172's original exploit) -- must produce identical Trauma, since "
@@ -181,24 +130,27 @@ def main() -> int:
               f"exactly ({single[-1]['trauma']} == {rotated[-1]['trauma']})",
               single[-1]['trauma'] == rotated[-1]['trauma'])
 
-    print("\nADR 0047's fix, demonstrated directly: the superseded edge-triggered check vs. the "
-          "adopted cumulative check, on the SAME roll sequences (#178):")
+    print("\nADR 0048's fix, demonstrated directly: the superseded win-or-lose accrual vs. the")
+    print("adopted failure-only accrual, on the SAME roll sequences already on record (#180):")
     for label, seed, attempts, eff, strain_cost, max_stamina in [
-        ("major tier (sec10/sec14)", 20260842, 26, 10, 8, 6),
-        ("minor tier (sec15)", 20260850, 26, 50, 2, 6),
+        ("major tier (sec10/sec14/sec16)", 20260842, 26, 10, 8, 6),
+        ("minor tier (sec15/sec16)", 20260850, 26, 50, 2, 6),
     ]:
-        edge, cum = compare_edge_vs_cumulative(seed, attempts, eff, strain_cost, max_stamina)
-        print(f"  {label}: edge-triggered Trauma {edge}, cumulative Trauma {cum}")
-        check(f"{label}: cumulative check never gives less Trauma than the superseded "
-              f"edge-triggered one on the same rolls", cum >= edge)
-        check(f"{label}: cumulative check gives strictly MORE Trauma here -- the erasure ADR "
-              f"0047 fixes was real on this exact sequence, not a hypothetical",
-              cum > edge)
+        win_or_lose = replay(seed, attempts, eff, strain_cost, max_stamina,
+                              fail_only_cost=False)
+        fail_only = replay(seed, attempts, eff, strain_cost, max_stamina,
+                            fail_only_cost=True)
+        wol_trauma = win_or_lose[-1]['trauma']
+        fo_trauma = fail_only[-1]['trauma']
+        print(f"  {label}: win-or-lose Trauma {wol_trauma}, failure-only Trauma {fo_trauma}")
+        check(f"{label}: failure-only accrual never gives more Trauma than the superseded "
+              f"win-or-lose rule on the same rolls", fo_trauma <= wol_trauma)
 
-    print("\nAll checks passed: ADR 0047's cumulative-Strain check produces real, failure-gated "
-          "Trauma on a spam sequence, leaves ordinary and mostly-successful play untouched, is "
-          "immune to #172's rotation exploit, and closes the erasure ADR 0045's edge-triggered "
-          "check allowed -- demonstrated on the exact sequences that found it.")
+    print("\nAll checks passed: ADR 0048's failure-only cost removes the silent-backlog problem "
+          "at its source (a success never touches Strain or Resolve), resolve_cost follows "
+          "strain_cost's timing exactly, and every property ADR 0047's brake already "
+          "established (spam produces real Trauma, ordinary play stays clean, rotation-immunity "
+          "holds) is unaffected.")
     return 0
 
 

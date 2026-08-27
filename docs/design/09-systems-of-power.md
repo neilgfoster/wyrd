@@ -44,31 +44,30 @@ roll, no additional dice, no power-specific difficulty ladder.
 [`03-rules.md`](03-rules.md) §1 already gives a skill requiring training (a language the
 character does not speak is not a 10% chance; nor is a system of power marked this way).
 
-**Cost is paid once the roll resolves, regardless of outcome.** The declared `strain_cost` always
-applies; the declared `resolve_cost`, if present, applies identically. Failing an invocation still
-costs what attempting it costs — the same shape any strenuous, risky effort already has in this
-engine.
+**Cost is paid only when the invocation fails.** The declared `strain_cost` applies on a failed
+roll; the declared `resolve_cost`, if present, applies identically on the same failure — a
+success costs neither field
+([ADR 0048](../adr/0048-system-of-power-costs-paid-only-on-failure.md)). This matches Strain's
+own generic definition elsewhere (`03-rules.md` §5: "today — from failed mental tests, terror,
+exhaustion") rather than carving out a win-or-lose exception unique to this one mechanism.
 
 **A failed invocation that leaves accumulated Strain containing a multiple of the character's
-maximum Stamina costs Trauma on top of that.** Strain still accrues exactly as above, win or
-lose; only a *failed* invocation is checked against the threshold — a success that happens to
-carry Strain past a multiple costs nothing extra at the moment it is rolled, but that multiple is
-not forgiven: Strain itself is never reduced on a success, so it keeps accumulating,
-unexamined, through any run of them. **The check reads Strain's current, cumulative total, not a
-before/after delta scoped to the one invocation that just resolved** — the first failure that
-comes along, however long after, gains 1 Trauma per multiple of maximum Stamina its own
-resolution leaves outstanding, catching up on everything a run of successes silently carried past
-in between, not only the span since its own immediately-prior roll. Strain carries forward at its
-remainder past the highest multiple charged, the same "further point past the floor" shape
-Trauma's own Affliction test already uses ([`08-afflictions.md`](08-afflictions.md)), not reset
-to zero outright. This composes with `strain_cost`/`resolve_cost` unchanged — it does not replace
-them, and it is not itself scaled by `intensity_tiers` (the tier's own `cost_multiplier`/
-`ill_omen_taint_bonus` already price ambition on the Strain/Taint side; a bigger `strain_cost` per
-attempt simply reaches a multiple sooner, without any separate scaling rule needed here). Strain's
-own reset at a Rally is unaffected — this brake targets the one thing that reset let pass
-consequence-free: retrying a failing declaration, over and over, before the Rally arrives — and
-because the check reads only the character's own Strain total and maximum Stamina, never which
-system of power produced the failure, it applies identically whether the same power is retried or
+maximum Stamina costs Trauma on top of that.** Because Strain now only ever grows on a failure,
+a run of successes never adds to it and never needs catching up on — but the check still reads
+Strain's current, cumulative total on a failure, not a before/after delta scoped to the one
+invocation that just resolved, as general-purpose correctness
+([ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md)): `gained =
+(strain − 1) // max_stamina`. Strain carries forward at its remainder past the highest multiple
+charged, the same "further point past the floor" shape Trauma's own Affliction test already uses
+([`08-afflictions.md`](08-afflictions.md)), not reset to zero outright. This composes with
+`strain_cost`/`resolve_cost` unchanged — it does not replace them, and it is not itself scaled by
+`intensity_tiers` (the tier's own `cost_multiplier`/`ill_omen_taint_bonus` already price ambition
+on the Strain/Taint side; a bigger `strain_cost` per attempt simply reaches a multiple sooner,
+without any separate scaling rule needed here). Strain's own reset at a Rally is unaffected —
+this brake targets the one thing that reset let pass consequence-free: repeatedly failing a
+declaration before the Rally arrives — and because the check reads only the character's own
+Strain total and maximum Stamina, never which system of power produced the failure, it applies
+identically whether the same power is retried or
 a player rotates between several known systems of power
 ([ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md), superseding
 [ADR 0045](../adr/superseded/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md)'s
@@ -109,7 +108,7 @@ as part of the same declaration step, subject to the GM's usual authority over p
 is not a new procedural step.
 
 **No new resolution path.** `cost_multiplier` and `ill_omen_taint_bonus` compose with the
-existing rules exactly as stated above and below — win-or-lose cost, the same Taint-accrual path
+existing rules exactly as stated above and below — failure-only cost, the same Taint-accrual path
 — they do not introduce a second dice mechanic, a second table, or a tier-specific consequence
 chain. A tier is a modifier on the one mechanism this document already defines, consistent with
 [ADR 0036](../adr/0036-one-configurable-power-mechanism.md)'s decision that a system of power is
@@ -150,10 +149,12 @@ systems_of_power:
 ```
 
 A trained practitioner attempts an Ember-craft working: the GM sets a difficulty from the
-fiction, the player rolls `d100` against their Ember-craft skill exactly as any other test. On
-resolution — success or failure — the character's Strain drops by 2 and Resolve by 1. If the
-natural roll's units digit was 0 (Ill Omen), the character also gains 1 Taint through the existing
-accrual path, with a transformation roll to follow only if that crosses a threshold.
+fiction, the player rolls `d100` against their Ember-craft skill exactly as any other test. If
+the attempt fails, the character's Strain rises by 2 and Resolve drops by 1; a success costs
+neither. If the natural roll's units digit was 0 (Ill Omen), the character also gains 1 Taint
+through the existing accrual path — on any roll, win or lose, since the Ill Omen consequence is
+read from the Wyrd die, not the cost fields — with a transformation roll to follow only if that
+crosses a threshold.
 
 A setting that wants ember-craft's stakes to scale with what was attempted adds tiers to the same
 declaration:
@@ -184,10 +185,11 @@ systems_of_power:
 
 Warming your hands is `minor` — resolution is identical to the untiered example above.
 Burning down a city is `major`: the GM sets Very Hard rather than picking a difficulty fresh, the
-roll is against `d100` exactly as before, and on resolution the character pays `2 * 4 = 8` Strain
-and `1 * 4 = 4` Resolve rather than the base 2 and 1. If the natural roll's units digit is 0 (Ill
-Omen), the character gains `1 + 3 = 4` Taint through the same accrual path — not the 1 Taint a
-`minor` Ill Omen would cost — reflecting that an ambitious working going wrong is a worse thing to
+roll is against `d100` exactly as before, and on a failed attempt the character's Strain rises by
+`2 * 4 = 8` and Resolve drops by `1 * 4 = 4`, rather than the base 2 and 1 — a success still costs
+neither, regardless of tier. If the natural roll's units digit is 0 (Ill Omen), the character
+gains `1 + 3 = 4` Taint through the same accrual path — not the 1 Taint a `minor` Ill Omen would
+cost — reflecting that an ambitious working going wrong is a worse thing to
 have happen, mechanically as well as fictionally.
 
 A second, structurally different example — confirming the schema does not assume a mythic
