@@ -5,7 +5,7 @@ At least six mechanics were referenced before they were defined -- engine charac
 the conversion contract, Standing in Upkeep, `party_effective` in the danger formula, the
 damage-type critical tables, the skill list, and the wound schema -- each reading as
 authoritative. Prose review caught none of them. This is the guard, per
-docs/design/20-tooling.md section 1: where a claim can be checked, check it.
+docs/design/27-tooling.md section 1: where a claim can be checked, check it.
 
 A **definition** is a place a mechanic's name is established: a Markdown heading naming it, a
 table row whose leading cell names it, or a glossary-style `**Term**: explanation` entry. A
@@ -41,7 +41,7 @@ Usage:
     python3 tools/check_dangling_mechanics.py
     python3 tools/check_dangling_mechanics.py --format json
 
-Python 3.11+, standard library only (docs/design/20-tooling.md). Reads the filesystem, nothing else.
+Python 3.11+, standard library only (docs/design/27-tooling.md). Reads the filesystem, nothing else.
 """
 
 from __future__ import annotations

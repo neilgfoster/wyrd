@@ -15,10 +15,10 @@ the design programme)."
 ### Session 2026-08-26
 
 - Q: How is a hazard's per-leg trigger chance determined? → A: Mirrors the Threat activation
-  roll (`docs/design/18-campaign.md`) — a per-journey hazard rating × 10, rolled once per leg.
+  roll (`docs/design/19-campaign.md`) — a per-journey hazard rating × 10, rolled once per leg.
 - Q: What decides whether a leg is played (a beat) versus summarised? → A: Author-declared,
   via the existing `mode: played | summarised` field beats already carry
-  (`docs/design/28-arcs-and-beats.md`) — set when the journey/leg is authored or converted.
+  (`docs/design/18-arcs-and-beats.md`) — set when the journey/leg is authored or converted.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -41,7 +41,7 @@ consequences (Standing, condition, supply) reflect what happened.
 1. **Given** a journey between two places with a known distance and pace, **When** the GM
    starts it, **Then** the journey produces a sequence of legs, each resolving through play
    (a beat) or through summary (elapsed time and expected-value events), matching
-   `docs/design/18-campaign.md`'s existing split.
+   `docs/design/19-campaign.md`'s existing split.
 2. **Given** a journey in progress, **When** a leg's hazard roll (`d100` against the
    journey's hazard rating × 10) succeeds, **Then** the triggered hazard entry resolves
    through the core percentile roll, using an existing skill and difficulty, exactly as any
@@ -60,7 +60,7 @@ no fields to fill in, no table to maintain, no rule the GM has to remember to ig
 
 **Why this priority**: The engine is setting-agnostic (`CLAUDE.md`); a subsystem that cannot
 be turned off cleanly becomes a tax on every setting that doesn't want it, which the
-`docs/design/26-authoring-a-setting.md` "a setting may never add a mechanism" rule is meant to
+`docs/design/24-authoring-a-setting.md` "a setting may never add a mechanism" rule is meant to
 prevent from being worked around by leaving it half-used instead.
 
 **Independent Test**: Take a setting with journeys left at their default (off, or minimally
@@ -71,7 +71,7 @@ journey-specific output.
 **Acceptance Scenarios**:
 
 1. **Given** a setting that does not configure journeys, **When** the character travels in
-   play, **Then** travel is narrated exactly as `docs/design/18-campaign.md` already describes,
+   play, **Then** travel is narrated exactly as `docs/design/19-campaign.md` already describes,
    with no journey subsystem invoked.
 2. **Given** a setting that does configure journeys, **When** an author reads its
    configuration, **Then** every field is optional beyond the minimum needed to place a
@@ -96,7 +96,7 @@ way any other arc's children are.
 **Acceptance Scenarios**:
 
 1. **Given** a stub arc tagged as a journey, **When** it is converted, **Then** its children
-   are legs expressed as ordinary beats or nested arcs (per `docs/design/28-arcs-and-beats.md`),
+   are legs expressed as ordinary beats or nested arcs (per `docs/design/18-arcs-and-beats.md`),
    not a separate journey-only file shape.
 
 ### Edge Cases
@@ -107,7 +107,7 @@ way any other arc's children are.
   fresh journey — rather than requiring it to run to its declared end.
 - What happens when a journey's hazard table has no entries (a setting configures roles and
   pace but skips hazards)? The journey still runs — legs resolve as travel/summary per
-  `docs/design/18-campaign.md` — it simply never rolls on an empty table.
+  `docs/design/19-campaign.md` — it simply never rolls on an empty table.
 - What happens when the party composition changes mid-journey (a companion joins or is
   lost)? Any per-character consequence (supply draw, harm) applies to whoever is present at
   that leg, consistent with how the rest of the engine already treats a changing party.
@@ -120,10 +120,10 @@ way any other arc's children are.
 ### Functional Requirements
 
 - **FR-001**: The engine MUST define a journey as a structural extension of the existing
-  arc/beat shape (`docs/design/28-arcs-and-beats.md`) — a sequence of legs, each an arc or a beat
+  arc/beat shape (`docs/design/18-arcs-and-beats.md`) — a sequence of legs, each an arc or a beat
   — not a new content type outside that tree.
 - **FR-002**: A journey MUST resolve each leg through one of the two mechanisms
-  `docs/design/18-campaign.md` already defines: **played** (a beat, run through the core roll) or
+  `docs/design/19-campaign.md` already defines: **played** (a beat, run through the core roll) or
   **summarised** (elapsed time and expected-value events). No third resolution path is
   introduced.
 - **FR-003**: The engine MUST support attaching, per journey, an optional pace (how much
@@ -135,24 +135,24 @@ way any other arc's children are.
   introduces no bespoke resolution mechanic.
 - **FR-004a**: Each journey MUST carry a hazard rating; each leg rolls `d100` once against
   `rating × 10` to decide whether a hazard triggers, mirroring the Threat activation roll
-  (`docs/design/18-campaign.md`) rather than introducing a second per-leg-chance formula.
+  (`docs/design/19-campaign.md`) rather than introducing a second per-leg-chance formula.
 - **FR-004b**: Each leg MUST declare its own resolution mode (`played` or `summarised`) using
-  the existing `mode:` field beats already carry (`docs/design/28-arcs-and-beats.md`); the engine
+  the existing `mode:` field beats already carry (`docs/design/18-arcs-and-beats.md`); the engine
   does not choose a leg's mode at runtime.
 - **FR-005**: Supply and encumbrance consequences arising from a journey MUST use the
-  existing material-economy abstraction (`docs/design/04-the-character.md` /
+  existing material-economy abstraction (`docs/design/10-the-character.md` /
   standing-material-economy work) rather than a journey-specific inventory or logistics
   ledger — consistent with the engine's existing preference for abstracted supply over
   granular tracking.
 - **FR-006**: The subsystem MUST be fully optional per setting: a setting that configures no
   journeys behaves exactly as the engine does today (narrated travel via
-  `docs/design/18-campaign.md`), and every journey-specific configuration field MUST have a
+  `docs/design/19-campaign.md`), and every journey-specific configuration field MUST have a
   documented default that lets a setting configure only what it cares about.
 - **FR-007**: A journey MUST be able to end before its declared distance is covered
   (abandoned, rerouted, interrupted), applying elapsed time and consequences for the
   distance actually travelled.
 - **FR-008**: The elapsed-time and expected-value machinery a journey uses for its
-  summarised legs MUST be the same mechanism `docs/design/18-campaign.md` already defines
+  summarised legs MUST be the same mechanism `docs/design/19-campaign.md` already defines
   (`wyrd advance-time`), not a duplicate implementation.
 - **FR-009**: The design document(s) introducing journeys MUST use setting-agnostic,
   descriptive English for every new label (per `CLAUDE.md`) — no term that only makes sense
@@ -183,7 +183,7 @@ way any other arc's children are.
   written in `design/`, with no undefined mechanic referenced along the way.
 - **SC-002**: A setting that does not configure journeys shows zero behavioural difference
   from the engine's current narrated-travel handling — verified by re-reading
-  `docs/design/18-campaign.md`'s existing elapsed-time section and confirming nothing there
+  `docs/design/19-campaign.md`'s existing elapsed-time section and confirming nothing there
   changed to accommodate the new subsystem.
 - **SC-003**: Every hazard resolution inside a journey traces to the same core-roll mechanic
   used elsewhere in the engine — zero journey-specific resolution tables that bypass it.
@@ -204,7 +204,7 @@ way any other arc's children are.
   journey may reference supply consumption but does not introduce per-item logistics
   tracking.
 - A journey is authored the same way any other arc is: it may start as a stub and be
-  converted lazily (`docs/design/28-arcs-and-beats.md`); this feature defines the shape, not a
+  converted lazily (`docs/design/18-arcs-and-beats.md`); this feature defines the shape, not a
   populated example.
 - "Configurable and disablable per setting" (the issue's acceptance criterion) is satisfied
   by every journey field being optional with a documented default — no separate

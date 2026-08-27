@@ -90,7 +90,7 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
   in disagreement.
 - **FR-004**: The document MUST define at least one answer table, addressed by the key
   `oracle-answer`, following the row schema and roll-declaration conventions of
-  [`docs/design/07-tables.md`](../../docs/design/07-tables.md).
+  [`docs/design/04-tables.md`](../../docs/design/04-tables.md).
 - **FR-005**: The table MUST support more than one likelihood band, so a GM's judgment that a
   question is more or less likely than even changes the odds of a "yes" outcome.
 - **FR-006**: The table MUST express degrees of yes/no (e.g. a plain outcome and an extreme one)
@@ -101,12 +101,12 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
   (§1 of [`docs/design/03-rules.md`](../../docs/design/03-rules.md)), and if it adds any complication
   mechanism of its own, MUST say why that is not simply the Wyrd die.
 - **FR-009**: The document MUST state what an oracle roll records to state and where, consistent
-  with the versioning and recording conventions in `docs/design/07-tables.md` and
-  [`docs/design/19-state.md`](../../docs/design/19-state.md), so the same question resolves the same way if
+  with the versioning and recording conventions in `docs/design/04-tables.md` and
+  [`docs/design/22-state.md`](../../docs/design/22-state.md), so the same question resolves the same way if
   asked again.
-- **FR-010**: `docs/design/07-tables.md`'s index row for oracles MUST be updated to link the finished
+- **FR-010**: `docs/design/04-tables.md`'s index row for oracles MUST be updated to link the finished
   document and state its roll, in place of "not yet written".
-- **FR-011**: `docs/design/02-architecture.md` and `docs/design/20-tooling.md` MUST be updated if the
+- **FR-011**: `docs/design/02-architecture.md` and `docs/design/27-tooling.md` MUST be updated if the
   document's filename or the family's file layout differs from what those documents currently say.
 - **FR-012**: No table row, example question, or label in the document MAY name a specific
   setting, a source system, or bake in a tonal register — verified by grep, per `CLAUDE.md`.
@@ -142,11 +142,11 @@ distinct, or absent) is stated as a fixed rule, not decided per-question.
   happened" channel; the document will state this explicitly per FR-008, and may reverse this
   assumption if reuse turns out to conflict with the table's own roll convention once the odds are
   computed.
-- The table's die and modifier are declared by the family, per `docs/design/07-tables.md`'s convention
+- The table's die and modifier are declared by the family, per `docs/design/04-tables.md`'s convention
   that the roll is a per-family choice, not fixed by the engine.
 - Likelihood bands are a fixed, small named set (not an arbitrary numeric slider) so the GM's
   choice at the table is bounded and auditable, matching how difficulty bands already work in
   `docs/design/03-rules.md` §1.
-- The document lives at `docs/design/12-oracle-answers.md` per the issue's stated goal; the tables
+- The document lives at `docs/design/14-oracle-answers.md` per the issue's stated goal; the tables
   index's placeholder name `03a-5-oracles.md` is corrected to match once this document exists,
   since prompt oracles (#21) will need their own, separate file.

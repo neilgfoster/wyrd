@@ -14,7 +14,7 @@ than something to remember.
 
 ## Technical Context
 
-**Language**: Python 3.11+, stdlib only. `unittest` (`docs/design/20-tooling.md` §6).
+**Language**: Python 3.11+, stdlib only. `unittest` (`docs/design/27-tooling.md` §6).
 
 **Placement**: `tools/check_docs.py`, beside `tools/backlog.py`. Same shape: a `check` that prints
 what is wrong and exits non-zero.
@@ -58,7 +58,7 @@ Dead-link checking, by contrast, applies everywhere including `specs/`.
 3. **Unindexed ADR** — a file in `docs/adr/` absent from `docs/README.md`.
 4. **Wikilink in prose** — `[[...]]` in a document that is not illustrating entity data.
 
-Check 4 needs care: `docs/design/27-entities.md`, `06-state.md`, `07-tooling.md` and `08-maintenance.md`
+Check 4 needs care: `docs/design/25-entities.md`, `06-state.md`, `07-tooling.md` and `08-maintenance.md`
 legitimately contain wikilinks, either inside fenced YAML examples or as inline code describing the
 convention. So the rule is **wikilinks are allowed inside fenced code blocks and inline code spans,
 and nowhere else** — which is exactly where they appear today, and is checkable without an allowlist

@@ -38,7 +38,7 @@ chronicle."
 - [X] T003 [US1] Create `docs/design/17-out-of-character-mode.md`: state the `?` trigger (FR-001,
       one character, prepended to the message), the suspension of the diegetic contract for
       that one response (FR-002, raw numbers on request — cross-referencing
-      `docs/design/23-diegesis.md`'s existing "on request" line), and the chronicle-exclusion rule
+      `docs/design/13-diegesis.md`'s existing "on request" line), and the chronicle-exclusion rule
       (FR-003) with the exact wording "nothing said out-of-character becomes established
       fiction" carried over from the issue's Definition of Done.
 - [X] T004 [US1] Add the per-message scope rule to `docs/design/17-out-of-character-mode.md`
@@ -66,7 +66,7 @@ the character's in-fiction knowledge from the player's own knowledge of the narr
 
 **Independent Test**: read the answer-shape section against the spec's Acceptance Scenarios
 2.1-2.2 and confirm both the "no, and here is what they'd believe instead" case and the "yes, at
-their competence" case are covered, with the latter cross-referencing `docs/design/23-diegesis.md`'s
+their competence" case are covered, with the latter cross-referencing `docs/design/13-diegesis.md`'s
 existing knowledge-source rule rather than restating it.
 
 - [X] T007 [US2] Add the "would my character know this?" section to
@@ -74,13 +74,13 @@ existing knowledge-source rule rather than restating it.
       in-fiction knowledge from the player's own knowledge of the narration; where the character
       would not know something, the response says so and states what the character would
       believe or assume instead where answerable; where the character would know it, the answer
-      is given at the character's scaled competence per `docs/design/23-diegesis.md`'s "the character
+      is given at the character's scaled competence per `docs/design/13-diegesis.md`'s "the character
       as a knowledge source" section (cross-referenced, not restated).
     - [X] T007a [US2] In the same section, add the "never shown" boundary case: where the
       honest answer would reveal engine-hidden state or another character's information the
       player's own character has no path to (e.g. a hidden threshold, another character's
       motive), the response says plainly the answer isn't available, per
-      `docs/design/23-diegesis.md`'s "never shown" visibility class — it does not fabricate an
+      `docs/design/13-diegesis.md`'s "never shown" visibility class — it does not fabricate an
       in-fiction justification.
 
 **Checkpoint**: User Story 2 is independently complete — the knowledge-question answer shape is
@@ -111,7 +111,7 @@ ever appears on an OOC response, never inside one).
       spec's Edge Cases: a bare `?` with no question prompts for what the player wants to know
       (still OOC-marked, never falling through to in-character play); an untriggered
       in-character knowledge question ("what do I know about this place?") is unaffected by this
-      feature and continues to be answered in character per `docs/design/23-diegesis.md`; OOC mode is
+      feature and continues to be answered in character per `docs/design/13-diegesis.md`; OOC mode is
       explicitly not a rewind/undo mechanism for established fiction (out of scope, per the
       issue).
 
@@ -123,7 +123,7 @@ all times, and the feature's boundaries (what it does not do) are explicit.
 - [X] T011 [P] Add a one-line cross-reference in `docs/design/01-principles.md` at the point that
       currently implies everything typed is in-character speech and action, pointing to
       `docs/design/17-out-of-character-mode.md`.
-- [X] T012 [P] Add a one-line cross-reference in `docs/design/23-diegesis.md` at "Mechanical detail is
+- [X] T012 [P] Add a one-line cross-reference in `docs/design/13-diegesis.md` at "Mechanical detail is
       always available on request", pointing to `docs/design/17-out-of-character-mode.md` as where
       the request mechanism is specified.
 - [X] T013 [P] Add a one-line cross-reference in `docs/design/16-session.md` noting OOC mode as the

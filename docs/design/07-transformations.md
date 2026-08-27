@@ -4,7 +4,7 @@ The table a character rolls on **when Taint crosses a threshold**. It is what
 [`03-rules.md`](03-rules.md) means by *a Taint threshold forces a Transformation*, and it is the
 only place the permanent, physical shape of Taint is defined.
 
-It is a family of the kind [`07-tables.md`](07-tables.md) defines, and everything below is
+It is a family of the kind [`04-tables.md`](04-tables.md) defines, and everything below is
 declared within those conventions.
 
 ---
@@ -49,7 +49,7 @@ ADR supersedes it.
 
 **The family is unique per character.** Carrying the same permanent change twice is not an
 ordinary event the way taking the same wound twice is
-([`07-tables.md`](07-tables.md)); a duplicate roll is re-rolled.
+([`04-tables.md`](04-tables.md)); a duplicate roll is re-rolled.
 
 **When the table is exhausted** — a character has already taken all six rows — the *hidden
 threshold* below has, by construction, already run out first in every realistic case (its range
@@ -104,14 +104,14 @@ outcome fires — which this document reads identically to the hidden threshold 
 That is a hard ceiling independent of the severity numbers chosen, and it is why the table above is
 safe even against a future re-tuning of its severities: termination does not depend on getting the
 severity values exactly right, only on the table staying finite and unique, which
-[`07-tables.md`](07-tables.md) already requires of every family in this class.
+[`04-tables.md`](04-tables.md) already requires of every family in this class.
 
 ## The hidden threshold
 
 On the character's **first** Transformation, the GM secretly rolls **1d6 + 2** (range **3–8**) and
 writes it to `chronicle.yaml` as the character's hidden threshold — how many Transformations this
 character can endure before they are lost. **The player never sees this number, in any form,
-including as unease** ([`23-diegesis.md`](23-diegesis.md)): the "never shown" visibility class
+including as unease** ([`13-diegesis.md`](13-diegesis.md)): the "never shown" visibility class
 covers it explicitly.
 
 **It is written once and never re-rolled.** A hidden threshold rolled on a later Transformation
@@ -123,14 +123,14 @@ character's life.
 character is lost.** Concretely, to the chronicle:
 
 - The player character (or companion) is removed from `status: with-party`
-  ([`19-state.md`](19-state.md)) and is no longer played by the operator.
+  ([`22-state.md`](22-state.md)) and is no longer played by the operator.
 - They become a character the **GM controls**, from that point on — an NPC, and specifically one
   available to the opposition. They do not die and they do not simply vanish from the story; they
   join it from the other side.
 - This is not a death and does not touch Fate ([`03-rules.md`](03-rules.md) §3) — Fate is a valve
   against dying, and this is a different kind of loss entirely, one no resource buys back.
 - For a player character, this ends that character's chronicle in the ordinary way a lost
-  protagonist does ([`18-campaign.md`](18-campaign.md)): a successor may follow. For a companion,
+  protagonist does ([`19-campaign.md`](19-campaign.md)): a successor may follow. For a companion,
   the party simply loses them, the way any companion can be lost.
 
 ## Dread

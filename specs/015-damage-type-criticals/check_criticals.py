@@ -3,7 +3,7 @@
 
 CLAUDE.md: where a claim can be checked by a script, check it. Probability claims in this repo
 have been wrong twice and both were caught only by computing them. Every figure
-docs/design/08-criticals.md publishes is asserted here, so a change to either fails loudly rather
+docs/design/05-criticals.md publishes is asserted here, so a change to either fails loudly rather
 than reading as authoritative and being wrong.
 
 Nothing about the damage scale is invented here. It is the model specs/013-the-mob-rule already
@@ -18,13 +18,13 @@ From merged design documents:
 2. A telling blow doubles the damage rolled, before armour subtracts (docs/design/03-rules.md
    section 2).
 3. A critical happens when damage takes a combatant below 0 Stamina, and reads 1d6 + points
-   below zero (docs/design/03-rules.md section 2, docs/design/07-tables.md).
+   below zero (docs/design/03-rules.md section 2, docs/design/04-tables.md).
 4. Aftermath reads d100 + 5 x points below zero, and death begins at 111
-   (docs/design/09-aftermath.md).
+   (docs/design/06-aftermath.md).
 5. A starting character has Stamina 6, 7 after a completed career
-   (docs/design/05-character-creation.md, docs/design/03-rules.md section 5).
+   (docs/design/11-character-creation.md, docs/design/03-rules.md section 5).
 
-Weapon damage is setting data (docs/design/26-authoring-a-setting.md), so it is modelled across the
+Weapon damage is setting data (docs/design/24-authoring-a-setting.md), so it is modelled across the
 same plausible band the merged scripts used, and no conclusion is allowed to hold at only one
 point of it.
 
@@ -46,7 +46,7 @@ ORDINARY_WEAPON = [6]          # the mid-band weapon specs/013 calibrated on
 STARTING_STAMINA = 6
 CAREER_STAMINA = 7
 CRITICAL_DIE = 6               # 1d6
-AFTERMATH_DEATH_FROM = 111     # docs/design/09-aftermath.md
+AFTERMATH_DEATH_FROM = 111     # docs/design/06-aftermath.md
 AFTERMATH_PER_POINT = 5
 
 # The Stamina a combatant actually has left when the blow lands. A fight is not fought at full
@@ -100,7 +100,7 @@ TABLES = {
 
 LOWEST_TOTAL = 2   # the die's lowest face is 1, and a critical means at least 1 below zero
 
-# Every figure docs/design/08-criticals.md publishes, asserted below. A table is where staleness
+# Every figure docs/design/05-criticals.md publishes, asserted below. A table is where staleness
 # hides: each row reads as a small factual claim, and nothing about a wrong one looks wrong.
 PUBLISHED_MODIFIER_SHARE = {1: 23.3, 2: 12.9, 4: 9.4, 8: 4.6, 12: 2.2}
 PUBLISHED_WEIGHTS = {                     # nothing lasting, a lasting mark, mortal
@@ -206,7 +206,7 @@ def row_for(table: str, total: int):
 
 
 def aftermath_death_chance(below: int) -> Fraction:
-    """P(d100 + 5*below >= 111), the death rows as docs/design/09-aftermath.md publishes them."""
+    """P(d100 + 5*below >= 111), the death rows as docs/design/06-aftermath.md publishes them."""
     need = AFTERMATH_DEATH_FROM - AFTERMATH_PER_POINT * below
     if need <= 1:
         return Fraction(1)
@@ -397,7 +397,7 @@ def main() -> int:
           f"Aftermath alone over the modifiers that occur is {float(aftermath_alone) * 100:.1f}%; "
           f"the document publishes {PUBLISHED_AFTERMATH_ALONE}%.")
 
-    # docs/design/09-aftermath.md publishes 23%, UNWEIGHTED across drops of one to twelve. This
+    # docs/design/06-aftermath.md publishes 23%, UNWEIGHTED across drops of one to twelve. This
     # script weights by how often each modifier actually occurs, and low modifiers dominate, so
     # the two figures are different questions about the same table. Both are asserted, because
     # taking one for the other is exactly how a stale-but-plausible number survives.
@@ -405,7 +405,7 @@ def main() -> int:
     print(f"  Aftermath alone, unweighted across drops of one to twelve: {pct(unweighted)}")
     check(abs(float(unweighted) - 0.23) < 0.01,
           f"Unweighted Aftermath death computes to {pct(unweighted)}, against the 23% "
-          "docs/design/09-aftermath.md publishes. One of the two models is wrong.")
+          "docs/design/06-aftermath.md publishes. One of the two models is wrong.")
     check(aftermath_alone < unweighted,
           "Weighting by the modifiers that actually occur no longer lowers the death rate, which "
           "would mean the modifier distribution has stopped concentrating on light drops.")

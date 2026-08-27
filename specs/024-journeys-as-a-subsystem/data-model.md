@@ -1,10 +1,10 @@
 # Data model: Journeys as a subsystem
 
-Design-document feature — this "data model" is the frontmatter shape `docs/design/30-journeys.md`
+Design-document feature — this "data model" is the frontmatter shape `docs/design/20-journeys.md`
 will document in prose, following the same convention `15-arcs-and-beats.md` and
 `03d-the-adversary.md` already use (a fenced YAML example, not a JSON Schema). No engine code
 and no persisted state format changes; a journey is state the same way any other arc/beat is
-(`docs/design/19-state.md` — chronicle state is entities).
+(`docs/design/22-state.md` — chronicle state is entities).
 
 ## Journey (a `scale: journey` arc)
 

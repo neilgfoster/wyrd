@@ -2,10 +2,10 @@
 
 The table the GM rolls to **settle a question the fiction has not answered yet**, instead of
 inventing one. It is what [`02-architecture.md`](02-architecture.md) and
-[`20-tooling.md`](20-tooling.md) have listed as `oracles` without defining, and it is the fifth
-family [`07-tables.md`](07-tables.md) commits to.
+[`27-tooling.md`](27-tooling.md) have listed as `oracles` without defining, and it is the fifth
+family [`04-tables.md`](04-tables.md) commits to.
 
-It is a family of the kind [`07-tables.md`](07-tables.md) defines, and everything below is
+It is a family of the kind [`04-tables.md`](04-tables.md) defines, and everything below is
 declared within those conventions.
 
 ---
@@ -135,7 +135,7 @@ answer is yes, and something also goes wrong with it.
 
 A dedicated oracle complication table was considered and rejected: it would duplicate the Wyrd
 die's job under a different name, which is exactly the shadow mechanic
-[`07-tables.md`](07-tables.md)'s "declared by the family" clause exists to prevent when nothing
+[`04-tables.md`](04-tables.md)'s "declared by the family" clause exists to prevent when nothing
 about this family's needs differs from any other roll's. "And something else happened" stays one
 channel across the whole ruleset, oracle rolls included.
 
@@ -143,7 +143,7 @@ channel across the whole ruleset, oracle rolls included.
 
 An oracle roll's value is that the same question resolves the same way if asked again, so it is
 recorded to the beat log with the same provenance shape every roll already carries
-([`19-state.md`](19-state.md)), plus this family's own fields:
+([`22-state.md`](22-state.md)), plus this family's own fields:
 
 ```json
 {"beat": 412, "verb": "oracle", "engine": "0.3.1", "setting": "0.2.0",
@@ -157,14 +157,14 @@ recorded to the beat log with the same provenance shape every roll already carri
   repeated NPC name or location already is.
 - **`band`** — the likelihood band declared before rolling.
 - **`outcome`** — one of the four row effects (`exceptional_yes`, `yes`, `no`, `exceptional_no`).
-- **`roll`** and **`wyrd`** — as for any other roll ([`19-state.md`](19-state.md)).
+- **`roll`** and **`wyrd`** — as for any other roll ([`22-state.md`](22-state.md)).
 
 Nothing new is added to any entity's frontmatter; the record lives entirely in the beat log, the
 same as every other roll.
 
 ## What a setting may replace
 
-Per [`07-tables.md`](07-tables.md): a setting may replace this table's rows — their ranges,
+Per [`04-tables.md`](04-tables.md): a setting may replace this table's rows — their ranges,
 effects and descriptions — under `overrides.tables: {oracle-answer: ...}`. It may not change the
 die, the modifier, the uniqueness (repeatable), the five likelihood bands, or the row schema. No
 row may carry a setting's name, a system's name, or a tonal register; a setting renames what the

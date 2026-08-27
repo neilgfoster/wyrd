@@ -14,7 +14,7 @@
 
 ## Phase 3 — The document
 
-- [x] T005 `docs/design/04-the-character.md`: the model, the scale, the skill contract.
+- [x] T005 `docs/design/10-the-character.md`: the model, the scale, the skill contract.
 - [x] T006 State how engine rules refer to a skill without naming one.
 - [x] T007 Cite the diegetic bands rather than restating them.
 

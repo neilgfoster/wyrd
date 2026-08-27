@@ -3,7 +3,7 @@
 Percentile, narrative, and light enough to run one beat in a few lines of text.
 
 Every label here is a **default**. A setting renames or disables what it likes
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)); nothing mechanical changes.
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)); nothing mechanical changes.
 
 | Engine label | What it measures | Typical setting names |
 |---|---|---|
@@ -48,7 +48,7 @@ One roll, three independent axes, no extra dice. Rationale and rejected alternat
 declaration. Anyone may try to shoot; almost nobody hits. The engine has no characteristics to fall
 back on ([ADR 0013](../adr/0013-the-engine-names-no-skill.md)), so this base is stated rather than
 derived, and it sits inside the *you would be guessing* band
-([`23-diegesis.md`](23-diegesis.md)).
+([`13-diegesis.md`](13-diegesis.md)).
 
 | Attempting | At |
 |---|---|
@@ -60,7 +60,7 @@ derived, and it sits inside the *you would be guessing* band
 
 Having the skill is worth at least 15 points over not having it, at every difficulty. A setting may
 mark a skill as **requiring training**, and then there is no untrained attempt at all — a language
-you do not speak is not a 10% chance ([`04-the-character.md`](04-the-character.md)).
+you do not speak is not a 10% chance ([`10-the-character.md`](10-the-character.md)).
 
 ### Opposed tests
 
@@ -224,13 +224,13 @@ A percentage the player *may choose* to test to dodge a misfortune or break a ti
 Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's choice.
 
 **Luck resets to maximum at the start of each top-level arc** ([ADR 0039](../adr/0039-luck-resets-at-the-top-level-arc-boundary.md)) — the arc level
-[`18-campaign.md`](18-campaign.md) gives a job the deeper, recursive arcs beneath it do not.
+[`19-campaign.md`](19-campaign.md) gives a job the deeper, recursive arcs beneath it do not.
 Spending Luck inside a nested arc does not restore it early; only its enclosing top-level arc
 ending does.
 
 **Invoking a system of power** — a setting's declared mechanism for supernatural or extraordinary
 effort — is an ordinary test governed entirely by this section; see
-[`14-systems-of-power.md`](14-systems-of-power.md) for the schema, the cost a setting
+[`09-systems-of-power.md`](09-systems-of-power.md) for the schema, the cost a setting
 declares, and the Ill Omen consequence.
 
 ---
@@ -240,10 +240,10 @@ declares, and the Ill Omen consequence.
 ### The exchange
 
 What is on the other side of the roll — what an opponent carries, and which of these rules reads
-each field — is in [`06-the-adversary.md`](06-the-adversary.md).
+each field — is in [`12-the-adversary.md`](12-the-adversary.md).
 
 - **The opponent never rolls.** Its capability is a static number
-  ([`06-the-adversary.md`](06-the-adversary.md)), and every roll in combat belongs to a player
+  ([`12-the-adversary.md`](12-the-adversary.md)), and every roll in combat belongs to a player
   character or companion ([ADR 0027](../adr/0027-combat-rolls-belong-to-the-player.md)).
 - **Attack:** the attacker rolls once against `effective% = clip(50 + (attack_skill −
   defender_skill_or_baseline), 5, 95)` — an even match is a coin flip, and no skill gap reaches
@@ -262,7 +262,7 @@ each field — is in [`06-the-adversary.md`](06-the-adversary.md).
   A minimum of 1 always gets through.
 - **Telling blow:** win by 6 or more degrees and **the damage rolled doubles**, and then armour
   subtracts. The order matters: it is where almost every large critical comes from
-  ([`08-criticals.md`](08-criticals.md)). Computed against the roll this section actually
+  ([`05-criticals.md`](05-criticals.md)). Computed against the roll this section actually
   produces, not carried over from the shape it replaced — telling blows stay a minority of hits
   at every realistic pairing
   ([`check_conversion.py`](../../specs/018-player-facing-combat/check_conversion.py),
@@ -271,7 +271,7 @@ each field — is in [`06-the-adversary.md`](06-the-adversary.md).
   and a setting renames one it has no fiction for
   ([ADR 0022](../adr/0022-four-damage-types-named-for-the-wound.md)).
 - **Critical** when damage takes a combatant **below 0 Stamina**. Roll `1d6 + points below
-  zero` on the table for the damage type ([`08-criticals.md`](08-criticals.md)). High results
+  zero` on the table for the damage type ([`05-criticals.md`](05-criticals.md)). High results
   are lethal — the worst row marks the blow **mortal**, and a mortal blow is answered when the fight
   ends, like every other death in this ruleset
   ([ADR 0023](../adr/0023-a-critical-never-kills-during-the-fight.md)).
@@ -284,7 +284,7 @@ each field — is in [`06-the-adversary.md`](06-the-adversary.md).
 ### Gear and coin
 
 A setting's `gear.yaml` declares what a weapon or armour piece is
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)), validated against a closed schema
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)), validated against a closed schema
 ([`check_gear.py`](../../tools/check_gear.py)): a weapon states its damage, damage type,
 casual/martial class, price and availability; armour states its rank, price and availability.
 
@@ -302,7 +302,7 @@ others where the fiction plainly calls for it, the same way Taint or Trauma can 
 their own triggers.
 
 **Encumbrance is a question asked of the fiction, not a number.** There is no weight table and no
-carrying-capacity score — consistent with [`23-diegesis.md`](23-diegesis.md)'s existing "realistic,
+carrying-capacity score — consistent with [`13-diegesis.md`](13-diegesis.md)'s existing "realistic,
 not logistic" rule for inventory generally. When it matters whether a character is plausibly
 carrying something, the GM asks the same question that document already asks about what a
 character has and what's missing, and answers it from the fiction: what they're wearing, where
@@ -496,7 +496,7 @@ rolls. What became of the crowd is the fiction's to say.
 
 Nothing resolves during the fight; a combatant who drops is *out of
 action*. Afterwards, roll `d100 + 5 × points below zero` on the **Aftermath** table
-([`09-aftermath.md`](09-aftermath.md)) — once per combatant who dropped, companions
+([`06-aftermath.md`](06-aftermath.md)) — once per combatant who dropped, companions
 included. Most results are a lasting mark rather than death. Deferred resolution is how a
 single-character chronicle survives lethal combat.
 
@@ -567,7 +567,7 @@ course-correction tool as well as its anti-frustration valve.
 
 Mechanically, spending Fate **closes the death rows** of the Aftermath table: the result is
 re-read on the worst row that is not death, and that is what the character carries away
-([`09-aftermath.md`](09-aftermath.md), [ADR 0009](../adr/0009-fate-closes-the-death-rows.md)).
+([`06-aftermath.md`](06-aftermath.md), [ADR 0009](../adr/0009-fate-closes-the-death-rows.md)).
 Fate is spent only against a death result, and never to improve any other.
 
 ### Spending Fate for someone else
@@ -646,7 +646,7 @@ and it is not only descriptive: it is what the GM reads against Exposure sources
 whether a failure gains Taint at its stated tier or one tier worse. Two characters at equal Taint
 with different Fault Lines therefore accrue Taint at different rates once the fiction starts
 drawing on each of their directions, without any change to the transformation table itself
-([`10-transformations.md`](10-transformations.md)) or to any resolution roll
+([`07-transformations.md`](07-transformations.md)) or to any resolution roll
 ([ADR 0031](../adr/0031-fault-line-biases-exposure-not-the-transformation-table.md)).
 
 ### Thresholds and the hidden count
@@ -655,10 +655,10 @@ drawing on each of their directions, without any change to the transformation ta
 Afflictions are Trauma's business alone — they arise at 6+ Trauma, a separate track (§5) — and a
 Taint threshold never produces one. The thresholds sit at every multiple of 3 (3, 6, 9, …), the
 same interval the Wyrd-die bands above already use for the first two. Crossing one forces a roll
-on the transformation table ([`10-transformations.md`](10-transformations.md)). The result
+on the transformation table ([`07-transformations.md`](07-transformations.md)). The result
 consumes Taint equal to its severity, dropping the character back below the threshold; if still
 over, roll again — a loop that terminates by construction
-([`10-transformations.md`](10-transformations.md),
+([`07-transformations.md`](07-transformations.md),
 [`check_transformation.py`](../../tools/check_transformation.py)).
 
 On the **first** Transformation the engine **secretly rolls the hidden threshold** — how many
@@ -671,7 +671,7 @@ leave the chronicle; they join the opposition.
 Transformations carry **Dread** — Taint's cost is social as well as mechanical. The
 transformed character's problem is being seen. Full detail —
 the table, the threshold's roll and range, and Dread's magnitude and effect — lives in
-[`10-transformations.md`](10-transformations.md).
+[`07-transformations.md`](07-transformations.md).
 
 ---
 
@@ -683,10 +683,10 @@ Three tiers of mental harm, distinguished by how long they last.
 - **Trauma** — long-term and sticky. **1 per critical taken**, 1 per failed Terror test, more
   at the GM's discretion for genuinely terrible events.
 - **Afflictions** — permanent. At **6+ Trauma**, test on every further point (a fiction-chosen
-  skill, pass/fail only — [`11-afflictions.md`](11-afflictions.md)); on a failure take an
+  skill, pass/fail only — [`08-afflictions.md`](08-afflictions.md)); on a failure take an
   Affliction and **lose 6 Trauma**. The track sawtooths, so a character can break many times
   across years — the same Affliction may recur, which is ordinary rather than a defect. Computed
-  in [`11-afflictions.md`](11-afflictions.md): the long-run cadence is exactly 1 Affliction
+  in [`08-afflictions.md`](08-afflictions.md): the long-run cadence is exactly 1 Affliction
   per 6 Trauma-adding events, independent of the test's skill, because the floor and the drop are
   the same number.
 
@@ -729,13 +729,13 @@ That is the entire economy. No talent trees, no feats — their absence is delib
 
 Careers form a **directed graph** — each entry career is choosable freely, and each non-entry
 career declares the prerequisite career(s) completing any one of grants eligibility for it
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). **Changing career is a free choice of
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). **Changing career is a free choice of
 any entry career, or a legal move to a non-entry career you are currently eligible for** — a
 character's own history of what they completed shapes what a non-entry career they can reach,
 but never traps them: abandoning a career path entirely and starting over from a fresh entry
 point is always legal, and the engine cannot grant a non-entry career your past does not permit.
 
-**Every career caps its skills at 70%** — the top of the *expert* band ([`23-diegesis.md`](23-diegesis.md))
+**Every career caps its skills at 70%** — the top of the *expert* band ([`13-diegesis.md`](13-diegesis.md))
 — one figure applied to every skill that career grants. No advance may raise a skill past its
 career's cap; a career alone never buys the 75%+ band, "it is part of who you are."
 
@@ -749,7 +749,7 @@ grants its Stamina and Mark each time.
 
 **Maximum Stamina stops climbing at 10.** Creation fixes the starting value at 6 because a further
 +1 there is a 16.7% gain, and states directly that "much above 10 [...] the sentence stops being
-true" ([`05-character-creation.md`](05-character-creation.md)) — a gain below 10% no longer
+true" ([`11-character-creation.md`](11-character-creation.md)) — a gain below 10% no longer
 reads as durable toughening. Ten is exactly that boundary (1⁄10 = 10%), computed and asserted in
 [`check_advancement.py`](../../tools/check_advancement.py). A career completed after maximum Stamina
 reaches 10 still grants its Mark; it grants no further Stamina.
@@ -770,7 +770,7 @@ widening what a test legally covers, or a wound's effect lessening — Mend alre
 case). No career graph, no Marks.
 
 A successor inherits none of the competence and all of the position
-([`18-campaign.md`](18-campaign.md)): the new companion's mechanical layer starts at its own
+([`19-campaign.md`](19-campaign.md)): the new companion's mechanical layer starts at its own
 baseline (no `wounds`, `bond: 0`, `taint: 0`, `strain: 0`) and their narrative layer is written
 fresh, same as any new companion.
 
@@ -781,9 +781,9 @@ fresh, same as any new companion.
 Content is written once with a **danger rating** used as a multiplier inside it: a trap
 written `Nd4` does `6d4` at danger 6, and enemy counts and skill values scale from the same
 number. It is also written for a party of a stated size — `written_for`, a head count and never
-a gate ([`24-corpus-index.md`](24-corpus-index.md)). Counts scale below; skill values scale in
+a gate ([`26-corpus-index.md`](26-corpus-index.md)). Counts scale below; skill values scale in
 points, further down. An opponent's own record never changes — what a written opponent carries is in
-[`06-the-adversary.md`](06-the-adversary.md), and it is absolute.
+[`12-the-adversary.md`](12-the-adversary.md), and it is absolute.
 
 Effective danger accounts for the party actually present:
 
@@ -820,7 +820,7 @@ runs content written for four exactly as written**, which is what makes the equa
 rather than a discount.
 
 **The party is a query, not a roster.** It is the player character, who counts as one body, plus
-every companion at `status: with-party` ([`19-state.md`](19-state.md)). A companion who is away,
+every companion at `status: with-party` ([`22-state.md`](22-state.md)). A companion who is away,
 dead, lost or departed counts for nothing, and no companion counts for more or less than any
 other — the engine holds no capability score for a companion and this rule does not invent one.
 Scaling happens when content is prepared, not when a door opens, so who is standing in a
@@ -872,7 +872,7 @@ on both quantities rather than on the count alone.
 ratio runs `0.408` to `2.450` — exactly antisymmetric, because swapping the two inverts it. Require
 the extreme of that computed range to land on the ladder's top rung and the coefficient falls out:
 `20 / log₂(2.45)`. It was derived before it was written down, which is the only way a round number
-in this repo means anything ([`20-tooling.md`](20-tooling.md)).
+in this repo means anything ([`27-tooling.md`](27-tooling.md)).
 
 **The clip is symmetric at ±20**, not the ladder's −40, because the adjustment must negate when
 party and `written_for` swap. A −40 floor against a +20 ceiling would break exactly that.

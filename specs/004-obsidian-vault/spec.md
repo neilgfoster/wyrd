@@ -16,10 +16,10 @@ The repo is read in two places that want different things. On github.com it is a
 design documents; in Obsidian it should be a navigable graph. The two are compatible, but only if
 the link policy is chosen deliberately.
 
-**Wikilinks are already a Wyrd convention — for data, not prose.** `docs/design/27-entities.md` describes
+**Wikilinks are already a Wyrd convention — for data, not prose.** `docs/design/25-entities.md` describes
 the world mesh as "human-editable, diff-legible, and — because they link with `[[wikilinks]]` — a
-working graph"; `docs/design/20-tooling.md` says state is YAML with `[[wikilink]]` frontmatter parsed by a
-small internal reader; `docs/design/21-maintenance.md` runs a referential-integrity check over `[[link]]`.
+working graph"; `docs/design/27-tooling.md` says state is YAML with `[[wikilink]]` frontmatter parsed by a
+small internal reader; `docs/design/28-maintenance.md` runs a referential-integrity check over `[[link]]`.
 So the *entity model* is already an Obsidian graph by design.
 
 **But GitHub does not render `[[wikilinks]]`.** This repo is intended public. A wikilink degrades to
@@ -96,7 +96,7 @@ Both audiences are real. Nothing may render worse on github.com than it does tod
 
 ## Constraints
 
-- Python 3.11+, stdlib only (`docs/design/20-tooling.md` §2). `unittest`, not pytest (§6).
+- Python 3.11+, stdlib only (`docs/design/27-tooling.md` §2). `unittest`, not pytest (§6).
 - Committed vault config must be machine-independent — no absolute paths, no personal preferences.
 - Nothing unpublishable: a vault config is not a place for library paths.
 - No file under `.kord/`, `.specify/` or `.github/ISSUE_TEMPLATE/` is touched.

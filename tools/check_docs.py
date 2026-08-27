@@ -8,7 +8,7 @@ status section linked a directory that did not exist while asserting the design 
 None of that was found by reading. All of it was found by script in ten minutes.
 
 So the hub is a checked invariant rather than a courtesy (docs/adr/0011, and
-docs/design/20-tooling.md section 1: where a claim can be checked, check it).
+docs/design/27-tooling.md section 1: where a claim can be checked, check it).
 
 Four checks:
 
@@ -23,7 +23,7 @@ Usage:
     python3 tools/check_docs.py
     python3 tools/check_docs.py --format json
 
-Python 3.11+, standard library only (docs/design/20-tooling.md). Reads the filesystem, nothing
+Python 3.11+, standard library only (docs/design/27-tooling.md). Reads the filesystem, nothing
 else.
 """
 
@@ -84,7 +84,7 @@ def markdown_files(root: pathlib.Path) -> list[pathlib.Path]:
 def strip_code(text: str) -> str:
     """Remove fenced blocks and inline spans.
 
-    Wikilinks legitimately appear in docs/design/27-entities.md, 19-state.md, 20-tooling.md and
+    Wikilinks legitimately appear in docs/design/25-entities.md, 19-state.md, 20-tooling.md and
     08-maintenance.md -- always inside a YAML example or an inline span describing the
     convention. Allowing them exactly there, and nowhere else, is checkable without an
     allowlist of filenames that would itself go stale.

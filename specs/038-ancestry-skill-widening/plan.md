@@ -9,7 +9,7 @@
 Close issue #121 by recording ADR 0040 (ancestry is optional setting-declared data that widens
 creation's eligible skill pool to the union of the starting career's list and the ancestry's list,
 with no additional advances and no stat modifier) and folding its statement into
-`docs/design/05-character-creation.md` §3, next to the existing 8-advances rule. Documentation-only:
+`docs/design/11-character-creation.md` §3, next to the existing 8-advances rule. Documentation-only:
 no code, schema, or entity-model change in this repository, since career/skill data lives in
 `wyrd-setting-*` repositories, not here.
 
@@ -73,7 +73,7 @@ No source tree changes. Files touched outside `specs/`:
 
 ```text
 docs/adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md   # new ADR
-docs/design/05-character-creation.md                               # §3 gains the ancestry rule
+docs/design/11-character-creation.md                               # §3 gains the ancestry rule
 ```
 
 ## Complexity Tracking

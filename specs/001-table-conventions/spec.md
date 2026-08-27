@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: GitHub issue #15 — "Table conventions and the tables index". Create `docs/design/07-tables.md`
+**Input**: GitHub issue #15 — "Table conventions and the tables index". Create `docs/design/04-tables.md`
 as the engine's table index and the shared conventions every table family must satisfy: how a table
 is rolled and read, the row schema, the override contract, the index, and versioning. Out of scope:
 the contents of any actual table, and implementing `tables.py`.
@@ -15,7 +15,7 @@ the contents of any actual table, and implementing `tables.py`.
 
 The ruleset in `docs/design/03-rules.md` names five table families — criticals, aftermath,
 transformations, afflictions, oracles — and defines none of them. `docs/design/02-architecture.md` and
-`docs/design/20-tooling.md` both promise a `tables/` directory holding them as pure, setting-neutral,
+`docs/design/27-tooling.md` both promise a `tables/` directory holding them as pure, setting-neutral,
 overridable data, but nothing in the repository states the shape of a row, how a result is looked
 up, or what a setting may replace.
 
@@ -41,7 +41,7 @@ agreed structural answer first, four siblings write four dialects.
 
 ### User Story 1 - An author writes a new table family (Priority: P1)
 
-Someone picking up one of the sibling issues opens `docs/design/07-tables.md` and can write their
+Someone picking up one of the sibling issues opens `docs/design/04-tables.md` and can write their
 family's file without inventing any structural decision: the die, the modifier, the out-of-range
 behaviour, the required row fields and the file's location are all already settled and stated in one
 place.
@@ -55,7 +55,7 @@ above the highest row. Both answers are found in the document.
 
 **Acceptance Scenarios**:
 
-1. **Given** `docs/design/07-tables.md` exists, **When** an author needs to know what die a table is
+1. **Given** `docs/design/04-tables.md` exists, **When** an author needs to know what die a table is
    rolled on and where its modifier comes from, **Then** the document states both, and states them
    once rather than per family.
 2. **Given** a roll resolves above the highest row or below the lowest, **When** the author consults
@@ -73,7 +73,7 @@ Someone writing a `wyrd-<setting>` repository wants a table whose results fit th
 to know exactly what `overrides.tables:` lets them replace, what it does not, and how their renamed
 vocabulary stays presentation-only.
 
-**Why this priority**: `docs/design/26-authoring-a-setting.md:157` already presumes this contract exists
+**Why this priority**: `docs/design/24-authoring-a-setting.md:157` already presumes this contract exists
 and is the only evidence in the repo of either a naming scheme or a per-table file. Leaving it
 undefined means the one published example is unbacked.
 
@@ -87,7 +87,7 @@ override is legal, and can name the file path their replacement must live at.
    scheme used to address a table.
 2. **Given** a setting wishes to change a table's die, its modifier, or its row schema, **When** it
    attempts to do so, **Then** the document states this is a new mechanism, forbidden by
-   `docs/design/26-authoring-a-setting.md`, and is a load error.
+   `docs/design/24-authoring-a-setting.md`, and is a load error.
 3. **Given** a setting renames a mechanic that a table's rows refer to, **When** a result is
    recorded to state, **Then** the document states that the rename is presentation-only and the
    engine's own label is what reaches state.
@@ -99,7 +99,7 @@ override is legal, and can name the file path their replacement must live at.
 A chronicle that recorded a table result under one version of a table is loaded after the table has
 changed. The recorded outcome must remain interpretable, and the history must not be recomputed.
 
-**Why this priority**: Required by `docs/design/22-evolution.md`, but only bites once tables exist and
+**Why this priority**: Required by `docs/design/29-evolution.md`, but only bites once tables exist and
 change. It must be settled now because it constrains what a row carries.
 
 **Independent Test**: Given a recorded table outcome from an earlier version, a reader can determine
@@ -131,7 +131,7 @@ which table produced it and that it will not be recomputed.
 
 ### Functional Requirements
 
-- **FR-001**: The repository MUST contain `docs/design/07-tables.md`, a design document in the present
+- **FR-001**: The repository MUST contain `docs/design/04-tables.md`, a design document in the present
   tense describing the engine's table conventions and indexing every table family.
 - **FR-002**: The document MUST state how a table is rolled: the die used, where the modifier comes
   from, and that the die and modifier are properties of the family rather than of an individual row.
@@ -153,7 +153,7 @@ which table produced it and that it will not be recomputed.
   schema.
 - **FR-008**: The document MUST state the table naming scheme and the file layout — one file per
   table, at a stated path — consistent with the `critical-slashing` example already published in
-  `docs/design/26-authoring-a-setting.md`.
+  `docs/design/24-authoring-a-setting.md`.
 - **FR-009**: The document MUST define the override contract: that a setting replaces a table's rows
   via `overrides.tables:`, that it may not change the roll or the row schema, and that an override
   naming an unpublished table key is a load error.
@@ -168,13 +168,13 @@ which table produced it and that it will not be recomputed.
   recorded outcome — plus the table key recorded with the outcome, and MUST state that no per-table
   version is introduced.
 - **FR-013a**: The document MUST state that a changed table applies forward only and that recorded
-  outcomes stand unchanged, consistent with `docs/design/22-evolution.md`; and MUST state which change
-  class a table change falls into, so the `migrations[]` entry in `docs/design/19-state.md` is
+  outcomes stand unchanged, consistent with `docs/design/29-evolution.md`; and MUST state which change
+  class a table change falls into, so the `migrations[]` entry in `docs/design/22-state.md` is
   determinable.
 - **FR-014**: The document MUST NOT contain the contents of any actual table beyond whatever minimal
   illustration the conventions require, and MUST NOT specify the implementation of `tables.py`.
 - **FR-015**: Existing design documents that reference tables MUST agree with the new document —
-  where `docs/design/02-architecture.md`, `docs/design/20-tooling.md` or `docs/design/26-authoring-a-setting.md`
+  where `docs/design/02-architecture.md`, `docs/design/27-tooling.md` or `docs/design/24-authoring-a-setting.md`
   state something the conventions contradict or leave dangling, those documents are updated in place
   rather than left to drift.
 - **FR-016**: No setting name, system name, or term borrowed from a source system may appear in the
@@ -202,21 +202,21 @@ which table produced it and that it will not be recomputed.
 
 ### Measurable Outcomes
 
-- **SC-001**: A reader who has seen none of the sibling issues can, from `docs/design/07-tables.md`
+- **SC-001**: A reader who has seen none of the sibling issues can, from `docs/design/04-tables.md`
   alone, answer all five structural questions — die, modifier, out-of-range, row fields, file path —
   without guessing.
-- **SC-002**: Every table family named in `docs/design/02-architecture.md` and `docs/design/20-tooling.md`
+- **SC-002**: Every table family named in `docs/design/02-architecture.md` and `docs/design/27-tooling.md`
   appears in the index, and every family in the index appears in those documents. The two sets match
   exactly.
-- **SC-003**: Adding one sibling family to the index is a one-row change to `docs/design/07-tables.md`
+- **SC-003**: Adding one sibling family to the index is a one-row change to `docs/design/04-tables.md`
   and touches no other line of it.
 - **SC-004**: A grep for setting and system vocabulary across `design/` returns nothing new.
 - **SC-005**: Every table reference in `docs/design/03-rules.md` resolves to a family present in the
   index — no rule names a table the index does not know about.
 - **SC-007**: The conventions introduce no version, no storage location and no override key beyond
-  those `docs/design/19-state.md` and `docs/design/26-authoring-a-setting.md` already define.
+  those `docs/design/22-state.md` and `docs/design/24-authoring-a-setting.md` already define.
 - **SC-006**: No statement in the new document contradicts `docs/design/02-architecture.md`,
-  `docs/design/20-tooling.md`, `docs/design/22-evolution.md` or `docs/design/26-authoring-a-setting.md`; where one
+  `docs/design/27-tooling.md`, `docs/design/29-evolution.md` or `docs/design/24-authoring-a-setting.md`; where one
   did, that document was updated in the same change.
 
 ## Assumptions
@@ -224,14 +224,14 @@ which table produced it and that it will not be recomputed.
 - The conventions document is prose design, not schema code. Any YAML shown is illustrative of the
   contract, not a specification of a parser — `tables.py` is R4 of epic #1 and out of scope here.
 - The five families named in `docs/design/02-architecture.md` are the complete current set. Oracles are
-  included even though `docs/design/20-tooling.md`'s list omits afflictions; that omission is treated as
+  included even though `docs/design/27-tooling.md`'s list omits afflictions; that omission is treated as
   the stale one and is corrected under FR-015.
 - Each family lands in its own `design/03a-N-*.md` file, per issue #15's stated deviation from epic
   #6's "one new file" deliverable. This document indexes rather than contains them.
 - Existing engine conventions are reused rather than re-invented: the version-pinning shape comes
-  from `docs/design/19-state.md`, the forward-only rule from `docs/design/22-evolution.md`, the closed
-  overridable set from `docs/design/26-authoring-a-setting.md`.
-- The `critical-slashing` key in `docs/design/26-authoring-a-setting.md:157` is authoritative for the
+  from `docs/design/22-state.md`, the forward-only rule from `docs/design/29-evolution.md`, the closed
+  overridable set from `docs/design/24-authoring-a-setting.md`.
+- The `critical-slashing` key in `docs/design/24-authoring-a-setting.md:157` is authoritative for the
   naming scheme: lowercase, hyphenated, `<family>-<variant>`.
 - Whether this feature also earns an ADR is decided during planning against `docs/README.md`'s
   two-part test; the spec does not presume one either way.

@@ -10,7 +10,7 @@ chronicle that stays correct for a decade.
 
 Worlds live in their own **setting** repositories and are overlaid onto a chronicle. Anything
 can be authored, from an original world to a conversion of a published one
-([13-authoring-a-setting](docs/design/26-authoring-a-setting.md)).
+([24-authoring-a-setting](docs/design/24-authoring-a-setting.md)).
 
 ## Start a chronicle
 
@@ -32,13 +32,13 @@ interviews you about your character and what you want the chronicle to be about.
 - **The world does not wait.** Threats and characters act on their own objectives; you hear
   about it late, partially, and sometimes wrong.
 - **Adventures are beats**, not scripts — recombinable into campaigns their authors never
-  wrote ([15-arcs-and-beats](docs/design/28-arcs-and-beats.md)).
+  wrote ([18-arcs-and-beats](docs/design/18-arcs-and-beats.md)).
 - **Tone is the setting's, not the engine's.** A setting declares whether prophecy is
   forbidden or central, whether victory is mitigation or triumph, how flat the power curve
   runs — and the engine holds that line against its own drift.
 - **Settings and chronicles are Obsidian vaults.** The graph view is the world.
 - **The past is a fact.** Rules change forward; history is never recomputed
-  ([09-evolution](docs/design/22-evolution.md)).
+  ([29-evolution](docs/design/29-evolution.md)).
 
 ## The repositories
 
@@ -69,33 +69,33 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [01-principles](docs/design/01-principles.md) | Seven engine principles, the tone contract, the GM contract |
 | [02-architecture](docs/design/02-architecture.md) | The four repositories; code versus prose |
 | [03-rules](docs/design/03-rules.md) | The ruleset |
-| [04-the-character](docs/design/04-the-character.md) | What a character is made of, and on what scale |
-| [05-character-creation](docs/design/05-character-creation.md) | Turning a setting's options into a playable character |
-| [06-the-adversary](docs/design/06-the-adversary.md) | What an opponent is made of, and which rule reads each field |
-| [07-tables](docs/design/07-tables.md) | Table conventions, and the index of the table families |
-| [08-criticals](docs/design/08-criticals.md) | The Criticals family — the four damage types, and one table for each |
-| [09-aftermath](docs/design/09-aftermath.md) | The Aftermath family — what happens to a combatant who drops |
-| [10-transformations](docs/design/10-transformations.md) | The Transformations family — Taint thresholds, the hidden count, Dread |
-| [11-afflictions](docs/design/11-afflictions.md) | The Afflictions family — the Trauma test, the table, the sawtooth cadence |
-| [12-oracle-answers](docs/design/12-oracle-answers.md) | The Oracle Answers family — a 5-band d100 read against a yes/no question |
-| [13-oracle-prompts](docs/design/13-oracle-prompts.md) | The Oracle Prompts family — additive prompt tables for open questions |
-| [14-systems-of-power](docs/design/14-systems-of-power.md) | The Systems of power schema — declaration, cost, the Ill Omen consequence |
-| [15-playtest-transcript](docs/design/15-playtest-transcript.md) | A hand-run character creation and combat exchange against the R1 specification |
+| [04-tables](docs/design/04-tables.md) | Table conventions, and the index of the table families |
+| [05-criticals](docs/design/05-criticals.md) | The Criticals family — the four damage types, and one table for each |
+| [06-aftermath](docs/design/06-aftermath.md) | The Aftermath family — what happens to a combatant who drops |
+| [07-transformations](docs/design/07-transformations.md) | The Transformations family — Taint thresholds, the hidden count, Dread |
+| [08-afflictions](docs/design/08-afflictions.md) | The Afflictions family — the Trauma test, the table, the sawtooth cadence |
+| [09-systems-of-power](docs/design/09-systems-of-power.md) | The Systems of power schema — declaration, cost, the Ill Omen consequence |
+| [10-the-character](docs/design/10-the-character.md) | What a character is made of, and on what scale |
+| [11-character-creation](docs/design/11-character-creation.md) | Turning a setting's options into a playable character |
+| [12-the-adversary](docs/design/12-the-adversary.md) | What an opponent is made of, and which rule reads each field |
+| [13-diegesis](docs/design/13-diegesis.md) | Knowing your character without reading their statistics |
+| [14-oracle-answers](docs/design/14-oracle-answers.md) | The Oracle Answers family — a 5-band d100 read against a yes/no question |
+| [15-oracle-prompts](docs/design/15-oracle-prompts.md) | The Oracle Prompts family — additive prompt tables for open questions |
 | [16-session](docs/design/16-session.md) | Beats, Rally points, downtime, and the party |
 | [17-out-of-character-mode](docs/design/17-out-of-character-mode.md) | The `?`-prefix trigger for stepping outside the fiction at play time |
-| [18-campaign](docs/design/18-campaign.md) | Threats, threads, elapsed time, succession |
-| [19-state](docs/design/19-state.md) | Chronicle state — which is entities |
-| [20-tooling](docs/design/20-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
-| [21-maintenance](docs/design/21-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
-| [22-evolution](docs/design/22-evolution.md) | How the engine changes without rewriting history |
-| [23-diegesis](docs/design/23-diegesis.md) | Knowing your character without reading their statistics |
-| [24-corpus-index](docs/design/24-corpus-index.md) | Finding the right passage in a large library |
-| [25-parallel-chronicles](docs/design/25-parallel-chronicles.md) | Running more than one chronicle at once |
-| [26-authoring-a-setting](docs/design/26-authoring-a-setting.md) | Everything needed to build a setting |
-| [27-entities](docs/design/27-entities.md) | The world mesh — ten types, two relations, overlays |
-| [28-arcs-and-beats](docs/design/28-arcs-and-beats.md) | Beats, recombination, lazy conversion |
-| [29-chronicle-bootstrap](docs/design/29-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
-| [30-journeys](docs/design/30-journeys.md) | The travel subsystem — legs, hazards, and when it's inert |
+| [18-arcs-and-beats](docs/design/18-arcs-and-beats.md) | Beats, recombination, lazy conversion |
+| [19-campaign](docs/design/19-campaign.md) | Threats, threads, elapsed time, succession |
+| [20-journeys](docs/design/20-journeys.md) | The travel subsystem — legs, hazards, and when it's inert |
+| [21-parallel-chronicles](docs/design/21-parallel-chronicles.md) | Running more than one chronicle at once |
+| [22-state](docs/design/22-state.md) | Chronicle state — which is entities |
+| [23-chronicle-bootstrap](docs/design/23-chronicle-bootstrap.md) | Cloning and seeding a chronicle |
+| [24-authoring-a-setting](docs/design/24-authoring-a-setting.md) | Everything needed to build a setting |
+| [25-entities](docs/design/25-entities.md) | The world mesh — ten types, two relations, overlays |
+| [26-corpus-index](docs/design/26-corpus-index.md) | Finding the right passage in a large library |
+| [27-tooling](docs/design/27-tooling.md) | Deterministic-over-inference, stdlib Python, model tiering |
+| [28-maintenance](docs/design/28-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
+| [29-evolution](docs/design/29-evolution.md) | How the engine changes without rewriting history |
+| [30-playtest-transcript](docs/design/30-playtest-transcript.md) | A hand-run character creation and combat exchange against the R1 specification |
 | [adr/](docs/adr/) | Decision records — indexed in [docs/README.md](docs/README.md) |
 
 Two more trees, reachable from here so nothing in the repo is orphaned:
@@ -118,7 +118,7 @@ not the engine's.
 ## Build order
 
 1. **Skeleton** — state schema (with version pinning, migrations and provenance stamping
-   from the first commit — see [09-evolution](docs/design/22-evolution.md)), atomic writes,
+   from the first commit — see [29-evolution](docs/design/29-evolution.md)), atomic writes,
    validation, and the CLI's dice and track verbs. Prove one fight and one track threshold
    round-trip through a save, then freeze it as the first golden chronicle.
 2. **Ruleset** — combat, criticals, Aftermath, the tracks, Fate, Fear.

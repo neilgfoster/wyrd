@@ -75,7 +75,7 @@ forbids a setting from adding.
 
 ## Consequences
 
-- `docs/design/05-character-creation.md` §3 gains an explicit statement of what ancestry is and
+- `docs/design/11-character-creation.md` §3 gains an explicit statement of what ancestry is and
   is not permitted to do, next to the 8-advances rule it extends.
 - No entity schema, career schema, or validator in this repository changes: career and skill data
   is setting-declared and lives in `wyrd-setting-*` repositories, not here, so this ADR closes a

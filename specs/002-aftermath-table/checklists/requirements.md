@@ -35,7 +35,7 @@
   `/kord-feature-plan`.
 - **All four open decisions were resolved by the operator** in the 2026-08-22 clarification session
   and are recorded under `## Clarifications` in the spec:
-  1. File path — `docs/design/09-aftermath.md`, per #15's index (FR-001).
+  1. File path — `docs/design/06-aftermath.md`, per #15's index (FR-001).
   2. The roll — `d100 + (5 × points below zero)`, lowest possible total 6 (FR-002, FR-003, FR-004).
   3. Fate — closes the death rows, does not suppress the roll (FR-016).
   4. Companions — same table, same rows, no Fate of their own (FR-017).

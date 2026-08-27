@@ -18,7 +18,7 @@ Stamina — and says nothing about when anyone does it. There is no round, no tu
 statement of who swings first. There is no ranged combat at all. There is no fleeing, no
 disengaging, no surprise and no ambush.
 
-Per [`docs/design/20-tooling.md`](../../docs/design/20-tooling.md), a gap here is not a neutral silence. Every
+Per [`docs/design/27-tooling.md`](../../docs/design/27-tooling.md), a gap here is not a neutral silence. Every
 question the rules decline to answer becomes a judgement call at play time, made differently each
 session, by an engine whose whole premise is that anything with a correct answer is computed rather
 than inferred. An unsequenced exchange is a rule delegated to improvisation.

@@ -30,7 +30,7 @@ the ledger room → the tavern
 
 Containment is strict and acyclic. Connection is free and may loop. A `wyrd doctor` check
 enforces the first and reports oddities in the second
-([`21-maintenance.md`](21-maintenance.md)).
+([`28-maintenance.md`](28-maintenance.md)).
 
 Any entity may use either. Three types are **recursive containers**: `place`, `organisation`
 and `arc`. They behave identically; only their contents differ.
@@ -44,7 +44,7 @@ and `arc`. They behave identically; only their contents differ.
 | `organisation` | **yes** | any body of people, at any scale |
 | `arc` | **yes** | any unit of story larger than a beat |
 | `beat` | leaf | the atomic unit of play |
-| `creature` | — | a stat block — a kind of thing, not an individual. What it carries is the adversary block ([`06-the-adversary.md`](06-the-adversary.md)) |
+| `creature` | — | a stat block — a kind of thing, not an individual. What it carries is the adversary block ([`12-the-adversary.md`](12-the-adversary.md)) |
 | `item` | — | a thing that matters |
 | `tracker` | — | a named clock, meter or state |
 | `thread` | — | an open loop the chronicle is carrying |
@@ -53,12 +53,12 @@ and `arc`. They behave identically; only their contents differ.
 Nothing else. **A new type is an engine change, never a setting one.**
 
 Entity *files* are the only storage; there is no second model for chronicle state
-([`19-state.md`](19-state.md)).
+([`22-state.md`](22-state.md)).
 
 Note what is *not* a type. A **nemesis** is a `character` with `role: nemesis`, and it carries an
 adversary block alongside the person layer — the same block a `creature` is, so one set of rules
 reads one set of fields whichever it is fighting
-([`06-the-adversary.md`](06-the-adversary.md)). A **threat**
+([`12-the-adversary.md`](12-the-adversary.md)). A **threat**
 is an aspect attached to a character, organisation or place — because a campaign-length
 antagonist may be a person, a conspiracy, or a blighted valley, and forcing a choice would
 lose information. A **faction** is an `organisation`.
@@ -87,7 +87,7 @@ links: []                      # free association; anything else
 never disagree with itself.
 
 `status: stub` is normal and healthy — most of a setting starts as stubs
-([`28-arcs-and-beats.md`](28-arcs-and-beats.md)).
+([`18-arcs-and-beats.md`](18-arcs-and-beats.md)).
 
 `sources.licence` decides distribution: anything marked `copyright` never leaves a private
 repository.
@@ -240,13 +240,13 @@ person it described; this chronicle records what they became.
 Resolution at load is `setting entity + overlay = effective entity`. The overlay alone
 answers *"what has this player done to this world?"* — and it is why one setting can host
 many chronicles with different histories, and why a setting update can be pulled in without
-discarding what happened ([`22-evolution.md`](22-evolution.md)).
+discarding what happened ([`29-evolution.md`](29-evolution.md)).
 
 ## Why frontmatter rather than a database
 
 Obsidian reads it natively and the graph view is free visualisation. `git diff` stays legible,
 so a chronicle's history is readable years later. `grep` works. No dependency
-([`20-tooling.md`](20-tooling.md)). And a person can repair a file by hand at three in the
+([`27-tooling.md`](27-tooling.md)). And a person can repair a file by hand at three in the
 morning, which a database does not allow.
 
 The cost is that referential integrity is checked rather than enforced — which is what

@@ -137,7 +137,7 @@ indexes had already gone stale silently before this existed, so treat it the sam
 
 ## Deterministic over inference
 
-The rule the engine follows ([`docs/design/20-tooling.md`](docs/design/20-tooling.md)) applies to the
+The rule the engine follows ([`docs/design/27-tooling.md`](docs/design/27-tooling.md)) applies to the
 work as well. Where a claim can be checked by a script, check it — do not assert it.
 
 Concretely, and from experience:
@@ -225,4 +225,4 @@ over arguing about it.** Where a mechanic is uncertain, run the numbers at the v
 character actually has, not at the midpoint.
 
 Rules changes apply **forward only**. History is never recomputed
-([`docs/design/22-evolution.md`](docs/design/22-evolution.md)).
+([`docs/design/29-evolution.md`](docs/design/29-evolution.md)).

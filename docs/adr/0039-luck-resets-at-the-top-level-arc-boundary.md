@@ -39,7 +39,7 @@ back regardless, there is no reason to scope its cost to anything narrower than 
 whole life — the sentence would need rewriting, not completing, to mean that.
 
 **Resets at every recursive arc boundary, including nested arcs.** Rejected: arcs recurse
-(`docs/design/27-entities.md`), but `18-campaign.md` is explicit that only the top-level arcs
+(`docs/design/25-entities.md`), but `18-campaign.md` is explicit that only the top-level arcs
 directly under a chronicle carry the "ends with something altered" property; nested arcs beneath
 them do not. Resetting Luck on every nested boundary would recover the resource far more often
 than its scarcity — 40 at creation, spent one point at a time — appears designed for, and would
@@ -56,10 +56,10 @@ expect them to share a recovery rhythm.
 
 - `docs/design/03-rules.md` §1's "for the rest of the arc" phrasing is no longer a dangling
   implication; it names the exact boundary at which the cost lapses.
-- The reset boundary is the same one `docs/design/18-campaign.md` already defines for top-level
+- The reset boundary is the same one `docs/design/19-campaign.md` already defines for top-level
   arcs — no new document, section, or vocabulary is introduced, and nothing in `18-campaign.md`
   itself is altered.
 - A nested (sub-)arc ending, on its own, does not restore Luck. Only its enclosing top-level arc
   ending does.
-- Luck's maximum (40, set at creation per `docs/design/05-character-creation.md`) is unaffected by
+- Luck's maximum (40, set at creation per `docs/design/11-character-creation.md`) is unaffected by
   this decision; only the mechanism for returning to it is newly stated.

@@ -7,7 +7,7 @@
 
 Two documents had been left pointing at each other with nothing in between.
 
-[`09-aftermath.md`](../design/09-aftermath.md) hands out a wound record on five of its eight rows,
+[`06-aftermath.md`](../design/06-aftermath.md) hands out a wound record on five of its eight rows,
 and said outright that a wound record "carries no healing field, no duration and no severity —
 whether a wound ever mends is not settled here". Deferring it was right at the time: a field shaped
 for one answer would have prejudged the question.
@@ -53,7 +53,7 @@ hard about as often as they rest keeps pace; one who fights harder than that acc
 is a valve, not a reset — which is the shape the rest of the engine's recovery rules already have.
 
 **Keeping the closed record is not sentimentality.** History is never recomputed
-([`22-evolution.md`](../design/22-evolution.md)). A character who limped for two years limped for two
+([`29-evolution.md`](../design/29-evolution.md)). A character who limped for two years limped for two
 years, and a chronicle that deletes the record loses the ability to answer why a roll two years ago
 went the way it did.
 
@@ -90,7 +90,7 @@ length regardless of what it does, and would be a number no other rule reads —
 
 ## Consequences
 
-- The wound record gains `closed:`, additively ([`19-state.md`](../design/19-state.md)). Writing it on a
+- The wound record gains `closed:`, additively ([`22-state.md`](../design/22-state.md)). Writing it on a
   recurring wound is a load error rather than a quietly ignored field.
 - Mend is now resolvable, and the undertaking list is a list of things the engine can actually do.
 - A setting may still replace the Aftermath rows, and this rule holds for whatever effects those

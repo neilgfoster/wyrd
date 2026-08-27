@@ -23,7 +23,7 @@
 - [x] T011 `docs/design/03-rules.md` §7 — rewritten in place: the effective-size function, both sides of the ratio read through it, the identity case, and the degenerate cases (FR-001, FR-002, FR-007, FR-011).
 - [x] T012 §7 — the single rounding rule applied at each point of use, with its minimum of 1, and the worked figures (FR-004, FR-005).
 - [x] T013 §7 — why the curve is not overridable, and what a setting's levers over difficulty are instead (US3).
-- [x] T014 `docs/design/24-corpus-index.md` — the one-sentence description rewritten to agree with §7, and the quoted worked figure replaced with the computed one (FR-008).
+- [x] T014 `docs/design/26-corpus-index.md` — the one-sentence description rewritten to agree with §7, and the quoted worked figure replaced with the computed one (FR-008).
 
 ## The record
 

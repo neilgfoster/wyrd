@@ -40,7 +40,7 @@ across `README.md`/`CLAUDE.md`/`tools/` rewritten; 24 open issues updated
 - **Nothing unpublishable** — pure reorganization of already-public design prose. **Pass.**
 - **No setting or system names in `design/`/`README.md`** — this feature renames files and
   rewrites paths; it does not touch prose content. **Pass.**
-- **Deterministic over inference** (`docs/design/20-tooling.md` — soon `docs/design/20-tooling.md`) —
+- **Deterministic over inference** (`docs/design/27-tooling.md` — soon `docs/design/27-tooling.md`) —
   the old→new mapping is a fixed table (data-model.md), substitution is scripted and verified by
   grep, not asserted by eye. **Pass.**
 - **Accepted ADRs never edited** — this feature's own Clarifications settle that a *path inside*

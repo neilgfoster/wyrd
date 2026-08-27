@@ -11,7 +11,7 @@ not looking. It is tempting — and was, briefly, the design — to advance the 
 ## Decision
 
 **Game time advances only when the fiction advances it.** Real-world gaps are irrelevant to
-the world clock ([`../18-campaign.md`](../design/18-campaign.md)).
+the world clock ([`../18-campaign.md`](../design/19-campaign.md)).
 
 What moves it: a summarised beat covering a span, narrated travel, an explicit wait,
 downtime, or an implied gap between arcs. **Nothing else — and closing a session advances

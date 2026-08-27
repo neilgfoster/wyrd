@@ -6,7 +6,7 @@
 
 ## Summary
 
-Write `docs/design/09-aftermath.md`: the Aftermath family, declared within the conventions #15
+Write `docs/design/06-aftermath.md`: the Aftermath family, declared within the conventions #15
 established. It is the table `docs/design/03-rules.md` has deferred all combat death to since the ruleset
 was written, and the gate on R1.2.
 
@@ -24,7 +24,7 @@ table structurally invalid at `mortality: low` and let a combatant dropped by 1 
 `mortality: high`. Neither fault was visible by reading.
 
 Alongside the new document: `docs/design/03-rules.md` loses its description of an undefined table,
-`docs/design/07-tables.md`'s index row is completed, `docs/design/19-state.md` gains the wound record its
+`docs/design/04-tables.md`'s index row is completed, `docs/design/22-state.md` gains the wound record its
 `wounds: []` field has always implied, and one ADR records the Fate/Aftermath boundary.
 
 ## Technical Context
@@ -35,7 +35,7 @@ rather than left as placeholders.
 **Language/Version**: Markdown (GitHub-flavoured), matching `design/`. One Python 3 script for
 verification.
 
-**Primary Dependencies**: None. `docs/design/07-tables.md` (#15) must be merged — it is.
+**Primary Dependencies**: None. `docs/design/04-tables.md` (#15) must be merged — it is.
 
 **Storage**: Files in `design/`. The conventions place engine tables at `engine/tables/<key>.yaml`,
 but there is no `engine/` directory in this repository yet and none is created here.
@@ -71,7 +71,7 @@ accepted ADRs. Evaluated against those:
 | No setting or system names; engine labels are descriptive English | **Pass, verified by grep** (quickstart step 4). Row keys are `out-of-action`, `lasting-wound`, `left-for-dead`, `new-enemy`, `taken`, `disfigured`, `recurring-wound`, `death` — all plain description. |
 | Tone is a setting property | **Pass.** Rows state what happened, not how to feel about it. A row says a wound recurs before every fight; it does not say the character is haunted by it. The register is the setting's. |
 | Anything with a correct answer is computed, not inferred | **Pass, and load-bearing.** `check_aftermath.py` computes the distribution and the range structure. It found two faults in the first draft ([research.md](./research.md) D2). |
-| Rule changes apply forward only | **Pass.** The document states that a result already rolled stands, per `docs/design/22-evolution.md`. This feature adds a table; it recomputes nothing. |
+| Rule changes apply forward only | **Pass.** The document states that a result already rolled stands, per `docs/design/29-evolution.md`. This feature adds a table; it recomputes nothing. |
 | Design documents rewritten in place; ADRs never edited | **Pass.** `docs/design/03-rules.md` is rewritten where it describes this table, with no "previously" note. The new ADR is new, not an edit. |
 | Capability change goes through Spec Kit, `specs/` committed | **Pass.** This is that cycle; `specs/002-aftermath-table/` is committed. |
 
@@ -113,8 +113,8 @@ design/
     └── 0009-fate-closes-the-death-rows.md   # NEW
 ```
 
-**Structure Decision**: the document lives at `docs/design/09-aftermath.md`, following the index
-`docs/design/07-tables.md` established in #15, which assigns `03a-1-` to criticals. Issue #16's
+**Structure Decision**: the document lives at `docs/design/06-aftermath.md`, following the index
+`docs/design/04-tables.md` established in #15, which assigns `03a-1-` to criticals. Issue #16's
 acceptance criteria names `03a-1-aftermath.md`; it was written before #15 merged and is stale. The
 operator confirmed the index wins ([spec.md](./spec.md#clarifications)). **Issue #16 needs that line
 corrected** so the board does not disagree with the merged index.

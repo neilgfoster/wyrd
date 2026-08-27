@@ -7,14 +7,14 @@ setting may never invent its own subsystem to fill the hole. This document is th
 generalised answer, which any setting may configure or leave off entirely.
 
 A setting that never authors a journey is unaffected: travel is narrated exactly as
-[`18-campaign.md`](18-campaign.md) already describes, and nothing below is invoked.
+[`19-campaign.md`](19-campaign.md) already describes, and nothing below is invoked.
 
 ---
 
 ## A journey is an arc
 
 Containment already recurses at every level — "arcs contain arcs"
-([`28-arcs-and-beats.md`](28-arcs-and-beats.md)) — so a journey needs no new content type, only
+([`18-arcs-and-beats.md`](18-arcs-and-beats.md)) — so a journey needs no new content type, only
 a recognised `scale` and two fields specific to travel.
 
 ```yaml
@@ -55,7 +55,7 @@ What the road is like, who else travels it, what waits along it. Never a script.
 | `roles` | no | empty — no travel roles named |
 | `children` | yes | — the journey's legs, in order |
 
-`from`/`to` are entity references to `place`s ([`27-entities.md`](27-entities.md)). A journey
+`from`/`to` are entity references to `place`s ([`25-entities.md`](25-entities.md)). A journey
 with no `pace` still has legs — it simply has one, covering the whole route — so "no pace" is
 how a setting author gets a journey that is structurally present (selectable, convertible) but
 mechanically as light as ordinary narrated travel.
@@ -66,16 +66,16 @@ mechanically as light as ordinary narrated travel.
 
 A **leg** is an ordinary arc or beat, a child of the journey, that additionally declares its
 resolution mode — the same `mode: played | summarised` field every beat already carries
-([`28-arcs-and-beats.md`](28-arcs-and-beats.md)).
+([`18-arcs-and-beats.md`](18-arcs-and-beats.md)).
 
 - **`mode: played`** — the leg is an ordinary beat: entry, cast, a scene, resolved through the
   core roll ([`03-rules.md`](03-rules.md)) like any other test.
 - **`mode: summarised`** — the leg advances through the existing elapsed-time machinery
-  (`wyrd advance-time`, [`18-campaign.md`](18-campaign.md)) — expected-value events over the
+  (`wyrd advance-time`, [`19-campaign.md`](19-campaign.md)) — expected-value events over the
   leg's span, not a played scene.
 
 **Mode is author-declared, never chosen at runtime.** A journey's author (or whoever converts
-its stub — [`28-arcs-and-beats.md`](28-arcs-and-beats.md)) decides, leg by leg, which stretches
+its stub — [`18-arcs-and-beats.md`](18-arcs-and-beats.md)) decides, leg by leg, which stretches
 of the road are worth playing and which are worth a sentence. The engine does not pick this on
 the fly from pacing or from whether a hazard happened to trigger — a leg's mode is fixed the
 same way any other beat's is.
@@ -91,7 +91,7 @@ d100 ≤ hazard_rating × 10
 ```
 
 This is the exact shape of a Threat's activation roll — `d100 ≤ imminence × 10`
-([`18-campaign.md`](18-campaign.md)) — reused rather than duplicated, so a GM who already knows
+([`19-campaign.md`](19-campaign.md)) — reused rather than duplicated, so a GM who already knows
 how Threat activation works needs no second formula to hold in their head. **Worked example**:
 `hazard_rating: 4` gives a 40% chance per leg, exactly comparable to a Threat at imminence 4
 (also 40%, but per game-week rather than per leg — the unit differs, the shape does not).
@@ -115,7 +115,7 @@ whatever a setting's fiction calls for. The engine carries this as a data slot o
 define what a role does, grant a bonus for filling one, or require one to be filled.
 
 This matches the engine's existing shape for skills and careers — the engine supplies the slot,
-the setting supplies the meaning ([`04-the-character.md`](04-the-character.md)). A setting
+the setting supplies the meaning ([`10-the-character.md`](10-the-character.md)). A setting
 that wants "forager" to lower the Survival difficulty, or to matter only in the fiction, decides
 that itself; the journey's `roles` list is where it hangs the name.
 
@@ -138,11 +138,11 @@ A hazard's `effect`, or an ordinary leg's outcome, may cost Standing, coin, cond
 These land through the same abstraction the rest of the engine already uses (Standing and the
 material economy) — a journey introduces no per-item inventory, no weight table, no logistics
 ledger. This is the same "realistic, not logistic" preference
-([`23-diegesis.md`](23-diegesis.md)) extended to travel rather than reinvented for it.
+([`13-diegesis.md`](13-diegesis.md)) extended to travel rather than reinvented for it.
 
 ## Passing through a Threat's reach
 
 A route that crosses an active Threat's reach is exposure like any other passage through it —
-its `ambient` cost ([`18-campaign.md`](18-campaign.md)) applies to whichever leg passes through.
+its `ambient` cost ([`19-campaign.md`](19-campaign.md)) applies to whichever leg passes through.
 There is no separate journey-versus-Threat resolution; a journey does not change what a Threat
 is or how it is encountered, only that the character is travelling when they encounter it.

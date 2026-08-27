@@ -4,7 +4,7 @@
 
 ## Context
 
-[`../02-architecture.md`](../design/02-architecture.md) and [`../20-tooling.md`](../design/20-tooling.md) both
+[`../02-architecture.md`](../design/02-architecture.md) and [`../20-tooling.md`](../design/27-tooling.md) both
 commit the engine to five families of table — criticals, aftermath, transformations, afflictions,
 oracles — as pure, setting-neutral, overridable data. Four of them are rolled by rules in
 [`../03-rules.md`](../design/03-rules.md); oracles have no rule that rolls them yet. None of the five was
@@ -25,7 +25,7 @@ of which there is always exactly one, because coverage is required at load.
 
 The engine does **not** fix the die. Each family declares its own roll, its own modifier source, and
 whether its results repeat or are unique to a character. Those declarations live in the family's own
-file and are summarised in the index in [`../07-tables.md`](../design/07-tables.md).
+file and are summarised in the index in [`../07-tables.md`](../design/04-tables.md).
 
 A setting replaces rows. It cannot replace a declaration, because a declaration is a mechanism.
 
@@ -49,14 +49,14 @@ Severity in particular is consumed by transformations and afflictions and by not
 a family field. An unread field on a table row is the ideal place for a wrong value to hide.
 
 **A per-table version, so a chronicle could pin exactly the rows it rolled on.** Rejected because
-[`../19-state.md`](../design/19-state.md) already versions four things, and the engine and setting versions
+[`../19-state.md`](../design/22-state.md) already versions four things, and the engine and setting versions
 plus the table key already resolve an outcome to one table. A fifth version would have to be bumped
 by hand on every row change, and a version nobody bumps reliably is worse than none — it reads as
 authoritative and is not.
 
 ## Consequences
 
-- The index in [`../07-tables.md`](../design/07-tables.md) has to carry each family's roll and
+- The index in [`../07-tables.md`](../design/04-tables.md) has to carry each family's roll and
   uniqueness, because those now vary. It is the only place all five are comparable.
 - The **effect/description split** becomes load-bearing rather than tidy. The effect is what reaches
   state; the description is what a setting rewrites. Without the split, a rename could not be

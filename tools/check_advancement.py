@@ -10,7 +10,7 @@ value of 6 rather than picking it.
 
 ## The cap
 
-A flat 70% (docs/design/23-diegesis.md's *expert* band, 60-70%), applied uniformly
+A flat 70% (docs/design/13-diegesis.md's *expert* band, 60-70%), applied uniformly
 to every skill a career grants (03-rules.md sec6 already writes "career's
 cap" as one figure per career, not one per skill). This script does not
 derive 70% numerically -- it is a design choice recorded in ADR 0032 -- but it
@@ -28,7 +28,7 @@ that document names the boundary directly -- "much above 10 and the sentence
 stops being true." This script reuses that same boundary rather than
 inventing a new one: it defines the gain as still meaningful while it is at
 least 10%, computes the Stamina value at which a further +1 first drops below
-that floor, and asserts it lands at the ceiling docs/design/05-character-creation.md
+that floor, and asserts it lands at the ceiling docs/design/11-character-creation.md
 already gestured at.
 
     gain_fraction(S) = 1 / S
@@ -40,8 +40,8 @@ further maximum Stamina.
 Run: python3 tools/check_advancement.py
 """
 
-STARTING_STAMINA = 6          # docs/design/05-character-creation.md
-CAREER_CAP = 0.70             # docs/design/23-diegesis.md's *expert* band top
+STARTING_STAMINA = 6          # docs/design/11-character-creation.md
+CAREER_CAP = 0.70             # docs/design/13-diegesis.md's *expert* band top
 SKILL_OPEN_VALUE = 0.25       # docs/design/03-rules.md s6, and s03c
 ADVANCE_STEP = 0.05           # docs/design/03-rules.md s6
 MEANINGFUL_GAIN_FLOOR = 0.10  # the boundary 03c already names ("much above 10")

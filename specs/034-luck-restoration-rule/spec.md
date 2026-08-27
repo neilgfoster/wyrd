@@ -50,7 +50,7 @@ whether and when Luck is restored, with no follow-on question left open.
   rest of the arc" (which implies a reset exists) and the absence, everywhere else in
   `docs/design/`, of any stated recovery.
 - **FR-003**: If the rule ties restoration to an arc boundary, it MUST name the same boundary
-  `docs/design/18-campaign.md` defines for top-level arcs — not a new, unstated notion of "arc."
+  `docs/design/19-campaign.md` defines for top-level arcs — not a new, unstated notion of "arc."
   Nested arcs recurse (`27-entities.md`); the rule MUST be explicit about which level of arc it
   fires on, so the two documents cannot be read as describing different boundaries.
 - **FR-004**: The restoration rule MUST NOT introduce a new named track, currency, or downtime

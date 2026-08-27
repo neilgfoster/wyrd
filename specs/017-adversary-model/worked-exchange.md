@@ -30,7 +30,7 @@ inventing anything, and this is the only place every rule that reads an opponent
 ```
 
 Ten fields, six of them required. Every one is read by a published rule, and the table in
-[`docs/design/06-the-adversary.md`](../../docs/design/06-the-adversary.md) names which.
+[`docs/design/12-the-adversary.md`](../../docs/design/12-the-adversary.md) names which.
 
 ---
 
@@ -71,7 +71,7 @@ totals run **2 to 11**, mean **5.12**, and the whole distribution's mass equals 
 opponent dropped at all.
 
 The lowest reachable total is 2, which is exactly where the critical tables' first row starts
-([`03a-1-criticals.md`](../../docs/design/08-criticals.md)) — a blow that drops someone is at least one
+([`03a-1-criticals.md`](../../docs/design/05-criticals.md)) — a blow that drops someone is at least one
 point below zero, and the die adds at least one more. The table has no row for 1 because no roll can
 produce one.
 

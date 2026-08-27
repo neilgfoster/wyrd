@@ -33,7 +33,7 @@ list, entry-point flag, prerequisite) so an author can write any career unambigu
 career and a dependent non-entry career and state their full shape with no invented fields.
 
 - [x] T002 [US1] Rewrite the `careers.yaml` description in
-      `docs/design/26-authoring-a-setting.md` to state the career-graph structure: identifier,
+      `docs/design/24-authoring-a-setting.md` to state the career-graph structure: identifier,
       `skills` (setting-defined length per career, not fixed — research.md), `entry` flag, and
       `prerequisites` (required, length >= 1, when `entry` is false, absent when `entry` is true;
       OR semantics -- completing any one qualifies),
@@ -56,7 +56,7 @@ Stamina bonus and the new eligibility rule to it.
 **Independent Test**: given a character's advance history inside a career, completion resolves
 to yes/no per the worked example in quickstart.md steps 2–4.
 
-- [x] T004 [US2] In `docs/design/05-character-creation.md`, add the completion definition next
+- [x] T004 [US2] In `docs/design/11-character-creation.md`, add the completion definition next
       to the existing "+1 maximum Stamina" bonus text: a career is complete for a character when
       every skill it grants has been opened and raised to the career's cap (data-model.md's
       derived-state section)
@@ -75,7 +75,7 @@ anywhere in the corpus.
 
 **Independent Test**: following the link lands on the career-graph definition written in T002/T003.
 
-- [x] T006 [US3] In `docs/design/05-character-creation.md`, change the "the setting's career
+- [x] T006 [US3] In `docs/design/11-character-creation.md`, change the "the setting's career
       graph" cross-reference from `27-entities.md` to point at the `careers.yaml` section of
       `26-authoring-a-setting.md` (the section rewritten in T002)
 
@@ -101,7 +101,7 @@ distinction needs (research.md's revised cardinality decision).
       `data-model.md`'s `Career` table and validity rules, `spec.md`'s FR-005/edge cases/Story 1
       acceptance scenarios, `quickstart.md`'s worked example, and this file's US1 task text — all
       from singular `prerequisite`/exactly-one to plural `prerequisites`/OR-semantics
-- [x] T011 Rewrite the `careers.yaml` example and prose in `docs/design/26-authoring-a-setting.md`
+- [x] T011 Rewrite the `careers.yaml` example and prose in `docs/design/24-authoring-a-setting.md`
       to use `prerequisites` (a list, OR semantics) with a convergence example (two entry
       careers both feeding one non-entry career)
 - [x] T012 Re-run `python3 tools/check_docs.py` and re-walk `quickstart.md`'s (updated) worked

@@ -8,7 +8,7 @@
 Nothing in the engine restored Stamina. Every other track had an answer — Strain recovers 1 at a
 Rally, Taint and Strain both have the **Recover** undertaking, Trauma sawtooths through Afflictions
 — and the resource the whole of [`03-rules.md`](../design/03-rules.md) §2 spends had none.
-[`09-aftermath.md`](../design/09-aftermath.md) declined the question explicitly, which was correct
+[`06-aftermath.md`](../design/06-aftermath.md) declined the question explicitly, which was correct
 scoping there and left it homeless.
 
 The consequence was not small. A starting character has Stamina **6**, an ordinary telling blow
@@ -100,6 +100,6 @@ function is to be a clean stopping point.
 - Downtime gains an automatic restore that is explicitly *not* an undertaking, stated where the
   undertaking list is, so the omission cannot read as an oversight.
 - A character's Stamina is now a state the chronicle carries between sessions and is meaningful to
-  render diegetically ([`23-diegesis.md`](../design/23-diegesis.md)).
+  render diegetically ([`13-diegesis.md`](../design/13-diegesis.md)).
 - Nothing here depends on the opponent rolling dice, so the rule survives the player-facing
   conversion unchanged.

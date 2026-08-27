@@ -35,7 +35,7 @@ exists to prevent.
 
 For the single response to an OOC-triggered message:
 
-- **The diegetic contract is suspended.** [`23-diegesis.md`](23-diegesis.md) withholds raw
+- **The diegetic contract is suspended.** [`13-diegesis.md`](13-diegesis.md) withholds raw
   numbers by default and renders state from the character's own perspective — right during
   play, wrong when the player is deliberately asking for the number. In OOC mode, exact
   mechanical state (Stamina, skill percentages, Taint, any other numeric state the player asks
@@ -71,13 +71,13 @@ character is treated as knowing) is exactly the failure diegetic play exists to 
   instead. The player's own knowledge, gained from reading the narration, is never granted to
   the character on the strength of an OOC question.
 - **Where the character would know it**, the answer confirms that and gives the information at
-  the character's scaled competence, per [`23-diegesis.md`](23-diegesis.md)'s "the character as
+  the character's scaled competence, per [`13-diegesis.md`](13-diegesis.md)'s "the character as
   a knowledge source" section — the same competence-scaling that already governs an in-character
   "what do I know about this place?" question.
 - **Where the honest answer would reveal engine-hidden state**, or another character's
   information the player's own character has no path to (the hidden threshold, another
   character's private motive — the "never shown" visibility class in
-  [`23-diegesis.md`](23-diegesis.md)) — the response says plainly that the answer isn't
+  [`13-diegesis.md`](13-diegesis.md)) — the response says plainly that the answer isn't
   available. It does not fabricate an in-fiction justification for withholding it; it simply
   says so.
 
@@ -105,7 +105,7 @@ its exact text.
   explicitly out of scope for this feature (#32) and remains its own, separate decision.
 - **Not required for in-character knowledge questions.** "What do I know about this place?",
   asked without the `?` trigger, is already a legitimate in-character move per
-  [`23-diegesis.md`](23-diegesis.md) and is answered in character, at the character's
+  [`13-diegesis.md`](13-diegesis.md) and is answered in character, at the character's
   competence. OOC mode does not change that existing behaviour, and using it is not necessary
   to ask that kind of question.
 

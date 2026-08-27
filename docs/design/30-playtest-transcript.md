@@ -3,9 +3,9 @@
 R3 of epic #1 ([`docs/adr/0012-the-design-reset-and-how-records-are-consolidated.md`](../adr/0012-the-design-reset-and-how-records-are-consolidated.md)
 records what the reset was; this document is the proof the resulting R1 specification can be run
 without a rulebook the GM is inventing on the fly). One character, created entirely by hand
-against [`05-character-creation.md`](05-character-creation.md), and one exchange of combat, run
-entirely by hand against [`03-rules.md`](03-rules.md) §2, [`08-criticals.md`](08-criticals.md)
-and [`09-aftermath.md`](09-aftermath.md). Every roll is a real `python3` `random` draw,
+against [`11-character-creation.md`](11-character-creation.md), and one exchange of combat, run
+entirely by hand against [`03-rules.md`](03-rules.md) §2, [`05-criticals.md`](05-criticals.md)
+and [`06-aftermath.md`](06-aftermath.md). Every roll is a real `python3` `random` draw,
 seeded (`20260826`) so the run is reproducible, not a chosen-to-be-interesting sequence.
 
 The setting data used here — the career, its skills, the Loyalties, the Drives and Misfortunes, and
@@ -16,7 +16,7 @@ question about any real setting; it exists to give the procedure something to re
 
 ## 1. Character creation
 
-Following [`05-character-creation.md`](05-character-creation.md) §1, step by step.
+Following [`11-character-creation.md`](11-character-creation.md) §1, step by step.
 
 ### Setting data assumed for this run
 
@@ -128,12 +128,12 @@ Every value above is either fixed by the procedure or a choice from setting data
 Step 9 did not exist before this run. [`03-rules.md`](03-rules.md) §4 states as established fact
 that "each character has a Fault Line derived at creation from their Drives and Misfortune," and
 [`ADR 0031`](../adr/0031-fault-line-biases-exposure-not-the-transformation-table.md) already built a
-mechanism that reads it — but [`05-character-creation.md`](05-character-creation.md)'s eight-step
+mechanism that reads it — but [`11-character-creation.md`](11-character-creation.md)'s eight-step
 procedure never produced one, and never asked for a Misfortune at all. Step 8 said "Name, a Drive, a
 Bond, and where they are from" and stopped there. Run literally, creation could not produce a
 character §4 already assumes exists — a judgement call the rules did not cover.
 
-**Fixed in [`05-character-creation.md`](05-character-creation.md)**, in place, before the
+**Fixed in [`11-character-creation.md`](11-character-creation.md)**, in place, before the
 transcript above continued past step 8:
 
 - Step 8 now includes choosing a **Misfortune** alongside the Drive.
@@ -141,7 +141,7 @@ transcript above continued past step 8:
   — a GM-and-player judgement call, explicitly not a roll or a table lookup, mirroring the judgement
   call §1 already uses to invoke a Drive.
 - §4 ("what a setting must provide") now lists **Misfortunes** alongside Drives, since
-  [`18-campaign.md`](18-campaign.md)'s "Seeded" Threat origin already assumed a Misfortune existed
+  [`19-campaign.md`](19-campaign.md)'s "Seeded" Threat origin already assumed a Misfortune existed
   to seed from, and nothing declared where a setting's Misfortunes come from.
 
 No new ADR: the mechanism the Fault Line feeds was already decided in ADR 0031, which anticipated
@@ -153,7 +153,7 @@ already made.
 
 ## 3. Combat: one exchange
 
-Senna, alone, against a single adversary built to [`06-the-adversary.md`](06-the-adversary.md)'s
+Senna, alone, against a single adversary built to [`12-the-adversary.md`](12-the-adversary.md)'s
 schema.
 
 ```yaml
@@ -237,7 +237,7 @@ them in, so no die drawn here was thrown away.
 ### The critical
 
 Damage took the collector below 0 Stamina, so ([`03-rules.md`](03-rules.md) §2,
-[`08-criticals.md`](08-criticals.md)) roll `1d6 + points below zero` on the table for the
+[`05-criticals.md`](05-criticals.md)) roll `1d6 + points below zero` on the table for the
 weapon's damage type — `critical-slashing`, since a blade's wound is slashing.
 
 `1d6` = **2**, `+ 1` (one point below zero) = **3** total. Range **2–5** on `critical-slashing`:
@@ -246,12 +246,12 @@ action, marked but not maimed.
 
 **No Trauma is charged for this critical.** [`03-rules.md`](03-rules.md) §5 prices a critical taken
 at 1 Trauma, but the collector is an adversary block, and an adversary carries none of the tracks
-[`04-the-character.md`](04-the-character.md) §4 and [`06-the-adversary.md`](06-the-adversary.md)
+[`10-the-character.md`](10-the-character.md) §4 and [`12-the-adversary.md`](12-the-adversary.md)
 §1 list — Trauma among them. There is no track here to charge. This was not a judgement call: §1 of
 `06-the-adversary.md` already states the block carries none of a character's tracks, and Trauma is
 one by name.
 
-**The Aftermath table is not rolled.** [`06-the-adversary.md`](06-the-adversary.md) §4 is explicit:
+**The Aftermath table is not rolled.** [`12-the-adversary.md`](12-the-adversary.md) §4 is explicit:
 Aftermath is rolled once per character or companion who dropped, and an adversary is neither — the
 same rule the crowd section of [`03-rules.md`](03-rules.md) §2 already states. What became of the
 collector — bound, questioned, sent running — is the fiction's, not a roll's.
@@ -269,7 +269,7 @@ step in the sequence needed the GM to invent a number.
 
 | # | Gap | Where surfaced | Resolution |
 |---|---|---|---|
-| 1 | [`05-character-creation.md`](05-character-creation.md) had no step to produce the Fault Line that [`03-rules.md`](03-rules.md) §4 and [ADR 0031](../adr/0031-fault-line-biases-exposure-not-the-transformation-table.md) already assumed every character has, and never asked for a Misfortune at all. | Character creation, step 8 | Fixed in place in [`05-character-creation.md`](05-character-creation.md) — see §2 above. No new ADR: ADR 0031 already decided the mechanism this fills in. |
+| 1 | [`11-character-creation.md`](11-character-creation.md) had no step to produce the Fault Line that [`03-rules.md`](03-rules.md) §4 and [ADR 0031](../adr/0031-fault-line-biases-exposure-not-the-transformation-table.md) already assumed every character has, and never asked for a Misfortune at all. | Character creation, step 8 | Fixed in place in [`11-character-creation.md`](11-character-creation.md) — see §2 above. No new ADR: ADR 0031 already decided the mechanism this fills in. |
 
 Nothing else forced a judgement call. Combat ran six full rounds — sequencing, an attack roll, a
 defence roll, armour, a telling-blow check that came up short of its threshold three separate times,

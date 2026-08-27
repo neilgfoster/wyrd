@@ -15,11 +15,11 @@ chosen and justified afterwards.
 ## The load-bearing decisions
 
 **An adversary is a thin block, and a named antagonist is that block inside a person.** The
-character model ([`03b-the-character.md`](../../docs/design/04-the-character.md)) carries Taint, Trauma,
+character model ([`03b-the-character.md`](../../docs/design/10-the-character.md)) carries Taint, Trauma,
 Strain, Resolve, Fate, Luck, a career, a career history, a Loyalty and an advancement economy. None
 of that exists for the thing a character kills in a corridor, and giving it all of that would mean
 running an advancement economy for a wolf. The block carries only what a published rule reads. A
-nemesis is not a second model: it is a `character` entity ([`14-entities.md`](../../docs/design/27-entities.md)
+nemesis is not a second model: it is a `character` entity ([`25-entities.md`](../../docs/design/25-entities.md)
 already says a nemesis is a `character` with `role: nemesis`) that *also* carries an adversary block.
 One description of an opponent, reached two ways. The alternative — adversaries as full characters —
 is the rejected option in the ADR, and it is not a straw man: it is what most percentile systems do,
@@ -38,7 +38,7 @@ into the default way fights resolve.
 **Traits come from a closed vocabulary.** A trait is a display name plus an effect the engine
 defines, acting only on difficulty, damage, Stamina, armour or the Wyrd die. This is the line
 between *retune* and *add a mechanism*
-([`13-authoring-a-setting.md`](../../docs/design/26-authoring-a-setting.md)), and it is a line the
+([`24-authoring-a-setting.md`](../../docs/design/24-authoring-a-setting.md)), and it is a line the
 validator can hold, which free text is not. The vocabulary is small on purpose and is allowed to grow
 later by an engine change, which is the correct cost.
 
@@ -121,11 +121,11 @@ scaling and the skill adjustment are visible in one place rather than described 
 
 | Document | Change |
 |---|---|
-| `docs/design/06-the-adversary.md` | **new**: the adversary block, the baseline, the trait vocabulary, what an opponent does on a turn, what happens when one drops |
-| `docs/design/04-the-character.md` §4 | rewritten in place — it currently says the adversary model "is not yet decided" |
+| `docs/design/12-the-adversary.md` | **new**: the adversary block, the baseline, the trait vocabulary, what an opponent does on a turn, what happens when one drops |
+| `docs/design/10-the-character.md` §4 | rewritten in place — it currently says the adversary model "is not yet decided" |
 | `docs/design/03-rules.md` §7 | the skill-value half of the scaling made explicit: the adjustment, the identity case, the bound. §7's claim stands; what is added is how it is evaluated |
-| `docs/design/26-authoring-a-setting.md` | `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use |
-| `docs/design/27-entities.md` | the `creature` row says what a creature carries; the nemesis note says a `character` used as opposition carries an adversary block |
+| `docs/design/24-authoring-a-setting.md` | `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use |
+| `docs/design/25-entities.md` | the `creature` row says what a creature carries; the nemesis note says a `character` used as opposition carries an adversary block |
 | `docs/README.md` | the new document linked from the hub, or `check_docs.py` fails |
 | `docs/adr/0025` | the thin adversary block, against the full character model |
 | `docs/adr/0026` | the skill adjustment: additive, identity-exact, ladder-bounded, against multiplying the percentage |
@@ -159,5 +159,5 @@ Evaluated against `CLAUDE.md` and the accepted ADRs, per `.specify/memory/consti
 ### One gate worth naming explicitly
 
 **A new design document must be reachable from `README.md`.** Four indexes went stale silently
-before `check_docs.py` existed. `docs/design/06-the-adversary.md` is linked from the hub in the same
+before `check_docs.py` existed. `docs/design/12-the-adversary.md` is linked from the hub in the same
 commit that creates it, and the check is run rather than assumed.

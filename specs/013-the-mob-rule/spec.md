@@ -19,7 +19,7 @@ The mob rule in `docs/design/03-rules.md` §2 was one sentence:
 
 It carries no numbers, and it defines neither *petty* nor *weaker* — the two terms the whole rule
 turns on. As written it cannot be applied without the GM inventing the missing half at the table,
-which is what [`docs/design/20-tooling.md`](../../docs/design/20-tooling.md) and ADR 0005 exist to prevent.
+which is what [`docs/design/27-tooling.md`](../../docs/design/27-tooling.md) and ADR 0005 exist to prevent.
 
 Two further silences are load-bearing and were not named in the issue. **The rule says nothing about
 what the crowd does back** — and a crowd that cannot hurt anyone is scenery, which makes the rule

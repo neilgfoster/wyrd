@@ -4,7 +4,7 @@
 
 ## Summary
 
-Define `docs/design/11-afflictions.md` as the affliction table family required by
+Define `docs/design/08-afflictions.md` as the affliction table family required by
 `03a-tables.md`'s conventions: the test fired on every Trauma point past 6, a table of behaviour
 rows large enough to survive a chronicle measured in years, the repeat-draw rule, the (already
 settled) restatement that Taint thresholds never produce an Affliction, and the sawtooth cadence
@@ -45,10 +45,10 @@ combination, flagged if any combination gives an implausible cadence.
 
 ## Structure
 
-- `docs/design/11-afflictions.md` — new. The test, the table, repeat draws, the Taint/Trauma
+- `docs/design/08-afflictions.md` — new. The test, the table, repeat draws, the Taint/Trauma
   restatement, the cadence.
 - `docs/design/03-rules.md` §5 — rewritten in place to name the test and point at the new document.
-- `docs/design/07-tables.md` — index row updated from "not yet written" to the real file, roll, and
+- `docs/design/04-tables.md` — index row updated from "not yet written" to the real file, roll, and
   link.
 - `README.md` — hub row added for reachability, matching the transformation table's precedent.
 - `docs/adr/00XX-*.md` — records the repeatable-family and fiction-chosen-test decisions and

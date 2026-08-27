@@ -2,7 +2,7 @@
 
 **State is entities.** There is no second storage model: the character, their companions,
 the threads, the trackers and the world are all entity files with YAML frontmatter, exactly
-as defined in [`27-entities.md`](27-entities.md).
+as defined in [`25-entities.md`](25-entities.md).
 
 What differs is not *format* but **where a file lives** and **when it is loaded**.
 
@@ -27,7 +27,7 @@ chronicle invented it. Nothing else needs resolving.
 ## Versioning
 
 Four things evolve independently across a chronicle's life, so four things carry versions
-([`22-evolution.md`](22-evolution.md)):
+([`29-evolution.md`](29-evolution.md)):
 
 | What | Where | Why |
 |---|---|---|
@@ -102,7 +102,7 @@ converted: {rules: 2, on: <date>}   # only on entities derived from source mater
 
 This is what lets `wyrd doctor` report **which entities predate a change** and offer
 re-conversion, rather than the engine silently reading old files under new assumptions
-([`21-maintenance.md`](21-maintenance.md)). Re-conversion is a *structural* change: the
+([`28-maintenance.md`](28-maintenance.md)). Re-conversion is a *structural* change: the
 representation moves, the history does not.
 
 An entity with no `schema_version` is treated as version 1 and flagged, not rejected.
@@ -158,12 +158,12 @@ advances_unspent: 0
 ```
 
 `hidden_threshold` is written once and **never shown to the player**. Any render for the
-player must strip it ([`23-diegesis.md`](23-diegesis.md)).
+player must strip it ([`13-diegesis.md`](13-diegesis.md)).
 
 ### Wounds
 
 `wounds` holds the lasting marks a character is carrying. Entries are written by the Aftermath
-table ([`09-aftermath.md`](09-aftermath.md)):
+table ([`06-aftermath.md`](06-aftermath.md)):
 
 ```yaml
 wounds:
@@ -181,24 +181,24 @@ rule names when it needs to act on exactly one wound — the **Mend** undertakin
 ([`16-session.md`](16-session.md)) names one, and moves its `effect` one grade toward nothing.
 
 `closed` holds the beat at which a wound stopped biting, and is `null` until then. **A closed wound
-is kept, never deleted**: history is never recomputed ([`22-evolution.md`](22-evolution.md)), and a
+is kept, never deleted**: history is never recomputed ([`29-evolution.md`](29-evolution.md)), and a
 character who limped for two years limped for two years. A closed wound's `effect` applies to
 nothing; readers skip it.
 
 **A wound with `recurring: true` never closes**, whatever is spent on it
-([`09-aftermath.md`](09-aftermath.md)). Writing `closed:` on one is a load error, not a
+([`06-aftermath.md`](06-aftermath.md)). Writing `closed:` on one is a load error, not a
 quietly ignored field.
 
 `bears_on` is the skill the wound burdens, taken from the roll that caused it and named in the
 setting's own vocabulary — the engine has none of its own
-([`04-the-character.md`](04-the-character.md), [ADR 0013](../adr/0013-the-engine-names-no-skill.md)).
+([`10-the-character.md`](10-the-character.md), [ADR 0013](../adr/0013-the-engine-names-no-skill.md)).
 
 **It is optional, and its absence is meaningful rather than missing.** A fall, a fire, a poisoning
 or a wound taken while unconscious has no skill behind it. Such a wound simply carries no
 `skill: -N` effect; it may still cost `stamina_max` or `dread`. An `effect` of `skill: -N` **with
 no `bears_on`** is a load error: the penalty would have nothing to apply to.
 
-Wounds render diegetically, like every other track ([`23-diegesis.md`](23-diegesis.md)): the knee
+Wounds render diegetically, like every other track ([`13-diegesis.md`](13-diegesis.md)): the knee
 never set right, never `skill: -10`.
 
 ## Companions
@@ -234,14 +234,14 @@ links: []
 ```
 
 Threads are the substrate campaign selection runs on
-([`18-campaign.md`](18-campaign.md)). There is no `threads.yaml`; the live set is a query on
+([`19-campaign.md`](19-campaign.md)). There is no `threads.yaml`; the live set is a query on
 `status: open` ordered by heat.
 
 ## Threats
 
 **A threat is not a type.** It is an aspect attached to a `character`, `organisation` or
 `place`, because a campaign-length antagonist may be a person, a conspiracy or a poisoned
-valley ([`27-entities.md`](27-entities.md)).
+valley ([`25-entities.md`](25-entities.md)).
 
 ```yaml
 threat:

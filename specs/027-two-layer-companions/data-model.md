@@ -1,7 +1,7 @@
 # Phase 1 data model: Two-layer companions and a positive party track
 
 This feature has no application data store — it defines terminology and field grouping inside an
-existing design document (`docs/design/16-session.md`'s companion record, `docs/design/19-state.md`'s state
+existing design document (`docs/design/16-session.md`'s companion record, `docs/design/22-state.md`'s state
 schema). This document is the authoritative field list `tools/check_companion_layers.py` checks
 against.
 

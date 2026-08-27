@@ -1,7 +1,7 @@
 # Wyrd — character creation
 
 The procedure that turns a setting's declared options into a playable character. It is run once
-per chronicle, at bootstrap ([`29-chronicle-bootstrap.md`](29-chronicle-bootstrap.md)), and it must
+per chronicle, at bootstrap ([`23-chronicle-bootstrap.md`](23-chronicle-bootstrap.md)), and it must
 produce the same character shape every time — two runs that disagree are a bug, not a flourish.
 
 **The procedure is the engine's. The options are the setting's.** There is one procedure, not an
@@ -13,7 +13,7 @@ engine one and a setting one.
 
 | | Step | Where the content comes from |
 |---|---|---|
-| 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)) |
+| 1 | **Choose a career.** Any the setting marks as an entry point. | the setting's career graph ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)) |
 | 2 | **Spend 8 advances** inside that career, opening and raising skills. This is the character's background. | §3 |
 | 3 | **Choose a Loyalty**, from those the setting declares. | the setting's Loyalties ([`16-session.md`](16-session.md)) |
 | 4 | **Set Stamina** to 6, current and maximum. | engine, §2 |
@@ -32,7 +32,7 @@ see [ADR 0014](../adr/0014-character-creation-is-chosen-not-rolled.md).
 
 Of step 8, the **Drive**, the **Misfortune** and the **Bond** carry mechanical weight — a Drive can be
 invoked for −20 ([`03-rules.md`](03-rules.md) §1), a Misfortune feeds the Fault Line (step 9) and
-seeds a Threat at chronicle creation ([`18-campaign.md`](18-campaign.md)), and a Bond is a real
+seeds a Threat at chronicle creation ([`19-campaign.md`](19-campaign.md)), and a Bond is a real
 relationship ([`16-session.md`](16-session.md)). The name and the place of origin are fiction, and
 the engine never reads them. Where a character is *from* shows up mechanically in step 3, not here.
 
@@ -43,7 +43,7 @@ against them, read together. No roll and no table decide it; the GM and player a
 the table, the same judgment call the GM already makes to invoke a Drive. A setting may replace the
 free sentence with a lookup from its own taxonomy — deriving the Fault Line from a culture rather
 than a Drive, say — as a **retune**, since the mechanism the Fault Line feeds does not change
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)).
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)).
 
 ## 2. The starting values
 
@@ -57,7 +57,7 @@ than a Drive, say — as a **retune**, since the mechanism the Fault Line feeds 
 | **Taint, Trauma, Strain, Resolve, Dread** | 0 | nothing has happened yet |
 | **Loyalty** | chosen from the setting's | what decides who will travel with them ([`16-session.md`](16-session.md)) |
 
-A setting may **retune** any of these ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)) —
+A setting may **retune** any of these ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)) —
 altering starting Fate is named there as a permitted override. These are the engine's defaults, not
 a constraint on the setting.
 
@@ -71,7 +71,7 @@ Four things already fixed it, and it was computed rather than chosen
   stops being true. A career is **complete** once every skill it grants has been opened and
   raised to that career's cap — the terminal state of the advance mechanics in §3, not a separate
   event. The same completed state is what makes a character **eligible** for any career naming
-  it as a prerequisite ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)).
+  it as a prerequisite ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)).
 - An **ordinary** telling blow — a mid-band weapon against modest armour — drops a full-Stamina
   character **2.4 points** below zero, inside the 1–3 that the Aftermath family treats as ordinary.
   Deferred death stays routinely survivable.
@@ -114,7 +114,7 @@ rather than a shopping trip.
 
 **At least two skills must be opened.** A career is not one thing, and without the floor eight
 advances on a single skill would open it at 60% — *expert*
-([`23-diegesis.md`](23-diegesis.md)) before the chronicle has begun.
+([`13-diegesis.md`](13-diegesis.md)) before the chronicle has begun.
 
 Two characters entering the same career therefore differ, and differ in a way that says something:
 
@@ -166,13 +166,13 @@ Reputation, no Allegiances, no Holdings, no Bonds beyond the one chosen at step 
 ## 5. Where creation hands off
 
 The character leaves creation as an ordinary `character` entity
-([`19-state.md`](19-state.md)) with `role: player`. Advancement takes over from there and uses the
+([`22-state.md`](22-state.md)) with `role: player`. Advancement takes over from there and uses the
 same doors creation used: an advance opens a career-granted skill at 25%, or raises one by +5% toward
 the career's cap ([`03-rules.md`](03-rules.md) §6).
 
 There is no separate "starting character" state and no creation-only rule that later stops applying.
 
 **A successor runs this same procedure.** When a chronicle continues through a new character
-([`18-campaign.md`](18-campaign.md)), they inherit the world's situation — open threads, live
+([`19-campaign.md`](19-campaign.md)), they inherit the world's situation — open threads, live
 Threats, the enemies the predecessor made — and none of the predecessor's skills, Stamina, Luck or
 Fate. Those come from here, exactly as they did the first time.

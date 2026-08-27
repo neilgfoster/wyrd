@@ -18,12 +18,12 @@ Two silences, and they are the same silence read at two timescales.
 Rally ([`docs/design/03-rules.md`](../../docs/design/03-rules.md) §5), Taint and Strain both have the
 **Recover** undertaking, Trauma sawtooths through Afflictions. Stamina — the resource the whole of
 §2 spends — has nothing at all.
-[`docs/design/09-aftermath.md`](../../docs/design/09-aftermath.md) explicitly declines to answer it
+[`docs/design/06-aftermath.md`](../../docs/design/06-aftermath.md) explicitly declines to answer it
 ("How a character gets back up, and over how long, is not this table's business"), which was correct
 scoping there and leaves the question homeless.
 
 The consequence is not a rounding error. A starting character has **Stamina 6**
-([`docs/design/05-character-creation.md`](../../docs/design/05-character-creation.md)), and an ordinary
+([`docs/design/11-character-creation.md`](../../docs/design/11-character-creation.md)), and an ordinary
 telling blow drops a full-Stamina character. Without a recovery rule, that character is at 0 for the
 rest of the chronicle. The combat loop has no bottom half.
 
@@ -75,7 +75,7 @@ one thing is the fault class this repo keeps being corrected for.
 
 `design/` states, unambiguously and in one place, what restores Stamina, at what rate, and gated on
 what. A reader must be able to apply it without inventing the missing half at the table
-([`docs/design/20-tooling.md`](../../docs/design/20-tooling.md)).
+([`docs/design/27-tooling.md`](../../docs/design/27-tooling.md)).
 
 ### FR-2 — The rule hangs off a clock the engine already has
 
@@ -102,7 +102,7 @@ lists it.
 
 ### FR-6 — The recurring wound's permanence is answered against what Fate bought
 
-`docs/design/09-aftermath.md` says a recurring wound lasts "the rest of the chronicle, unless a later
+`docs/design/06-aftermath.md` says a recurring wound lasts "the rest of the chronicle, unless a later
 rule says otherwise". This is that later rule, and it must state its position deliberately: whether
 mending can reach a recurring wound, given that re-reading a `death` row onto the recurring wound is
 what a spent Fate point buys. A mending rule that erases it prices Fate's promise at one downtime.
@@ -110,13 +110,13 @@ what a spent Fate point buys. A mending rule that erases it prices Fate's promis
 ### FR-7 — Whatever state changes are additive
 
 Any new field on a wound record or on the character is an **additive** change
-([`docs/design/22-evolution.md`](../../docs/design/22-evolution.md)), and
-[`docs/design/19-state.md`](../../docs/design/19-state.md) is updated to hold it. A closed wound's record is
+([`docs/design/29-evolution.md`](../../docs/design/29-evolution.md)), and
+[`docs/design/22-state.md`](../../docs/design/22-state.md) is updated to hold it. A closed wound's record is
 not deleted — history is never recomputed.
 
 ### FR-8 — Effects step only through values the closed set already permits
 
-`docs/design/09-aftermath.md` declares a closed set of wound effects (`stamina_max: -N`, `skill: -N`,
+`docs/design/06-aftermath.md` declares a closed set of wound effects (`stamina_max: -N`, `skill: -N`,
 `dread: +N`), and an effect naming anything else is a load error. Any mending rule that changes an
 effect must leave it inside that set at every step.
 
@@ -151,7 +151,7 @@ rejected are recorded as ADRs, which are never edited afterwards.
 ## Constraints
 
 - Rules changes apply **forward only**; history is never recomputed
-  ([`docs/design/22-evolution.md`](../../docs/design/22-evolution.md)).
+  ([`docs/design/29-evolution.md`](../../docs/design/29-evolution.md)).
 - Setting-agnostic: descriptive English labels, no borrowed system vocabulary, no tone baked into the
   mechanic's description. What recovery *feels* like is the setting's.
 - The engine **names no skill** ([ADR 0013](../../docs/adr/0013-the-engine-names-no-skill.md)), so
@@ -183,6 +183,6 @@ rejected are recorded as ADRs, which are never edited afterwards.
 - [ ] The fate of lasting wounds is settled — never healing (with reasoning) or a defined mechanism.
 - [ ] `docs/design/16-session.md`'s Mend undertaking resolves to a defined effect, or is removed.
 - [ ] Both decisions are recorded as ADRs where a real alternative was rejected.
-- [ ] `docs/design/19-state.md` holds any new field, additively.
+- [ ] `docs/design/22-state.md` holds any new field, additively.
 - [ ] `check_recovery.py` computes every published figure and asserts agreement with prior issues'.
 - [ ] `python3 tools/check_docs.py` and `python3 tools/backlog.py check` pass.

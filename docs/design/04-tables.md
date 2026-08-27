@@ -3,8 +3,8 @@
 The engine holds five families of table ([`02-architecture.md`](02-architecture.md)). Four are
 rolled by rules in [`03-rules.md`](03-rules.md) — criticals, aftermath, transformations,
 afflictions. The fifth, oracles, is rolled by the GM's own judgment of when a question needs settling or
-content needs generating ([`12-oracle-answers.md`](12-oracle-answers.md),
-[`13-oracle-prompts.md`](13-oracle-prompts.md)), not by a rule that forces the roll. This document is where all five are defined: the conventions every table satisfies, and the
+content needs generating ([`14-oracle-answers.md`](14-oracle-answers.md),
+[`15-oracle-prompts.md`](15-oracle-prompts.md)), not by a rule that forces the roll. This document is where all five are defined: the conventions every table satisfies, and the
 index of the families themselves.
 
 The conventions exist so that five families written at different times behave the same way. The
@@ -26,11 +26,11 @@ there and summarised here.
 
 | Family | Roll | Uniqueness | Defined in |
 |---|---|---|---|
-| **Criticals** | `1d6` + points below zero | repeatable | [`08-criticals.md`](08-criticals.md) |
-| **Aftermath** | `d100` + 5 × points below zero | repeatable | [`09-aftermath.md`](09-aftermath.md) |
-| **Transformations** | `1d6` | unique per character | [`10-transformations.md`](10-transformations.md) |
-| **Afflictions** | `1d12`, no modifier | repeatable | [`11-afflictions.md`](11-afflictions.md) |
-| **Oracles** | `1d100` | repeatable | [`12-oracle-answers.md`](12-oracle-answers.md), [`13-oracle-prompts.md`](13-oracle-prompts.md) |
+| **Criticals** | `1d6` + points below zero | repeatable | [`05-criticals.md`](05-criticals.md) |
+| **Aftermath** | `d100` + 5 × points below zero | repeatable | [`06-aftermath.md`](06-aftermath.md) |
+| **Transformations** | `1d6` | unique per character | [`07-transformations.md`](07-transformations.md) |
+| **Afflictions** | `1d12`, no modifier | repeatable | [`08-afflictions.md`](08-afflictions.md) |
+| **Oracles** | `1d100` | repeatable | [`14-oracle-answers.md`](14-oracle-answers.md), [`15-oracle-prompts.md`](15-oracle-prompts.md) |
 
 A family holds one table or several. Criticals hold one per damage type; a family with a single
 table needs no variant.
@@ -110,7 +110,7 @@ live at `engine/tables/<key>.yaml`.
 
 A setting **replaces** a table's rows wholesale — their ranges, their effects, their descriptions —
 by naming the table under `overrides.tables:` in `setting.yaml`
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)):
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)):
 
 ```yaml
 overrides:
@@ -119,7 +119,7 @@ overrides:
 
 A setting **extends** a table — adds rows on top of the engine's own, rather than restating them —
 by naming the table under `extend:` instead, the same override kind already used for careers,
-talents, gear and creatures ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)):
+talents, gear and creatures ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)):
 
 ```yaml
 overrides:
@@ -130,13 +130,13 @@ An extension file's rows are appended above the engine's own highest range, cont
 never overlapping, so every engine row stays live; the combined table's now-last row stays open at
 the top, per this document's row-schema rule. Extension suits a family a setting wants to add
 flavour to without discarding the baseline — prompt tables are the case this was written for
-([`13-oracle-prompts.md`](13-oracle-prompts.md)) — where replacement suits a family a setting
+([`15-oracle-prompts.md`](15-oracle-prompts.md)) — where replacement suits a family a setting
 wants to fully re-author.
 
 A setting may **not** change a family's die, its modifier, its uniqueness, its exhaustion outcome,
 or the row schema, by either path. Each of those is a mechanism rather than content, and a setting
 that needs a mechanism the engine lacks files an engine gap so every setting gets it
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). A replacement or extension file
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). A replacement or extension file
 therefore carries rows and nothing else, each satisfying the same row schema as the engine's own.
 
 **A replacement must load.** These are checked, not trusted:
@@ -162,9 +162,9 @@ say about it. The key and the effect are what reach state, and a rename never to
 ## Versioning
 
 **A table is pinned by the versions that already exist.** A table ships with the engine or with a
-setting, and `chronicle.yaml` records the version of both ([`19-state.md`](19-state.md)). Every
+setting, and `chronicle.yaml` records the version of both ([`22-state.md`](22-state.md)). Every
 recorded outcome already states the engine that produced it
-([`22-evolution.md`](22-evolution.md)). A table roll additionally records the key it rolled on:
+([`29-evolution.md`](29-evolution.md)). A table roll additionally records the key it rolled on:
 
 ```json
 {"beat": 412, "verb": "roll", "engine": "0.3.1", "table": "critical-slashing", ...}
@@ -173,11 +173,11 @@ recorded outcome already states the engine that produced it
 Version plus key resolves an outcome to exactly one table, so a reader years later can always tell
 which rows produced it.
 
-**There is no per-table version.** Four things carry versions ([`19-state.md`](19-state.md)) and a
+**There is no per-table version.** Four things carry versions ([`22-state.md`](22-state.md)) and a
 fifth would have to be bumped by hand on every row change. A version nobody bumps reliably is worse
 than none, because it reads as authoritative and is not.
 
 **Table changes apply forward.** Changing ranges, effects or numbers within an existing family is
 *tuning*; adding a table or a row without disturbing existing ranges is *additive*
-([`22-evolution.md`](22-evolution.md)). Neither is retroactive. A result already rolled stands as it
+([`29-evolution.md`](29-evolution.md)). Neither is retroactive. A result already rolled stands as it
 was rolled, and no history is recomputed.

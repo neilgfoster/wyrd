@@ -50,7 +50,7 @@ framed at any tier):
 ### State transitions
 
 None — a system of power's `intensity_tiers` declaration is static setting data, not something
-that changes over the course of a chronicle (per `docs/design/22-evolution.md`, rule changes are
+that changes over the course of a chronicle (per `docs/design/29-evolution.md`, rule changes are
 forward-only and are an authoring-time edit, not a runtime state transition this feature tracks).
 
 ### Validation summary (feeds `tools/check_power_systems.py`)

@@ -15,11 +15,11 @@ handful of typed state files for whatever the engine reads every session.
 ## Decision
 
 **Everything is an entity.** A markdown file with YAML frontmatter, in one of ten types
-([`../27-entities.md`](../design/27-entities.md)). The player's character is a `character` with
+([`../27-entities.md`](../design/25-entities.md)). The player's character is a `character` with
 `role: player`. Threads are entities. A threat is an *aspect* on an entity.
 
 What differs is not format but **where a file lives and when it loads**
-([`../19-state.md`](../design/19-state.md)). Only `chronicle.yaml` is not an entity, because it
+([`../19-state.md`](../design/22-state.md)). Only `chronicle.yaml` is not an entity, because it
 describes the chronicle rather than anything in the world.
 
 The always-loaded tier is chosen **by query, not by manifest** — companions are
@@ -46,7 +46,7 @@ must be kept true. A query cannot fall out of date.
 - The party is a query, not a file — a companion leaving is a status change, not a move
   between documents.
 - Chronicle overlays work uniformly, including promoting a bystander into a nemesis
-  ([`../18-campaign.md`](../design/18-campaign.md)).
+  ([`../18-campaign.md`](../design/19-campaign.md)).
 - `thread` had to become a tenth entity type. It was used in fifteen documents while absent
   from the type list — the same class of fault, found the same way.
 - Everything is an Obsidian vault by construction rather than by effort.

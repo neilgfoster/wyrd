@@ -13,7 +13,7 @@ The mob rule was one sentence:
 It carried no numbers. It defined neither *petty* nor *weaker* — the two words the whole rule turns
 on — and it said nothing about what the crowd does back. Whether the rule applied to a given group
 was therefore a judgement call made fresh each session, which is precisely what
-[`20-tooling.md`](../design/20-tooling.md) and [ADR 0005](0005-deterministic-over-inference.md) exist to
+[`27-tooling.md`](../design/27-tooling.md) and [ADR 0005](0005-deterministic-over-inference.md) exist to
 remove.
 
 It also could not be written until [ADR 0018](0018-combat-sequencing.md) landed. *Each round* means
@@ -62,7 +62,7 @@ been inventing removals, not compressing them. That is the fourth combat probabi
 repository that intuition had wrong.
 
 **The 20-point gap is anchored to numbers already merged**, not picked. Untrained is a flat 10% and
-a skill opens at 25% and rises by 5 ([`04-the-character.md`](../design/04-the-character.md)), so a gap of
+a skill opens at 25% and rises by 5 ([`10-the-character.md`](../design/10-the-character.md)), so a gap of
 20 puts the rule one advance past a newly opened skill. A gap of 15 would have handed it to a
 character on the day they opened the skill, which would make *weaker than themselves* mean *trained
 at all*.

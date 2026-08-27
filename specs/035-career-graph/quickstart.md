@@ -15,8 +15,8 @@ python3 tools/check_docs.py
 ```
 
 Expected: passes with no dead links — in particular, the cross-reference from
-`docs/design/05-character-creation.md` to the career graph must resolve to real content in
-`docs/design/26-authoring-a-setting.md` (FR-007, SC-003).
+`docs/design/11-character-creation.md` to the career graph must resolve to real content in
+`docs/design/24-authoring-a-setting.md` (FR-007, SC-003).
 
 ## Worked example: prove the shape resolves eligibility and completion unambiguously
 
@@ -43,11 +43,11 @@ This is the manual proof for SC-001 and SC-002 — write it out on paper (or as 
    for `master` by completely different routes, which is the mechanism a **generalist** career
    path relies on: nothing in the graph forces every character reaching `master` through the
    same ladder.
-6. **Confirm SC-004**: check that `docs/design/26-authoring-a-setting.md`'s prose description of
+6. **Confirm SC-004**: check that `docs/design/24-authoring-a-setting.md`'s prose description of
    `careers.yaml`'s expected shape names exactly the fields in this worked example (`entry`,
    `skills`, `prerequisites`) — no field appears in one document and not the other.
 
 ## Expected outcome
 
 Every step above has exactly one correct answer, reachable without inventing a rule not already
-stated in `docs/design/26-authoring-a-setting.md` or `docs/design/05-character-creation.md`.
+stated in `docs/design/24-authoring-a-setting.md` or `docs/design/11-character-creation.md`.

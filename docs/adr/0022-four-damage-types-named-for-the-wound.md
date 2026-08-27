@@ -9,8 +9,8 @@
 type" since the ruleset was written. There were no such tables, and — worse — **the engine had never
 enumerated its damage types at all**. Two fragments were the entire evidence anywhere in the repo:
 `critical-slashing`, used as an override example in
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md), and "he is Blunt 5" in
-[`23-diegesis.md`](../design/23-diegesis.md). Neither is a statement of the set.
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md), and "he is Blunt 5" in
+[`13-diegesis.md`](../design/13-diegesis.md). Neither is a statement of the set.
 
 So the tables could not be written without first deciding a thing the engine had been assuming for
 its whole existence. The decision is constrained twice over. The set is **closed** — a weapon

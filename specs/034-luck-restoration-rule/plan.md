@@ -10,7 +10,7 @@
 
 Luck's spend rule ("costs 1 Luck for the rest of the arc, pass or fail," `docs/design/03-rules.md`
 §1) implies a reset boundary that is never stated. This feature decides that Luck resets to
-maximum at the start of each top-level arc — the level `docs/design/18-campaign.md` already
+maximum at the start of each top-level arc — the level `docs/design/19-campaign.md` already
 singles out as having "a job the deeper ones do not" — and records the decision as an ADR, then
 states the rule in `03-rules.md` itself. There is no code to write: `CLAUDE.md` exempts
 documentation-only changes from anything beyond the Spec Kit cycle itself.

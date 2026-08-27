@@ -123,7 +123,7 @@ target or remove one ADR from the index and get a reported failure.
   `specs/*/*.md` (User Story 2, Scenario 5) — a closed issue is not read by `tools/check_docs.py`
   at all, so there is no link-rot check forcing a repair the way there is for `specs/`.
 - What happens to an open issue's citation that includes a line number
-  (`docs/design/26-authoring-a-setting.md:157`)? The path is rewritten; the line number cannot survive
+  (`docs/design/24-authoring-a-setting.md:157`)? The path is rewritten; the line number cannot survive
   a document rename with content otherwise unchanged in position, so it is flagged in the issue
   update as "line reference may have shifted" rather than silently kept or silently dropped.
 - What happens to a relative link that already lives inside an ADR and breaks because its target

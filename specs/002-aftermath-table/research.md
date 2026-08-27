@@ -31,7 +31,7 @@ lurching.
 
 **Consequence**: the lowest possible total is `1 + 5 = 6`, and the first row must start there rather
 than at 1. The modifier is unbounded above, so the last row must be open at the top — which is what
-`docs/design/07-tables.md` already requires of every family.
+`docs/design/04-tables.md` already requires of every family.
 
 ---
 
@@ -46,7 +46,7 @@ is read as written.
 re-reading the prose would have surfaced:
 
 1. At `mortality: low` the lowest possible total became `1 + 5 − 10 = −4`, so the table's first row
-   no longer sat at the family's lowest possible total. `docs/design/07-tables.md` requires ranges to
+   no longer sat at the family's lowest possible total. `docs/design/04-tables.md` requires ranges to
    start there, and a table that leaves a total unanswered does not load. The table would have been
    structurally invalid at one of the three legal `mortality` values.
 2. At `mortality: high` a combatant dropped by only **1** could reach the death row — destroying the
@@ -123,14 +123,14 @@ they lack the valve, not because the dice are rigged against them.
 
 **Decision**: rows carry range, effect and description. No severity, no weight, no tags.
 
-**Why**: `docs/design/07-tables.md` is explicit that severity is family-specific and that "a field
+**Why**: `docs/design/04-tables.md` is explicit that severity is family-specific and that "a field
 nothing reads is how a table goes quietly stale". No rule reads a severity for aftermath —
 Transformations and Afflictions consume Taint equal to severity, but nothing consumes anything equal
 to an Aftermath severity. Adding one in anticipation of R1.2 would be inventing a field for a rule
 that does not exist yet and may not want it.
 
 R1.2 can add a field when it has a rule that reads one. That is an additive change under
-`docs/design/22-evolution.md` and costs nothing to defer.
+`docs/design/29-evolution.md` and costs nothing to defer.
 
 ---
 
@@ -138,7 +138,7 @@ R1.2 can add a field when it has a rule that reads one. That is an additive chan
 
 **Decision**: repeatable, like criticals. No exhaustion outcome is required.
 
-**Why**: `docs/design/07-tables.md` sets the test — "taking the same wound twice is ordinary, so criticals
+**Why**: `docs/design/04-tables.md` sets the test — "taking the same wound twice is ordinary, so criticals
 repeat; carrying the same permanent change twice is not, so transformations do not". A character who
 is left for dead twice across a decade has simply been left for dead twice. Nothing about an
 Aftermath result is a slot that can only be filled once.

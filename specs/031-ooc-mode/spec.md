@@ -63,7 +63,7 @@ the character.
    background, something witnessed, common knowledge for their competence), **When** the
    player asks the same kind of question, **Then** the answer confirms the character would
    know it and gives the answer at the character's scaled competence, consistent with
-   [`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md).
+   [`docs/design/13-diegesis.md`](../../docs/design/13-diegesis.md).
 
 ---
 
@@ -96,7 +96,7 @@ marker.
   prompt for what they want to know, still marked OOC, rather than guessing or silently
   falling through to in-character play.
 - What happens when a player asks an in-character-sounding question ("what do I know about
-  this place?") without the trigger? Per [`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md),
+  this place?") without the trigger? Per [`docs/design/13-diegesis.md`](../../docs/design/13-diegesis.md),
   that is a legitimate in-character move already and is answered in character, at the
   character's competence — OOC mode is not required for it and this feature must not change
   that existing behaviour.
@@ -109,7 +109,7 @@ marker.
   revealing information the character has no way to access (e.g. another character's hidden
   motive, a future plot point)? The answer must not fabricate an in-fiction justification;
   it should say plainly that the answer isn't available yet, consistent with the "never
-  shown" visibility class in [`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md).
+  shown" visibility class in [`docs/design/13-diegesis.md`](../../docs/design/13-diegesis.md).
 - What happens across a very long play session where many OOC exchanges accumulate — does
   the accumulation affect model context or session length in a way that degrades either
   mode? Out of scope to solve mechanically here; flagged as a known limit of the approach in
@@ -123,7 +123,7 @@ marker.
   that switches the GM's handling of that message to out-of-character (OOC) mode. The `?`
   character is the chosen trigger (see Assumptions for the rejected alternative and why).
 - **FR-002**: While handling an OOC-triggered message, the GM MUST suspend the diegetic
-  contract of [`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md) for that response: raw
+  contract of [`docs/design/13-diegesis.md`](../../docs/design/13-diegesis.md) for that response: raw
   mechanical state (exact Stamina, exact skill percentages, Taint score, and any other
   numeric state the player asks for) MUST be given as numbers on request, not translated into
   diegetic prose.

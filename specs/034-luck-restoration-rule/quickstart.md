@@ -14,7 +14,7 @@ document checks.
    no other document open. Confirm you can answer: "A character spent Luck last arc — do they
    have it back now?" without inferring anything.
 2. **Cross-check against the campaign structure** (spec.md Acceptance Scenario 2): open
-   `docs/design/18-campaign.md` and confirm the "arc" the Luck rule resets on is the same
+   `docs/design/19-campaign.md` and confirm the "arc" the Luck rule resets on is the same
    top-level arc boundary that document defines — not a different or unstated notion of "arc."
 3. **Run the document graph check**:
 

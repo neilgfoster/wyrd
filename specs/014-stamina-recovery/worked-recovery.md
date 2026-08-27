@@ -51,7 +51,7 @@ companion-specific rate is introduced; the rule is written for combatants, not f
 character.*
 
 **Question three: what does the GM say?** "You are on 3 Stamina" is engine scaffolding
-([`10-diegesis.md`](../../docs/design/23-diegesis.md)). What was actually said was that the character
+([`13-diegesis.md`](../../docs/design/13-diegesis.md)). What was actually said was that the character
 could walk without the wall now, and still would not want to run. That is the existing diegesis rule
 applying unchanged, which is the correct outcome — no new rendering rule was needed, and one was
 nearly written.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate a setting's systems-of-power declarations against the schema.
 
-docs/design/14-systems-of-power.md defines the schema a setting fills in to declare a system of
+docs/design/09-systems-of-power.md defines the schema a setting fills in to declare a system of
 power: what skill it tests, what it costs, whether it requires training, and what an Ill Omen
 costs on top. ADR 0036 decided this is one configurable mechanism rather than a set of
 engine-defined mechanism shapes -- the unrecognised-field rejection below is what actually
@@ -23,7 +23,7 @@ Usage:
     python3 tools/check_power_systems.py --format json <path>
     python3 tools/check_power_systems.py            # runs the embedded self-test only
 
-Python 3.11+, standard library only (docs/design/20-tooling.md section 2). YAML is read by the same
+Python 3.11+, standard library only (docs/design/27-tooling.md section 2). YAML is read by the same
 small internal reader tools/check_bestiary.py uses, for the restricted subset Wyrd uses -- there
 is deliberately no third-party YAML dependency.
 """
@@ -36,7 +36,7 @@ import pathlib
 import re
 import tempfile
 
-# --- The schema, from docs/design/14-systems-of-power.md ----------------------
+# --- The schema, from docs/design/09-systems-of-power.md ----------------------
 
 REQUIRED_FIELDS = {"id", "name", "skill", "strain_cost", "requires_training"}
 OPTIONAL_FIELDS = {"resolve_cost", "ill_omen_taint", "description", "intensity_tiers"}
@@ -44,7 +44,7 @@ ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
 ID_RE = re.compile(
     r"^[a-z0-9]+(-[a-z0-9]+)*$"
-)  # docs/design/27-entities.md: kebab-case
+)  # docs/design/25-entities.md: kebab-case
 
 DEFAULT_ILL_OMEN_TAINT = 1
 
@@ -161,7 +161,7 @@ def read_yaml(path: pathlib.Path):
 def check_tier(tier, index: int, label: str, bad) -> None:
     """Validate one entry of a system of power's intensity_tiers list.
 
-    docs/design/14-systems-of-power.md's Intensity tiers section: a tier is malformed the same
+    docs/design/09-systems-of-power.md's Intensity tiers section: a tier is malformed the same
     four ways check_entry already rejects a system of power -- a missing/empty required field or
     a value outside the range the engine can absorb. Failures are named by tier position, since a
     tier has no id of its own to identify it by.
@@ -295,7 +295,7 @@ def check_file(path: pathlib.Path, known_skills: set[str] | None = None) -> list
 
 
 # --- Resolution trace ---------------------------------------------------------
-# Confirms, for a given entry, exactly what docs/design/14-systems-of-power.md claims: cost is
+# Confirms, for a given entry, exactly what docs/design/09-systems-of-power.md claims: cost is
 # applied on resolution regardless of outcome, and the declared ill_omen_taint (or the default)
 # is what an Ill Omen applies. This does not touch docs/design/03-rules.md section 1's own resolution
 # maths (difficulty, degrees, the Wyrd die) -- nothing about a power test perturbs it, so this
@@ -306,7 +306,7 @@ def resolution_trace(entry: dict, tier_label: str | None = None) -> dict:
     """The cost and Ill Omen Taint an invocation actually pays/risks.
 
     With no tier_label, this is unchanged from before intensity_tiers existed -- the base
-    strain_cost/resolve_cost/ill_omen_taint, applied exactly as docs/design/14-systems-of-power.md's
+    strain_cost/resolve_cost/ill_omen_taint, applied exactly as docs/design/09-systems-of-power.md's
     Resolution and Ill Omen sections state. With tier_label naming one of the system's declared
     intensity_tiers, the Intensity tiers section's formulas apply on top: cost is multiplied by
     the tier's cost_multiplier, ill_omen_taint gains the tier's ill_omen_taint_bonus.
@@ -500,7 +500,7 @@ def self_test() -> None:
         assert set(ember_data) <= ALL_FIELDS | {"id"}
         assert set(signal_data) <= ALL_FIELDS | {"id"}
 
-        # Resolution trace: cost applied on resolution, matching docs/design/14-systems-of-power.md.
+        # Resolution trace: cost applied on resolution, matching docs/design/09-systems-of-power.md.
         ember_trace = resolution_trace(ember_data)
         assert ember_trace == {"strain_paid": 2, "resolve_paid": 1, "ill_omen_taint": 1}
         signal_trace = resolution_trace(signal_data)

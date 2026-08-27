@@ -109,7 +109,7 @@ missing `label`) and confirm `check_power_systems.py` rejects each with a clear 
   an `ill_omen_taint_bonus` (a non-negative integer).
 - **FR-003**: A system of power with no `intensity_tiers` field MUST resolve and validate
   identically to how it does today — this field is purely additive.
-- **FR-004**: `docs/design/14-systems-of-power.md` MUST document `intensity_tiers` as an
+- **FR-004**: `docs/design/09-systems-of-power.md` MUST document `intensity_tiers` as an
   optional field, including a worked example showing a tiered invocation and how
   `cost_multiplier`/`ill_omen_taint_bonus` apply at resolution.
 - **FR-005**: `tools/check_power_systems.py` MUST validate `intensity_tiers` when present: reject
@@ -150,7 +150,7 @@ anything addressing it.
   changes required to it.
 - **SC-003**: A malformed tier of each of the four kinds in User Story 3 is rejected at
   validation time, with an error that names which system of power and which tier is at fault.
-- **SC-004**: `docs/design/14-systems-of-power.md` states, in prose a reader can act on without
+- **SC-004**: `docs/design/09-systems-of-power.md` states, in prose a reader can act on without
   consulting anything else, that `intensity_tiers` is optional and does not require any existing
   declared system of power to change.
 

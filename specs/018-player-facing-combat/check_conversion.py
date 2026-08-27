@@ -16,7 +16,7 @@ Everything below is derived from numbers already merged, not invented here:
 2. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 through
    (docs/design/03-rules.md section 2), reused from specs/017-adversary-model/check_adversary.py by
    construction, not re-modelled.
-3. **A starting character has Stamina 6** (docs/design/05-character-creation.md).
+3. **A starting character has Stamina 6** (docs/design/11-character-creation.md).
 4. **Degrees are tens(skill) - tens(roll)** (docs/design/03-rules.md section 1); this script feeds
    the formula the new input, effective%, rather than a raw skill.
 5. **Today's telling blow: win by 3 or more degrees, damage doubles before armour**

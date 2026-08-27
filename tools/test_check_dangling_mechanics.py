@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for tools/check_dangling_mechanics.py.
 
-stdlib unittest, no pytest (docs/design/20-tooling.md section 6). No fixtures on disk: each
+stdlib unittest, no pytest (docs/design/27-tooling.md section 6). No fixtures on disk: each
 failure class is built in a temporary tree, so the tests exercise the real check functions
 rather than restating their logic (tools/test_check_docs.py's own reasoning: "a guard whose
 tests reimplement it cannot fail when it is wrong").

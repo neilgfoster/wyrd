@@ -10,10 +10,10 @@ Everything below is derived from numbers already merged, not invented here:
 
 1. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
    (docs/design/03-rules.md section 2).
-2. **A starting character has Stamina 6** (docs/design/05-character-creation.md), and a critical
-   happens when damage takes a combatant below 0 (docs/design/08-criticals.md).
+2. **A starting character has Stamina 6** (docs/design/11-character-creation.md), and a critical
+   happens when damage takes a combatant below 0 (docs/design/05-criticals.md).
 3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (docs/design/03-rules.md section 1,
-   docs/design/04-the-character.md).
+   docs/design/10-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
    (docs/design/03-rules.md section 1, ADR 0016).
 5. **The k-th body is worth 1/k**, so a party of p bodies has effective size H(p), and both sides
@@ -77,7 +77,7 @@ CROWD_MAX_ARMOUR = "none"
 CROWD_SKILL_GAP = 20
 
 # The closed trait vocabulary. Every effect names a mechanism that already exists; a setting may
-# retune through these and may never add one (docs/design/26-authoring-a-setting.md).
+# retune through these and may never add one (docs/design/24-authoring-a-setting.md).
 TRAIT_EFFECTS = {
     "difficulty": "shifts the difficulty of a named class of test, in ladder rungs",
     "damage": "adds or removes damage dice on this opponent's blows",
@@ -170,7 +170,7 @@ HIT_MODELS = [("opposed", p_opposed_win), ("mapped", p_mapped)]
 ORDINARY_HIT = damage_through(ORDINARY_WEAPON, ARMOUR[ORDINARY_ARMOUR])
 
 # The critical table rows run from 2 (1d6 plus at least 1 point below zero) to 22+
-# (docs/design/08-criticals.md). One table per damage type; the block picks which.
+# (docs/design/05-criticals.md). One table per damage type; the block picks which.
 CRITICAL_FIRST_ROW = 2
 CRITICAL_DIE = 6
 

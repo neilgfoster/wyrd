@@ -3,8 +3,8 @@
 
 Unlike tools/check_oracle_answers.py, this family makes no probability claim
 to compute -- its correctness criterion is genre-neutrality, a qualitative
-reading check recorded per row in docs/design/13-oracle-prompts.md, not a
-number. What *is* computable, per docs/design/07-tables.md's row schema, is
+reading check recorded per row in docs/design/15-oracle-prompts.md, not a
+number. What *is* computable, per docs/design/04-tables.md's row schema, is
 checked here: every table's ranges are contiguous, start at 1, and every row
 declares that its genre-neutrality check passed -- verified against the rows
 this script parses out of the design document itself, not a hand-copied
@@ -75,7 +75,7 @@ def main() -> int:
 
         # Contiguity, coverage of 1-100 exactly (no modifier: the d100 max is
         # the family's own ceiling, so the last row is open at the top the
-        # same way docs/design/12-oracle-answers.md's rows are).
+        # same way docs/design/14-oracle-answers.md's rows are).
         covered = sorted(v for r in ranges for v in r)
         if covered != list(range(1, 101)):
             failures.append(
@@ -94,7 +94,7 @@ def main() -> int:
 
     # The genre-neutrality check itself is qualitative (research.md) -- what's
     # checked here is only that the document records, for every table, that
-    # the check was carried out, per docs/design/07-tables.md's row-schema rule
+    # the check was carried out, per docs/design/04-tables.md's row-schema rule
     # that a family's declared extra field ("checked") is present on every
     # row. The document states this once per table (no failing row ships, so
     # there is no "checked: no" value to parse) rather than per-row markup;

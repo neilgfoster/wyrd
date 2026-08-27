@@ -10,7 +10,7 @@ opposed test, armour subtracting dice, a telling blow, a critical below zero Sta
 about when anyone does it. **The word *initiative* appeared in no design document.** There was no
 round, no turn order, no ranged combat, no fleeing, no surprise.
 
-That is not a neutral silence. [`20-tooling.md`](../design/20-tooling.md) and
+That is not a neutral silence. [`27-tooling.md`](../design/27-tooling.md) and
 [ADR 0005](0005-deterministic-over-inference.md) hold that anything with a correct answer is
 computed rather than inferred, and every question the rules decline to answer becomes a judgement
 call made differently each session. An unsequenced exchange is a rule delegated to improvisation.

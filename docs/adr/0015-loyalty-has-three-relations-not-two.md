@@ -12,7 +12,7 @@ answered dozens of times across a chronicle, unprompted. Left to judgement it dr
 is invisible: nothing about a party that should never have formed looks wrong.
 
 It is engine work by the hard rule in
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md): a setting may extend, retune, rename or
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md): a setting may extend, retune, rename or
 disable, and may **never add a mechanism**. A constraint on party composition is a mechanism.
 
 Nothing like it existed. The character record had a career and no notion of what a character serves,
@@ -39,7 +39,7 @@ moment — which is what the existing track already does at 6.
 
 The name is **Loyalty** because everything better was taken: *Allegiance* is organisational standing
 a character accumulates ([`03-rules.md`](../design/03-rules.md) §6), *faction* is an entity type
-([`27-entities.md`](../design/27-entities.md)), *Bond* and *Drive* are companion and character mechanics
+([`25-entities.md`](../design/25-entities.md)), *Bond* and *Drive* are companion and character mechanics
 already. *Alignment* is a published system's term and fails the naming rule in
 [`CLAUDE.md`](../../CLAUDE.md) on sight.
 

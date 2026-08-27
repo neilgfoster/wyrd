@@ -64,7 +64,7 @@ Three bodies. `party_effective` is 1.833, the ratio is **0.880**, and `danger_ef
 | the watch | 2.64 bodies | **3** |
 | the prior | +13.2 | **+13** |
 
-This is the case `docs/design/24-corpus-index.md` used to answer with "roughly danger 2". It is 2.64,
+This is the case `docs/design/26-corpus-index.md` used to answer with "roughly danger 2". It is 2.64,
 and the difference is not academic: at 2 the cult is four bodies, at 2.64 it is five, and the
 undercroft fight is the whole middle of the arc.
 

@@ -16,7 +16,7 @@ Research behind these choices is recorded in the private `wyrd-research` reposit
 - **Short sessions**, often on a phone, at unpredictable intervals.
 - **A chronicle running years**, resumable after weeks of absence.
 - **Setting-agnostic.** Tone, world and content come from a setting
-  ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)); the engine supplies the
+  ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)); the engine supplies the
   machinery and holds the line.
 
 ## Engine principles
@@ -43,7 +43,7 @@ context reset or a closed phone never loses the fiction. Every beat ends in a co
 
 Do not enumerate what the player might do, and do not pre-plan branches for it. Maintain what
 every character and organisation *wants* and *is currently doing*, and resolve the player's
-action against that ([`27-entities.md`](27-entities.md)).
+action against that ([`25-entities.md`](25-entities.md)).
 
 Outcomes emerge from collision between an agenda and an action. A pre-branched world can only
 produce the outcomes its author imagined, and the player will feel it within a few sessions.
@@ -63,7 +63,7 @@ significance earned, or its triumphs mean nothing.
 ### 5. The past is a fact
 
 Rules change forward. History is never recomputed
-([`22-evolution.md`](22-evolution.md)). A chronicle's value is that it is a true record of
+([`29-evolution.md`](29-evolution.md)). A chronicle's value is that it is a true record of
 what occurred, and an engine that quietly reinterprets old events destroys the thing it
 exists to preserve.
 
@@ -71,7 +71,7 @@ exists to preserve.
 
 No fact, name, character or invention crosses from one chronicle into another, in either
 direction. The failure is invisible to the player, which is what makes it serious
-([`25-parallel-chronicles.md`](25-parallel-chronicles.md)).
+([`21-parallel-chronicles.md`](21-parallel-chronicles.md)).
 
 ### 7. Honour the declared tone
 
@@ -108,7 +108,7 @@ What each means to the engine:
 | `power_curve` | how much advancement raises capability ([`03-rules.md`](03-rules.md)) |
 | `scope` | how far the stakes may travel from the character |
 | `scale_drift` | whether stakes may escalate over a chronicle, or must stay local |
-| `mortality` | starting Fate, and whether the Aftermath table's death rows are closed ([`09-aftermath.md`](09-aftermath.md)) |
+| `mortality` | starting Fate, and whether the Aftermath table's death rows are closed ([`06-aftermath.md`](06-aftermath.md)) |
 
 A chronicle may narrow the contract further in `houserules.yaml`, never widen it.
 
@@ -131,7 +131,7 @@ running Wyrd.
 - roll before narrating, and abide by the result
 - **settle an unresolved question of fact with an oracle roll, not invention** — a yes/no (or
   more/less likely) question the fiction hasn't already answered, whose answer could plausibly be
-  asked again ([`12-oracle-answers.md`](12-oracle-answers.md)). An answer invented once and
+  asked again ([`14-oracle-answers.md`](14-oracle-answers.md)). An answer invented once and
   invented differently later is the exact failure [ADR 0005](../adr/0005-deterministic-over-inference.md)
   exists to close; this is that principle held to at the table, not a separate rule.
 - write state before narrating

@@ -142,7 +142,7 @@ that already scales content. Mob clearing does the rest of the work in combat.
 `danger` in the record is therefore *intrinsic difficulty as written for its stated party
 size*, not what this table will face. The engine computes the latter.
 
-Field names match the beat schema in [`28-arcs-and-beats.md`](28-arcs-and-beats.md) exactly;
+Field names match the beat schema in [`18-arcs-and-beats.md`](18-arcs-and-beats.md) exactly;
 the index is a projection of the entities, not a parallel vocabulary.
 
 **Access and capability are inputs too, not walls.** A low-status character can be hired by someone
@@ -161,7 +161,7 @@ That is a reason to choose it, not to skip it.
 
 The genuine exclusions are few: wrong setting, or an `adaptation: rewrite` cost that is not
 worth paying today. Everything else is a dial. That is the tooling rule
-([`20-tooling.md`](20-tooling.md)) applied to selection — the arithmetic is code, the fit is
+([`27-tooling.md`](27-tooling.md)) applied to selection — the arithmetic is code, the fit is
 judgment, and the judgment should almost always be *yes, scaled*.
 
 #### Two kinds of chaining
@@ -176,7 +176,7 @@ So scenarios use an **open, tag-matched graph**:
 - `requires_threads` — what must already be live for this to be reachable
 
 Selection is then: find scenarios whose `requires_threads` match currently hot threads
-([`18-campaign.md`](18-campaign.md)), that pass the deterministic filters, and scale them to
+([`19-campaign.md`](19-campaign.md)), that pass the deterministic filters, and scale them to
 current `T`. The meta-campaign tree is **emergent** rather than authored — which is the only
 way it can span a library this heterogeneous, and it avoids the railroad that a fixed tree
 would impose.
@@ -185,7 +185,7 @@ Where a real chain exists — a published multi-part campaign — it is
 recorded in `chain`. Published campaigns keep their sequence; everything else earns its place
 by matching threads.
 
-**Haiku-tier** per [`20-tooling.md`](20-tooling.md): structured extraction against text that
+**Haiku-tier** per [`27-tooling.md`](27-tooling.md): structured extraction against text that
 already exists. Roughly 400 adventures library-wide, one pass each, cached forever.
 Regenerated only when the schema changes.
 
@@ -200,7 +200,7 @@ the same work adapted for two worlds produces two different adaptations.
 Index records reference documents **by id**, so a setting indexes shared source material
 without holding a copy. Every record names its setting, so a query made in one chronicle
 never returns another's material — which is also part of how chronicles stay isolated
-([`25-parallel-chronicles.md`](25-parallel-chronicles.md)).
+([`21-parallel-chronicles.md`](21-parallel-chronicles.md)).
 
 Tagging beats duplicating; scoping beats sharing.
 
@@ -242,7 +242,7 @@ thematic record the first time anything asks for it, not up front. Most of the l
 never need one.
 
 Rebuilding is a `wyrd optimise` function
-([`21-maintenance.md`](21-maintenance.md)), and `wyrd doctor` reports index staleness
+([`28-maintenance.md`](28-maintenance.md)), and `wyrd doctor` reports index staleness
 against the corpus.
 
 ## What is not indexed

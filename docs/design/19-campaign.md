@@ -14,7 +14,7 @@ A **threat** is a campaign-length antagonist that acts on its own schedule wheth
 player is present.
 
 It is **not an entity type**. It is an *aspect* attached to a `character`, `organisation` or
-`place` ([`27-entities.md`](27-entities.md)), because such an antagonist may be a person, a
+`place` ([`25-entities.md`](25-entities.md)), because such an antagonist may be a person, a
 conspiracy or a poisoned valley — and forcing a choice between them loses information.
 
 ```yaml
@@ -65,7 +65,7 @@ brings word; a companion's family writes; the market is talking. Information sho
 
 ### Where threats come from
 
-A threat is an **aspect**, not a type ([`27-entities.md`](27-entities.md)) — so **any entity
+A threat is an **aspect**, not a type ([`25-entities.md`](25-entities.md)) — so **any entity
 may acquire one at any time**, and most of the interesting ones are not there at the start.
 
 | Origin | How it arises |
@@ -149,14 +149,14 @@ Deterministic, and it writes its results. It is called **when the fiction says t
 — most often at the end of a downtime phase — not at the start of a session.
 
 A journey's summarised legs advance the clock this same way — see
-[`30-journeys.md`](30-journeys.md) for the setting-configurable subsystem that plays travel
+[`20-journeys.md`](20-journeys.md) for the setting-configurable subsystem that plays travel
 rather than only narrating it.
 
 ### Returning after a long absence
 
 A real-world gap changes nothing about the world. It changes what the **recap** has to do:
 re-establish where the character is, what was unresolved, and what was about to happen
-([`19-state.md`](19-state.md)). If the session stopped mid-beat, the `pending:` marker
+([`22-state.md`](22-state.md)). If the session stopped mid-beat, the `pending:` marker
 restores the exact moment.
 
 That distinction is what makes "dip in and out over years" work. The player's absence is a
@@ -226,7 +226,7 @@ An era does four jobs, all of them structural:
 - it **sets the ambient register**, which the GM reads as context for every beat inside it
 - it is a **natural seam for rules changes**, since "the world works differently now" is
   absorbed far more gracefully between eras than mid-arc
-  ([`22-evolution.md`](22-evolution.md))
+  ([`29-evolution.md`](29-evolution.md))
 - it is **git-tagged**, giving a decade of play navigable checkpoints
 
 **The direction is the setting's business, not the engine's.** A sequence of eras may
@@ -240,7 +240,7 @@ changes ([`01-principles.md`](01-principles.md)).
 
 ### Top-level arcs
 
-Arcs recurse ([`27-entities.md`](27-entities.md)), so there is no fixed number of anything.
+Arcs recurse ([`25-entities.md`](25-entities.md)), so there is no fixed number of anything.
 But the arcs directly under a chronicle have a job the deeper ones do not: **each should end
 with a real change to the world**, recorded in the overlay, and that change is what an era
 boundary is eventually drawn around.

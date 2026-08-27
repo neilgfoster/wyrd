@@ -19,7 +19,7 @@ references a chronicle.
 
 This is what makes parallel play safe: two chronicles never share a repository, so two live
 sessions cannot race on a commit
-([`25-parallel-chronicles.md`](25-parallel-chronicles.md)). It also means many
+([`21-parallel-chronicles.md`](21-parallel-chronicles.md)). It also means many
 chronicles and many characters can coexist — several in the same setting, at different points
 in its history, without interfering.
 
@@ -27,7 +27,7 @@ in its history, without interfering.
 
 Because they change for different reasons and at different rates. The engine changes when a
 rule changes — rarely, deliberately, with a migration
-([`22-evolution.md`](22-evolution.md)). A setting only accumulates: another arc indexed,
+([`29-evolution.md`](29-evolution.md)). A setting only accumulates: another arc indexed,
 another organisation written up, another career added. Mixing them makes both histories
 unreadable, and makes it impossible to say which version of *what* a chronicle is pinned to.
 
@@ -45,7 +45,7 @@ apportioning it would be wrong.
 | | Lives in |
 |---|---|
 | Extracted source text | the private research repo, once |
-| Per-setting indexes over it | the setting repo ([`24-corpus-index.md`](24-corpus-index.md)) |
+| Per-setting indexes over it | the setting repo ([`26-corpus-index.md`](26-corpus-index.md)) |
 | Entities converted from it | the setting repo, carrying `sources:` back to the document |
 
 Indexes reference documents **by id**, so a setting index can point into shared source
@@ -82,14 +82,14 @@ wyrd-chronicle-<name>/
 ```
 
 Which files are tables and which are entities is decided by one test
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)): *would anything link to it, or
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)): *would anything link to it, or
 would a chronicle change it?*
 
 ### What the engine holds
 
 - `rules/` — resolution, combat, the tracks, fate, fear, advancement
 - `tables/` — criticals, aftermath, transformations, afflictions, oracles, to the conventions in
-  [`07-tables.md`](07-tables.md)
+  [`04-tables.md`](04-tables.md)
 - `contract.md` — the GM contract from [`01-principles.md`](01-principles.md), in the form
   loaded every session
 - `settings.yaml` — the catalogue of known settings
@@ -99,21 +99,21 @@ Setting-neutral throughout. **A rule that names a god belongs in a setting, not 
 ### What a setting holds
 
 Content, in the two forms distinguished in
-[`26-authoring-a-setting.md`](26-authoring-a-setting.md):
+[`24-authoring-a-setting.md`](24-authoring-a-setting.md):
 
 - **Lookup tables** (`setting/*.yaml`) — voice, careers, gear, names, calendar, bestiary.
   Rows queried by key.
 - **Entities** (`entities/**/*.md`) — every named thing, in the ten types
-  ([`27-entities.md`](27-entities.md)). Arcs and beats live here, so scenarios and campaigns
+  ([`25-entities.md`](25-entities.md)). Arcs and beats live here, so scenarios and campaigns
   are entities like everything else.
 - **Overrides** (`setting/rules/`) — extend, retune, rename or disable. Never a new mechanism.
-- **Index and corpus** — [`24-corpus-index.md`](24-corpus-index.md).
+- **Index and corpus** — [`26-corpus-index.md`](26-corpus-index.md).
 
 ### What a chronicle holds
 
 Its pinned copies of engine and setting, an `overlay/` of what it has changed about that
 setting, the entities it has created itself, its log, and its recap
-([`19-state.md`](19-state.md)).
+([`22-state.md`](22-state.md)).
 
 ## Memory tiers
 
@@ -146,7 +146,7 @@ wyrd optimise                          # reindex, recompact, canonicalise
 ```
 
 Maintenance is a first-class engine function, not a chore — see
-[`21-maintenance.md`](21-maintenance.md).
+[`28-maintenance.md`](28-maintenance.md).
 
 Everything else is **skills** — prompt-level instructions the GM follows:
 
@@ -163,13 +163,13 @@ feel indifferent to the player, and it is the only defence against principle 1 e
 quietly over a long campaign.
 
 Engineering ground rules for all of this — deterministic-over-inference, stdlib-only Python,
-the MCP-shaped tool catalog, and model tiering — are in [`20-tooling.md`](20-tooling.md).
+the MCP-shaped tool catalog, and model tiering — are in [`27-tooling.md`](27-tooling.md).
 
 ## Deployment
 
 Wyrd runs wherever Claude Code runs — a laptop, or an always-on machine reached from a phone.
 A chronicle is a git repository and needs no service, no database and no network at play
 time; source material is fetched only when converting content
-([`28-arcs-and-beats.md`](28-arcs-and-beats.md)).
+([`18-arcs-and-beats.md`](18-arcs-and-beats.md)).
 
 Sessions are stateless with respect to the model: everything needed to resume is on disk.

@@ -17,7 +17,7 @@ real chronicle has, and update [`docs/design/03-rules.md`](../../docs/design/03-
 > `danger_effective = danger × (party_effective / written_for)`
 
 `written_for` is defined — it is a field on a corpus record
-([`docs/design/24-corpus-index.md`](../../docs/design/24-corpus-index.md)), the party size the content was
+([`docs/design/26-corpus-index.md`](../../docs/design/26-corpus-index.md)), the party size the content was
 written for. `danger` is defined — intrinsic difficulty as written. `party_effective` is not
 defined anywhere. The nearest thing to a definition is one sentence in `11-corpus-index.md`:
 
@@ -61,7 +61,7 @@ This feature therefore carries a decision, not a transcription: **what a compani
   was at least 1. Rounding once, up front, throws away precision that the later multiplications
   need. Rejected: rounding `danger_effective` itself to an integer, either half-up or down.
 - **Q: Which companions count?** → **Those with `status: with-party`, and no others.** The party is
-  already a query on exactly that predicate ([`docs/design/19-state.md`](../../docs/design/19-state.md)); a
+  already a query on exactly that predicate ([`docs/design/22-state.md`](../../docs/design/22-state.md)); a
   companion who is `away`, `dead`, `lost` or `departed` contributes nothing. Presence in a
   particular room is not consulted — scaling is a preparation-time computation, not a per-scene one.
 - **Q: What if `written_for` is missing or zero?** → **The content runs as written** — the ratio is
@@ -110,7 +110,7 @@ counts is the roster, the people on this journey, or the bodies in this room, an
 count is taken.
 
 **Why this priority**: Companions leave and return constantly — `status` already has five values
-([`docs/design/19-state.md`](../../docs/design/19-state.md)) precisely because this happens. A definition that
+([`docs/design/22-state.md`](../../docs/design/22-state.md)) precisely because this happens. A definition that
 does not say which statuses count is undefined in practice even if it names a fraction.
 
 **Independent Test**: Given a set of `character` entities with `role: companion` and their statuses,
@@ -123,7 +123,7 @@ the count is derivable from the entity data alone, with no query to the GM.
 2. **Given** a companion joins between two beats of the same arc, **When** the next beat is scaled,
    **Then** the rule for when a scaled danger is recomputed versus held is stated, and does not
    require recomputing anything already played
-   ([`docs/design/22-evolution.md`](../../docs/design/22-evolution.md)).
+   ([`docs/design/29-evolution.md`](../../docs/design/29-evolution.md)).
 
 ---
 
@@ -185,7 +185,7 @@ against a record written for four.
 - **FR-006**: The engine MUST state its behaviour when `written_for` is missing or zero.
 - **FR-007**: `docs/design/03-rules.md` §7 MUST contain no undefined term after this change, and MUST be
   rewritten in place rather than appended to.
-- **FR-008**: The sentence in `docs/design/24-corpus-index.md` that describes `party_effective`, and the
+- **FR-008**: The sentence in `docs/design/26-corpus-index.md` that describes `party_effective`, and the
   worked figure it quotes, MUST agree with `docs/design/03-rules.md` §7 — one description of one thing.
 - **FR-009**: A committed script MUST compute the scaled danger for the party compositions a real
   chronicle has, and MUST assert agreement with every figure any design document quotes, so a later
@@ -196,14 +196,14 @@ against a record written for four.
 
 - **Party**: not an entity — a query over `character` entities with `role: companion` and a
   qualifying `status`, plus the player character
-  ([`docs/design/19-state.md`](../../docs/design/19-state.md)). This feature does not introduce a
+  ([`docs/design/22-state.md`](../../docs/design/22-state.md)). This feature does not introduce a
   `party.yaml`.
 - **Companion**: a `character` entity whose mechanical layer is deliberately thin — presence, bond,
   a competence or two, and no numeric capability score. Any definition of `party_effective` that
   needs a companion's power level would have to invent that data.
 - **Beat/arc record**: carries `danger` and `written_for`
-  ([`docs/design/24-corpus-index.md`](../../docs/design/24-corpus-index.md),
-  [`docs/design/28-arcs-and-beats.md`](../../docs/design/28-arcs-and-beats.md)). Neither field is changed by
+  ([`docs/design/26-corpus-index.md`](../../docs/design/26-corpus-index.md),
+  [`docs/design/18-arcs-and-beats.md`](../../docs/design/18-arcs-and-beats.md)). Neither field is changed by
   this feature.
 
 ## Success Criteria *(mandatory)*
@@ -231,9 +231,9 @@ against a record written for four.
   into a usable number, are open.
 - Companions carry no numeric capability, and this feature does not add one — the thin companion
   layer is a stated design position
-  ([`docs/design/19-state.md`](../../docs/design/19-state.md), [`docs/design/16-session.md`](../../docs/design/16-session.md)).
+  ([`docs/design/22-state.md`](../../docs/design/22-state.md), [`docs/design/16-session.md`](../../docs/design/16-session.md)).
 - Scaling is a preparation-time computation, not a per-roll one. Rules changes apply forward only
-  ([`docs/design/22-evolution.md`](../../docs/design/22-evolution.md)), so nothing already played is
+  ([`docs/design/29-evolution.md`](../../docs/design/29-evolution.md)), so nothing already played is
   recomputed.
 - Hired help and other non-companion bodies are outside this feature; `needs_capability` already
   covers what they are for.

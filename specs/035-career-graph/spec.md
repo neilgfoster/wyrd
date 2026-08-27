@@ -39,7 +39,7 @@ choose it.
 ### User Story 2 - A player reads what "completing" their career means (Priority: P2)
 
 A player advancing their character needs to know when their career counts as *completed* — the
-event that grants the existing "+1 maximum Stamina" bonus ([`05-character-creation.md`](../../docs/design/05-character-creation.md)) and, for a non-entry
+event that grants the existing "+1 maximum Stamina" bonus ([`11-character-creation.md`](../../docs/design/11-character-creation.md)) and, for a non-entry
 career elsewhere in the graph, satisfies that career as one of its qualifying prerequisites.
 
 **Why this priority**: the completion bonus already exists in the text as an effect with no
@@ -99,7 +99,7 @@ that actually defines the career graph.
   skills or whether the count is setting-defined per career.
 - **FR-003**: The design MUST define what it means for a character to have **completed** a
   career, in terms of the advance mechanics already defined in
-  [`05-character-creation.md`](../../docs/design/05-character-creation.md) §3, and MUST cross-reference the
+  [`11-character-creation.md`](../../docs/design/11-character-creation.md) §3, and MUST cross-reference the
   existing "+1 maximum Stamina" completion bonus to this definition.
 - **FR-004**: The design MUST define the eligibility rule for a non-entry career: what a
   character must have done (in terms of career completion, per FR-003) to be allowed to choose
@@ -111,9 +111,9 @@ that actually defines the career graph.
 - **FR-006**: The design MUST state whether the career graph may contain cycles (a career
   reachable, directly or transitively, as its own prerequisite), and if not, that this is a
   setting-authoring error the setting's own validation is expected to catch.
-- **FR-007**: `docs/design/05-character-creation.md`'s cross-reference to "the setting's career
+- **FR-007**: `docs/design/11-character-creation.md`'s cross-reference to "the setting's career
   graph" MUST be updated to point at wherever the graph structure is actually defined.
-- **FR-008**: `docs/design/26-authoring-a-setting.md`'s description of `careers.yaml`'s expected
+- **FR-008**: `docs/design/24-authoring-a-setting.md`'s description of `careers.yaml`'s expected
   shape MUST be consistent with the decided career-graph structure (entry-point flag, skill
   list, prerequisite field(s)).
 - **FR-009**: This is a documentation-only design decision (per the source issue); no
@@ -122,7 +122,7 @@ that actually defines the career graph.
 ### Key Entities
 
 - **Career**: a row in a setting's career lookup table (`careers.yaml`), not a Wyrd entity
-  ([`27-entities.md`](../../docs/design/27-entities.md)). Declares an identifier, a skill list, an
+  ([`25-entities.md`](../../docs/design/25-entities.md)). Declares an identifier, a skill list, an
   entry-point flag, and — if non-entry — its prerequisite career(s).
 - **Career completion**: an event, defined in terms of a character's advance history inside a
   career, that grants the "+1 maximum Stamina" bonus and satisfies a successor career's

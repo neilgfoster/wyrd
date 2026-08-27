@@ -6,7 +6,7 @@
 ## Context
 
 Many settings are derived from published games
-([`../26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)). Since Wyrd resolves on
+([`../26-authoring-a-setting.md`](../design/24-authoring-a-setting.md)). Since Wyrd resolves on
 percentiles ([ADR 0001](0001-resolution.md)), it could adopt a percentile source game
 wholesale and tune it — inheriting a large body of immediately usable material rather than
 converting anything.
@@ -27,7 +27,7 @@ tracks and session structure stay Wyrd's.
 abilities that each modify one situation. Storing them is trivial. *Applying* them is not:
 recognising that a narrated action is the one a given ability modifies is judgement, not
 lookup. A hundred such judgements per session, sustained across years, is precisely the drift
-[`../20-tooling.md`](../design/20-tooling.md) exists to prevent — and the GM will forget them
+[`../20-tooling.md`](../design/27-tooling.md) exists to prevent — and the GM will forget them
 **inconsistently**, which is worse than not having them at all.
 
 Wyrd's advance economy has no equivalent layer for the same reason
@@ -40,13 +40,13 @@ turns a five-exchange fight into a whole short session — and session length is
 requirement Wyrd cannot negotiate away ([`../01-principles.md`](../design/01-principles.md)).
 
 **Character cost.** Wyrd models characters asymmetrically: only the player's carries full
-state ([`../19-state.md`](../design/19-state.md)). Adopting a source game wholesale would multiply
+state ([`../19-state.md`](../design/22-state.md)). Adopting a source game wholesale would multiply
 bookkeeping for every character the player does not control, which is most of them.
 
 ## Consequences
 
 - Settings must declare **conversion rules**, so conversion is repeatable rather than
-  improvised each time ([`../26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)).
+  improvised each time ([`../26-authoring-a-setting.md`](../design/24-authoring-a-setting.md)).
 - Dropped mechanics survive as **prose on the converted entity**: a creature with a rage
   ability is *described* as prone to rage rather than tracked as having it.
 - Where one genuinely matters mechanically, express it as a **Wyrd-die outcome** or a
