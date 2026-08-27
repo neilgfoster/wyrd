@@ -1066,3 +1066,133 @@ place. Noted on both issues.
 alternative and a genuine balance or pacing consequence — exactly what CLAUDE.md's own test says
 an ADR is for, and exactly what #162's own Definition of Done says belongs to each issue's own
 resolution, not to this synthesis pass. All three remain open, ranked, and ready.
+
+---
+
+## 14. Re-playing the scenarios rule changes affected
+
+#174, part of #134. Four decisions landed after §7-§12 were written and played: ADR 0043
+(Resolve recovery), ADR 0044 (telling blow via a failed defence roll), ADR 0045 (the systems-of-
+power spam brake), and ADR 0046 (reroll stacking — documentation-only, no mechanical change, so
+no scenario needs replaying for it). This section re-derives the three scenarios the other three
+decisions actually touch, using real rolls throughout. **The original §7/§8/§10 text is not
+edited** — it stands as the historical record of the gap or ambiguity as it was actually found;
+this section states what changed.
+
+### §7's combat exchange, re-checked against ADR 0044
+
+§7's three defence rolls (Round 1: `43`, Round 2: `86`, Round 3: `64`, all against `eff. 30`) are
+not re-rolled — they already happened — but re-read against ADR 0044's virtual-roll formula
+(`virtual_eff = 100 − eff_def = 70`, `virtual_roll = 101 − r`, degrees from those two virtual
+inputs):
+
+| Round | Roll | Virtual roll | Degrees | Telling? |
+|---|---|---|---|---|
+| 1 | 43 | 58 | 2 | no |
+| 2 | 86 | 15 | 6 | **yes** |
+| 3 | 64 | 37 | 4 | no (moot — see below) |
+
+**Round 2 is now a telling blow.** The weapon roll (`1d8 = 4`, already drawn) doubles to `8`
+before armour subtracts its already-rolled `1d3 = 1`: `7` through, not `3`. Senna: `4 (post-round
+1) − 7 = −3`. **She drops in Round 2, not Round 3** — Round 3 never happens under the corrected
+timeline; the Fair Omen still pending from Round 2's own attack roll lapses unused, exactly as
+the Omen rule states for a scene that ends first.
+
+**The critical and Aftermath rolls, reusing the same dice, recomputed with the new modifier.**
+The die itself is independent of the modifier it is added to; only the addend changes:
+
+- **Critical**: original `1d6 + 2 = 5` means the die read `3`. Recomputed at `points_below = 3`:
+  `3 + 3 = 6`, landing in `critical-slashing`'s `6–9` band — `slashing-scored` (one wound record,
+  `dread: +1`) — not `slashing-glancing` (`2–5`, nothing lasting) as originally recorded.
+- **Aftermath**: original `d100 + (5 × 2) = 73 + 10 = 83` means the die read `73`. Recomputed at
+  `points_below = 3`: `73 + 15 = 88`, still the `79–88` band — `taken` — the same outcome as
+  originally recorded, sitting at the top edge of the band.
+
+**Net effect**: Senna's fight ends one round sooner and she carries a wound (`dread: +1`) she
+didn't originally take, but the fight's final outcome (captured, `taken`) is unchanged. The crowd
+encounter and Stamina recovery that follow §7's exchange are unaffected by any of this — both
+already start from "Senna is down, the fight is over," which is still true here, just a round
+earlier.
+
+### §8's Resolve gap, replayed under ADR 0043
+
+This continues Senna's arc from where §8 left her (Taint `1`, Resolve `0` — the gap prevented
+exercising it at all). Fresh rolls, seeded `20260840`.
+
+**The single-Rally case, shown honestly rather than skipped**: a Rally grants only `+1`
+(`03-rules.md` §4). Since Taint is already `1` and Resolve started at `0`, one Rally alone brings
+Resolve to `1` — equal to Taint, the Spent condition, before she has spent anything this arc at
+all. This is a real, correctly-designed consequence of accruing Taint before her next Rally
+lands, not a bug: a character worn down by what has happened to her can be Spent the moment she
+catches her breath, if Taint has outpaced her Rallies.
+
+Continuing instead to her next downtime, which raises Resolve to its cap (ADR 0043):
+Resolve `→ 4` (cap `= Taint + 3 = 4`). No longer Spent. A test under pressure, `eff. 35`: roll
+**48** — fails. She spends **1 Resolve** for the `+20` reroll: `4 → 3`. Reroll at `eff. 55`: roll
+**17** — succeeds.
+
+**Final: Resolve `3`, Taint `1`** — real headroom, not Spent. The cadence, the cap, and an actual
+spend all played out exactly as ADR 0043 states — the gap §8 found (nothing to ever spend) is
+closed.
+
+### §10's two findings, replayed against Kester's own character
+
+Kester, continuing exactly as §10 set him up: `ember-craft: 50`, `strain_cost: 2`,
+`ill_omen_taint: 1`, `intensity_tiers` as published, Strain `0`, Taint `0`, Stamina `6/6`
+(creation default — §10 never stated one explicitly).
+
+**The Resolve recurrence, replayed under ADR 0043.** Seeded `20260841`. With `resolve_cost: 1`
+added, the very first invocation still cannot pay it — Resolve starts at `0`, exactly like every
+other track at creation. That is no longer a gap, though: it is the same "nothing has happened
+yet" state Stamina, Strain and Taint all start from, and the fix is the same one every other
+track already uses. After a Rally: Resolve `0 → 1`. Invocation, `eff. 50`: roll **17** —
+succeeds. `resolve_cost: 1` paid regardless of outcome: `1 → 0`. Pays cleanly — the gap §10 found
+is closed.
+
+**The spam sequence, replayed under ADR 0045's final design.** Seeded `20260842`, 26 attempts at
+`major` tier (`eff. 10`, `strain_cost 8`), against Kester's own maximum Stamina of `6`:
+
+| # | Roll | Result | Strain | Ill Omen | Taint | Trauma |
+|---|---|---|---|---|---|---|
+| 1 | 73 | fail | 2 | no | 0 | 1 |
+| 2 | 32 | fail | 4 | no | 0 | 2 |
+| 3 | 84 | fail | 0 | no | 0 | 3 |
+| 4 | 51 | fail | 2 | no | 0 | 4 |
+| 5 | 44 | fail | 4 | no | 0 | 5 |
+| 6 | 19 | fail | 0 | no | 0 | 6 |
+| 7 | 36 | fail | 2 | no | 0 | 7 |
+| 8 | 72 | fail | 4 | no | 0 | 8 |
+| 9 | 7 | **success** | 12 | no | 0 | 8 |
+| 10 | 33 | fail | 2 | no | 0 | 10 (+2, two floors crossed in one jump) |
+| 11 | 63 | fail | 4 | no | 0 | 11 |
+| 12 | 68 | fail | 0 | no | 0 | 6 (+1, Affliction rolled) |
+| 13 | 19 | fail | 2 | no | 0 | 1 (+1, Affliction rolled) |
+| 14 | 91 | fail | 4 | no | 0 | 2 |
+| 15 | 43 | fail | 0 | no | 0 | 3 |
+| 16 | 45 | fail | 2 | no | 0 | 4 |
+| 17 | 22 | fail | 4 | no | 0 | 5 |
+| 18 | 90 | fail | 0 | **YES** | 4 | 6 |
+| 19 | 39 | fail | 2 | no | 4 | 1 (+1, Affliction rolled) |
+| 20 | 14 | fail | 4 | no | 4 | 2 |
+| 21 | 40 | fail | 0 | **YES** | 8 | 3 |
+| 22 | 6 | **success** | 8 | no | 8 | 3 |
+| 23 | 25 | fail | 4 | no | 8 | 4 |
+| 24 | 44 | fail | 0 | no | 8 | 5 |
+| 25 | 17 | fail | 2 | no | 8 | 6 |
+| 26 | 65 | fail | 4 | no | 8 | 7 |
+
+**24 of 26 attempts failed. Final: Strain 4, Taint 8, Trauma 7 — three Afflictions rolled along
+the way** (at attempts 12, 13, and 19, each dropping Trauma by 6 on a failed test against an
+assumed `eff. 50` GM-chosen skill, disclosed as this replay's own assumption per
+`08-afflictions.md`). Where the original sequence (under the pre-ADR-0045 rules) left this exact
+shape of spam with zero Trauma and zero lasting consequence beyond Taint, this replay's Kester
+carries three real Afflictions and a Trauma track still at 7 by the end — the brake §10 found
+missing is now demonstrably present, against Kester's own character, not only in the abstract
+verification script (`specs/057-systems-of-power-spam-brake/check_spam_brake.py`).
+
+### What this section does not do
+
+**No new design decision is made here.** This only re-applies decisions already made (ADR
+0043–0045) to scenarios that were played before those decisions existed. Where a replay produces
+a materially different outcome (§7's dropped round, §10's Trauma accrual), that difference is the
+expected, intended effect of the fix landing — not a new finding to raise as its own issue.
