@@ -1,6 +1,6 @@
 # ADR 0045: A failed invocation that pushes Strain past a multiple of maximum Stamina costs Trauma
 
-**Status:** Accepted
+**Status:** Superseded by [ADR 0047](../0047-strain-threshold-crossing-checks-cumulative-strain.md)
 **Date:** 2026-08-27
 
 ## Context
