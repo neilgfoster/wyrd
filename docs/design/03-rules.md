@@ -60,19 +60,33 @@ One roll, three independent axes, no extra dice. Rationale and rejected alternat
 |---|---|---|---|---|---|
 | +20 | +0 | −10 | −20 | −30 | −40 |
 
+**One step up, four steps down, on purpose.** A task easier than Easy is not rolled at all — "only
+roll when it is dramatic" (below), and the Declaration table's "so well-judged it removes the
+risk" row already covers a plan good enough to remove the risk entirely. There is no *Very Easy*
+tier because the tier below Easy is *no roll, it simply works*. The steps below Average, by
+contrast, are where most of the dramatic range actually lives — genuinely hard-but-attemptable
+tasks span a wide band, from "harder than usual" to "at the edge of possible," and that band is
+where the difficulty ladder is doing its real work.
+
 **Untrained — a skill you do not have** is tested at a flat **10%**, before difficulty and
 declaration. Anyone may try to shoot; almost nobody hits. The engine has no characteristics to fall
 back on ([ADR 0013](../adr/0013-the-engine-names-no-skill.md)), so this base is stated rather than
 derived, and it sits inside the *you would be guessing* band
 ([`13-diegesis.md`](13-diegesis.md)).
 
-| Attempting | At |
-|---|---|
-| untrained, average difficulty, said briefly | **10%** |
-| untrained, easy, said briefly | **30%** |
-| untrained, easy, specific and leveraging something established | **50%** |
-| untrained, hard | impossible — the modifier takes it below zero |
-| trained, average difficulty, said briefly | **25%** and up |
+Untrained attempts stack the same two modifiers as any other roll — difficulty (above) and
+declaration (below) — so a combined figure is never one hidden number, always two named ones added
+to the 10% base:
+
+| Attempting | Base | + Difficulty | + Declaration | At |
+|---|---|---|---|---|
+| average, said briefly | 10% | Average +0 | brief, no bonus | **10%** |
+| easy, said briefly | 10% | Easy +20 | brief, no bonus | **30%** |
+| easy, specific and leveraging something established | 10% | Easy +20 | Specific *and* leveraging, +20 | **50%** |
+| hard | 10% | Hard −30 | brief, no bonus | impossible — the modifier takes it below zero |
+
+Trained, at average difficulty said briefly, opens at **25%** and up — see Declaration below for
+what "specific and leveraging something established" means, and §3 for a skill's cap.
 
 Having the skill is worth at least 15 points over not having it, at every difficulty. A setting may
 mark a skill as **requiring training**, and then there is no untrained attempt at all — a language
