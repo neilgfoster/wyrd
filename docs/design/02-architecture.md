@@ -152,9 +152,10 @@ named CLI command rather than left as a manifest the GM assembles by hand:
    question, not a corollary of this one.
 
 Every query/fetch command above returns **structured, machine-parseable output by default** —
-the same "full structured result" shape `wyrd roll` already uses. Rendering any of it
-diegetically for the player is a GM-contract/skill concern (§ Code versus prose below), not the
-CLI's — the CLI states facts, prose tells the story.
+the same shape `wyrd propose` already returns (§ Code versus prose below,
+[`31-action-resolution.md`](31-action-resolution.md)). Rendering any of it diegetically for the
+player is a GM-contract/skill concern, not the CLI's — the CLI states facts, prose tells the
+story.
 
 **Compaction** runs at session end: what mattered is promoted into the entity store and the recap
 is regenerated. This is the step that makes multi-year play possible, and it must be
@@ -166,7 +167,11 @@ mechanical, not optional.
 freehand:
 
 ```
-wyrd roll <skill> [--difficulty N]     # d100 + Wyrd die; full structured result
+wyrd propose --actor A --mechanic M [--skill S] [--target T] [--difficulty D]
+                                        # resolves one roll against state; stages any implied
+                                        # mutation; writes nothing (ADR 0050)
+wyrd commit <proposal-id>              # applies exactly the staged mutations, atomically
+wyrd discard <proposal-id>             # writes nothing; invalidates the id
 wyrd damage <target> <expr>            # applies damage, stamina, criticals
 wyrd track <id> taint +1               # mutates a track, fires thresholds
 wyrd advance-time <days>               # calendar, threat activation, expected-value events
@@ -186,6 +191,13 @@ wyrd threads                           # status:open threads, ordered by heat �
 wyrd threats                           # entities with an active threat block — a named `find`
 wyrd log --last N | --since <beat>     # Archival tier, in beat order; no full-text search (deferred)
 ```
+
+**`propose`/`commit`/`discard` are the base action-resolution mechanism**
+([`31-action-resolution.md`](31-action-resolution.md), [ADR 0050](../adr/0050-action-resolution-proposes-before-it-commits.md))
+— every mechanic in `03-rules.md` resolves through them, staged and re-derivable rather than
+written immediately. `damage` and `track` above still write immediately, predating this
+mechanism; reconciling them onto the same propose/commit shape is a known follow-up, not
+resolved by this document.
 
 Maintenance is a first-class engine function, not a chore — see
 [`28-maintenance.md`](28-maintenance.md).

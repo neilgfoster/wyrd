@@ -96,6 +96,7 @@ have children in any `wyrd-*` repository; the board spans them all.
 | [28-maintenance](docs/design/28-maintenance.md) | Keeping a decade-long chronicle correct and cheap |
 | [29-evolution](docs/design/29-evolution.md) | How the engine changes without rewriting history |
 | [30-playtest-transcript](docs/design/30-playtest-transcript.md) | A hand-run character creation and combat exchange against the R1 specification |
+| [31-action-resolution](docs/design/31-action-resolution.md) | The base propose/commit mechanism every mechanic resolves through |
 | [adr/](docs/adr/) | Decision records — indexed in [docs/README.md](docs/README.md) |
 
 Two more trees, reachable from here so nothing in the repo is orphaned:
