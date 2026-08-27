@@ -81,6 +81,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0037](adr/0037-out-of-character-mode-is-a-prefix-trigger.md) | Out-of-character mode is a one-character prefix trigger, not a slash command |
 | [0038](adr/0038-an-adr-path-is-repaired-not-its-reasoning.md) | An ADR's path references are repaired when a target moves; its reasoning is never edited |
 | [0039](adr/0039-luck-resets-at-the-top-level-arc-boundary.md) | Luck resets to maximum at the start of each top-level arc |
+| [0040](adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md) | Ancestry widens creation's skill pool, never its budget |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
