@@ -4,12 +4,12 @@ How an action actually resolves against state: the base mechanism every mechanic
 [`03-rules.md`](03-rules.md) composes with. Not combat-specific — resolution, Exposure,
 Terror tests, systems of power, advancement rolls all use the same shape.
 
-This document covers the propose/commit/discard mechanism and cascading resolution (a mutation
-that crosses a threshold and spawns a further roll, inside the same proposal). **Partial reroll**
-(a player spending Fortune/Resolve/the Bargain against a proposed result) and **Omen carryover**
-across more than one roll are not yet specified — see the parent epic's remaining children for
-those, extending this same document once landed rather than fragmenting into separate ones for
-what is genuinely one mechanism.
+This document covers the propose/commit/discard mechanism, cascading resolution (a mutation that
+crosses a threshold and spawns a further roll, inside the same proposal), and partial reroll (a
+player spending Fortune/Resolve/the Bargain against one step of a proposed result, without
+disturbing what didn't depend on it). **Omen carryover** across more than one roll is not yet
+specified — see the parent epic's remaining child for that, extending this same document once
+landed rather than fragmenting into a separate one for what is genuinely one mechanism.
 
 ---
 
@@ -111,9 +111,8 @@ further threshold in turn (Taint's own every-3 spacing already allows more than 
 a single large gain).
 
 **Each staged step records what it depends on** — the sub-roll a crossing spawns depends on the
-mutation that crossed it, which depends on the roll that produced that mutation. Nothing here
-uses that dependency yet; it is what the dependency-graph partial-reroll mechanism (a later,
-dependent feature) consumes to work out what a mid-batch reroll invalidates.
+mutation that crossed it, which depends on the roll that produced that mutation. This is what
+partial reroll (below) consumes to work out what a mid-batch reroll invalidates.
 
 **This does not need its own termination proof.** Each track's own cascade shape already
 terminates by a proof that already exists — the Transformation hidden-threshold loop terminates
@@ -167,3 +166,57 @@ in the same proposal, depending on step 0.
 **Committing this proposal** applies all four mutations atomically: Taint ends at 0 (not 4), not
 because two separate calls happened, but because the cascade already resolved and staged both
 legs before anything was confirmed.
+
+## Partial reroll
+
+**Rerolling one step discards exactly what causally depends on it, and nothing else.** A
+proposal can contain more than one step — independent branches from separate actions batched
+together (§ A worked example below), or a cascade's own dependent chain (§ Cascading resolution
+above). When a player spends a reroll resource (Fortune, Resolve, or the Bargain) against one
+staged step, `reroll` computes the **downstream set** — every step that `step_id` names, or anything
+that in turn depends on it, transitively — from the `depends_on` edges cascading resolution
+already records. Every step in the downstream set is discarded and freshly resolved, starting
+from the rerolled step under the resource's own modifier (Resolve's `+20`, Fortune's plain
+reroll at the same odds, the Bargain's plain reroll for 1 Taint). **Every step outside the
+downstream set is untouched** — its roll data and mutations stand exactly as first staged,
+whether or not it happens to sit later in the proposal.
+
+A freshly-resolved step can itself cascade again, under cascading resolution's own rule — a
+reroll that turns a failure into a success removes whatever mutation the failure implied; a
+reroll that still fails may cross a threshold the original roll didn't, staging a new cascade
+the same way `propose` would have the first time.
+
+**The resource's own cost is itself a staged mutation on the reroll**, not a separate call —
+Resolve/Fortune spent, or Taint gained for the Bargain, is added to the proposal alongside
+whatever the re-resolved steps produce.
+
+**`reroll` does not invalidate the proposal id.** The proposal stays open, revised in place —
+only `commit` or `discard` (against the id, once the player is done spending resources against
+it) ends it, exactly as before.
+
+### A worked example: an independent branch survives a reroll elsewhere in the batch
+
+Senna Vask, Taint `0`. Two unrelated Exposure sources in the same scene, proposed together as
+step `0` (`eff. 35`) and step `1` (`eff. 45`), neither depending on the other. Real `d100`
+draws, seeded `20260854`:
+
+- Step `0`: roll **91** — fails. A minor Exposure source, Taint `+1` staged.
+- Step `1`: roll **38** — succeeds. Nothing staged.
+
+**`propose`** returns both as independent steps (`depends_on: []` for each) — one mutation
+(step `0`'s Taint `+1`), one no-op (step `1`).
+
+Senna's player spends **the Bargain** against step `0` specifically. `reroll(proposal_id,
+step=0, resource=bargain)` computes the downstream set for step `0`: just itself — nothing
+depends on it, and it depends on nothing. Step `1` is untouched. Rerolled at the same odds
+(the Bargain grants a plain reroll): roll **39** — still fails against `eff. 35`. An honest
+outcome — the reroll doesn't guarantee success.
+
+**The revised proposal**: step `0`'s mutation is still Taint `+1` (from the new roll, which also
+failed), *plus* the Bargain's own cost, Taint `+1` — Taint `+2` total from that branch. **Step
+`1`'s own result (success, nothing staged) is exactly what `propose` first returned, untouched
+by the reroll happening elsewhere in the same proposal.**
+
+**Committing this proposal** applies Taint `+2` (from step `0`'s failed reroll and the Bargain's
+cost) and nothing from step `1` — the same outcome step `1` would have committed to on its own,
+confirming the independent branch was never at risk from a reroll it had nothing to do with.
