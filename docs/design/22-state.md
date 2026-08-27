@@ -277,16 +277,49 @@ Choosing by query rather than a manifest means the tier can never drift out of d
 
 ## Invariants
 
-Enforced on every write, and tested directly:
+Enforced on every write, and tested directly. Under [`31-action-resolution.md`](31-action-resolution.md)'s
+propose/commit model, "a write" means a **commit**, not a `propose` — nothing here is checked
+against a proposal that hasn't been confirmed, since a proposal isn't state yet.
+
+**Passive validation** — rejects a write outright if violated; nothing else happens:
 
 - an entity's `id` is unique and stable; `parent` never forms a cycle
 - every `[[link]]`, `parent` and `overlay_of` resolves
 - `fortune.current ≤ fate.max`
-- a character is **Spent** iff `resolve.current ≤ taint` and `taint > 0`
-- `trauma ≥ 6` triggers a test on every further gain
-- `transformations` count > `hidden_threshold` → `status: lost`
-- a tracker's `value` stays within `0..max`; reaching `max` fires and resets
-- **no write may be skipped because narration already happened** — persist precedes narrate
+- a tracker's `value` stays within `0..max`
+
+**Active triggers** — under `31-action-resolution.md`'s cascading resolution, these are not
+merely checked; a mutation crossing one of them *spawns* the further roll the crossing calls for,
+inside the same proposal, before anything commits:
+
+- `taint` crossing a multiple of 3 spawns a Transformation roll
+- `trauma ≥ 6` spawns a test on every further gain, and a failed test spawns an Affliction roll
+- a tracker's `value` reaching `max` fires and resets
+- `transformations` count exceeding `hidden_threshold` sets `status: lost`
+
+**Derived, not stored** — a character is **Spent** iff `resolve.current ≤ max(taint, trauma)`,
+with each axis exempted at `0` ([ADR 0049](../adr/0049-resolve-counters-both-taint-and-trauma.md)) —
+not a write-time check at all, since nothing is ever written to make a character Spent; it is
+read off `resolve`, `taint` and `trauma` whenever asked.
+
+**"Persist precedes narrate" means the *confirmed* result, not every proposed one.** A proposal
+returned by `propose` may be narrated to the player as a live possibility — "you feel it slip" —
+before it commits, because nothing about narrating a proposal claims it is final. What this
+invariant actually forbids is narrating a result **as settled** — "the blade lands" — before
+`commit` has actually applied it. A GM may describe a pending roll's stakes; a GM may not
+describe its outcome as having happened until it has.
+
+### Transaction lifecycle
+
+**An uncommitted proposal that survives past the end of a session is recorded the same way any
+other mid-beat interruption already is** — `chronicle.yaml`'s existing `pending.rolled` field
+(§ Interrupted sessions, below) holds it, rather than a second mechanism invented for exactly
+this case. **Cleared at the next Rally**, the same rule `pending` already states: an abandoned
+proposal is implicitly discarded once the character next recovers, not the moment the session
+ends. A proposal a player is actively deciding on within a live session that becomes moot before
+either `commit` or `discard` is called (the situation changes, the player acts on something else
+entirely) is explicitly discarded rather than left open — an engine session never carries more
+than one genuinely open proposal per actor at a time.
 
 ## Interrupted sessions
 
@@ -300,4 +333,6 @@ pending:
 ```
 
 Cleared at the next Rally. Its presence means the next session resumes exactly rather than
-recapping vaguely.
+recapping vaguely. **`rolled` is where an open, uncommitted proposal lives if a session ends
+before it is confirmed or discarded** — `31-action-resolution.md`'s propose/commit model (§
+Invariants → Transaction lifecycle, above), not a second mechanism for the same idea.
