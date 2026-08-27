@@ -31,8 +31,11 @@
 
 ## Notes
 
-- The operator was asked which brake shape to use (escalating cost, Strain cap, or both) and
-  redirected toward a different resolution: tying repeated failure to Taint or Trauma directly.
-  This spec reflects that direction, resolved to Trauma specifically (see spec's Assumptions and
-  ADR 0045's Alternatives rejected for why Trauma over Taint).
-- No [NEEDS CLARIFICATION] markers were needed once the operator's direction was given.
+- This spec went through three rounds of operator redirection, each surfacing a genuine finding:
+  a same-power-streak first draft was re-playtested and found defeated by rotating between two
+  systems of power (#172, closed by this same decision); a flat engine-wide threshold was found
+  to interact awkwardly with varying `strain_cost` scales; and a setting's ability to disable
+  Strain/Trauma entirely was checked against precedent (Taint) rather than assumed to need a
+  workaround.
+- No [NEEDS CLARIFICATION] markers were needed once the operator's direction was given at each
+  round.

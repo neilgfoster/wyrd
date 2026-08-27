@@ -1,19 +1,32 @@
 # Tasks: Brake on spamming a failing system-of-power invocation
 
-- [X] **T001** Get operator direction on the brake's shape (asked; redirected to tying repeated
-      failure to Taint/Trauma) (FR-006).
-- [X] **T002** Decide Trauma over Taint (Taint already has a dedicated systems-of-power channel;
-      Strain/Trauma are the engine's paired mental-harm tiers) and write ADR 0045, including the
-      rejected Strain-cap and escalating-cost alternatives (FR-006).
-- [X] **T003** Add the Trauma-gain bullet to `03-rules.md` §5 (FR-001, FR-002).
-- [X] **T004** Add the cost-section paragraph to `09-systems-of-power.md`, cross-referencing §5
-      (FR-003).
-- [X] **T005** Write `check_spam_brake.py`: replay a comparable spam sequence to #151's playtest,
-      confirm real Trauma accrues (crossing the Affliction threshold) under the new rule where the
-      published rule accrued none (FR-004); confirm ordinary play (isolated failure among
-      successes) costs zero (FR-005).
-- [X] **T006** Add the ADR 0045 index entry to `docs/README.md`.
-- [X] **T007** Add a resolution note to §10 of `docs/design/30-playtest-transcript.md`, and update
-      §13's synthesis table's #163 row and closing sentence to reflect the fix.
-- [X] **T008** Run `python3 tools/check_docs.py`, `python3 tools/check_dangling_mechanics.py`, and
+- [X] **T001** Get operator direction on the brake's shape; redirected iteratively across three
+      rounds: (a) tie to Taint/Trauma rather than an escalating cost or Strain cap; (b) resolved
+      to Trauma; (c) first same-power-streak draft re-playtested and found defeated by two-power
+      rotation (#172); (d) redirected to a Strain-threshold trigger keyed to an existing
+      per-character stat, failure-only (FR-008).
+- [X] **T002** Re-playtest the first (same-power-streak) design against a two-power rotation
+      scenario with real seeded rolls; confirm it produces zero Trauma where single-power spam
+      produces real Trauma — a genuine exploit, not a hypothetical (raised and tracked as #172).
+- [X] **T003** Evaluate candidate thresholds: a flat engine-wide number (rejected — sits
+      awkwardly against varying `strain_cost` scales) vs. an existing per-character stat; resolve
+      to maximum Stamina, grounded in `03-rules.md`'s own "not meat... losing control of the
+      fight" framing (FR-008).
+- [X] **T004** Evaluate outcome-gating: any-outcome (no new logic needed, but taxes legitimate
+      successful use) vs. failure-only (matches operator's stated intent); resolve to
+      failure-only, verified by computed comparison on identical rolls (FR-002, FR-007).
+- [X] **T005** Assess whether a setting could defeat the brake via `strain_cost: 0` (checked:
+      already schema-rejected) or by disabling Strain/Trauma (checked: already permitted per
+      `24-authoring-a-setting.md`, matching the existing Taint-disable precedent) — resolved to
+      stating the degradation explicitly rather than inventing a fallback (FR-004).
+- [X] **T006** Rewrite ADR 0045 (pre-merge, edited in place, not superseded) recording the full
+      decision path, including the superseded first draft and all rejected alternatives (FR-008).
+- [X] **T007** Rewrite `03-rules.md` §5's Trauma-gain bullet and `09-systems-of-power.md`'s cost
+      section for the max-Stamina-threshold rule and the disabled-track note (FR-001–FR-004).
+- [X] **T008** Rewrite `check_spam_brake.py`: verify the spam outcome across the realistic
+      maximum-Stamina range (FR-005), rotation-immunity against the #172 exploit (FR-006), and
+      failure-gating against a naive any-outcome variant on mostly-successful play (FR-007).
+- [X] **T009** Update the ADR 0045 index entry in `docs/README.md` and the resolution note in
+      `docs/design/30-playtest-transcript.md` §10.
+- [X] **T010** Run `python3 tools/check_docs.py`, `python3 tools/check_dangling_mechanics.py`, and
       `python3 -m pytest -q`; confirm clean.

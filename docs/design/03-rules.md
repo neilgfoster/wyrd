@@ -741,12 +741,12 @@ Three tiers of mental harm, distinguished by how long they last.
 
 - **Strain** — today. From failed mental tests, terror, exhaustion. Recovered at a Rally.
 - **Trauma** — long-term and sticky. **1 per critical taken**, 1 per failed Terror test, **1 per
-  failed system-of-power invocation that immediately follows another failed invocation of the
-  same system of power in the same scene** (the first failure of a scene costs nothing extra; a
-  success, or a failed invocation of a *different* power, resets the streak —
+  failed system-of-power invocation that pushes accumulated Strain past a multiple of the
+  character's maximum Stamina** (a success that crosses the same multiple costs nothing extra;
+  Strain carries forward at its remainder past that multiple, not reset to zero —
   [`09-systems-of-power.md`](09-systems-of-power.md),
-  [ADR 0045](../adr/0045-repeated-failed-invocations-cost-trauma.md)), more at the GM's discretion
-  for genuinely terrible events.
+  [ADR 0045](../adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md)), more
+  at the GM's discretion for genuinely terrible events.
 - **Afflictions** — permanent. At **6+ Trauma**, test on every further point (a fiction-chosen
   skill, pass/fail only — [`08-afflictions.md`](08-afflictions.md)); on a failure take an
   Affliction and **lose 6 Trauma**. The track sawtooths, so a character can break many times

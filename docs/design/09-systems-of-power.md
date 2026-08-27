@@ -49,18 +49,31 @@ applies; the declared `resolve_cost`, if present, applies identically. Failing a
 costs what attempting it costs — the same shape any strenuous, risky effort already has in this
 engine.
 
-**Repeated failure of the same declaration, in the same scene, costs Trauma on top of that.** A
-failed invocation that immediately follows another failed invocation of the *same* system of
-power costs 1 Trauma, through the engine's existing Trauma-gain list
-([`03-rules.md`](03-rules.md) §5) — the same rate "1 per failed Terror test" already uses, not a
-new one. The first failure of a scene is free of this; a success, or failing a *different* system
-of power, resets the streak. This composes with `strain_cost`/`resolve_cost` unchanged — it does
-not replace them, and it is not itself scaled by `intensity_tiers` (a `major`-tier failure and a
-`minor`-tier failure of the same power cost the same 1 Trauma on repetition; the tier's own
-`cost_multiplier`/`ill_omen_taint_bonus` already price ambition on the Strain/Taint side).
-Strain's own reset at a Rally is unaffected — this brake targets the one thing that reset let pass
-consequence-free: retrying the same failing declaration, over and over, before the Rally arrives
-([ADR 0045](../adr/0045-repeated-failed-invocations-cost-trauma.md)).
+**A failed invocation that pushes accumulated Strain past a multiple of the character's maximum
+Stamina costs Trauma on top of that.** Strain still accrues exactly as above, win or lose; only a
+*failed* invocation is checked against the threshold — a success that happens to cross the same
+multiple costs nothing extra. When a failed invocation's resulting Strain crosses one or more
+multiples of maximum Stamina, the character gains 1 Trauma per multiple crossed, through the
+engine's existing Trauma-gain list ([`03-rules.md`](03-rules.md) §5) — the same rate "1 per failed
+Terror test" already uses, not a new one — and Strain carries forward at its remainder past the
+last multiple crossed, the same "further point past the floor" shape Trauma's own Affliction test
+already uses ([`08-afflictions.md`](08-afflictions.md)), not reset to zero outright. This composes
+with `strain_cost`/`resolve_cost` unchanged — it does not replace them, and it is not itself
+scaled by `intensity_tiers` (the tier's own `cost_multiplier`/`ill_omen_taint_bonus` already price
+ambition on the Strain/Taint side; a bigger `strain_cost` per attempt simply reaches the threshold
+sooner, without any separate scaling rule needed here). Strain's own reset at a Rally is
+unaffected — this brake targets the one thing that reset let pass consequence-free: retrying a
+failing declaration, over and over, before the Rally arrives — and because the check reads only
+the character's own Strain total and maximum Stamina, never which system of power produced the
+failure, it applies identically whether the same power is retried or a player rotates between
+several known systems of power ([ADR 0045](../adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md)).
+
+**When a setting has disabled Strain and/or Trauma** (`overrides.disable`,
+[`24-authoring-a-setting.md`](24-authoring-a-setting.md)), this brake applies no consequence at
+all — the same graceful degradation already stated above for a Taint-disabled setting's Ill Omen.
+A setting disabling both is choosing consequence-free power use as a genre feature, on purpose,
+through the same override mechanism that already lets it drop Taint; the engine does not invent a
+substitute consequence for a track a setting has deliberately switched off.
 
 ## Intensity tiers
 

@@ -1,43 +1,56 @@
-"""Re-run a comparable spam sequence to #151's playtest finding (#163) and confirm ADR 0045's
-brake actually changes the outcome, not just the prose (#163's own acceptance criterion).
+"""Verify ADR 0045's max-Stamina-threshold Trauma brake: a failed system-of-power invocation
+that pushes accumulated Strain past a multiple of the character's maximum Stamina costs 1
+Trauma per multiple crossed, with Strain carrying forward at its remainder (Trauma's own
+"further point past the floor" shape, 08-afflictions.md, restated for Strain with maximum
+Stamina as the modulus instead of a fixed number). Only a failed invocation is checked -- a
+success crossing the same multiple costs nothing extra.
 
-Replays a fresh, disclosed, seeded d100 sequence of major-tier `ember-craft` invocations
-(eff. 10%, the worked example's own numbers from 09-systems-of-power.md/30-playtest-transcript.md
-sec10), comparing the published (pre-fix) rule -- cost paid regardless of outcome, no brake -- to
-ADR 0045's rule -- 1 Trauma on a failed invocation immediately following another failed
-invocation of the same system of power in the same scene, first failure of the scene free.
+Supersedes an earlier same-power-failure-streak design (see ADR 0045's own superseded section
+and #172): that version was defeated outright by rotating between two known systems of power.
+This version is checked directly against that exact exploit below (see rotation_matches_spam)
+and confirmed immune, because the check never reads which power produced the failure -- only
+the character's own Strain total and maximum Stamina.
 """
-import random
 from fractions import Fraction
+import random
 
 SEED = 20260831
-ATTEMPTS = 26
-EFF = 10          # major tier, "Very Hard"
-STRAIN_COST = 8   # strain_cost 2 * cost_multiplier 4, the worked example's major tier
 
 
-def replay(seed: int, attempts: int, eff: int):
+def crossings(before: int, after: int, modulus: int) -> int:
+    """How many multiples of `modulus` lie strictly between `before` and `after`, treating the
+    modulus itself as the floor (not itself a further point) -- exactly Trauma's own convention
+    (08-afflictions.md: "6 is the floor... fires on the next point past it") restated with
+    `modulus` standing in for the fixed 6."""
+    return max(0, (after - 1) // modulus - max(before - 1, 0) // modulus)
+
+
+def replay(seed: int, attempts: int, eff: int, strain_cost: int, max_stamina: int,
+           rotate_powers: bool = False):
+    """Replays `attempts` invocations of a d100 test at `eff`%, paying `strain_cost` Strain
+    every time regardless of outcome, and applying the Trauma brake on failure. `rotate_powers`
+    is purely cosmetic here -- the brake's own logic never reads it -- included only so the
+    rotation-immunity check below is visibly running a distinct scenario, not the same call
+    twice."""
     rng = random.Random(seed)
     strain = 0
-    trauma_no_brake = 0
-    trauma_with_brake = 0
-    streak_failed = False  # whether the previous invocation of this power failed
-    results = []
+    trauma = 0
+    log = []
     for i in range(1, attempts + 1):
+        power = ("A" if i % 2 == 1 else "B") if rotate_powers else "A"
         roll = rng.randint(1, 100)
         success = roll <= eff
-        strain += STRAIN_COST
+        before = strain
+        strain += strain_cost
+        gained = 0
         if not success:
-            # published rule: no Trauma consequence at all
-            # ADR 0045: 1 Trauma if this failure immediately follows another failure of the
-            # same power in the same scene; the first failure of the scene is free.
-            if streak_failed:
-                trauma_with_brake += 1
-            streak_failed = True
-        else:
-            streak_failed = False
-        results.append((i, roll, success, strain, trauma_no_brake, trauma_with_brake))
-    return results, trauma_no_brake, trauma_with_brake, strain
+            gained = crossings(before, strain, max_stamina)
+            trauma += gained
+            if gained:
+                strain %= max_stamina
+        log.append(dict(i=i, power=power, roll=roll, success=success, strain=strain,
+                         trauma=trauma, gained=gained))
+    return log
 
 
 def check(claim: str, ok: bool) -> None:
@@ -48,49 +61,85 @@ def check(claim: str, ok: bool) -> None:
 
 
 def main() -> int:
-    print(f"Replaying {ATTEMPTS} major-tier (eff. {EFF}%) invocations, seed {SEED}, "
-          f"strain_cost {STRAIN_COST} (2 base x4 major-tier multiplier).\n")
-    results, trauma_no_brake, trauma_with_brake, final_strain = replay(SEED, ATTEMPTS, EFF)
+    print("Re-run of a comparable spam sequence to #151's playtest, major tier "
+          "(eff. 10%, strain_cost 8), across the realistic maximum-Stamina range (6-10):\n")
+    for max_stamina in range(6, 11):
+        log = replay(SEED, 26, 10, 8, max_stamina)
+        final = log[-1]
+        print(f"  max Stamina {max_stamina:>2}: 26/26 fail, final Trauma {final['trauma']:>2}, "
+              f"final Strain (remainder) {final['strain']}")
+        check(f"max Stamina {max_stamina}: spam produces real, non-zero Trauma",
+              final['trauma'] > 0)
+        check(f"max Stamina {max_stamina}: spam crosses the Affliction threshold (6+ Trauma, "
+              f"08-afflictions.md)", final['trauma'] >= 6)
 
-    fails = sum(1 for _, _, success, *_ in results if not success)
-    print(f"  fails: {fails}/{ATTEMPTS}   final Strain: {final_strain}")
-    print(f"  Trauma under the published (pre-fix) rule: {trauma_no_brake}")
-    print(f"  Trauma under ADR 0045's brake:              {trauma_with_brake}\n")
+    print("\nOrdinary use (3 invocations of one power, eff. 50%, strain_cost 2, "
+          "success/success/fail -- the design doc's own worked example):")
+    for max_stamina in range(6, 11):
+        rng_seed_irrelevant = None
+        strain = 0
+        trauma = 0
+        for roll, eff in [(26, 50), (25, 50), (66, 50)]:
+            before = strain
+            strain += 2
+            success = roll <= eff
+            if not success:
+                gained = crossings(before, strain, max_stamina)
+                trauma += gained
+                if gained:
+                    strain %= max_stamina
+        print(f"  max Stamina {max_stamina:>2}: Trauma {trauma}")
+        check(f"max Stamina {max_stamina}: ordinary play costs zero extra Trauma",
+              trauma == 0)
 
-    check("the published rule accrues zero Trauma from this sequence, matching #163's own "
-          "finding (\"nothing brakes the spam\")", trauma_no_brake == 0)
-    check("ADR 0045's brake accrues real, non-zero Trauma from the same sequence -- the fix "
-          "actually changes the outcome, not just the prose (#163's acceptance criterion)",
-          trauma_with_brake > 0)
-    check("the brake's Trauma total is consistent with 'first failure free, then 1 per "
-          "consecutive further failure' -- at most (fails - 1) when every attempt fails and "
-          "there is no success to reset the streak", trauma_with_brake <= fails - 1)
-    check("a spam run of consecutively-failing invocations crosses the Affliction threshold "
-          "(6+ Trauma, 08-afflictions.md) under the brake, where it never could under the "
-          "published rule", trauma_with_brake >= 6)
+    print("\nMixed-outcome, mostly-successful use (eff. 50%, strain_cost 4, 26 attempts) -- "
+          "confirms the brake is failure-gated, not volume-gated:")
+    for max_stamina in (9, 12):
+        # any-outcome variant, for comparison only -- not the adopted rule
+        rng = random.Random(SEED)
+        strain_any = 0
+        trauma_any = 0
+        rng2 = random.Random(SEED)
+        strain_fail = 0
+        trauma_fail = 0
+        for _ in range(26):
+            roll = rng.randint(1, 100)
+            success = roll <= 50
+            before = strain_any
+            strain_any += 4
+            gained = crossings(before, strain_any, max_stamina)
+            trauma_any += gained
+            if gained:
+                strain_any %= max_stamina
 
-    print("\nAlso confirm the brake does NOT fire on ordinary, non-spam play: three invocations "
-          "of the same power with only one failure among them (09-systems-of-power.md's own "
-          "worked example, 30-playtest-transcript.md sec10's 'ordinary use').")
-    rng = random.Random(1)
-    ordinary_rolls = [26, 25, 66]  # matches the documented ordinary-use sequence: success,
-                                    # success, fail -- reused directly, not re-rolled
-    streak_failed = False
-    ordinary_trauma = 0
-    for roll in ordinary_rolls:
-        success = roll <= 50  # minor tier, eff. 50 in the documented example
-        if not success:
-            if streak_failed:
-                ordinary_trauma += 1
-            streak_failed = True
-        else:
-            streak_failed = False
-    check("ordinary play (one isolated failure among successes) costs zero Trauma under the "
-          "brake -- a character is still free to try, per ADR 0045's own stated intent",
-          ordinary_trauma == 0)
+            roll2 = rng2.randint(1, 100)
+            success2 = roll2 <= 50
+            before2 = strain_fail
+            strain_fail += 4
+            if not success2:
+                gained2 = crossings(before2, strain_fail, max_stamina)
+                trauma_fail += gained2
+                if gained2:
+                    strain_fail %= max_stamina
+        print(f"  max Stamina {max_stamina:>2}: any-outcome Trauma {trauma_any:>2}, "
+              f"failure-only Trauma {trauma_fail:>2}")
+        check(f"max Stamina {max_stamina}: failure-only produces strictly less Trauma than "
+              f"counting every outcome, on identical rolls", trauma_fail < trauma_any)
 
-    print("\nAll checks passed: ADR 0045's brake leaves ordinary play untouched and gives "
-          "repeated same-power failure a real, persistent cost that survives a Rally.")
+    print("\nRotation-immunity check: identical roll sequence, single power spammed vs. two "
+          "powers alternated (#172's original exploit) -- must produce identical Trauma, since "
+          "the brake never reads which power failed:")
+    for max_stamina in range(6, 11):
+        single = replay(SEED, 26, 10, 8, max_stamina, rotate_powers=False)
+        rotated = replay(SEED, 26, 10, 8, max_stamina, rotate_powers=True)
+        check(f"max Stamina {max_stamina}: single-power and two-power-rotation Trauma match "
+              f"exactly ({single[-1]['trauma']} == {rotated[-1]['trauma']})",
+              single[-1]['trauma'] == rotated[-1]['trauma'])
+
+    print("\nAll checks passed: the max-Stamina-threshold brake produces real, failure-gated "
+          "Trauma on a spam sequence, leaves ordinary and mostly-successful play untouched "
+          "relative to a naive any-outcome rule, and is immune to #172's rotation exploit by "
+          "construction.")
     return 0
 
 

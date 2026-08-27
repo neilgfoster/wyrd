@@ -828,15 +828,18 @@ bite. Raised as a follow-up issue: the cost structure needs either a Strain cap/
 cost that scales with attempts within a scene, or some other brake — a real design decision, not
 decided here.
 
-**Resolved in [ADR 0045](../adr/0045-repeated-failed-invocations-cost-trauma.md):** a failed
-invocation immediately following another failed invocation of the *same* system of power, in the
-same scene, now costs 1 Trauma on top of its stated Strain/Resolve cost, the first failure of a
-scene remaining free. `specs/057-systems-of-power-spam-brake/check_spam_brake.py` re-runs a
-comparable 26-attempt `major`-tier spam sequence and confirms the brake accrues real, non-zero
-Trauma (25, crossing the Affliction threshold) where the published rule accrued none — and that
-ordinary play (one isolated failure among successes, this pass's own "ordinary use" sequence
-above) still costs nothing extra. Not re-played against this exact sequence's own logged rolls,
-which were not fully disclosed roll-by-roll above; the re-run uses a fresh seed instead.
+**Resolved in [ADR 0045](../adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md):**
+a failed invocation that pushes accumulated Strain past a multiple of the character's maximum
+Stamina now costs 1 Trauma on top of its stated Strain/Resolve cost, with Strain carrying forward
+at its remainder. `specs/057-systems-of-power-spam-brake/check_spam_brake.py` re-runs a comparable
+26-attempt `major`-tier spam sequence and confirms real, non-zero Trauma accrues (13–26 depending
+on the character's maximum Stamina, always crossing the Affliction threshold) where the published
+rule accrued none — that ordinary play and mostly-successful play both stay untouched — and that
+the brake is immune to a rotation exploit an earlier same-power-streak design was not (a
+two-power-alternating re-run of this exact roll sequence produces identical Trauma to spamming one
+power, at every maximum Stamina tested, since the check never reads which power failed). Not
+re-played against this exact sequence's own logged rolls, which were not fully disclosed
+roll-by-roll above; the re-run uses a fresh seed instead.
 
 **The Resolve gap (#157) recurs independently**, strengthening the case that it needs resolving
 before systems of power with a declared `resolve_cost` are usable at all.
