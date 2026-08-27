@@ -383,3 +383,135 @@ with nothing further to invent.
 **What this pass does not prove**: extended tasks (§1's interval-based work), the Bargain (Taint
 route via a failed roll), and Fortune spent to reroll, defend again, act sooner, dodge a
 misfortune, or break a tie — none were exercised here and remain untested by this document.
+
+---
+
+## 7. Combat and harm: a deeper pass
+
+Part of #134 (the autonomous playtest epic), #148. Where §3 ran one exchange to a survived
+resolution, this pass deliberately picks a tougher single opponent so a drop is a real possibility,
+then plays whatever the dice actually produce — including, this time, a drop, a critical, an
+Aftermath roll, and (via a separate, explicitly-labelled sampling exercise) a Fate spend against a
+death result. A crowd encounter and Stamina recovery close the pass.
+
+Senna Vask again: `blade: 35`, `evasion: 30`, Stamina `6/6`, light armour.
+
+```yaml
+creatures:
+  - id: the-bounty-hunter
+    name: A professional the debt-collector called in
+    baseline: 30
+    stamina_max: 6
+    armour: modest
+    skills: {blade: 50}
+    damage: 1d8
+    damage_type: slashing
+    ranged: false
+```
+
+Every roll below is a real `d100`/`d6`/`d8`/`d3` draw from Python's `random`, seeded `20260828`,
+drawn in the exact order the fight needed them (attack roll, its damage/armour dice only on a hit;
+defence roll, its damage/armour dice only on a landed blow) — the same discipline §3 and §6 both
+already established.
+
+`effective%` for Senna's attack: `clip(50 + (35 − 50), 5, 95) = 35`. For her defence:
+`clip(50 + (30 − 50), 5, 95) = 30`. Both fixed for the fight, same as §3.
+
+### The exchange
+
+- **Round 1.** Senna attacks (eff. 35). Roll **47** — fails, Wyrd die reads nothing (units 7). The
+  bounty hunter attacks; Senna defends (eff. 30). Roll **43** — **fails: the blow lands.** Wyrd die
+  nothing (units 3). Damage `1d8` = **4**; light armour subtracts `1d3` = **2**; **2** gets
+  through. Senna: **6 → 4**.
+- **Round 2.** Senna attacks (eff. 35). Roll **59** — fails. Units digit 9 → **Fair Omen** on a
+  failure (something breaks her way even as the strike goes wide — played as: she reads an opening
+  for next round). Senna defends (eff. 30). Roll **86** — **blow lands**, nothing on the Wyrd die.
+  Damage `1d8` = **4**; armour `1d3` = **1**; **3** through. Senna: **4 → 1**.
+- **Round 3.** Senna attacks (eff. 35). Roll **99** — fails. **Fair Omen** again. Senna defends
+  (eff. 30). Roll **64** — **blow lands**, nothing on the Wyrd die. Damage `1d8` = **5**; armour
+  `1d3` = **2**; **3** through. Senna: **1 → −2**. She drops.
+
+Senna never landed a hit — all three of her own attack rolls failed — and took all three of the
+bounty hunter's blows through a failed defence roll each time. See **Findings** below for what
+this exposed about telling blow on the defence side.
+
+### The critical and Aftermath
+
+Dropped by **2**. Critical: `1d6 + 2` = **5**, read on `critical-slashing`'s **2–5** row —
+`slashing-glancing`, nothing lasting. It opens skin and no more; the drop itself is what actually
+costs her.
+
+Aftermath: `d100 + (5 × 2)` — roll **73** + **10** = **83**, landing in the **79–88** band:
+`taken` — captured, a `thread` entity opens. Played: the bounty hunter doesn't finish her; he
+delivers her to whoever is owed the debt.
+
+### A separate sampling pass: reaching the death band, to play the Fate spend
+
+The single Aftermath roll above landed on `taken`, not death — which is itself a real result, not
+a disappointing one, but it leaves the Fate-spend mechanic (#148's own required scope) unplayed.
+Rather than reroll the actual fight's outcome, a fresh, separately-seeded (`20260829`) sample of
+six Aftermath rolls at `points_below = 9` (the 35%-death row from `06-aftermath.md`'s own published
+table) was drawn to reach — honestly, not by discarding misses — an actual death result to play
+through:
+
+| Roll | `d100` | Total (`+45`) | Band |
+|---|---|---|---|
+| 1 | 78 | 123 | **death** |
+| 2 | 53 | 98 | disfigured |
+| 3 | 44 | 89 | disfigured |
+| 4 | 85 | 130 | **death** |
+| 5 | 84 | 129 | **death** |
+| 6 | 9 | 54 | left-for-dead |
+
+Three of six landed in the death band — consistent with the published 35% figure at this drop
+depth. Taking roll 1 (**123**, death) to play the Fate spend: Senna's player has Fate remaining and
+chooses to spend it. Per `03-rules.md` §3 and `06-aftermath.md`, the result is **re-read on the
+worst row that is not death** — `99–110`, `recurring-wound`: one wound record, `recurring: true`,
+effect `skill: -10`. She survives, and is not better off — the wound "wakes before every fight
+after this one," exactly as the row describes, and exactly the cost `06-aftermath.md` prices for
+spending Fate rather than the free pass it would otherwise read as.
+
+### A crowd encounter
+
+Three more of the debt-collector's hired hands close in — skill 15%, Stamina 1, no armour.
+Set against Senna's blade 35%, the gap is **20**, meeting the clearing test's threshold exactly (all
+three: Stamina 1 ✓, no armour ✓, gap ≥20 ✓ — all three qualify). At the start of each of Senna's
+turns while she remains engaged with them, she clears one without a roll and without spending her
+action; three of her turns clear all three. No dice were drawn for this — the rule is a lookup, not
+a roll, and playing it through confirmed it needs none.
+
+### Stamina recovery
+
+Following the fight (all of it — the exchange, the drop, the crowd), Senna is at 0 (per
+`03-rules.md` §2: "a combatant who dropped below 0 wakes at 0 when the fight ends"). At her next
+Rally: **0 → 1**. At the following downtime: **1 → 6** (maximum), matching
+[`check_recovery.py`](../../specs/014-stamina-recovery/check_recovery.py)'s own computed figures
+for a starting-Stamina character with no further complication.
+
+### Findings
+
+**One real ambiguity found, not silently resolved.** `03-rules.md` §2 states degrees are "read
+from the roll exactly as in §1" and telling blow triggers on "win by 6 or more degrees" — but §1's
+own convention, already established in §3's combat exchange ("No degrees — degrees only exist on a
+success"), means a **failed defence roll has no degrees to compare against 6 at all**, even though
+that failure is exactly what makes the blow land. This pass hit the case directly: all three blows
+Senna took arrived via a failed defence roll, and under the only textually-supported reading (no
+degrees on a failure, full stop), none of them could have been a telling blow, however badly the
+roll missed. `specs/018-player-facing-combat/check_conversion.py`'s own probability modelling
+(`telling_rate(100 - effective_pct(...), threshold)`) suggests the *intended* mechanic does let a
+telling blow land via a failed defence — treating the miss as symmetric to a virtual attack success
+at the complementary skill — but nothing in `03-rules.md`'s prose tells a GM how to compute that by
+hand for one specific roll. **This playtest used the conservative, textually-supported reading (no
+degrees, no telling blow, on a defence failure) rather than deciding the ambiguity itself** — a
+real design question, not a documentation typo, and one with a genuine balance consequence (whether
+an opponent can ever land a telling blow against a purely-defending player character). Raised
+separately as a follow-up issue rather than resolved inline here.
+
+**Everything else resolved cleanly**: the critical and Aftermath rolls read their tables exactly as
+published, the death-band sampling landed within a few points of the published 35% figure at three
+of six, the Fate spend closed the death row exactly as `06-aftermath.md` describes, the crowd
+clearing test needed no roll and no judgement call, and Stamina recovery matched
+`check_recovery.py`'s own computed figures.
+
+**What this pass does not prove**: ranged attacks, breaking off, surprise, and a mortal-blow result
+(the worst row of any critical table) were not exercised here and remain untested by this document.
