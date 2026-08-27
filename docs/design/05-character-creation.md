@@ -136,6 +136,16 @@ puts every opened skill in the *trained* band at every legal spread, and cannot 
 **This is the only allocation in creation, and it buys no advantage the fiction does not.** Depth
 costs breadth; there is no optimum, only a shape.
 
+**A setting may optionally declare an ancestry — a species, lineage, or cultural grouping — that
+grants a skill list, exactly as a career does.** Where a character has one, the eight advances
+above may open or raise any skill in the *union* of the starting career's list and the ancestry's
+list, under the same cost table. Ancestry grants no additional advances, and no Stamina, Luck, or
+other stat modifier — its only mechanical effect is widening which skills are eligible, never how
+many advances there are to spend on them
+([ADR 0040](../adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md)). Two characters who
+took the same entry career can still read as different if their ancestries differ; a setting with
+no ancestry concept declares nothing, and creation is exactly as described above.
+
 ## 4. What a setting must provide
 
 Creation cannot run without these. A setting missing any of them fails to load, rather than being
