@@ -992,6 +992,13 @@ minutes of resolution. Raised as a follow-up issue: whether a per-test cap on *h
 resources may be spent is needed, or whether the current shape (bounded only by what a character
 actually has) is the intended design and just needs stating as a deliberate choice.
 
+**Resolved in [ADR 0046](../adr/0046-reroll-resources-stack-unbounded-on-one-roll.md):** stacking
+is unbounded and deliberate, not capped. Trial 7 above — the full stack spent and still failing —
+is exactly the evidence this decision relies on: the stack is a real, resource-costly, narratively
+earned gamble, not a guaranteed win, and its cost (Taint accrued, Resolve and Fortune spent down)
+is already steep enough that no second cap is needed on top of what each of the three mechanics
+already carries individually.
+
 **Systems of power's Omen scope holds at the boundary it claims.** A quick confirming check, not
 a new finding: invoking a system of power is "an ordinary test" (`09-systems-of-power.md`), and
 ADR 0042 scoped the ±10 combat-Omen modifier to opposed tests and combat specifically, not every
@@ -1027,11 +1034,11 @@ pass independently.
 | §10 (systems of power) | Cost structure doesn't discourage spamming failed high-tier invocations | #163 | **fixed** (ADR 0045) |
 | §10 (systems of power) | Resolve gap recurs for any `resolve_cost` declaration | #157 | **fixed** (same fix as §8's finding) |
 | §11 (solo procedures) | No fault found (one stale scope note, self-corrected) | — | closed, nothing to track |
-| §12 (combination) | Reroll resources (Bargain, Resolve, Fortune) stack unbounded on one roll | #167 | open |
+| §12 (combination) | Reroll resources (Bargain, Resolve, Fortune) stack unbounded on one roll | #167 | **resolved** (ADR 0046 — deliberate, not capped) |
 | §12 (combination) | Systems-of-power/combat Omen scope boundary confirmed clean | — | confirmed, not a finding |
 
 **Nothing from any pass's Findings section is untracked.** Every real gap has either landed a fix
-(#157, #155, #163) or has its own open, board-ranked issue (#167).
+(#157, #155, #163) or has its own resolution (#167, ADR 0046).
 
 ### Two recurrences, called out explicitly
 

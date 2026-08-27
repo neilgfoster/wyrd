@@ -86,6 +86,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0043](adr/0043-resolve-recovers-at-a-rally-capped-by-taint.md) | Resolve recovers at a Rally, capped at Taint plus 3 |
 | [0044](adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md) | A telling blow via a failed defence roll is computed by the same symmetric procedure the damage-multiplier modelling already assumed |
 | [0045](adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md) | A failed invocation that pushes Strain past a multiple of maximum Stamina costs Trauma |
+| [0046](adr/0046-reroll-resources-stack-unbounded-on-one-roll.md) | Reroll resources stack unbounded on one roll, deliberately |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
