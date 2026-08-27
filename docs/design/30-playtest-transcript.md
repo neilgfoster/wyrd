@@ -984,3 +984,56 @@ otherwise have collided.
 every available reroll), not an exhaustive cross-product of every mechanic against every other.
 Further combination passes, if #162's synthesis review finds reason for one, are not precluded by
 this document calling its own pass complete.
+
+---
+
+## 13. The playtest epic's findings, reviewed together
+
+#162, closing out #134 (the autonomous playtest epic). This section does not play anything —
+per #162's own scope, it reads §6–§12's seven Findings subsections together, confirms every
+distinct finding is accounted for, and calls out anything that recurred across more than one
+pass independently.
+
+### Every finding, and where it stands
+
+| Pass | Finding | Tracked as | Status |
+|---|---|---|---|
+| §6 (resolution/opposed) | No fault found | — | closed, nothing to track |
+| §7 (combat/harm) | Telling blow via a failed defence roll has no stated per-roll procedure | #155 | open |
+| §8 (condition tracks) | Resolve has no gain mechanic, cannot be spent as designed | #157 | **fixed** (ADR 0043) |
+| §9 (economy/progression) | Career-change skill retention — a stated inference, not a gap | — | resolved by the playtest's own reasoning, no issue needed |
+| §10 (systems of power) | Cost structure doesn't discourage spamming failed high-tier invocations | #163 | open |
+| §10 (systems of power) | Resolve gap recurs for any `resolve_cost` declaration | #157 | **fixed** (same fix as §8's finding) |
+| §11 (solo procedures) | No fault found (one stale scope note, self-corrected) | — | closed, nothing to track |
+| §12 (combination) | Reroll resources (Bargain, Resolve, Fortune) stack unbounded on one roll | #167 | open |
+| §12 (combination) | Systems-of-power/combat Omen scope boundary confirmed clean | — | confirmed, not a finding |
+
+**Nothing from any pass's Findings section is untracked.** Every real gap has either landed a fix
+(#157) or has its own open, board-ranked issue (#155, #163, #167).
+
+### Two recurrences, called out explicitly
+
+**The Resolve gap appeared in two independent passes** — §8 found it first, playing the condition
+tracks in isolation; §10 hit the identical gap independently, trying to exercise a system of
+power's `resolve_cost` field. Two unrelated playtests reaching the same wall, from different
+directions, is exactly the stronger signal #162 was raised to watch for. It is also, now, the
+epic's one closed finding — fixed in #157/ADR 0043 before this synthesis pass ran, per the
+operator's own instruction to resolve a recurring, blocking gap before the epic's remaining
+individual playtests continued.
+
+**A second, thematic recurrence, not a shared root cause but worth naming together: §10's
+finding (#163) and §12's finding (#167) are both instances of the same shape** — a resource or
+declaration can be spent repeatedly, in the same scene, against the same roll or the same
+consequence, with no stated pacing limit. #163 is about a single mechanism (systems of power's
+cost) applied repeatedly; #167 is about three different mechanisms (Bargain, Resolve, Fortune)
+composed on one roll. They are not the same bug and do not need the same fix — but a designer
+resolving either should read the other first, since a design that caps one shape without
+considering the other risks solving the specific instance and leaving the general pattern in
+place. Noted on both issues.
+
+### What this section does not do
+
+**No design decision is made here.** #155, #163 and #167 each name a real, workable rejected
+alternative and a genuine balance or pacing consequence — exactly what CLAUDE.md's own test says
+an ADR is for, and exactly what #162's own Definition of Done says belongs to each issue's own
+resolution, not to this synthesis pass. All three remain open, ranked, and ready.
