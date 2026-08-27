@@ -172,6 +172,10 @@ wyrd propose --actor A --mechanic M [--skill S] [--target T] [--difficulty D]
                                         # mutation; writes nothing (ADR 0050)
 wyrd commit <proposal-id>              # applies exactly the staged mutations, atomically
 wyrd discard <proposal-id>             # writes nothing; invalidates the id
+wyrd reroll <proposal-id> --step N --resource resolve|fortune|bargain
+                                        # discards step N's downstream set, re-resolves it;
+                                        # leaves the rest of the proposal untouched; the
+                                        # proposal id stays open
 wyrd damage <target> <expr>            # applies damage, stamina, criticals
 wyrd track <id> taint +1               # mutates a track, fires thresholds
 wyrd advance-time <days>               # calendar, threat activation, expected-value events
