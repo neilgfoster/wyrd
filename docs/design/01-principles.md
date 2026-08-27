@@ -109,6 +109,7 @@ What each means to the engine:
 | `scope` | how far the stakes may travel from the character |
 | `scale_drift` | whether stakes may escalate over a chronicle, or must stay local |
 | `mortality` | starting Fate, and whether the Aftermath table's death rows are closed ([`06-aftermath.md`](06-aftermath.md)) |
+| `register` | a one-line pointer to `voice.md` — the setting's narrative voice, read alongside it for every beat. Descriptive, not enforced: unlike the fields above, there is no result the engine refuses because `register` says so ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)) |
 
 A chronicle may narrow the contract further in `houserules.yaml`, never widen it.
 
