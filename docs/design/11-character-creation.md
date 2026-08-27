@@ -17,26 +17,25 @@ engine one and a setting one.
 | 2 | **Spend 8 advances** inside that career, opening and raising skills. This is the character's background. | §3 |
 | 3 | **Choose a Loyalty**, from those the setting declares. | the setting's Loyalties ([`16-session.md`](16-session.md)) |
 | 4 | **Set Stamina** to 6, current and maximum. | engine, §2 |
-| 5 | **Set Luck** to 40, current and maximum. | engine, §2 |
-| 6 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
-| 7 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
-| 8 | **Name them, and place them.** Name, a Drive, a Misfortune, a Bond, and where they are from. | the setting's name, Drive and Misfortune tables |
-| 9 | **Write the Fault Line** — one sentence naming the direction Taint pulls this character, from the Drive and Misfortune chosen above. | engine, §1 below |
+| 5 | **Set Fate** from the setting's `mortality`. Fortune equals it. | engine, §2 |
+| 6 | **Set the tracks** the setting has not disabled to zero. | [`03-rules.md`](03-rules.md) §4–5 |
+| 7 | **Name them, and place them.** Name, a Drive, a Misfortune, a Bond, and where they are from. | the setting's name, Drive and Misfortune tables |
+| 8 | **Write the Fault Line** — one sentence naming the direction Taint pulls this character, from the Drive and Misfortune chosen above. | engine, §1 below |
 
-Steps 4–7 are fixed. Steps 1, 2, 3, 8 and 9 read setting data or the choices already made and cannot
+Steps 4–6 are fixed. Steps 1, 2, 3, 7 and 8 read setting data or the choices already made and cannot
 be completed without them.
 
 **Nothing is rolled.** No characteristics exist to roll ([ADR 0013](../adr/0013-the-engine-names-no-skill.md)),
-Stamina and Luck are flat, and skills come from the career. A character is *chosen*, not generated —
+Stamina is flat, and skills come from the career. A character is *chosen*, not generated —
 see [ADR 0014](../adr/0014-character-creation-is-chosen-not-rolled.md).
 
-Of step 8, the **Drive**, the **Misfortune** and the **Bond** carry mechanical weight — a Drive can be
-invoked for −20 ([`03-rules.md`](03-rules.md) §1), a Misfortune feeds the Fault Line (step 9) and
+Of step 7, the **Drive**, the **Misfortune** and the **Bond** carry mechanical weight — a Drive can be
+invoked for −20 ([`03-rules.md`](03-rules.md) §1), a Misfortune feeds the Fault Line (step 8) and
 seeds a Threat at chronicle creation ([`19-campaign.md`](19-campaign.md)), and a Bond is a real
 relationship ([`16-session.md`](16-session.md)). The name and the place of origin are fiction, and
 the engine never reads them. Where a character is *from* shows up mechanically in step 3, not here.
 
-**The Fault Line (step 9) is written, not chosen from a list.** It names the direction Taint pulls
+**The Fault Line (step 8) is written, not chosen from a list.** It names the direction Taint pulls
 this character — how they fall, not how much ([`03-rules.md`](03-rules.md) §4) — and it is one
 sentence combining the Drive and the Misfortune just chosen: what they want, and what already works
 against them, read together. No roll and no table decide it; the GM and player agree the sentence at
@@ -51,7 +50,6 @@ than a Drive, say — as a **retune**, since the mechanism the Fault Line feeds 
 |---|---|---|
 | **Skills** | **8 advances**, spent inside the starting career, opening at least two skills | creation uses the same doors play uses ([`03-rules.md`](03-rules.md) §6) and invents none |
 | **Stamina** | **6**, current and maximum | derived; see below |
-| **Luck** | **40**, current and maximum | a test must fail more often than it succeeds, and still have something to erode |
 | **Fate** | by `mortality`: `low` **2**, `standard` **3**, `high` **4** | the tone contract sets it ([`01-principles.md`](01-principles.md)) |
 | **Fortune** | equal to Fate, renewed daily | [`03-rules.md`](03-rules.md) §3 |
 | **Taint, Trauma, Strain, Resolve, Dread** | 0 | nothing has happened yet |
@@ -139,7 +137,7 @@ costs breadth; there is no optimum, only a shape.
 **A setting may optionally declare an ancestry — a species, lineage, or cultural grouping — that
 grants a skill list, exactly as a career does.** Where a character has one, the eight advances
 above may open or raise any skill in the *union* of the starting career's list and the ancestry's
-list, under the same cost table. Ancestry grants no additional advances, and no Stamina, Luck, or
+list, under the same cost table. Ancestry grants no additional advances, and no Stamina or
 other stat modifier — its only mechanical effect is widening which skills are eligible, never how
 many advances there are to spend on them
 ([ADR 0040](../adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md)). Two characters who
@@ -157,7 +155,7 @@ filled in by the GM's judgement.
 | **Names** | enough to name a person of this world |
 | **Places** | somewhere to be from |
 | **Drives** | the things a character wants, in this world's terms |
-| **Misfortunes** | the things already working against a character, in this world's terms — what step 9 draws on to write the Fault Line |
+| **Misfortunes** | the things already working against a character, in this world's terms — what step 8 draws on to write the Fault Line |
 | **Loyalties** | at least one, and the relations between any that are strained or irreconcilable. A setting with a single Loyalty is legal, and means the question never arises |
 
 Everything else a character carries starts empty: no wounds, no Marks, no career history, no
@@ -174,5 +172,5 @@ There is no separate "starting character" state and no creation-only rule that l
 
 **A successor runs this same procedure.** When a chronicle continues through a new character
 ([`19-campaign.md`](19-campaign.md)), they inherit the world's situation — open threads, live
-Threats, the enemies the predecessor made — and none of the predecessor's skills, Stamina, Luck or
+Threats, the enemies the predecessor made — and none of the predecessor's skills, Stamina or
 Fate. Those come from here, exactly as they did the first time.

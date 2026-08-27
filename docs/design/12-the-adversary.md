@@ -11,7 +11,7 @@ Every name here is an **engine** name. What a setting calls any of it is the set
 ## 1. An adversary is thinner than a character
 
 A character ([`10-the-character.md`](10-the-character.md)) carries Taint, Trauma, Strain, Resolve,
-Dread, Fate, Luck, a career and a career history, a Loyalty, and an advancement economy. Those exist
+Dread, Fate, Fortune, a career and a career history, a Loyalty, and an advancement economy. Those exist
 to model a person the chronicle follows for years.
 
 **An adversary carries none of it.** It carries what a published rule reads off it, and nothing
