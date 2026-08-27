@@ -908,3 +908,79 @@ exactly the kind of curated outcome this document's own dice discipline exists t
 change and its Tension-break consequence, and a downtime's Recover/Cultivate/Learn/Ask
 undertakings (only Mend has been played, in an earlier downtime not detailed here), remain
 untested by this document.
+
+---
+
+## 12. Combination and minmaxing: the seams between mechanics
+
+Part of #134 (the autonomous playtest epic), #153, depending on #147–#151. Where each prior pass
+proved one mechanic (or one closely-related family) in isolation, this pass deliberately hunts
+for what happens at the boundary between them — the class of fault CLAUDE.md names as hardest to
+catch, because no single-mechanic check asks "what happens if a player uses two of these at
+once." Senna Vask's arc, spanning the several sessions §6–§11 already documented, is treated as
+the career-length chronicle this pass's scope calls for; nothing here re-proves what those
+sections already did.
+
+Every roll below is a real `d100` draw from Python's `random`. Every table below reports every
+independent trial run, not a curated single result.
+
+### The question: how many reroll resources can stack on one failed test?
+
+Three separate mechanics each grant a reroll after a failure, and nothing in `03-rules.md`
+states a limit on using more than one on the same original roll:
+
+- **The Bargain** (§4) — 1 Taint, once no Fortune is left, for a plain reroll.
+- **Resolve** (§4) — 1 point, for a +20-boosted reroll.
+- **Fortune** (§3) — 1 point each, for a plain reroll, and Fortune has no stated per-test cap on
+  how many points may be spent.
+
+Played straight, nothing stops a player from failing, taking the Bargain, failing again, spending
+both Resolve points, failing again, and spending all three Fortune points — one original roll,
+**up to seven total attempts**, paid for in accruing Taint and depleting two other resources.
+
+**Seven independent trials**, seeded `20260835`, same fixed setup each time (`eff. 30`, Taint 5
+going in, 2 Resolve and 3 Fortune available), stacking the full chain only as far as an actual
+failure requires:
+
+| Trial | Sequence | Attempts | Outcome | Taint out | Resolve left | Fortune left |
+|---|---|---|---|---|---|---|
+| 1 | orig(95 f) → Bargain(39 f) → Resolve(16 **S**) | 3 | success | 6 | 1 | 3 |
+| 2 | orig(50 f) → Bargain(87 f) → Resolve(96 f) → Resolve(88 f) → Fortune(3 **S**) | 5 | success | 6 | 0 | 2 |
+| 3 | orig(28 **S**) | 1 | success | 5 | 2 | 3 |
+| 4 | orig(4 **S**) | 1 | success | 5 | 2 | 3 |
+| 5 | orig(51 f) → Bargain(30 **S**) | 2 | success | 6 | 2 | 3 |
+| 6 | orig(44 f) → Bargain(75 f) → Resolve(48 **S**) | 3 | success | 6 | 1 | 3 |
+| 7 | orig(42 f) → Bargain(90 f) → Resolve(68 f) → Resolve(65 f) → Fortune(36 f) → Fortune(65 f) → Fortune(85 f) | 7 | **fail** | 6 | 0 | 0 |
+
+Trial 7 is the interesting one: **the character threw everything she had — every reroll every
+mechanic grants — at one roll, and it still failed.** The stacking is real (it did materially
+raise the observed success rate: 6 of 7 trials succeeded against a 30% single-roll base rate),
+but it is not a guaranteed win, and its cost is real and persistent (Taint accrued in trial 7
+alone does not undo itself when the roll still fails).
+
+### Findings
+
+**A real combination question, not a bug.** Nothing in `03-rules.md` forbids spending the
+Bargain, Resolve and Fortune on the same original failure in sequence, and nothing computes what
+that combination is actually worth. Trial 7 shows it is not an automatic win — but six attempts
+plus the original is a lot of narrative real estate for one roll, and a GM running this at the
+table with no guidance either has to invent a pacing limit on the spot (exactly the improvisation
+`01-principles.md`'s GM contract exists to remove) or let a single dramatic beat absorb several
+minutes of resolution. Raised as a follow-up issue: whether a per-test cap on *how many* reroll
+resources may be spent is needed, or whether the current shape (bounded only by what a character
+actually has) is the intended design and just needs stating as a deliberate choice.
+
+**Systems of power's Omen scope holds at the boundary it claims.** A quick confirming check, not
+a new finding: invoking a system of power is "an ordinary test" (`09-systems-of-power.md`), and
+ADR 0042 scoped the ±10 combat-Omen modifier to opposed tests and combat specifically, not every
+ordinary test. Playing an ember-craft invocation outside combat and outside an opposed-test shape
+confirms an Ill Omen there stays narrative-plus-Taint only, exactly as ADR 0042 states — the
+scope boundary between "ordinary test" and "opposed test/combat" holds where two Omen-bearing
+mechanisms (systems of power's Ill-Omen-Taint, and the combat/opposed-test roll modifier) could
+otherwise have collided.
+
+**What this pass does not prove**: every possible pairwise interaction between the mechanics
+#147–#152 covered — this pass hunted the interaction most likely to hide an exploit (stacking
+every available reroll), not an exhaustive cross-product of every mechanic against every other.
+Further combination passes, if #162's synthesis review finds reason for one, are not precluded by
+this document calling its own pass complete.
