@@ -726,3 +726,103 @@ reading has this playtest's own reasoning to argue against directly.
 non-entry career reached through satisfied prerequisites (only a free entry-career change was
 played), and a second career left unfinished (to confirm it grants nothing) were not exercised
 here and remain untested by this document.
+
+---
+
+## 10. Systems of power: a balance pass
+
+Part of #134 (the autonomous playtest epic), #151, raised for dedicated balance scrutiny. A new
+character, invented for this exercise only: **Kester**, a trained practitioner of `ember-craft` —
+the design document's own worked example (`09-systems-of-power.md`), reused rather than
+re-invented, `ember-craft: 50`, `strain_cost: 2`, `ill_omen_taint: 1`, `intensity_tiers` exactly
+as published (`minor` average/×1/+0, `moderate` hard/×2/+1, `major` very hard/×4/+3), Strain 0,
+Taint 0.
+
+Every roll is a real `d100` draw from Python's `random`, seeded `20260831`, in the order
+presented.
+
+### Ordinary use
+
+Three `minor` invocations across a session (`eff. 50`, no tier modifier):
+
+| # | Roll | Result | Strain | Ill Omen | Taint |
+|---|---|---|---|---|---|
+| 1 | 26 | success | 2 | no | 0 |
+| 2 | 25 | success | 4 | no | 0 |
+| 3 | 66 | fail | 6 | no | 0 |
+
+Nothing surprising: cost is paid win-or-lose exactly as `09-systems-of-power.md` states, and no
+Ill Omen came up in three tries at the un-widened 10% band.
+
+### Minmax: spamming `major` tier
+
+The same character, now deliberately pushing every invocation to `major` (Very Hard, `eff. 10`,
+×4 cost, +3 Ill Omen Taint bonus) — the highest ambition the schema allows — repeatedly, with no
+Rally between attempts:
+
+| # | Roll | eff | Result | Strain (running) | Ill Omen | Taint (running) |
+|---|---|---|---|---|---|---|
+| 1–21 | *(21 attempts, all miss the 10% Ill Omen band)* | 10 | fail every time | 8 → 168 | no | 0 |
+| 22 | 30 | 10 | fail | 176 | **YES** | **4** — threshold crossed |
+| 23–25 | *(3 more attempts)* | 10 | fail | 176 → 200 | no | 4 |
+| 26 | 81 | 10 | fail | 208 | **YES** | **8** — threshold crossed again |
+
+**Every single one of these 26 attempts failed** (`eff. 10` means a 90% miss rate), and it did not
+matter: `09-systems-of-power.md`'s own rule is that cost is paid "regardless of outcome." Strain
+climbed to 208 with **no stated consequence for high Strain anywhere in `docs/design/`** — no
+cap, no threshold, nothing analogous to Taint's transformation table or Trauma's sawtooth. The
+first Ill Omen took 22 tries (consistent with the un-widened 10% band); the second took only 4
+more, once Taint's die-bending (`03-rules.md` §1) had widened the Ill Omen range to two units
+after crossing 3 Taint — the spiral the die-bending rule is clearly meant to produce, and it did.
+
+### The finding: nothing brakes the spam
+
+**A minmaxing player loses nothing by attempting `major`-tier invocations repeatedly and failing
+every time, right up until the next Rally.** Strain is "recovered at a Rally" (`03-rules.md` §5)
+— a full reset, not a partial one — and nothing in `docs/design/` prices *accumulated* Strain
+before that Rally arrives: no cap, no fictional consequence, no mechanical one. Since invocation
+cost is identical whether the roll succeeds or fails, a player has no reason to declare
+conservatively or stop after a miss — the only real, persistent cost across a Rally is the Ill
+Omen's Taint, which fires at a flat, skill-independent rate (the units digit of the natural roll)
+regardless of how many times the same scene's declaration is retried in the fiction. The
+difficulty ladder, which the rest of the ruleset uses to make ambition costly, does essentially
+no work here: `eff. 10`'s 90% failure rate costs the same as `eff. 90`'s 10% failure rate, because
+outcome never touches cost.
+
+This is not the same shape as #155 or #157 — it is not a missing procedure or an unreachable
+value, it is a cost structure that, as published, does not discourage the exact behaviour ("spam
+the biggest declaration you can and don't worry about missing") the intensity-tier mechanism's
+own stated purpose ("ties ambition to consequence") was meant to price. Raised as a follow-up
+issue rather than redesigned here.
+
+### The Resolve gap recurs
+
+`09-systems-of-power.md`'s own worked example declares `resolve_cost: 1` alongside `strain_cost`.
+Attempting that variant here — Kester with `resolve_cost: 1` added — hits #157 immediately: Resolve
+starts at 0 with no stated gain trigger anywhere in `docs/design/`, so the very first invocation
+of a system of power with a declared `resolve_cost` cannot pay it as written. This is the same
+gap #149 found, recurring in a second, independent context — evidence for #162's own "does a
+finding appear in more than one playtest" check, not a new issue.
+
+### A non-user, for comparison
+
+A character who never invokes a system of power accrues zero Strain and zero Taint through this
+path over the same span, by construction — there is nothing to compute here beyond confirming the
+schema adds no cost a non-user ever pays.
+
+### Findings
+
+**A real balance gap, not an edge case.** The spam sequence above is not a contrived worst case —
+it is the schema's own most ambitious declared tier, used exactly as `09-systems-of-power.md`
+describes, and it produced 26 consequence-free failures before the Taint mechanism started to
+bite. Raised as a follow-up issue: the cost structure needs either a Strain cap/consequence, a
+cost that scales with attempts within a scene, or some other brake — a real design decision, not
+decided here.
+
+**The Resolve gap (#157) recurs independently**, strengthening the case that it needs resolving
+before systems of power with a declared `resolve_cost` are usable at all.
+
+**What this pass does not prove**: a setting with Taint disabled (where an Ill Omen applies no
+Taint consequence at all, per `09-systems-of-power.md`'s own stated behaviour), and a system of
+power sharing a skill with a mundane use of the same skill, were not exercised here and remain
+untested by this document.
