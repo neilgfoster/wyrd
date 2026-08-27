@@ -39,7 +39,7 @@ implies the latter but never states it."
 **Alternatives considered**:
 - *Fix every career to the same skill count* (e.g. always exactly 4). Rejected — no existing
   text motivates a specific number, and it would need re-litigating with the same "check the
-  maths" rigor as Stamina's 6 ([`05-character-creation.md`](../../docs/design/05-character-creation.md)
+  maths" rigor as Stamina's 6 ([`11-character-creation.md`](../../docs/design/11-character-creation.md)
   §"Why Stamina is 6") for a constraint nobody asked for.
 
 ## Prerequisite cardinality
@@ -121,5 +121,5 @@ teach, not partway through.
   6-skill career without ever opening half its skills), which weakens both the Stamina-bonus
   rationale and the eligibility gate for successor careers.
 - *GM judgment call ("when the story says so").* Rejected under "deterministic over inference"
-  ([`20-tooling.md`](../../docs/design/20-tooling.md)) — this is exactly the kind of claim that can
+  ([`27-tooling.md`](../../docs/design/27-tooling.md)) — this is exactly the kind of claim that can
   be checked mechanically and should be.

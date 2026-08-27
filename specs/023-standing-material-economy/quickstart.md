@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Python 3.11+, standard library only (`docs/design/20-tooling.md`).
+Python 3.11+, standard library only (`docs/design/27-tooling.md`).
 
 ## Validate a gear file
 

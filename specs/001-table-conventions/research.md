@@ -2,7 +2,7 @@
 
 **Feature**: `001-table-conventions` | **Date**: 2026-08-22
 
-Phase 0 output. Each decision below is settled here so `docs/design/07-tables.md` can state it as
+Phase 0 output. Each decision below is settled here so `docs/design/04-tables.md` can state it as
 present-tense fact rather than argue for it. Three of these were settled by the operator during
 clarification and are marked as such.
 
@@ -94,7 +94,7 @@ the effect is what reaches state, the description never does.
 **Alternatives considered**:
 
 - *A single free-text row.* Simplest to author. Rejected: the engine could not apply the result, so
-  every table would need an AI to interpret it — the exact inference `docs/design/20-tooling.md` and
+  every table would need an AI to interpret it — the exact inference `docs/design/27-tooling.md` and
   ADR 0005 rule out for anything with a correct answer.
 - *A rich shared schema* carrying severity, tags, duration and dread. Rejected: four of those are
   needed by one or two families each, so most rows would carry fields nothing reads. Tables are
@@ -148,7 +148,7 @@ instead (invents a stacking mechanic the ruleset lacks).
 **Decision**: A table is addressed by a lowercase hyphenated key, `<family>` where the family holds
 one table and `<family>-<variant>` where it holds several. One table per file.
 
-**Rationale**: `docs/design/26-authoring-a-setting.md:157` already publishes
+**Rationale**: `docs/design/24-authoring-a-setting.md:157` already publishes
 `tables: {critical-slashing: setting/rules/tables/critical-slashing.yaml}`. That single line is the
 only evidence in the repository of either a naming scheme or a per-table file, and it is consistent:
 `critical` is the family, `slashing` the variant, the file is named for the key. Inventing a
@@ -169,17 +169,17 @@ rather than contradicting it.
 
 **Decision**: By the version stamps that already exist. A table ships with the engine or with a
 setting; `chronicle.yaml` already records both versions, and every recorded outcome already records
-the engine that produced it (`docs/design/22-evolution.md:105`). The outcome additionally records the
+the engine that produced it (`docs/design/29-evolution.md:105`). The outcome additionally records the
 table key it rolled on. No per-table version is introduced.
 
 **Settled by**: operator, clarification session 2026-08-22.
 
-**Rationale**: `docs/design/19-state.md:29` is explicit that four things carry versions and enumerates
+**Rationale**: `docs/design/22-state.md:29` is explicit that four things carry versions and enumerates
 them. A fifth would have to be bumped by hand every time a row changed, and a version nobody bumps
 reliably is worse than no version — it reads as authoritative and is not, which is fault class 4 in
 `CLAUDE.md`. Engine version plus table key already resolves an outcome to exactly one table.
 
-**Change class**: a table change is *tuning* under `docs/design/22-evolution.md:37` when it alters
+**Change class**: a table change is *tuning* under `docs/design/29-evolution.md:37` when it alters
 numbers, ranges or effects within an existing family, and *additive* when it adds a table or a row
 without changing existing ranges. Neither is retroactive; both are forward-only, so no recorded
 outcome is ever recomputed.
@@ -195,7 +195,7 @@ drift, but is unreadable to a human auditing the log, which is the stated purpos
 `overrides.tables:`. It may not change the family's die, its modifier source, its row schema, its
 uniqueness declaration, or the set of published table keys.
 
-**Rationale**: `docs/design/26-authoring-a-setting.md` already draws exactly this line: content is a
+**Rationale**: `docs/design/24-authoring-a-setting.md` already draws exactly this line: content is a
 setting's business, mechanism is the engine's, and a setting that needs a mechanism the engine lacks
 files an engine gap instead. Changing the die or the schema is changing the mechanism.
 
@@ -203,13 +203,13 @@ files an engine gap instead. Changing the die or the schema is changing the mech
 than asserted (ADR 0005):
 
 1. The key is one the engine publishes; an unknown key is a load error
-   (`docs/design/26-authoring-a-setting.md`: the overridable set is closed).
+   (`docs/design/24-authoring-a-setting.md`: the overridable set is closed).
 2. The ranges are contiguous and non-overlapping, and span the family's rollable minimum upward.
 3. Every row carries the three shared fields and whatever the family additionally declares.
 4. Every `effect` names a mechanic the engine knows; an effect naming an unknown mechanic is a load
    error, not a silently ignored row.
 
-**Renames**: presentation-only, per `docs/design/26-authoring-a-setting.md` and ADR 0004. A rename
+**Renames**: presentation-only, per `docs/design/24-authoring-a-setting.md` and ADR 0004. A rename
 changes what a description says; the `effect` and the table key are what reach state, and they are
 never renamed. This is why the row schema separates the two.
 
@@ -228,7 +228,7 @@ the document itself.
 
 The other decisions do not earn their own records. R2, R6 and R8 follow from documents that already
 exist rather than choosing against them. R4, R5 and R7 each rejected a real alternative, but all
-three are stated in `docs/design/07-tables.md` itself and their rejected alternatives are recorded here
+three are stated in `docs/design/04-tables.md` itself and their rejected alternatives are recorded here
 in this committed spec — which is what `CLAUDE.md` says a spec is for. Writing four records where
 one is load-bearing is the noise `docs/README.md` warns turns records into something nobody reads.
 
@@ -241,11 +241,11 @@ grep:
 
 | Document | Line | Problem | Action |
 |---|---|---|---|
-| `docs/design/20-tooling.md` | 84 | Lists "criticals, aftermath, transformations, oracles" — omits afflictions, which `docs/design/02-architecture.md:91` includes and `docs/design/03-rules.md:229` requires | Add afflictions, so the two lists match |
-| `docs/design/02-architecture.md` | 91 | Names the families but nothing points to where they are defined | Link to `docs/design/07-tables.md` |
-| `docs/design/03-rules.md` | 115, 123, 205, 229 | Names four table families without resolving any of them | Link each to `docs/design/07-tables.md` |
-| `docs/design/26-authoring-a-setting.md` | 157 | The `overrides.tables:` example is the only statement of the contract and states none of its rules | Link to the override contract in `docs/design/07-tables.md` |
+| `docs/design/27-tooling.md` | 84 | Lists "criticals, aftermath, transformations, oracles" — omits afflictions, which `docs/design/02-architecture.md:91` includes and `docs/design/03-rules.md:229` requires | Add afflictions, so the two lists match |
+| `docs/design/02-architecture.md` | 91 | Names the families but nothing points to where they are defined | Link to `docs/design/04-tables.md` |
+| `docs/design/03-rules.md` | 115, 123, 205, 229 | Names four table families without resolving any of them | Link each to `docs/design/04-tables.md` |
+| `docs/design/24-authoring-a-setting.md` | 157 | The `overrides.tables:` example is the only statement of the contract and states none of its rules | Link to the override contract in `docs/design/04-tables.md` |
 | `docs/README.md` | Index | Will not list the new ADR | Add its row |
 
-`docs/design/22-evolution.md` and `docs/design/19-state.md` need no change: the conventions were chosen to fit
+`docs/design/29-evolution.md` and `docs/design/22-state.md` need no change: the conventions were chosen to fit
 what they already say, which is the point of R7.

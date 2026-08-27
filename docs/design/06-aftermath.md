@@ -8,7 +8,7 @@ This is the load-bearing table in the ruleset. Deferred resolution is how a sing
 chronicle survives lethal combat, and most of what this table says is a lasting mark rather than
 death.
 
-It is a family of the kind [`07-tables.md`](07-tables.md) defines, and everything below is declared
+It is a family of the kind [`04-tables.md`](04-tables.md) defines, and everything below is declared
 within those conventions.
 
 ---
@@ -33,7 +33,7 @@ distinction the ruleset already draws.
 
 **The lowest possible total is 6**, not 1: the die's lowest face is 1, and a critical means at least
 one point below zero, so the smallest modifier is 5. The first row starts at 6 because
-[`07-tables.md`](07-tables.md) requires a family's ranges to begin at its lowest possible total,
+[`04-tables.md`](04-tables.md) requires a family's ranges to begin at its lowest possible total,
 and 6 is that total.
 
 **The last row is open at the top** because the modifier is unbounded. A hard enough blow runs off
@@ -41,7 +41,7 @@ the end of any table with a highest row, and the worst row absorbs everything ab
 
 **The family is repeatable.** Being left for dead twice across a decade is being left for dead twice;
 nothing here is a slot that can only be filled once. Because it is repeatable, the *when a unique
-family runs out* clause of [`07-tables.md`](07-tables.md) does not apply to it, and this family
+family runs out* clause of [`04-tables.md`](04-tables.md) does not apply to it, and this family
 declares no exhaustion outcome.
 
 **The family declares no extra row field.** Transformations and Afflictions carry a severity because
@@ -82,7 +82,7 @@ A critical describes the wound as it lands. Aftermath describes what the charact
 **mortal**, and a combatant carrying a mortal blow has their result here **read on the `death` row**,
 whatever the dice said — the mirror of the re-read a spent Fate point performs (below). Nothing about
 that changes this table's die, its modifier, or when it is rolled
-([`08-criticals.md`](08-criticals.md),
+([`05-criticals.md`](05-criticals.md),
 [ADR 0023](../adr/0023-a-critical-never-kills-during-the-fight.md)).
 
 ---
@@ -105,7 +105,7 @@ row. It is engine vocabulary and never rendered to the player; the description i
 the table.
 
 Descriptions are the engine's defaults and say only what happened. What it *feels* like is the
-setting's ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)) — a setting may rewrite every
+setting's ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)) — a setting may rewrite every
 word of this column without touching what any row does.
 
 ### Reading a result
@@ -156,7 +156,7 @@ and were caught only by computing them.
 ## The lasting wound
 
 Several rows leave a **wound record** — an entry in the character's `wounds` list
-([`19-state.md`](19-state.md)). It is what makes a permanent mark a thing state holds rather than a
+([`22-state.md`](22-state.md)). It is what makes a permanent mark a thing state holds rather than a
 sentence somebody said once.
 
 ```yaml
@@ -190,11 +190,11 @@ An effect naming anything else is a load error, not a row quietly ignored.
 until something mends it, and what mends it is the **Mend** undertaking
 ([`16-session.md`](16-session.md)), which moves one named wound's effect one grade per downtime
 spent. A wound whose effect reaches nothing gains `closed:` — the record is kept and marked, never
-deleted, because history is never recomputed ([`22-evolution.md`](22-evolution.md)).
+deleted, because history is never recomputed ([`29-evolution.md`](29-evolution.md)).
 
 **A recurring wound is the exception, and never closes** (below).
 
-**Wounds are rendered diegetically** ([`23-diegesis.md`](23-diegesis.md)). The knee never set right;
+**Wounds are rendered diegetically** ([`13-diegesis.md`](13-diegesis.md)). The knee never set right;
 never `skill: -10`.
 
 ---
@@ -241,7 +241,7 @@ before every fight for the rest of their life.
 A mortal critical arrives at the same rows from the other direction, and Fate answers it the same
 way: a mortal blow fixes the result at `death`, and a spent Fate point re-reads that `death` onto the
 worst non-death row. A mortal blow is not a way around Fate; it is a way into the row Fate answers
-([`08-criticals.md`](08-criticals.md)).
+([`05-criticals.md`](05-criticals.md)).
 
 | Closed by | Condition |
 |---|---|
@@ -280,7 +280,7 @@ source of loss — they lack the valve, not because the dice are weighted agains
 Weighting the dice as well would count the same fragility twice, and the two would eventually
 disagree.
 
-A companion's outcome moves their existing `status` ([`19-state.md`](19-state.md)): `dead` where a
+A companion's outcome moves their existing `status` ([`22-state.md`](22-state.md)): `dead` where a
 death result stands, `away` while they are held. No new status value is introduced.
 
 ---
@@ -299,7 +299,7 @@ table says what the fight cost, never how long the bruises take.
 ## What a setting may replace
 
 The **rows** — their ranges, effects and descriptions — by naming the table under
-`overrides.tables:` in `setting.yaml` ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)):
+`overrides.tables:` in `setting.yaml` ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)):
 
 ```yaml
 overrides:
@@ -311,4 +311,4 @@ rows close. The last of those is a mechanism Fate depends on, and a setting that
 change what a Fate point buys. Lethality is already a setting's to set, through `mortality`.
 
 **Table changes apply forward.** A result already rolled stands as it was rolled, and no history is
-recomputed ([`22-evolution.md`](22-evolution.md)).
+recomputed ([`29-evolution.md`](29-evolution.md)).

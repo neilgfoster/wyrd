@@ -16,7 +16,7 @@ Chronicle          years of play
      └ beat        one goal. THE ATOMIC UNIT.
 ```
 
-Arcs nest freely ([`27-entities.md`](27-entities.md)). The distinction that matters is not
+Arcs nest freely ([`25-entities.md`](25-entities.md)). The distinction that matters is not
 depth but kind:
 
 > **Arcs organise. Beats are played.**
@@ -137,20 +137,20 @@ resolve to the same choice, and the trade above would be a formality rather than
 
 | | |
 |---|---|
-| **Names** | one wound, by its `id` ([`19-state.md`](19-state.md)) |
+| **Names** | one wound, by its `id` ([`22-state.md`](22-state.md)) |
 | **Moves** | that wound's effect one step toward nothing: `skill: -10` → `-5` → closed; `stamina_max: -1` → closed; `dread: +1` → closed |
 | **Leaves alone** | everything else on the record — a mended wound keeps its `id`, its origin and its description |
 | **Costs** | the downtime's one undertaking |
 | **Cannot touch** | a **recurring** wound, ever |
 
 Every step lands on a value the wound record's closed effect set already permits
-([`09-aftermath.md`](09-aftermath.md)) — `−10` and `−5` are the difficulty ladder's own rungs
+([`06-aftermath.md`](06-aftermath.md)) — `−10` and `−5` are the difficulty ladder's own rungs
 (`03-rules.md` §1), so nothing new has to be learned to apply a half-mended wound. A wound whose
 effect reaches nothing is **closed, not deleted**: the record stays, marked, because history is
-never recomputed ([`22-evolution.md`](22-evolution.md)).
+never recomputed ([`29-evolution.md`](29-evolution.md)).
 
 **A recurring wound never closes.** Re-reading a `death` result onto the recurring wound is exactly
-what a spent Fate point buys ([`09-aftermath.md`](09-aftermath.md)); a mending rule that
+what a spent Fate point buys ([`06-aftermath.md`](06-aftermath.md)); a mending rule that
 erased it would price that promise at one season
 ([ADR 0021](../adr/0021-mending-steps-and-the-recurring-wound-does-not.md)).
 
@@ -168,7 +168,7 @@ The player runs one character. The GM runs everyone else.
 **The player's character can be threatened, and the engine is built to do it.** Criticals are
 lethal, death is deferred to the Aftermath table rather than softened, Fate points are few
 and permanent, and a chronicle that outlives its protagonist has succession rules waiting
-([`18-campaign.md`](18-campaign.md)). Any setting can raise or lower that with `mortality`.
+([`19-campaign.md`](19-campaign.md)). Any setting can raise or lower that with `mortality`.
 
 What differs is **rationing**. Threat to the player's character is real but expensive — it
 costs a Fate point, or it ends a character the chronicle has been building for years.
@@ -234,7 +234,7 @@ assembles the party and the question comes up constantly.
 
 Every character carries a **Loyalty**: what they serve, or what they are. The engine fixes nothing
 about what Loyalties exist — a setting declares them, and names them
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). Most settings need two or three; a
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). Most settings need two or three; a
 setting with one dividing line and a setting with none are both legal.
 
 Between any two Loyalties the setting declares one of three relations. Only the interesting ones are

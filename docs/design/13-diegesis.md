@@ -136,9 +136,9 @@ wyrd knows <topic>          # what this character would know, at their competenc
 
 Band lookup is deterministic and lives in `engine/tables/bands.py` — the *mapping* is a
 table, only the sentence is written. This is the tooling rule in
-[`20-tooling.md`](20-tooling.md) applied to prose: the model chooses the words, never the
+[`27-tooling.md`](27-tooling.md) applied to prose: the model chooses the words, never the
 band.
 
 Bands are per-setting where the idiom differs — a farmhand and a void-sailor describe
 exhaustion differently. **The thresholds are the same; only the words change**, which is the
-same rule renames follow everywhere ([`20-tooling.md`](20-tooling.md)).
+same rule renames follow everywhere ([`27-tooling.md`](27-tooling.md)).

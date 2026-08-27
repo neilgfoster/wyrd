@@ -11,7 +11,7 @@ were not forced by the section's own text alone, and each had a real alternative
 could plausibly re-propose:
 
 1. **Whether the affliction family is unique per character or repeatable.**
-   [`07-tables.md`](../design/07-tables.md) defaults every table family to unique per character unless
+   [`04-tables.md`](../design/04-tables.md) defaults every table family to unique per character unless
    carrying the same result twice is genuinely ordinary for that family.
 2. **What the Trauma test at 6+ is rolled against.** The engine names no skill
    ([ADR 0013](0013-the-engine-names-no-skill.md)), so a test firing repeatedly across a
@@ -24,7 +24,7 @@ could plausibly re-propose:
 explicitly is not the intent: "the track sawtooths, so a character can break many times across
 years" reads as the same fracture recurring, and forcing uniqueness would additionally require an
 exhaustion clause this track has no natural cap to justify — unlike the transformation table's
-hidden threshold ([`10-transformations.md`](../design/10-transformations.md)), nothing in §5 bounds
+hidden threshold ([`07-transformations.md`](../design/07-transformations.md)), nothing in §5 bounds
 how many times a character can break this way.
 
 **The Trauma test names no fixed skill.** It is an ordinary [`03-rules.md`](../design/03-rules.md) §1
@@ -57,7 +57,7 @@ point of characterisation (which skill a given character leans on under pressure
 
 ## Consequences
 
-- [`11-afflictions.md`](../design/11-afflictions.md) declares the family repeatable and the roll
+- [`08-afflictions.md`](../design/08-afflictions.md) declares the family repeatable and the roll
   `1d12`, no modifier, no severity field.
 - The sawtooth cadence computed in `tools/check_affliction.py` — exactly 1 Affliction per 6
   Trauma-adding events, for any test skill below ~83% — is a consequence of the floor and drop

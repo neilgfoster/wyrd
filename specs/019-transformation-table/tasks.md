@@ -11,12 +11,12 @@
 
 ## Phase 2 — Design document
 
-- [X] T003 Write `docs/design/10-transformations.md`: thresholds (FR-001), the roll and table with a
+- [X] T003 Write `docs/design/07-transformations.md`: thresholds (FR-001), the roll and table with a
   severity per row (FR-002), the body/mind statement (FR-004), termination proof (FR-003), the
   hidden threshold (FR-005), and Dread (FR-006). [US1, US2, US3]
 - [X] T004 Update `docs/design/03-rules.md` §4 in place: state the thresholds and the resolved body/mind
   split, point at the new document, no changelog language. [FR-007]
-- [X] T005 Update `docs/design/07-tables.md`'s index row for Transformations: roll, link, no longer
+- [X] T005 Update `docs/design/04-tables.md`'s index row for Transformations: roll, link, no longer
   "not yet written". [FR-008]
 - [X] T006 Add the hub row for `03a-3-transformations.md` to `README.md` for reachability.
 
@@ -28,7 +28,7 @@
 
 ## Phase 4 — Verification
 
-- [X] T009 `grep` `docs/design/10-transformations.md` and the touched files for setting/system
+- [X] T009 `grep` `docs/design/07-transformations.md` and the touched files for setting/system
   vocabulary and tonal register; confirm none. [FR-009]
 - [X] T010 Confirm nothing produced requires showing the hidden threshold to the player (re-read
   against `10-diegesis.md`'s "never shown" class). [FR-010]

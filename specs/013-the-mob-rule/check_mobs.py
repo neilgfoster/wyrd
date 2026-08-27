@@ -4,16 +4,16 @@
 CLAUDE.md: where a claim can be checked by a script, check it. The rule this replaces was one
 sentence -- "each round a character also clears petty opponents weaker than themselves" -- and it
 carried no numbers at all. Neither *petty* nor *weaker* was defined, so whether the rule applied
-was a judgement call, which is exactly what docs/design/20-tooling.md exists to prevent.
+was a judgement call, which is exactly what docs/design/27-tooling.md exists to prevent.
 
 Everything below is derived from numbers already merged, not invented here:
 
 1. **Armour subtracts dice** -- light 1d3, modest 1d6, heavy 2d6, minimum 1 always through
    (docs/design/03-rules.md section 2).
-2. **A starting character has Stamina 6** (docs/design/05-character-creation.md), and a critical
+2. **A starting character has Stamina 6** (docs/design/11-character-creation.md), and a critical
    happens when damage takes a combatant below 0.
 3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (docs/design/03-rules.md section 1,
-   docs/design/04-the-character.md).
+   docs/design/10-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
    (docs/design/03-rules.md section 1, ADR 0016).
 5. **The recorded player-facing mapping** is effective% = 50 + (player_skill - opponent_skill),
@@ -21,7 +21,7 @@ Everything below is derived from numbers already merged, not invented here:
    under BOTH the opposed test as it stands today and that mapping, because the rule must survive
    the conversion.
 
-Weapon damage is setting data (docs/design/26-authoring-a-setting.md), so it is modelled across the
+Weapon damage is setting data (docs/design/24-authoring-a-setting.md), so it is modelled across the
 same plausible band specs/008-character-creation/check_creation.py used, and no conclusion is
 allowed to hold at only one point of it.
 
@@ -39,7 +39,7 @@ ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
 MIN_THROUGH = 1
 WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 
-# The ORDINARY pairing, in the sense docs/design/05-character-creation.md already uses: a mid-band
+# The ORDINARY pairing, in the sense docs/design/11-character-creation.md already uses: a mid-band
 # weapon against modest armour. It is 1.56 points through and 4.5 hits to drop a starting
 # character -- the figures #44 corrected this repo to and specs/012 is calibrated against. A
 # crowd's blows are modelled on it rather than on the band mean, because the band mean includes
@@ -47,8 +47,8 @@ WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 ORDINARY_WEAPON = [6]
 
 UNTRAINED = 10          # docs/design/03-rules.md section 1
-SKILL_OPENS_AT = 25     # docs/design/04-the-character.md section 2
-STARTING_STAMINA = 6    # docs/design/05-character-creation.md section 2
+SKILL_OPENS_AT = 25     # docs/design/10-the-character.md section 2
+STARTING_STAMINA = 6    # docs/design/11-character-creation.md section 2
 
 # The skills a character actually has in a real fight: newly opened, a few advances in,
 # competent, and practised. Not a midpoint -- CLAUDE.md is explicit about that.

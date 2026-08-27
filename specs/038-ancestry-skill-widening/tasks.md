@@ -7,7 +7,7 @@
 
 - [ ] **T001** Write ADR 0040 recording the decision and its two rejected alternatives (satisfies
       FR-005).
-- [ ] **T002** Add a subsection to `docs/design/05-character-creation.md` §3 stating that an
+- [ ] **T002** Add a subsection to `docs/design/11-character-creation.md` §3 stating that an
       optional, setting-declared ancestry widens the eligible skill pool to the union of the
       career's and ancestry's lists, grants no additional advances, and carries no stat/Stamina/
       Luck modifier (satisfies FR-001, FR-002, FR-003, FR-004, FR-006).

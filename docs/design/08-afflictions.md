@@ -4,14 +4,14 @@ The table a character rolls on **when a Trauma test fails at 6+ Trauma**. It is 
 [`03-rules.md`](03-rules.md) means by *take an Affliction*, and it is the only place the lasting
 shape of Trauma is defined.
 
-It is a family of the kind [`07-tables.md`](07-tables.md) defines, and everything below is
+It is a family of the kind [`04-tables.md`](04-tables.md) defines, and everything below is
 declared within those conventions.
 
 ---
 
 ## Body, never mind — restated
 
-[`10-transformations.md`](10-transformations.md) already resolves the collision
+[`07-transformations.md`](07-transformations.md) already resolves the collision
 [`03-rules.md`](03-rules.md) §4 used to read: **a Taint threshold always forces a Transformation,
 never an Affliction.** This document restates it once for a reader who starts here: Afflictions
 are Trauma's business alone. Taint and Trauma are independent scores with independent triggers,
@@ -113,7 +113,7 @@ should expect this track to matter, not sit dormant.
 
 ## What a setting may replace
 
-Per [`07-tables.md`](07-tables.md): a setting may replace this table's rows — their ranges,
+Per [`04-tables.md`](04-tables.md): a setting may replace this table's rows — their ranges,
 effects and descriptions — under `overrides.tables: {affliction: ...}`. It may not change the die,
 the modifier, the uniqueness (repeatable), or the row schema. No row may carry a setting's name, a
 system's name, or a tonal register; a setting renames what the descriptions say, never what the

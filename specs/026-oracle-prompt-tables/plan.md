@@ -6,17 +6,17 @@
 
 ## Summary
 
-Write `docs/design/13-oracle-prompts.md`: a fixed, small set of genre-neutral prompt families (NPC
+Write `docs/design/15-oracle-prompts.md`: a fixed, small set of genre-neutral prompt families (NPC
 objective, why a situation isn't as presented, what a thread turns on, what complicates a scene),
-each a table under the existing `oracles` family from `docs/design/07-tables.md`. Every row is checked
+each a table under the existing `oracles` family from `docs/design/04-tables.md`. Every row is checked
 against a grim reading and a comic reading, recorded row by row; any row that fails either is
 dropped. State when the GM is obliged to roll one, how generated content maps onto
-`docs/design/16-session.md` (companion objectives/Tension) and `docs/design/18-campaign.md` /
-`docs/design/28-arcs-and-beats.md` (threads/threats), and the setting extension path: `extend:`
-(`docs/design/26-authoring-a-setting.md`) gains tables as an extendable kind, alongside its existing
+`docs/design/16-session.md` (companion objectives/Tension) and `docs/design/19-campaign.md` /
+`docs/design/18-arcs-and-beats.md` (threads/threats), and the setting extension path: `extend:`
+(`docs/design/24-authoring-a-setting.md`) gains tables as an extendable kind, alongside its existing
 careers/talents/gear/creatures, so a setting can add rows to a prompt table without replacing the
-engine's own. Amend `docs/design/07-tables.md`'s existing oracles index row to also link the new
-document, and `docs/design/02-architecture.md` / `docs/design/20-tooling.md` if their file-layout mentions
+engine's own. Amend `docs/design/04-tables.md`'s existing oracles index row to also link the new
+document, and `docs/design/02-architecture.md` / `docs/design/27-tooling.md` if their file-layout mentions
 need it.
 
 ## Technical Context
@@ -33,7 +33,7 @@ those files is future work (Stage 13).
 
 **Testing**: `tools/check_oracle_prompts.py` — checks, per table, that every row's range is
 contiguous, starts at the family's lowest possible total, and is open at the top
-(`docs/design/07-tables.md`'s row-schema rule), and that the document records a grim/comic check for
+(`docs/design/04-tables.md`'s row-schema rule), and that the document records a grim/comic check for
 every row with no row marked as failing either. This is a structural check (row coverage,
 duplicate-row detection), not a probability computation — this family's correctness criterion is
 qualitative genre-neutrality, not a numeric odds claim (spec Assumptions), so the script's shape
@@ -55,8 +55,8 @@ no tonal register baked into any row (`docs/adr/0004-tone-belongs-to-the-setting
 design documents rewritten in place, no changelog prose (`CLAUDE.md`).
 
 **Scale/Scope**: One new design document defining a fixed set of prompt families (expected: four,
-per the spec's scoped generative gaps), three existing documents amended (`docs/design/07-tables.md`'s
-oracles index row, and `docs/design/02-architecture.md` / `docs/design/20-tooling.md` if their filename
+per the spec's scoped generative gaps), three existing documents amended (`docs/design/04-tables.md`'s
+oracles index row, and `docs/design/02-architecture.md` / `docs/design/27-tooling.md` if their filename
 mentions go stale), one verification script. No `engine/tables/*.yaml` — consistent with all five
 other table families, none of which has one yet.
 
@@ -74,8 +74,8 @@ This repo has no `.specify/memory/constitution.md`; its governing document is `C
   read once grim and once comic before it ships, and the check is recorded in the document, not
   asserted in a sentence. Gate: satisfied by construction — see `data-model.md`'s row-checking
   discipline.
-- **Design documents rewritten in place, no changelogs** — `docs/design/07-tables.md`,
-  `docs/design/02-architecture.md`, `docs/design/20-tooling.md` are edited to describe the present state
+- **Design documents rewritten in place, no changelogs** — `docs/design/04-tables.md`,
+  `docs/design/02-architecture.md`, `docs/design/27-tooling.md` are edited to describe the present state
   only.
 - **Capability change goes through the Spec Kit cycle, `specs/` committed** — this plan.
 
@@ -96,7 +96,7 @@ specs/026-oracle-prompt-tables/
 
 No `contracts/` — this feature has no external interface (API, CLI surface, wire format); it is a
 design document and rollable tables read by the engine's own table-loading rules, already
-specified in `docs/design/07-tables.md`.
+specified in `docs/design/04-tables.md`.
 
 ### Source Code (repository root)
 
@@ -116,7 +116,7 @@ tools/
 ```
 
 **Structure Decision**: Follows the pattern set by the five already-defined table families
-(`docs/design/08-criticals.md` through `03a-5-oracle-answers.md`, each with a matching
+(`docs/design/05-criticals.md` through `03a-5-oracle-answers.md`, each with a matching
 `tools/check_<family>.py`) and mirrors how criticals already holds several variant tables (one per
 damage type) under one index row — this feature adds a second variant document under the existing
 oracles row rather than a sixth row, per the spec's Clarifications. None of the existing families

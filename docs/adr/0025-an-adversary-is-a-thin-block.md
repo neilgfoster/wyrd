@@ -8,9 +8,9 @@
 **Nothing in `docs/design/` said how an opponent was represented.** Adversary, opponent and statblock
 returned no matches across every design document.
 
-Two documents gestured at it and neither delivered. [`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)
+Two documents gestured at it and neither delivered. [`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md)
 listed `setting/bestiary.yaml` in the setting layout with the parenthetical "creature stat blocks (a
-lookup table)" — no schema, no field list, no example. [`27-entities.md`](../design/27-entities.md) listed
+lookup table)" — no schema, no field list, no example. [`25-entities.md`](../design/25-entities.md) listed
 `creature` as an entity type and described it as "a stat block — a kind of thing, not an
 individual", which says what a creature is *not*.
 
@@ -44,8 +44,8 @@ opponent, reached two ways.
 **An opponent tests any skill its block does not list at its baseline**, which is why the baseline
 is required rather than optional.
 
-The block is in [`06-the-adversary.md`](../design/06-the-adversary.md), the schema and validator in
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md) and `tools/check_bestiary.py`.
+The block is in [`12-the-adversary.md`](../design/12-the-adversary.md), the schema and validator in
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md) and `tools/check_bestiary.py`.
 
 ## Why not the full character model
 
@@ -90,7 +90,7 @@ Traits could have been free text the GM interprets. That is the most expressive 
 setting author would ask for.
 
 It is also **the one option under which a setting can add a mechanism**, which
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md) forbids outright: a setting may extend,
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md) forbids outright: a setting may extend,
 retune, rename or disable, and never add. A trait reading "regenerates 2 Stamina each round" is not
 a retune — it is a new mechanism, arriving in a lookup table where nobody reviews it. And it is
 inference where a rule could be deterministic

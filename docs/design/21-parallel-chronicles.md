@@ -5,7 +5,7 @@ is the only part of Wyrd where two things run at once, so it is the only part th
 rules about isolation.
 
 What separates a setting from the engine is in
-[`26-authoring-a-setting.md`](26-authoring-a-setting.md); how the repositories divide is in
+[`24-authoring-a-setting.md`](24-authoring-a-setting.md); how the repositories divide is in
 [`02-architecture.md`](02-architecture.md). This document is about the running of them.
 
 ---
@@ -24,7 +24,7 @@ So:
 
 - a session loads exactly one chronicle and one setting, and **says which in the recap**
 - the corpus is queried **with the setting as a filter**, never unfiltered
-  ([`24-corpus-index.md`](24-corpus-index.md))
+  ([`26-corpus-index.md`](26-corpus-index.md))
 - name collisions are checked **per chronicle, never globally** — the same innkeeper's name
   may legitimately exist in both, and merging them would be the bleed, not the fix
 - every verb takes an **explicit chronicle path**. There is no "current chronicle" global, so
@@ -36,7 +36,7 @@ Because each chronicle is its own repository and every verb names its target, tw
 sessions cannot contend. There is nothing to lock and no shared mutable state.
 
 Each chronicle also pins its own engine and setting versions
-([`22-evolution.md`](22-evolution.md)), so one may trial a rules change while another stays
+([`29-evolution.md`](29-evolution.md)), so one may trial a rules change while another stays
 put — the cheapest way to test a change that only shows up in play.
 
 ## Alternating, not simultaneous
@@ -44,10 +44,10 @@ put — the cheapest way to test a change that only shows up in play.
 The realistic pattern is not two sessions at once but **one on Tuesday and another on
 Thursday**. That makes resumption matter *more*, not less: `recap.md` and thread heat have to
 carry *which world is this, and what was happening* after a fortnight away
-([`19-state.md`](19-state.md)).
+([`22-state.md`](22-state.md)).
 
 Each chronicle's threats advance on its own calendar — and only when its own game time
-advances ([`18-campaign.md`](18-campaign.md)). Neither knows the other exists.
+advances ([`19-campaign.md`](19-campaign.md)). Neither knows the other exists.
 
 ## The same arc in two chronicles
 

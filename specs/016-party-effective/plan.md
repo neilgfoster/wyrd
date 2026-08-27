@@ -9,7 +9,7 @@ Define `party_effective` as an exact function of head count, define the matching
 quantity built from `danger_effective` applies, and rewrite `docs/design/03-rules.md` §7 in place so the
 engine's only scaling equation can actually be evaluated. Compute the resulting danger at every
 party a real chronicle has before writing a word of it, replace the uncomputed figure
-`docs/design/24-corpus-index.md` currently quotes, and record the curve as an ADR.
+`docs/design/26-corpus-index.md` currently quotes, and record the curve as an ADR.
 
 ## The load-bearing decisions
 
@@ -38,7 +38,7 @@ visible at the table. The minimum of 1 is what stops a lone character walking th
 free: a trap written `Nd4` always throws at least one die.
 
 **The party is a query, not a roster.** Companions with `status: with-party` count; `away`, `dead`,
-`lost` and `departed` do not. This is not a new predicate — `docs/design/19-state.md` already defines
+`lost` and `departed` do not. This is not a new predicate — `docs/design/22-state.md` already defines
 the party as exactly that query, and inventing a second definition here would be the two-documents
 fault class in its purest form. Presence in a particular room is never consulted, because scaling
 happens when content is prepared, not when a door opens.
@@ -89,7 +89,7 @@ the only place all three points of use appear together.
 | Document | Change |
 |---|---|
 | `docs/design/03-rules.md` §7 | rewritten in place: the effective-size function, both sides of the ratio, the rounding rule, the degenerate cases, and why the curve is not overridable |
-| `docs/design/24-corpus-index.md` | the one-sentence description replaced so it agrees with §7; the quoted worked figure replaced with the computed one |
+| `docs/design/26-corpus-index.md` | the one-sentence description replaced so it agrees with §7; the quoted worked figure replaced with the computed one |
 | `docs/adr/` | one ADR: the diminishing curve and the symmetric reading of `written_for`, against the flat weight and the raw denominator |
 | `docs/adr/0012` | the open-term row for `party_effective` is a record of the reset, not an index — left alone |
 

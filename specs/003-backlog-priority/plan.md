@@ -20,7 +20,7 @@ Nothing new is recorded per child issue. The only new state anywhere is one numb
 
 ## Technical Context
 
-**Language**: Python 3.11+, standard library only (`docs/design/20-tooling.md` §2). No pytest —
+**Language**: Python 3.11+, standard library only (`docs/design/27-tooling.md` §2). No pytest —
 `unittest` (§6).
 
 **GitHub access**: `subprocess` to `gh`. The token needs the `project` scope, which is already
@@ -95,7 +95,7 @@ number, rather than renumbering the tail. The order is a total order; the gaps c
 | 20 | #24 Backlog priority order | This feature. Cheap, and it is what makes the rest of the order legible. Ranked above the remaining epics because it is nearly done, not because it outranks the engine. |
 | 30 | #2 Close the known engine gaps | Gap-closing presupposes the engine it is closing gaps in. Undecomposed. |
 | 40 | #3 Corpus extraction and indexing | Lives mostly in `wyrd-research`; not gating the engine. Undecomposed. |
-| 50 | #4 Onboard settings | A setting overlays a finished engine (`docs/design/26-authoring-a-setting.md`), so this is last by construction. Undecomposed. |
+| 50 | #4 Onboard settings | A setting overlays a finished engine (`docs/design/24-authoring-a-setting.md`), so this is last by construction. Undecomposed. |
 
 The order is the operator's to change; it is recorded here as the seed, not as a claim that will
 stay true. The board is authoritative — this table is the reasoning, which is what a design

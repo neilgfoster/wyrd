@@ -15,7 +15,7 @@ alone:
    long-running character could actually reach.
 2. **What Dread measures.** §4 says Transformations carry Dread and says nothing about its size.
 
-Both are load-bearing for [`10-transformations.md`](../design/10-transformations.md)'s termination
+Both are load-bearing for [`07-transformations.md`](../design/07-transformations.md)'s termination
 proof and social consequence, and both had a real alternative that a future pass could plausibly
 re-propose having forgotten why it was rejected.
 
@@ -45,7 +45,7 @@ was tried and rejected — which is exactly the case for recording it.
 that a heavily-Tainted character should cross them less often). Rejected for the same reason ADR
 0019's crowd rule and ADR 0024's danger scaling both reject unmotivated special-casing: a second
 interval needs its own justification and its own re-derivation of the termination proof in
-[`10-transformations.md`](../design/10-transformations.md), for a benefit (fewer high-Taint
+[`07-transformations.md`](../design/07-transformations.md), for a benefit (fewer high-Taint
 Transformation rolls) nothing in play has yet shown is needed. The uniform interval is simpler,
 already computed, and extends without a seam.
 
@@ -58,7 +58,7 @@ one automatically re-tunes the other correctly.
 
 ## Consequences
 
-- [`10-transformations.md`](../design/10-transformations.md) states both numbers as computed facts,
+- [`07-transformations.md`](../design/07-transformations.md) states both numbers as computed facts,
   and [`tools/check_transformation.py`](../../tools/check_transformation.py) checks the threshold
   scheme's termination property rather than asserting it.
 - A later re-tuning of the severity table is expected to be possible without touching Dread's

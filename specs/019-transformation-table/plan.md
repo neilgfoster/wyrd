@@ -4,7 +4,7 @@
 
 ## Summary
 
-Define `docs/design/10-transformations.md` as the transformation table family required by
+Define `docs/design/07-transformations.md` as the transformation table family required by
 `03a-tables.md`'s conventions: a `1d6` table with a severity per row, concrete Taint threshold
 values, a computed proof the re-roll loop terminates, the resolved body-versus-mind statement, the
 hidden threshold's mechanics, and Dread. Update `03-rules.md` §4 and `03a-tables.md`'s index in
@@ -41,11 +41,11 @@ per the issue's own instruction.
 
 ## Structure
 
-- `docs/design/10-transformations.md` — new. Thresholds, body/mind, the roll, the table, termination,
+- `docs/design/07-transformations.md` — new. Thresholds, body/mind, the roll, the table, termination,
   hidden threshold, Dread.
 - `docs/design/03-rules.md` §4 — rewritten in place to state the resolved thresholds and body/mind split,
   and to point at the new document for detail.
-- `docs/design/07-tables.md` — index row updated from "not yet written" to the real file, roll, and
+- `docs/design/04-tables.md` — index row updated from "not yet written" to the real file, roll, and
   link.
 - `README.md` — hub row added for reachability.
 - `docs/adr/0029-*.md` — records the threshold-spacing and Dread-reuse decisions and their

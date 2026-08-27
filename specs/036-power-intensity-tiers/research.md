@@ -47,7 +47,7 @@ rather than three or four numbers needing to move in lockstep.
 **Decision**: A tier's `ill_omen_taint_bonus` adds to the system's base `ill_omen_taint` before
 feeding the existing Taint-accrual path; there is no tier-specific consequence table.
 
-**Rationale**: `docs/design/14-systems-of-power.md` already states "No second table exists for
+**Rationale**: `docs/design/09-systems-of-power.md` already states "No second table exists for
 this" for the base mechanism, and ADR 0036 rejected a set of engine-defined power shapes in favour
 of one configurable mechanism. A tier-specific consequence table would reopen exactly the
 distinction ADR 0036 closed. An additive bonus to the number already feeding the one existing

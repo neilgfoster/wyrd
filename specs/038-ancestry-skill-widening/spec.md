@@ -46,7 +46,7 @@ player's "does my character's ancestry do anything mechanically?" question corre
 **Why this priority**: The issue's core complaint is that the current silence is indistinguishable
 from an oversight. This closes that gap for the "no ancestry" case too, not only the "yes" case.
 
-**Independent Test**: Read `docs/design/05-character-creation.md` and confirm it states plainly
+**Independent Test**: Read `docs/design/11-character-creation.md` and confirm it states plainly
 that ancestry, where a setting has one, only ever widens the eligible skill pool — never a stat,
 never an extra advance, never a separate roll.
 
@@ -98,7 +98,7 @@ never an extra advance, never a separate roll.
 
 ### Measurable Outcomes
 
-- **SC-001**: A reader of `docs/design/05-character-creation.md` can state, without consulting any
+- **SC-001**: A reader of `docs/design/11-character-creation.md` can state, without consulting any
   other document, whether ancestry has a mechanical effect and exactly what it is.
 - **SC-002**: `python3 tools/check_docs.py` passes with the new text and new ADR in place.
 - **SC-003**: `python3 tools/check_dangling_mechanics.py` introduces no new dangling reference from
@@ -116,8 +116,8 @@ never an extra advance, never a separate roll.
   effect) rather than the "no mechanical differentiation" alternative also considered.
 - No code, schema, or validator changes are needed in this repository: career and skill data is
   setting-declared and lives in `wyrd-setting-*` repositories, not here (confirmed — this repo
-  holds no career/skill schema file). The change is entirely to `docs/design/05-character-creation.md`
+  holds no career/skill schema file). The change is entirely to `docs/design/11-character-creation.md`
   and a new ADR.
-- `docs/design/27-entities.md`'s character schema is the NPC/nemesis entity shape and does not
+- `docs/design/25-entities.md`'s character schema is the NPC/nemesis entity shape and does not
   model the player character's creation mechanics (those live in `05-character-creation.md`), so
   no entity schema change is needed there either.

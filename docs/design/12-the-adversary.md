@@ -4,13 +4,13 @@ What an opponent is made of. The ruleset ([`03-rules.md`](03-rules.md)) rolls ag
 this document says what they are, and which rule reads each one.
 
 Every name here is an **engine** name. What a setting calls any of it is the setting's business
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)), and renames are presentation-only.
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)), and renames are presentation-only.
 
 ---
 
 ## 1. An adversary is thinner than a character
 
-A character ([`04-the-character.md`](04-the-character.md)) carries Taint, Trauma, Strain, Resolve,
+A character ([`10-the-character.md`](10-the-character.md)) carries Taint, Trauma, Strain, Resolve,
 Dread, Fate, Luck, a career and a career history, a Loyalty, and an advancement economy. Those exist
 to model a person the chronicle follows for years.
 
@@ -22,7 +22,7 @@ giving it one means running an advancement economy for a wolf.
 Recorded in [ADR 0025](../adr/0025-an-adversary-is-a-thin-block.md).
 
 **A named antagonist is not a second model.** A nemesis, a rival, a hostile companion — anyone the
-chronicle follows — is a `character` entity ([`27-entities.md`](27-entities.md)) that *also* carries
+chronicle follows — is a `character` entity ([`25-entities.md`](25-entities.md)) that *also* carries
 the block below. One description of an opponent, reached two ways. Where a rule asks what an
 opponent rolls, it reads the block, whether that block sits in a bestiary or on a person.
 
@@ -30,10 +30,10 @@ opponent rolls, it reads the block, whether that block sits in a bestiary or on 
 
 | Field | What it is | Read by |
 |---|---|---|
-| **`id`** | stable, kebab-case, unique in the repo | [`27-entities.md`](27-entities.md) |
+| **`id`** | stable, kebab-case, unique in the repo | [`25-entities.md`](25-entities.md) |
 | **`name`** | what the player ever sees | the prose |
 | **`baseline`** | the percentage it tests **any skill it does not list** at | §3 below |
-| **`stamina_max`** | what it survives; a critical when damage takes it below 0 | [`03-rules.md`](03-rules.md) §2, [`08-criticals.md`](08-criticals.md) |
+| **`stamina_max`** | what it survives; a critical when damage takes it below 0 | [`03-rules.md`](03-rules.md) §2, [`05-criticals.md`](05-criticals.md) |
 | **`armour`** | one of **none**, **light**, **modest**, **heavy** — subtracts dice | [`03-rules.md`](03-rules.md) §2 |
 | **`skills`** | names the setting owns, percentages the engine understands | [`03-rules.md`](03-rules.md) §1 |
 | `damage` | the dice its blows roll | [`03-rules.md`](03-rules.md) §2 |
@@ -48,7 +48,7 @@ improvising an opponent's numbers is the judgement call this document exists to 
 **A field no rule reads does not belong here.** That is the test any addition has to pass, and it is
 also what makes an unrecognised field an error rather than a curiosity: a setting may extend,
 retune, rename or disable, and may never add a mechanism
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). An unrecognised field is how one gets
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). An unrecognised field is how one gets
 added anyway.
 
 **`damage` and `damage_type` travel together.** An opponent that deals damage must say what kind, or
@@ -86,7 +86,7 @@ does not already hold.
 
 **A critical is rolled for an adversary exactly as for anyone else**: damage takes it below 0
 Stamina, `1d6 + points below zero` on the table for the damage type
-([`08-criticals.md`](08-criticals.md)).
+([`05-criticals.md`](05-criticals.md)).
 
 **The Aftermath table is not.** Aftermath is rolled once per **character or companion** who dropped
 ([`03-rules.md`](03-rules.md) §2), and an adversary is neither. This is the rule §2 already states

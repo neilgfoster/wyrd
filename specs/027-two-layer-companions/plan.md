@@ -96,8 +96,8 @@ specs/027-two-layer-companions/
 ```
 
 No `contracts/` — this feature has no external interface (API, CLI surface, wire format); it
-amends existing design prose and entity fields already governed by `docs/design/19-state.md` /
-`docs/design/27-entities.md`.
+amends existing design prose and entity fields already governed by `docs/design/22-state.md` /
+`docs/design/25-entities.md`.
 
 ### Source Code (repository root)
 

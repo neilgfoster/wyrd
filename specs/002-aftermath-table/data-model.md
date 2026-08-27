@@ -3,13 +3,13 @@
 **Feature**: 002-aftermath-table | **Date**: 2026-08-22
 
 What this feature adds to chronicle state, and what it only reads. Nothing here is code — the engine
-does not exist yet — but each structure is what `docs/design/19-state.md` will carry.
+does not exist yet — but each structure is what `docs/design/22-state.md` will carry.
 
 ---
 
 ## 1. The Aftermath table itself
 
-A member of the table families defined in `docs/design/07-tables.md`. It declares:
+A member of the table families defined in `docs/design/04-tables.md`. It declares:
 
 | Property | Value |
 |---|---|
@@ -26,7 +26,7 @@ Rows carry the three fields the shared row schema requires and nothing more.
 
 ## 2. The wound record
 
-This feature gives structure to the `wounds: []` list that `docs/design/19-state.md` already declares on
+This feature gives structure to the `wounds: []` list that `docs/design/22-state.md` already declares on
 the player character but never defines. A wound record is an entry in it.
 
 ```yaml
@@ -46,13 +46,13 @@ wounds:
 | Field | Meaning |
 |---|---|
 | `id` | identifies this wound for the life of the chronicle. A later rule that heals, worsens or reads a wound needs a handle on exactly one. |
-| `from.table` / `from.beat` | provenance. `docs/design/07-tables.md` already requires a table roll to record the key it rolled on; a wound outlives the log entry, so it carries its own. |
+| `from.table` / `from.beat` | provenance. `docs/design/04-tables.md` already requires a table roll to record the key it rolled on; a wound outlives the log entry, so it carries its own. |
 | `effect` | the mechanical consequence, applicable without reading the prose. Names a mechanic the engine already knows. |
 | `recurring` | `false` for a wound that simply applies; `true` for one that fires at the start of every fight. |
 | `description` | what is said at the table. Never reaches state as a mechanic; a setting rewrites this freely. |
 
 **`effect` is drawn from a closed set** — every mechanic named must be one the engine knows, or the
-record is a load error rather than a row quietly ignored (`docs/design/07-tables.md`):
+record is a load error rather than a row quietly ignored (`docs/design/04-tables.md`):
 
 | `effect` | Applies |
 |---|---|
@@ -62,9 +62,9 @@ record is a load error rather than a row quietly ignored (`docs/design/07-tables
 
 **What the record deliberately does not carry**: no `healed` flag, no duration, no severity. Whether
 a wound ever heals is R1.2's decision, and a field shaped for one answer would prejudge it. Adding a
-field when a rule reads one is additive under `docs/design/22-evolution.md`.
+field when a rule reads one is additive under `docs/design/29-evolution.md`.
 
-**Rendering**: diegetic, per `docs/design/23-diegesis.md` — "the knee never set right", never `skill: -10`.
+**Rendering**: diegetic, per `docs/design/13-diegesis.md` — "the knee never set right", never `skill: -10`.
 
 ---
 
@@ -82,7 +82,7 @@ A wound record with `recurring: true`. It is not a separate structure.
 
 ## 4. Entities this feature creates
 
-Neither is new machinery; both are shapes `docs/design/27-entities.md` already fixes.
+Neither is new machinery; both are shapes `docs/design/25-entities.md` already fixes.
 
 **A new enemy** — a `character` entity, created when the `new-enemy` row comes up:
 
@@ -100,7 +100,7 @@ The `objective` block is what makes the enemy act while the player is elsewhere,
 reason this row creates an entity rather than recording a name.
 
 **An open loop** — a `thread` entity, created when the `taken` row comes up. Capture is a situation
-the chronicle carries until it resolves; a thread is the type `docs/design/27-entities.md` already has for
+the chronicle carries until it resolves; a thread is the type `docs/design/25-entities.md` already has for
 exactly that.
 
 ---
@@ -119,7 +119,7 @@ exactly that.
 
 ## 6. What is recorded
 
-Per `docs/design/07-tables.md`, a table roll records the key it rolled on alongside the engine version:
+Per `docs/design/04-tables.md`, a table roll records the key it rolled on alongside the engine version:
 
 ```json
 {"beat": 412, "verb": "roll", "engine": "0.3.1", "table": "aftermath",

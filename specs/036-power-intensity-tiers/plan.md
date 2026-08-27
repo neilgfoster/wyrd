@@ -9,7 +9,7 @@
 ## Summary
 
 Add an optional `intensity_tiers` field to the systems-of-power schema
-(`docs/design/14-systems-of-power.md`) so a setting can declare that framing an invocation more
+(`docs/design/09-systems-of-power.md`) so a setting can declare that framing an invocation more
 ambitiously costs more and risks more Taint on an Ill Omen, without disturbing the existing
 flat-cost behaviour for a setting that doesn't declare any tiers. `tools/check_power_systems.py`
 gains matching validation for the new field, reusing its existing rejection shape (missing field,
@@ -17,7 +17,7 @@ bad value, one problem line per fault) rather than inventing a new validation st
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+, standard library only (`docs/design/20-tooling.md` §2 — no
+**Language/Version**: Python 3.11+, standard library only (`docs/design/27-tooling.md` §2 — no
 third-party dependency; `check_power_systems.py` already carries its own restricted YAML reader
 rather than importing one)
 

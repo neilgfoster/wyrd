@@ -5,7 +5,7 @@
 **Rationale**: The ruleset already commits to `d100` as its one resolution mechanic
 (`docs/design/03-rules.md` §1). Reusing it for the oracle keeps the engine to one die vocabulary
 instead of introducing a second (a d6, d12, d20 as other table families do for their own reasons —
-`docs/design/07-tables.md`'s index). A hundred-sided space also gives enough resolution to place five
+`docs/design/04-tables.md`'s index). A hundred-sided space also gives enough resolution to place five
 likelihood bands and an "exceptional" degree at each without cramping any of them into single-digit
 ranges.
 
@@ -70,7 +70,7 @@ be justified against the existing one.
 
 **Alternatives considered**: A dedicated oracle complication table (as some GM-emulator designs
 use) — rejected. It would duplicate the Wyrd die's job under a different name, which is exactly the
-kind of shadow mechanic `docs/design/07-tables.md`'s "declared by the family" clause exists to prevent
+kind of shadow mechanic `docs/design/04-tables.md`'s "declared by the family" clause exists to prevent
 when no real difference justifies a second die.
 
 ## Decision: an oracle roll is obligatory for a question the fiction has not settled and that future play could contradict
@@ -89,14 +89,14 @@ boundary, not maximizing how much goes through the table.
 
 ## Decision: an oracle roll records to the beat log with the same provenance shape as any other roll
 
-**Rationale**: `docs/design/19-state.md`'s log-provenance example already fixes the shape every roll's
+**Rationale**: `docs/design/22-state.md`'s log-provenance example already fixes the shape every roll's
 entry takes (`beat`, `verb`, `engine`, `setting`, plus roll-specific fields). The oracle reuses it
 verbatim, adding its own fields: `table` (the key, `oracle-answer`), `question` (the GM's stated
 question, verbatim), `band` (the likelihood band declared), and `outcome` (one of the four row
 labels). The `roll` field is already covered by the shared shape, and `wyrd` reuses its existing
 value vocabulary (`none`, `ill`, `fair`) from the resolution roll's own log entries.
 
-**Alternatives considered**: A separate `oracles.log` file — rejected. `docs/design/07-tables.md`'s
+**Alternatives considered**: A separate `oracles.log` file — rejected. `docs/design/04-tables.md`'s
 own versioning section already states a table roll's provenance belongs in the ordinary log
 (`beat`/`table`/version), and a second log for one family reopens the "two lists of the same thing
 drift" fault class `CLAUDE.md` names for the backlog specifically, which applies here for the same

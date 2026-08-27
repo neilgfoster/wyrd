@@ -1,7 +1,7 @@
 # Systems of power
 
 The schema a setting fills in to give its practitioners supernatural or extraordinary reach —
-what [`26-authoring-a-setting.md`](26-authoring-a-setting.md) means when it says a setting may
+what [`24-authoring-a-setting.md`](24-authoring-a-setting.md) means when it says a setting may
 never add a mechanism the engine does not have. Magic, psionics, a saint's grace, an engineered
 apex organism's neural overclock — every one of them is *one system of power*, declared as data
 against the schema below. See [ADR 0036](../adr/0036-one-configurable-power-mechanism.md) for why
@@ -88,7 +88,7 @@ one configurable mechanism, not a family of mechanism shapes.
 **An Ill Omen on an invocation applies the declared `ill_omen_taint` through the engine's existing
 Taint-accrual path** ([`03-rules.md`](03-rules.md) §4), exactly as the Bargain, Exposure, or an
 Invocation already feed it. If that Taint gain crosses a threshold, a transformation-table roll
-follows immediately, using the same loop [`10-transformations.md`](10-transformations.md)
+follows immediately, using the same loop [`07-transformations.md`](07-transformations.md)
 already defines. **No second table exists for this.** A power-specific consequence table would
 duplicate a consequence chain the engine already has, for no distinction that changes what
 happens at the table.

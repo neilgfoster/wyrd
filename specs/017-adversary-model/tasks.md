@@ -37,14 +37,14 @@
 
 ## The rules
 
-- [x] T022 `docs/design/06-the-adversary.md` — new: the block, field by field, with the rule that reads each (FR-001, FR-004, FR-005, FR-007).
+- [x] T022 `docs/design/12-the-adversary.md` — new: the block, field by field, with the rule that reads each (FR-001, FR-004, FR-005, FR-007).
 - [x] T023 The baseline: what it is, that it is required, and that it is not a floor under a listed skill (FR-006).
 - [x] T024 The closed trait vocabulary, in full, with each effect named against the mechanism it acts on (FR-012).
 - [x] T025 What happens when an opponent that is neither character nor companion drops below 0 — the critical, and whether Aftermath is rolled — agreeing with §2's existing statement about a crowd (FR-008).
-- [x] T026 `docs/design/04-the-character.md` §4 — rewritten in place; it currently says the adversary model is not yet decided (FR-016).
+- [x] T026 `docs/design/10-the-character.md` §4 — rewritten in place; it currently says the adversary model is not yet decided (FR-016).
 - [x] T027 `docs/design/03-rules.md` §7 — the skill-value half made evaluable: the adjustment, the identity case, the bound, and the published table at the party sizes a table has (FR-013, FR-013a–c).
-- [x] T028 `docs/design/26-authoring-a-setting.md` — `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use (FR-009).
-- [x] T029 `docs/design/27-entities.md` — the `creature` row says what a creature carries, and the nemesis note says a `character` used as opposition carries an adversary block (FR-009, FR-016).
+- [x] T028 `docs/design/24-authoring-a-setting.md` — `bestiary.yaml` gains its schema and an example, in the shape the other setting files already use (FR-009).
+- [x] T029 `docs/design/25-entities.md` — the `creature` row says what a creature carries, and the nemesis note says a `character` used as opposition carries an adversary block (FR-009, FR-016).
 - [x] T030 `docs/README.md` — link the new document from the hub, in the same commit that creates it (SC-007).
 
 ## The record

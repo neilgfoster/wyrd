@@ -13,9 +13,9 @@
 ### Session 2026-08-26
 
 - Q: Should oracle prompt tables be documented as a variant of the existing 'oracles' family row
-  in `docs/design/07-tables.md`'s index, or get their own separate index row? → A: Variant of oracles
-  — one `Oracles` index row covers both `docs/design/12-oracle-answers.md` and the new
-  `docs/design/13-oracle-prompts.md`, the same way criticals already holds several variant tables
+  in `docs/design/04-tables.md`'s index, or get their own separate index row? → A: Variant of oracles
+  — one `Oracles` index row covers both `docs/design/14-oracle-answers.md` and the new
+  `docs/design/15-oracle-prompts.md`, the same way criticals already holds several variant tables
   under one row. The index stays at five families.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -74,7 +74,7 @@ either forks the whole table (losing the engine's baseline) or has nowhere to pu
 all.
 
 **Independent Test**: A setting can declare additional rows for a prompt table, in a form the
-override mechanism from `docs/design/07-tables.md` and `docs/design/26-authoring-a-setting.md` accepts,
+override mechanism from `docs/design/04-tables.md` and `docs/design/24-authoring-a-setting.md` accepts,
 without needing to restate or discard the engine's own rows.
 
 ---
@@ -104,7 +104,7 @@ without needing to restate or discard the engine's own rows.
   situation isn't as presented, what a thread turns on, what complicates a scene) rather than a
   broad table of atmosphere.
 - **FR-002**: Each prompt family MUST define at least one table, addressed by a key, following the
-  row schema and roll-declaration conventions of [`docs/design/07-tables.md`](../../docs/design/07-tables.md).
+  row schema and roll-declaration conventions of [`docs/design/04-tables.md`](../../docs/design/04-tables.md).
 - **FR-003**: Every row in every table MUST be genre-neutral — the document MUST record, row by
   row, that each was checked once against a grim reading and once against a comic reading, and any
   row that failed either reading MUST NOT appear in the shipped table.
@@ -112,24 +112,24 @@ without needing to restate or discard the engine's own rows.
   restate that "something happens" — the document states how this is judged.
 - **FR-005**: The document MUST state which class of situation obliges the GM to roll a prompt
   table rather than invent, consistent with `docs/design/01-principles.md`, mirroring how
-  `docs/design/12-oracle-answers.md` states the answer-oracle obligation.
+  `docs/design/14-oracle-answers.md` states the answer-oracle obligation.
 - **FR-006**: The document MUST state how a family's generated content maps onto existing content
   structures — an NPC-objective row onto the companion/objective machinery in
   [`docs/design/16-session.md`](../../docs/design/16-session.md), a thread-turn row onto the thread/threat
-  structures in [`docs/design/18-campaign.md`](../../docs/design/18-campaign.md) and
-  [`docs/design/28-arcs-and-beats.md`](../../docs/design/28-arcs-and-beats.md) — so a roll's output is
+  structures in [`docs/design/19-campaign.md`](../../docs/design/19-campaign.md) and
+  [`docs/design/18-arcs-and-beats.md`](../../docs/design/18-arcs-and-beats.md) — so a roll's output is
   usable without further translation.
 - **FR-007**: The document MUST specify the setting extension path: a setting adding its own rows
   to a prompt table's row set, distinct from wholesale replacement, consistent with the override
-  mechanism in `docs/design/07-tables.md` and [`docs/design/26-authoring-a-setting.md`](../../docs/design/26-authoring-a-setting.md).
+  mechanism in `docs/design/04-tables.md` and [`docs/design/24-authoring-a-setting.md`](../../docs/design/24-authoring-a-setting.md).
 - **FR-008**: The document MUST state what a prompt roll records to state and where, consistent
-  with the recording conventions in `docs/design/07-tables.md`, so a generated result can be reused
+  with the recording conventions in `docs/design/04-tables.md`, so a generated result can be reused
   rather than regenerated if the same gap is asked again.
-- **FR-009**: `docs/design/07-tables.md`'s index row for oracles MUST be amended to also link
-  `docs/design/13-oracle-prompts.md`, the same way the row already links
-  `docs/design/12-oracle-answers.md` — prompts are a variant of the existing oracles family, not a
+- **FR-009**: `docs/design/04-tables.md`'s index row for oracles MUST be amended to also link
+  `docs/design/15-oracle-prompts.md`, the same way the row already links
+  `docs/design/14-oracle-answers.md` — prompts are a variant of the existing oracles family, not a
   sixth index row, per the Clarifications above.
-- **FR-010**: `docs/design/02-architecture.md` and `docs/design/20-tooling.md` MUST be updated if the
+- **FR-010**: `docs/design/02-architecture.md` and `docs/design/27-tooling.md` MUST be updated if the
   document's filename or the family's file layout differs from what those documents currently
   say.
 - **FR-011**: No table row, example, or label in the document MAY name a specific setting, a
@@ -139,7 +139,7 @@ without needing to restate or discard the engine's own rows.
 
 - **Prompt family**: a named category of GM invention the engine constrains with a table (e.g. an
   NPC's real objective) rather than leaving to unconstrained invention.
-- **Prompt table**: a rollable table within a family, following `docs/design/07-tables.md`'s row
+- **Prompt table**: a rollable table within a family, following `docs/design/04-tables.md`'s row
   schema, whose rows are genre-neutral generative seeds rather than fixed narrative content.
 - **Generated content record**: the state entry a prompt roll writes, keyed so the same generative
   gap resolves to the same content if it recurs.
@@ -158,7 +158,7 @@ without needing to restate or discard the engine's own rows.
   the document, and no row fails either reading.
 - **SC-003**: Grepping `design/` for setting or system vocabulary introduced by this change returns
   nothing.
-- **SC-004**: A setting author reading only this document and `docs/design/26-authoring-a-setting.md`
+- **SC-004**: A setting author reading only this document and `docs/design/24-authoring-a-setting.md`
   can correctly state how to add a table-specific row without replacing the engine's table.
 - **SC-005**: A second GM reading only `docs/design/01-principles.md` and this document, with no other
   context, can state correctly whether a given example situation obliges a prompt roll.
@@ -167,22 +167,22 @@ without needing to restate or discard the engine's own rows.
 
 - The prompt families are a closed, small set chosen for where invention runs loose in the
   existing design (companion objectives in `docs/design/16-session.md`; thread/threat turns in
-  `docs/design/18-campaign.md` and `docs/design/28-arcs-and-beats.md`), not an open-ended content library —
+  `docs/design/19-campaign.md` and `docs/design/18-arcs-and-beats.md`), not an open-ended content library —
   actual setting-specific prompt content is explicitly out of scope (issue #21) and belongs in a
   `wyrd-<setting>` repo.
-- The document lives at `docs/design/13-oracle-prompts.md` per the issue's stated goal, as a sibling
-  to `docs/design/12-oracle-answers.md` under the same `oracles` family named in
-  `docs/design/07-tables.md`'s index — resolved in Clarifications above as a variant of that one
+- The document lives at `docs/design/15-oracle-prompts.md` per the issue's stated goal, as a sibling
+  to `docs/design/14-oracle-answers.md` under the same `oracles` family named in
+  `docs/design/04-tables.md`'s index — resolved in Clarifications above as a variant of that one
   family, matching how criticals already hold several variant tables under one family entry.
-- Prompt tables are `repeatable` (per `docs/design/07-tables.md`'s uniqueness declaration), matching
+- Prompt tables are `repeatable` (per `docs/design/04-tables.md`'s uniqueness declaration), matching
   the answer oracle rather than the unique-per-character transformation table, since rolling the
   same generative seed twice for two different NPCs or scenes is ordinary.
-- Each prompt table declares its own die and modifier, per `docs/design/07-tables.md`'s "declared by
+- Each prompt table declares its own die and modifier, per `docs/design/04-tables.md`'s "declared by
   the family" convention — reusing `1d100` (as the answer oracle does) is the default assumption
   unless a family's row count makes a smaller die a better fit, decided during planning.
 - No verification script is assumed necessary the way `tools/check_oracle_answers.py` checks #20's
   probabilities, because this family's correctness criterion (genre-neutrality) is a qualitative
   reading check recorded in prose, not a computable probability; this may be revisited during
-  planning if a computable property (e.g. row-range contiguity per `docs/design/07-tables.md`) turns
+  planning if a computable property (e.g. row-range contiguity per `docs/design/04-tables.md`) turns
   out to need its own script, mirroring `tools/check_bestiary.py`-style structural checks used
   elsewhere.

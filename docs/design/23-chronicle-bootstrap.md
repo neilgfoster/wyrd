@@ -26,7 +26,7 @@ The bootstrap:
 5. **Seeds the world.** Picks an opening situation matching the answers, sets the calendar,
    selects the threats that will run in the background at the start, and connects at least
    one to the character. Most threats in a long chronicle are not seeded here — they are
-   provoked or made in play ([`18-campaign.md`](18-campaign.md)).
+   provoked or made in play ([`19-campaign.md`](19-campaign.md)).
 6. **Writes and commits** `chronicle.yaml`, the player character, the opening threads,
    `overlay/`, and the first `recap.md`.
 
@@ -42,9 +42,9 @@ skipped by tooling:
   tool at once.
 - **How long is a typical session?** Sets the default beat pacing.
 - **How lethal?** Sets starting Fate, and whether the Aftermath table's death rows are closed
-  ([`09-aftermath.md`](09-aftermath.md)).
+  ([`06-aftermath.md`](06-aftermath.md)).
 - **Should the world act when you are not looking?** Sets whether threats activate during
-  spans of *game* time the character did not witness ([`18-campaign.md`](18-campaign.md)).
+  spans of *game* time the character did not witness ([`19-campaign.md`](19-campaign.md)).
   This is nothing to do with real-world time between sessions, which never advances the
   world.
 
@@ -70,7 +70,7 @@ wyrd update --setting 0.4.0     # new content merges; overlay is preserved
 
 A setting update is nearly always additive — more beats, more characters, another adventure
 converted. The chronicle's `overlay/` is never touched by either
-([`27-entities.md`](27-entities.md)).
+([`25-entities.md`](25-entities.md)).
 
 Declining an update forever is legitimate. A chronicle two years deep on an old engine is a
 valid chronicle.

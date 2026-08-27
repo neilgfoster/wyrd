@@ -12,7 +12,7 @@ ruleset was written:
 
 `danger` was defined. `written_for` was defined. **`party_effective` was not defined anywhere.**
 The nearest thing to a definition was one sentence in
-[`24-corpus-index.md`](../design/24-corpus-index.md) — the player character counts as 1 and each companion
+[`26-corpus-index.md`](../design/26-corpus-index.md) — the player character counts as 1 and each companion
 counts as "a fraction" — which never said which fraction. So the equation could not be evaluated at
 all, and every claim resting on it rested on a term nobody could compute: that a chronicle stays
 interesting for years without escalating the fiction, and that a corpus written for four-to-six
@@ -26,7 +26,7 @@ figure this repository has published and the second to be wrong.
 The decision was constrained three ways. It had to be a **pure function of party composition**,
 because the engine evaluates it without asking anyone. It had to use **only data the engine already
 holds** — companions carry presence, a bond and a competence or two, and no capability score
-([`19-state.md`](../design/19-state.md)), so any weighting by a companion's own power would have meant
+([`22-state.md`](../design/22-state.md)), so any weighting by a companion's own power would have meant
 inventing a companion stat block the engine has spent five documents declining to have. And it had
 to leave the **shape** of the formula and the **meaning** of `written_for` alone.
 
@@ -68,7 +68,7 @@ party of players, and the tenth body plainly is not worth what the first was.
 count them differently — and the one the original sentence's reasoning ("companions are GM-run and
 less capable") points at. Rejected because the engine holds no number to weight by. Introducing one
 would give companions the mechanical depth
-[`16-session.md`](../design/16-session.md) and [`19-state.md`](../design/19-state.md) both deliberately withhold,
+[`16-session.md`](../design/16-session.md) and [`22-state.md`](../design/22-state.md) both deliberately withhold,
 and it would put a judgement call inside an equation whose whole purpose is to be evaluated without
 one.
 
@@ -109,5 +109,5 @@ grants and the `danger` its content carries.
   not what makes it fair.
 - Companions stay mechanically thin. Nothing in this decision needs a capability score, so the
   pressure to invent one is not created here.
-- Applied forward only ([`22-evolution.md`](../design/22-evolution.md)). Content already prepared and
+- Applied forward only ([`29-evolution.md`](../design/29-evolution.md)). Content already prepared and
   played is not rescaled.

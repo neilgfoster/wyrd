@@ -67,7 +67,7 @@ blind converts a death valve into a gamble.
 computing it rather than by reading it. Two faults, neither visible in prose:
 
 1. At `mortality: low` the lowest possible total becomes `1 + 5 − 10 = −4`, below the table's first
-   row. [`07-tables.md`](../design/07-tables.md) requires a family's ranges to start at its lowest
+   row. [`04-tables.md`](../design/04-tables.md) requires a family's ranges to start at its lowest
    possible total, so the table would not load at one of its three legal settings.
 2. At `mortality: high` a combatant who dropped by a single point can reach the death row —
    destroying the property deferred death exists to provide, that a light knockdown is survivable.

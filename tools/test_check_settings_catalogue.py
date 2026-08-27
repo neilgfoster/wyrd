@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for tools/check_settings_catalogue.py.
 
-stdlib unittest, no pytest (docs/design/20-tooling.md section 6). No network: the reader and the
+stdlib unittest, no pytest (docs/design/27-tooling.md section 6). No network: the reader and the
 drift computation are exercised against tools/fixtures/settings_catalogue.json.
 
 Run: python3 -m unittest discover -s tools -p 'test_*.py'

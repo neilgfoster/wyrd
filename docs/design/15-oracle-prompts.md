@@ -2,12 +2,12 @@
 
 The tables the GM rolls to **generate content the fiction hasn't specified yet**, instead of
 inventing it: what an NPC actually wants, why a situation isn't as presented, what a thread turns
-on, what complicates a scene. Where [`12-oracle-answers.md`](12-oracle-answers.md) settles a
+on, what complicates a scene. Where [`14-oracle-answers.md`](14-oracle-answers.md) settles a
 yes/no question, this document generates the content an LLM GM would otherwise reach for
 unconstrained — and, left unconstrained, reach for the same handful of dramatic shapes, then
 escalate them across sessions.
 
-It is a variant of the `oracles` family [`07-tables.md`](07-tables.md) commits to, sharing that
+It is a variant of the `oracles` family [`04-tables.md`](04-tables.md) commits to, sharing that
 family's one index row with `12-oracle-answers.md`. Everything below is declared within
 `07-tables.md`'s conventions.
 
@@ -35,7 +35,7 @@ holds a structure that generated content has to land in:
 |---|---|---|
 | **NPC objective** | `objective.wants` on a companion, or the equivalent unstated motive on any NPC ([`16-session.md`](16-session.md)) | what a character actually wants, distinct from what they say |
 | **Situation truth** | a scene the GM is about to narrate | why what's presented isn't the whole story |
-| **Thread turn** | a thread's next beat ([`18-campaign.md`](18-campaign.md), [`28-arcs-and-beats.md`](28-arcs-and-beats.md)) | what changes about an open loop, and why now |
+| **Thread turn** | a thread's next beat ([`19-campaign.md`](19-campaign.md), [`18-arcs-and-beats.md`](18-arcs-and-beats.md)) | what changes about an open loop, and why now |
 | **Complication** | an ordinary scene | what makes the next moment harder than it looked |
 
 Considered and rejected: a broader table of atmosphere — NPC mannerisms, weather, location
@@ -45,7 +45,7 @@ this family exists to close.
 
 **What a prompt table is not for.** It does not override an NPC's already-established objective,
 a companion's stated Tension, or a thread's already-recorded state ([`16-session.md`](16-session.md),
-[`18-campaign.md`](18-campaign.md)). It fills a gap that hasn't been decided yet; once rolled, the
+[`19-campaign.md`](19-campaign.md)). It fills a gap that hasn't been decided yet; once rolled, the
 result is established the same way an oracle answer is, and stays fixed if the same gap comes up
 again.
 
@@ -69,7 +69,7 @@ rolling.
 
 ## The roll
 
-Every prompt table shares one roll declaration, following [`12-oracle-answers.md`](12-oracle-answers.md)'s
+Every prompt table shares one roll declaration, following [`14-oracle-answers.md`](14-oracle-answers.md)'s
 choice of die for the same reason: the ruleset already commits to `d100` as its one resolution
 mechanic ([`03-rules.md`](03-rules.md) §1), and ten rows per table fit comfortably in contiguous
 `1d100` ranges without needing finer resolution than that.
@@ -210,7 +210,7 @@ design already defines:
   entity's state on their own, the same way an oracle answer doesn't until something is done
   with it.
 - **Thread turn** rows describe a change to a thread's `summary`, `hooks`, or `heat`
-  ([`18-campaign.md`](18-campaign.md)) — the GM applies the row's shape to the specific thread in
+  ([`19-campaign.md`](19-campaign.md)) — the GM applies the row's shape to the specific thread in
   play and updates its recorded state accordingly.
 - **Complication** rows describe an event dropped into the current scene; like situation-truth
   rows, they don't write to state directly.
@@ -218,7 +218,7 @@ design already defines:
 ## Recording
 
 A prompt roll is recorded to the beat log with the same provenance shape every table roll already
-carries ([`07-tables.md`](07-tables.md), [`19-state.md`](19-state.md)), plus this family's own
+carries ([`04-tables.md`](04-tables.md), [`22-state.md`](22-state.md)), plus this family's own
 fields:
 
 ```json
@@ -230,7 +230,7 @@ fields:
 
 - **`table`** — one of the four keys above.
 - **`subject`** — what the roll is generating content *for*: an NPC's name, a thread's id, a
-  scene's label. As with an oracle answer's `question` ([`12-oracle-answers.md`](12-oracle-answers.md)),
+  scene's label. As with an oracle answer's `question` ([`14-oracle-answers.md`](14-oracle-answers.md)),
   recognising that a later roll concerns "the same subject" is the GM's judgment call, not
   automated matching.
 - **`roll`** and **`effect`** — the natural total and the row it landed on.
@@ -244,13 +244,13 @@ Wyrd-die reading here: a prompt roll generates content, it doesn't resolve a yes
 
 ## What a setting may extend or replace
 
-Per [`07-tables.md`](07-tables.md), a setting may replace any of these tables' rows wholesale —
+Per [`04-tables.md`](04-tables.md), a setting may replace any of these tables' rows wholesale —
 their ranges, effects and descriptions — under `overrides.tables: {oracle-prompt-npc-objective:
 ...}`, exactly as any other table family. But a setting wanting its own prompts wants this more
 often than it wants its own criticals, and full replacement means re-authoring and maintaining the
 whole ten-row baseline just to add one setting-specific motive.
 
-`extend:` ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)) closes that gap: alongside its
+`extend:` ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)) closes that gap: alongside its
 existing careers/talents/gear/creatures entries, `extend:` now also accepts a table key, whose
 rows are appended above the engine's own highest range — contiguous with it, never overlapping —
 leaving every engine row live:

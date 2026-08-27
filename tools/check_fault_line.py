@@ -7,11 +7,11 @@ character's Fault Line (the GM's fiction-grounded call, the same shape as invoki
 Drive), a failed resistance gains Taint one tier worse than the source's stated base
 (minor 1 -> 2, moderate 2 -> 3, major 3 stays 3). This script computes, rather than
 asserts, how many fewer Exposure events it takes an aligned character to cross the
-next transformation threshold (every multiple of 3 -- docs/design/10-transformations.md)
+next transformation threshold (every multiple of 3 -- docs/design/07-transformations.md)
 compared with an unaligned character starting at the same Taint, across a spread of
 realistic starting values and all three Exposure tiers. It also confirms the
 tier-worse step never exceeds the major ceiling, and that
-docs/design/10-transformations.md is untouched by this feature.
+docs/design/07-transformations.md is untouched by this feature.
 
 Run: python3 tools/check_fault_line.py
 """
@@ -23,7 +23,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 TRANSFORMATIONS_DOC = REPO_ROOT / "docs" / "design" / "10-transformations.md"
 
 BASE_TIERS = {"minor": 1, "moderate": 2, "major": 3}
-THRESHOLD_SPACING = 3  # every multiple of 3 -- docs/design/10-transformations.md
+THRESHOLD_SPACING = 3  # every multiple of 3 -- docs/design/07-transformations.md
 
 # Starting Taint values a real character plausibly reaches: just crossed a threshold
 # (0, freshly reset), mid-band, and just below the next one.
@@ -57,7 +57,7 @@ def check_ceiling():
 
 
 def check_transformations_doc_untouched():
-    """This feature must not edit docs/design/10-transformations.md (FR-006, SC-003). Compare
+    """This feature must not edit docs/design/07-transformations.md (FR-006, SC-003). Compare
     the working tree's copy against main; report drift rather than silently passing if git
     is unavailable."""
     if not TRANSFORMATIONS_DOC.exists():

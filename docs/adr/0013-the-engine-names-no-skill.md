@@ -10,7 +10,7 @@ Wyrd resolves everything by rolling `d100` under a `skill%`
 been answered, and were raised as separate issues because they look separate.
 
 **Are skills the engine's or the setting's?** Already answered, in a table nobody re-read.
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)'s engine/setting contract states that the
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md)'s engine/setting contract states that the
 engine provides `d100` resolution, degrees of success and the Wyrd die, and the setting supplies
 **skill names**. What was genuinely missing is the contract a setting must satisfy — a smaller job
 than the fork it was raised as.
@@ -33,8 +33,8 @@ some engine rule needed to *name* a skill. Three passages looked like they did:
 
 | Passage | What it wanted |
 |---|---|
-| [`09-aftermath.md`](../design/09-aftermath.md), the wound effect | "the skill the wound bears on" |
-| [`09-aftermath.md`](../design/09-aftermath.md), the worked example | "the character's **combat skill**" |
+| [`06-aftermath.md`](../design/06-aftermath.md), the wound effect | "the skill the wound bears on" |
+| [`06-aftermath.md`](../design/06-aftermath.md), the worked example | "the character's **combat skill**" |
 | [`03-rules.md`](../design/03-rules.md) §7, danger scaling | "skill values scale from the same number" |
 
 The second is the only one that names anything, and it names something the engine cannot know. The
@@ -93,7 +93,7 @@ correct: it is the setting author's judgement, and an engine that policed it wou
 decisions.
 
 **Two contradictions are removed, in both directions.** `26-authoring-a-setting.md` and
-[`20-tooling.md`](../design/20-tooling.md) both describe settings as *extending* skills, which presupposes a
+[`27-tooling.md`](../design/27-tooling.md) both describe settings as *extending* skills, which presupposes a
 base list. Settings **declare** skills; they extend careers, gear and creatures, which do have
 engine-side structure. Fixing one and leaving the other is how the fault recurs.
 

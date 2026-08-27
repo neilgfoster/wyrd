@@ -158,12 +158,12 @@ encounter trigger) rather than only a sentence of flavour text.
   `03d-the-adversary.md` already assume.
 - **FR-004**: The design MUST provide (or point to) a validator for a gear file against that
   schema, consistent with how the adversary block is validated today
-  (`docs/design/06-the-adversary.md`).
+  (`docs/design/12-the-adversary.md`).
 - **FR-005**: The design MUST state how wealth works — a small numeric count of coin the player
   can state a total for, without itemized transaction tracking — and MUST reconcile it explicitly
   with Standing (are they the same resource, do they interconvert, are they independent).
 - **FR-006**: The design MUST specify encumbrance as a GM judgment call against the fiction (the
-  same shape `docs/design/23-diegesis.md` already uses for what a character is missing), not as a roll
+  same shape `docs/design/13-diegesis.md` already uses for what a character is missing), not as a roll
   or a numeric threshold, and that specification MUST NOT require the player or GM to maintain a
   numeric running total or consult an item-weight table.
 - **FR-007**: The design MUST state a concrete mechanical consequence (not only social framing)
@@ -201,7 +201,7 @@ encounter trigger) rather than only a sentence of flavour text.
   fully resolve.
 - **SC-004**: The GM can answer "can this character plausibly be carrying that" and "what does
   this cost them" in a live scene without pausing to look up a number, consistent with
-  `docs/design/23-diegesis.md`.
+  `docs/design/13-diegesis.md`.
 
 ## Assumptions
 
@@ -217,5 +217,5 @@ encounter trigger) rather than only a sentence of flavour text.
   mechanics) — only what a character owns, what it's worth, and what having or lacking it costs
   them at the table, per the issue's stated goal.
 - The gear schema and validator follow the same shape as the adversary block's schema/validator
-  (`docs/design/06-the-adversary.md`, `03d-the-adversary.md` §validation) rather than inventing a new
+  (`docs/design/12-the-adversary.md`, `03d-the-adversary.md` §validation) rather than inventing a new
   validation convention.

@@ -4,7 +4,7 @@
 
 ## Summary
 
-Write `docs/design/05-character-creation.md` and ADR 0014, with starting Stamina derived by
+Write `docs/design/11-character-creation.md` and ADR 0014, with starting Stamina derived by
 [`check_creation.py`](./check_creation.py) rather than picked.
 
 The shape: **a character is chosen, not generated.** Nothing is rolled — there are no
@@ -62,7 +62,7 @@ Never zero, because Fortune equals Fate and a character with no Fortune has no d
 ## Steps
 
 1. `check_creation.py` — derive Stamina; model Luck erosion.
-2. `docs/design/05-character-creation.md` — the procedure, the values, the setting's obligations.
+2. `docs/design/11-character-creation.md` — the procedure, the values, the setting's obligations.
 3. ADR 0014 — chosen, not rolled.
 4. Indexes; verify nothing else describes creation as rolled.
 

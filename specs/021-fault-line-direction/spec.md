@@ -24,9 +24,9 @@ carrying all of Taint's texture alone.
 **What the Fault Line modifies.** Three candidates were on the table: which transformation is
 rolled, how a threshold reads, or how Taint accrues. The first two both require restructuring or
 biasing an existing roll or table — either a direction-keyed rework of
-`docs/design/10-transformations.md`'s six rows, or a skew on the secretly-rolled hidden threshold
+`docs/design/07-transformations.md`'s six rows, or a skew on the secretly-rolled hidden threshold
 that stays invisible to the player by design, sitting awkwardly against the issue's own acceptance
-criteria. The chosen answer keeps the transformation table exactly as `docs/design/10-transformations.md`
+criteria. The chosen answer keeps the transformation table exactly as `docs/design/07-transformations.md`
 already defines it — untouched, no duplicate table — and instead extends the mechanism
 `docs/design/03-rules.md` §1 already uses for Drives ("against the character's established nature, the
 GM may invoke a Drive for −20") to Exposure: when an Exposure source runs with the grain of a
@@ -117,7 +117,7 @@ Invocation.
   document must state plainly that one changes the Taint gained on failure and the other changes
   the difficulty of the roll, and that applying both to the same event does not compound either
   effect beyond its own stated step.
-- **FR-006**: `docs/design/10-transformations.md` MUST remain unchanged in its roll, thresholds, and
+- **FR-006**: `docs/design/07-transformations.md` MUST remain unchanged in its roll, thresholds, and
   row contents — the Fault Line's effect must not duplicate or fork that table.
 - **FR-007**: A check script MUST compute, at real Taint trajectories, how much sooner a character
   facing aligned Exposure crosses the next transformation threshold compared with one facing
@@ -127,7 +127,7 @@ Invocation.
 
 ### Key Entities
 
-- **Fault Line**: an existing field on the player character (`fault_line` in `docs/design/19-state.md`),
+- **Fault Line**: an existing field on the player character (`fault_line` in `docs/design/22-state.md`),
   prose naming the direction a character's Taint is taking them. This feature does not change how
   it is set at creation — only that it is now read at Exposure time.
 - **Exposure**: the existing Taint-gain route (`docs/design/03-rules.md` §4) — a resisted test with a
@@ -143,7 +143,7 @@ Invocation.
 - **SC-002**: Two characters at identical starting Taint, one facing Fault-Line-aligned Exposure
   and one facing unaligned Exposure of the same base tier, provably diverge in Taint after one
   failed test — computed, not asserted, by the feature's check script.
-- **SC-003**: `docs/design/10-transformations.md` requires zero edits to its roll, table, or
+- **SC-003**: `docs/design/07-transformations.md` requires zero edits to its roll, table, or
   threshold content as a result of this feature.
 
 ## Assumptions

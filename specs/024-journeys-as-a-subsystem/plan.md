@@ -5,14 +5,14 @@
 ## Summary
 
 Define a journey as a `scale: journey` arc whose children are legs, closing the engine gap
-`docs/design/26-authoring-a-setting.md` names outright and `settings.yaml` records against `tor`. A
+`docs/design/24-authoring-a-setting.md` names outright and `settings.yaml` records against `tor`. A
 leg is an ordinary arc/beat that additionally declares `mode: played | summarised` (already a
-beat field — [`15-arcs-and-beats.md`](../../docs/design/28-arcs-and-beats.md)); summarised legs use
+beat field — [`18-arcs-and-beats.md`](../../docs/design/18-arcs-and-beats.md)); summarised legs use
 the existing `wyrd advance-time` machinery, played legs run as ordinary beats. Hazards trigger
 per leg by mirroring the Threat activation roll (`rating × 10` on `d100`,
-[`05-campaign.md`](../../docs/design/18-campaign.md)) and resolve through the core roll like any
+[`19-campaign.md`](../../docs/design/19-campaign.md)) and resolve through the core roll like any
 other test. The subsystem is inert unless a setting authors a journey — no enable/disable flag
-is needed. New design document `docs/design/30-journeys.md`, linked from the hub and from the two
+is needed. New design document `docs/design/20-journeys.md`, linked from the hub and from the two
 documents it extends; the `settings.yaml` gap note is restated to close.
 
 ## The load-bearing decisions
@@ -52,17 +52,17 @@ adding a field to `setting.yaml`'s override vocabulary.
 
 ## Structure
 
-- `docs/design/30-journeys.md` *(new)* — defines the journey/leg shape (frontmatter fields: `pace`,
+- `docs/design/20-journeys.md` *(new)* — defines the journey/leg shape (frontmatter fields: `pace`,
   `hazard_rating`, `hazards` table, `roles`), the per-leg hazard roll, and how a leg resolves
   (played vs. summarised, reusing `mode:`). Linked from `README.md`'s design table and from the
   two documents it extends.
-- `docs/design/18-campaign.md` — a short cross-reference from the elapsed-time section to
+- `docs/design/19-campaign.md` — a short cross-reference from the elapsed-time section to
   `17-journeys.md` for the played-journey case; no rewrite of the existing narrated-travel text
   (Success Criterion SC-002 requires it stay unchanged).
-- `docs/design/28-arcs-and-beats.md` — a short cross-reference noting `scale: journey` as a
+- `docs/design/18-arcs-and-beats.md` — a short cross-reference noting `scale: journey` as a
   recognised arc scale alongside `adventure`/whatever scales already exist, pointing to
   `17-journeys.md` for the fields specific to it.
-- `docs/design/26-authoring-a-setting.md` — the worked example's "Journeys as a played mechanic — an
+- `docs/design/24-authoring-a-setting.md` — the worked example's "Journeys as a played mechanic — an
   engine gap" row is updated to point at `17-journeys.md` now that the gap is closed; the
   "engine gap" framing in the permitted/not-permitted section stays (it's still true in
   general, journeys are just no longer the example of an unfilled one) unless review finds it
@@ -93,7 +93,7 @@ real alternative that would have produced a different engine — the CLAUDE.md b
 - `python3 tools/check_docs.py` — reachability, dead links, ADR index (none added), link policy.
 - `python3 tools/backlog.py check` — confirms no drift introduced.
 - `grep` across changed files for setting/system vocabulary — no unexpected match.
-- Confirm `docs/design/18-campaign.md`'s existing elapsed-time prose is byte-identical apart from
+- Confirm `docs/design/19-campaign.md`'s existing elapsed-time prose is byte-identical apart from
   the added cross-reference line (SC-002, "zero behavioural difference when unconfigured").
 - Compute the hazard-roll worked example in `17-journeys.md` at a stated rating (e.g. rating 4
   → 40% per leg) and check it against the Threat activation table's own worked numbers in

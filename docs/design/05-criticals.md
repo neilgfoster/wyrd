@@ -7,7 +7,7 @@ ruleset where the **damage type** of a blow does any work.
 There is one table per damage type, because a puncture and a bruise are not the same injury and the
 ruleset has been telling the GM to roll "on the table for the damage type" since it was written.
 
-It is a family of the kind [`07-tables.md`](07-tables.md) defines, and everything below is
+It is a family of the kind [`04-tables.md`](04-tables.md) defines, and everything below is
 declared within those conventions.
 
 ---
@@ -25,12 +25,12 @@ declared within those conventions.
 
 **The modifier is how far the blow overshot.** A combatant driven to −1 reads the top of the table;
 one driven to −11 reads most of the way down it. The same count of points below zero, multiplied by
-five, is what modifies the Aftermath roll ([`09-aftermath.md`](09-aftermath.md)) — one measured
+five, is what modifies the Aftermath roll ([`06-aftermath.md`](06-aftermath.md)) — one measured
 quantity, read twice, rather than two measurements of the same blow that could disagree.
 
 **The lowest possible total is 2**, not 1: the die's lowest face is 1, and a critical means at least
 one point below zero. Every table's first row starts at 2, because
-[`07-tables.md`](07-tables.md) requires a family's ranges to begin at its lowest possible total.
+[`04-tables.md`](04-tables.md) requires a family's ranges to begin at its lowest possible total.
 
 **The last row of every table is open at the top** because the modifier is unbounded above. The
 largest modifier the rules can produce is **24** — a doubled telling blow from the heaviest weapon in
@@ -38,7 +38,7 @@ the band, against an unarmoured combatant with nothing left — and a table with
 run off the end well before that.
 
 **The family is repeatable.** Taking the same wound twice across a decade is taking it twice. Because
-it is repeatable, the *when a unique family runs out* clause of [`07-tables.md`](07-tables.md) does
+it is repeatable, the *when a unique family runs out* clause of [`04-tables.md`](04-tables.md) does
 not apply, and this family declares no exhaustion outcome.
 
 **The family declares no extra row field.** No rule consumes a critical's severity — Taint is
@@ -66,7 +66,7 @@ shape is a fact about a body, and every setting has bodies.
 **Searing is the flexible one, on purpose.** It is fire in one setting, a beam weapon in another,
 acid or cold or a current in a third. A setting whose fiction has none of those renames it to the
 one thing it does have, or declares no weapon of that type and never rolls on the table
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). A setting may not add a fifth type: the
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). A setting may not add a fifth type: the
 set is closed, and a weapon declaring a type the engine does not publish is a load error rather than
 a table quietly skipped.
 
@@ -99,9 +99,9 @@ of seven in how often they are mortal and by twenty points in how often they lea
 ## The tables
 
 Every row carries **range**, **key**, **effect** and **description**, per
-[`07-tables.md`](07-tables.md). The key is engine vocabulary and never rendered to the player. The
+[`04-tables.md`](04-tables.md). The key is engine vocabulary and never rendered to the player. The
 descriptions say only what happened; what it *feels* like is the setting's
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)).
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)).
 
 ### `critical-slashing`
 
@@ -159,7 +159,7 @@ descriptions say only what happened; what it *feels* like is the setting's
  "roll": 4, "modifier": 11, "total": 15, "row": "slashing-hamstrung"}
 ```
 
-**Effects come from a closed set** — the same one [`09-aftermath.md`](09-aftermath.md) already
+**Effects come from a closed set** — the same one [`06-aftermath.md`](06-aftermath.md) already
 declares, so a critical writes the wound record every other rule already knows how to read, and the
 **Mend** undertaking ([`16-session.md`](16-session.md)) already knows how to step it:
 
@@ -199,7 +199,7 @@ The worst row of every table is `mortal`. It does **not** kill during the fight.
 > A combatant carrying a mortal blow has their **Aftermath result read on the `death` row**, whatever
 > the dice said.
 
-This is the mirror of the re-read [`09-aftermath.md`](09-aftermath.md) already publishes for a
+This is the mirror of the re-read [`06-aftermath.md`](06-aftermath.md) already publishes for a
 spent Fate point — one mechanism, running in both directions — and it is what lets *high results are
 lethal* be true without a second, quieter way to die mid-fight:
 
@@ -297,7 +297,7 @@ Rally, full at a downtime. A critical says what the blow did, never how long it 
 ## What a setting may replace
 
 The **rows** — their ranges, effects and descriptions — by naming a table under `overrides.tables:`
-in `setting.yaml` ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)):
+in `setting.yaml` ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)):
 
 ```yaml
 overrides:
@@ -311,7 +311,7 @@ setting's to set, through `mortality`.
 
 **A setting renames a type it has no fiction for**, and the rename is presentation-only: the key and
 the effect are what reach state, and a rename never touches either
-([`07-tables.md`](07-tables.md)).
+([`04-tables.md`](04-tables.md)).
 
 **Table changes apply forward.** A result already rolled stands as it was rolled, and no history is
-recomputed ([`22-evolution.md`](22-evolution.md)).
+recomputed ([`29-evolution.md`](29-evolution.md)).

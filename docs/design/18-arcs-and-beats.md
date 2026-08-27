@@ -4,7 +4,7 @@ Source material in Wyrd is not a document to be read aloud. It is a **tree of ar
 beats**, each with entry and exit conditions, from which stories can be rebuilt in
 combinations their authors never wrote.
 
-Entity shapes are in [`27-entities.md`](27-entities.md); this is what they are *for*.
+Entity shapes are in [`25-entities.md`](25-entities.md); this is what they are *for*.
 
 ---
 
@@ -51,12 +51,12 @@ None of those hold.
 Broken into beats, the same material becomes reusable: a beat from the middle of one
 adventure can sit inside another entirely; a six-page magazine scenario might be three beats
 of which two are worth keeping; and beats recombine into stories driven by thread matching
-([`18-campaign.md`](18-campaign.md)) rather than by an author's sequence.
+([`19-campaign.md`](19-campaign.md)) rather than by an author's sequence.
 
 ## Selection, and why `leads_to` is only a hint
 
 The engine picks the next beat by matching **live threads** against `entry.requires_threads`,
-filtered by the deterministic predicates in [`24-corpus-index.md`](24-corpus-index.md), and
+filtered by the deterministic predicates in [`26-corpus-index.md`](26-corpus-index.md), and
 scaled to the party. `leads_to` is consulted only when nothing better is live.
 
 Where a genuine authored sequence exists, the arc tree preserves it — an arc's children in
@@ -72,7 +72,7 @@ is twelve stories; four hundred beats is not.
 
 ## Recursion at every level
 
-Because arcs contain arcs ([`27-entities.md`](27-entities.md)), entry and exit conditions
+Because arcs contain arcs ([`25-entities.md`](25-entities.md)), entry and exit conditions
 exist at **every** level, not just the leaves. The engine can therefore match threads against
 a whole campaign, an adventure inside it, or a single situation — and insert any of them into any
 other, since they are the same shape.
@@ -103,7 +103,7 @@ A stub carries **enough to be selected** — a summary, tags, a source path — 
 
 `scale` is not limited to the sizes above one library naturally produces — `scale: journey` is
 a recognised value for an arc whose children are legs of travel, decomposed and converted the
-same way any other arc is. See [`30-journeys.md`](30-journeys.md) for the fields specific to
+same way any other arc is. See [`20-journeys.md`](20-journeys.md) for the fields specific to
 it.
 
 **Conversion happens on demand.** When the engine is planning the next stage of a chronicle

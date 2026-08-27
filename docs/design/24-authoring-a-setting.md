@@ -54,7 +54,7 @@ engine will hold whatever line it draws — refusing to invent a destiny under
 a technically correct chronicle that feels like the wrong game.
 
 `version` matters: a chronicle pins **both** an engine version and a setting version
-([`22-evolution.md`](22-evolution.md)). Setting changes are almost always *additive* and
+([`29-evolution.md`](29-evolution.md)). Setting changes are almost always *additive* and
 therefore safe, but a career being removed or renamed is structural and needs a migration
 like any other.
 
@@ -75,7 +75,7 @@ an entity. A career is a row; the guild that grants it is an entity.
 ### `careers.yaml`
 
 One `careers:` list — the career graph character creation and advancement both draw skills from
-([`05-character-creation.md`](05-character-creation.md)). Each entry is one career:
+([`11-character-creation.md`](11-character-creation.md)). Each entry is one career:
 
 ```yaml
 careers:
@@ -103,7 +103,7 @@ completes a spread of careers across different ladders) possible over the same g
 difference is which careers a character chose to complete, not a separate mechanic. `skills`'
 length is **setting-defined per career**, not fixed across the table: nothing ties two careers to
 the same skill count, only the "at least two skills opened" floor advancement already enforces
-([`05-character-creation.md`](05-character-creation.md) §3).
+([`11-character-creation.md`](11-character-creation.md) §3).
 
 **At least one career in the table must declare `entry: true`** — a character always has
 somewhere to start. Every entry in `prerequisites` must name another career **in the same
@@ -115,7 +115,7 @@ reference. (A career named in more than one other career's `prerequisites` — a
 
 A career is **complete** for a character when every skill in its `skills` list has been opened
 and raised to that career's cap — the terminal state of the advance mechanics
-[`05-character-creation.md`](05-character-creation.md) §3 already defines, not a new one. Two
+[`11-character-creation.md`](11-character-creation.md) §3 already defines, not a new one. Two
 things key off that completed state: the **+1 maximum Stamina** bonus a completed career grants,
 and **eligibility for any career listing it in `prerequisites`** — a character may choose a
 non-entry career once any one of its declared prerequisites is complete for them.
@@ -123,7 +123,7 @@ non-entry career once any one of its declared prerequisites is complete for them
 ### `bestiary.yaml`
 
 One `creatures:` list. Each entry is one **adversary block** — the fields the ruleset reads off an
-opponent, defined once in [`06-the-adversary.md`](06-the-adversary.md):
+opponent, defined once in [`12-the-adversary.md`](12-the-adversary.md):
 
 ```yaml
 creatures:
@@ -155,7 +155,7 @@ setting adding a mechanism, which the hard rule below forbids. The validator is 
 actually enforced rather than merely stated.
 
 A **named antagonist** does not go here. It is a `character` entity carrying the same block
-([`27-entities.md`](27-entities.md)) — a bestiary holds kinds of thing, not individuals.
+([`25-entities.md`](25-entities.md)) — a bestiary holds kinds of thing, not individuals.
 
 ### `gear.yaml`
 
@@ -223,7 +223,7 @@ The engine guarantees, and a setting may rely on:
 
 | Engine provides | Setting supplies |
 |---|---|
-| `d100` resolution, degrees of success, the Wyrd die | **every skill name, and which skills exist** ([`04-the-character.md`](04-the-character.md)) |
+| `d100` resolution, degrees of success, the Wyrd die | **every skill name, and which skills exist** ([`10-the-character.md`](10-the-character.md)) |
 | Difficulty bands | when they apply |
 | Stamina, armour dice, criticals, Aftermath | weapons, armour, critical flavour |
 | Taint, Trauma, Fate, Resolve, Strain | what they are *called*, what causes them, and **whether they exist at all** |
@@ -231,7 +231,7 @@ The engine guarantees, and a setting may rely on:
 | Beats, Rally, downtime, party tension | what downtime looks like here |
 | Loyalty, and the strained/irreconcilable relations | **which Loyalties exist, what they are called, and which pairs are strained or irreconcilable** ([`16-session.md`](16-session.md)) |
 | Threats, threads, elapsed time, succession | who the Threats are |
-| Diegetic bands ([`23-diegesis.md`](23-diegesis.md)) | the idiom they are spoken in |
+| Diegetic bands ([`13-diegesis.md`](13-diegesis.md)) | the idiom they are spoken in |
 | *(nothing)* | **the tone contract** ([`01-principles.md`](01-principles.md)) |
 | *(nothing)* | **the voice** |
 
@@ -256,7 +256,7 @@ rather than a family of incompatible forks, and it is not negotiable.
 
 | Override | Example |
 |---|---|
-| **Extend** | add careers, talents, gear, creatures, or rows to a table (append above the engine's own range, without restating it — see [`07-tables.md`](07-tables.md)). *(Skills are not extended — a setting declares its own outright; there is no engine list to add to. See [ADR 0013](../adr/0013-the-engine-names-no-skill.md).)* |
+| **Extend** | add careers, talents, gear, creatures, or rows to a table (append above the engine's own range, without restating it — see [`04-tables.md`](04-tables.md)). *(Skills are not extended — a setting declares its own outright; there is no engine list to add to. See [ADR 0013](../adr/0013-the-engine-names-no-skill.md).)* |
 | **Retune** | replace a table with one that has more setting feel; change exposure tiers; alter starting Fate |
 | **Rename** | Taint becomes Shadow, or Warp-taint, or Sin. Vocabulary only |
 | **Disable** | switch off Taint entirely for a high-fantasy setting; switch off Trauma for a lighter one |
@@ -284,10 +284,10 @@ overrides:
 Loaded after engine defaults, exactly like a chronicle's `houserules.yaml`. What is
 overridable is a **closed set published by the engine** — an override naming anything else is
 a load error, and renames are presentation-only, never reaching state. See
-[`20-tooling.md`](20-tooling.md).
+[`27-tooling.md`](27-tooling.md).
 
 What a replacement table may and may not change, and what it must satisfy to load, is in
-[`07-tables.md`](07-tables.md).
+[`04-tables.md`](04-tables.md).
 
 Overlays are declared in `setting.yaml` and loaded after engine defaults, exactly like
 `houserules.yaml` for a chronicle.
@@ -298,10 +298,10 @@ Overlays are declared in `setting.yaml` and loaded after engine defaults, exactl
 
 A setting derived from an existing system **must** carry `setting/conversion.yaml`.
 
-Without it, on-demand conversion ([`28-arcs-and-beats.md`](28-arcs-and-beats.md)) is
+Without it, on-demand conversion ([`18-arcs-and-beats.md`](18-arcs-and-beats.md)) is
 improvised each time, and the same source converted twice produces different numbers. That is
 non-determinism entering through the back door — precisely what
-[`20-tooling.md`](20-tooling.md) exists to prevent. A conversion table makes the process
+[`27-tooling.md`](27-tooling.md) exists to prevent. A conversion table makes the process
 mechanical, repeatable and auditable.
 
 ```yaml
@@ -356,7 +356,7 @@ converted: {rules: 1, on: 2026-08-21}
 ```
 
 So when a conversion rule changes, `wyrd doctor` reports which entities predate it and offers
-re-conversion — a **structural** change under [`22-evolution.md`](22-evolution.md), never one
+re-conversion — a **structural** change under [`29-evolution.md`](29-evolution.md), never one
 that rewrites what happened in play.
 
 ### The three things conversion must never do
@@ -386,11 +386,11 @@ Most of it lands in data, which is the point — the exercise is meant to find w
 
 **And it found one.** A setting built around travel needs journeys *played* rather than
 narrated, and at the time this example was run Wyrd had no travel subsystem: the engine assumed
-travel was always summarised ([`18-campaign.md`](18-campaign.md)).
+travel was always summarised ([`19-campaign.md`](19-campaign.md)).
 
 That was a **new mechanism**, so by the hard rule above no setting was permitted to add it
 itself. It went into the core instead, generalised, and every setting may now configure it or
-leave it off — see [`30-journeys.md`](30-journeys.md). A setting that had quietly implemented
+leave it off — see [`20-journeys.md`](20-journeys.md). A setting that had quietly implemented
 its own would have forked the engine, and the next setting wanting journeys would have found
 nothing to reuse.
 
@@ -408,6 +408,6 @@ the contract is not confirming that it fits, but discovering precisely where it 
 5. `gear.yaml`, `bestiary.yaml` — enough to run one scenario, not everything; validate with `tools/check_gear.py` and `tools/check_bestiary.py`
 6. a few `organisation` entities with objectives — so the world can act while the player is absent
 7. One threat and one arc — enough to play
-8. Index whatever sources you have ([`24-corpus-index.md`](24-corpus-index.md))
+8. Index whatever sources you have ([`26-corpus-index.md`](26-corpus-index.md))
 
 Steps 1–5 and one scenario is a playable setting. Everything else accumulates.

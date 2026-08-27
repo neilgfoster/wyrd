@@ -14,7 +14,7 @@ type.
 ## Decision
 
 **Containment is recursive.** Three types — `place`, `organisation`, `arc` — are containers
-that hold their own kind to any depth ([`../27-entities.md`](../design/27-entities.md)). `scale` is a
+that hold their own kind to any depth ([`../27-entities.md`](../design/25-entities.md)). `scale` is a
 human-readable label, never a structural constraint.
 
 Only the **beat** is structurally special, and not because of its position in the tree:
@@ -48,7 +48,7 @@ must not have.
 - **Recombination becomes trivial**: any arc fits inside any arc, because they are the same
   shape.
 - Entry and exit conditions exist at **every** level, so thread-matching can select a whole
-  campaign or one situation out of it ([`../28-arcs-and-beats.md`](../design/28-arcs-and-beats.md)).
+  campaign or one situation out of it ([`../28-arcs-and-beats.md`](../design/18-arcs-and-beats.md)).
 - An arc that has never been decomposed is still **selectable**, which is what makes lazy
   conversion possible.
 - Entity types fell from twelve to ten, because scenario, adventure and campaign became one

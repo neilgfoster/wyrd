@@ -24,7 +24,7 @@
   alongside Taint/Trauma/Strain/Resolve/Fate: what it measures (social position), that it is an
   open-ended count like the other tracks (not a percentile, not a capped band). [FR-001, FR-008]
 - [X] T006 In `docs/design/03-rules.md` (near the other tracks, §4-5's neighbourhood), state what
-  raises and lowers Standing in play, and cross-reference `docs/design/23-diegesis.md` for how it is
+  raises and lowers Standing in play, and cross-reference `docs/design/13-diegesis.md` for how it is
   rendered to the player (diegetic status, never a raw number). [FR-001, FR-002]
 - [X] T007 Rewrite `docs/design/16-session.md:112`'s Upkeep line in place: "lose 1 Standing, or spend
   coin equal to Standing" now resolves against the definitions from T005/T006 and the coin
@@ -33,7 +33,7 @@
 
 ## Phase 3 — Design document: wealth and gear (US2)
 
-- [X] T008 Expand `docs/design/26-authoring-a-setting.md:19`'s `gear.yaml` line into the field list
+- [X] T008 Expand `docs/design/24-authoring-a-setting.md:19`'s `gear.yaml` line into the field list
   from `data-model.md` (weapon and armour schemas), and note `tools/check_gear.py` as its
   validator, mirroring how the adversary block's line points at `check_bestiary.py`. [FR-003,
   FR-004, SC-002]
@@ -43,7 +43,7 @@
 
 ## Phase 4 — Design document: encumbrance and casual/martial (US3, US4)
 
-- [X] T010 In `docs/design/23-diegesis.md`'s "Inventory — realistic, not logistic" section, extend the
+- [X] T010 In `docs/design/13-diegesis.md`'s "Inventory — realistic, not logistic" section, extend the
   existing "what is missing" framing to state the encumbrance question explicitly ("can this
   plausibly be carried") as the same kind of GM judgment call, with no numeric mechanism added.
   [FR-006, SC-004]

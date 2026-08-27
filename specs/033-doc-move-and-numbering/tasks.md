@@ -25,7 +25,7 @@ description: "Task list for the design-doc move and numbering settlement (issue 
   `superseded/`) → `docs/adr/`, numbers unchanged
 - [X] T005 [US1] Run the migration script's link-rewrite step over every file now under `doc/`
 - [X] T006 [US1] Update `README.md`'s "Read in this order" table: all thirty documents in the
-  corrected order, including the three previously missing (`docs/design/12-oracle-answers.md`,
+  corrected order, including the three previously missing (`docs/design/14-oracle-answers.md`,
   `13-oracle-prompts.md`, `17-out-of-character-mode.md`)
 
 ## Phase 3: External references (User Story 2)

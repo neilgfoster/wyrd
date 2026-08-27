@@ -8,7 +8,7 @@
 Two tables answer one blow, and both can be fatal.
 
 [`03-rules.md`](../design/03-rules.md) says of criticals that **high results are lethal**.
-[`09-aftermath.md`](../design/09-aftermath.md) says that **death is deferred** — nothing resolves while
+[`06-aftermath.md`](../design/06-aftermath.md) says that **death is deferred** — nothing resolves while
 the fight is running, and what dropping cost is settled when it is over. Deferred death is not a
 detail: it is how a single-character chronicle survives lethal combat at all, and
 [ADR 0009](0009-fate-closes-the-death-rows.md) hangs a spent Fate point's entire promise on the
@@ -48,7 +48,7 @@ pointless: an unbounded modifier that tops out at a limp is a ladder with nothin
 and the worst blow the rules can produce would be indistinguishable from a moderately bad one.
 
 **A bonus to the Aftermath total** — a mortal blow adds, say, +20. Rejected twice over. Aftermath
-declares exactly one modifier and [`07-tables.md`](../design/07-tables.md) forbids a family carrying a
+declares exactly one modifier and [`04-tables.md`](../design/04-tables.md) forbids a family carrying a
 second; and it makes a mortal blow *probably* fatal rather than fatal, which is a different rule
 wearing the same name. It also reintroduces the failure mode
 [ADR 0009](0009-fate-closes-the-death-rows.md) already diagnosed for `mortality`: adjusting the total

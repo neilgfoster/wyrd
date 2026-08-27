@@ -16,7 +16,7 @@ Usage:
     python3 tools/check_settings_catalogue.py
     python3 tools/check_settings_catalogue.py --format json
 
-Requires the `gh` CLI. Python 3.11+, standard library only (docs/design/20-tooling.md).
+Requires the `gh` CLI. Python 3.11+, standard library only (docs/design/27-tooling.md).
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ def _parse_scalar(value: str) -> str | None:
 def parse_catalogue(text: str) -> list[dict]:
     """The `settings:` list of flat mappings -- id, title, repo, visibility, status, group.
 
-    A restricted-subset reader, not a general YAML parser (docs/design/20-tooling.md section 2: no
+    A restricted-subset reader, not a general YAML parser (docs/design/27-tooling.md section 2: no
     third-party YAML dependency). Each entry is a `- key: value` line starting a new mapping,
     followed by indented `key: value` lines until the next `- ` or a blank/comment line at the
     same indent ends it. Comments and blank lines are skipped everywhere.

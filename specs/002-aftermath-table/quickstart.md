@@ -30,7 +30,7 @@ The script holds the rows separately from the prose, so they can drift. Confirm 
 
 ```bash
 # The document's ranges. They are bold, so the pattern must expect that.
-grep -oE '^\| \*\*[0-9]+(–[0-9]+|\+)\*\*' docs/design/09-aftermath.md | tr -d '|* '
+grep -oE '^\| \*\*[0-9]+(–[0-9]+|\+)\*\*' docs/design/06-aftermath.md | tr -d '|* '
 
 # The script's ranges.
 grep -oE '^    \([0-9]+, (None|[0-9]+)' specs/002-aftermath-table/check_aftermath.py \
@@ -53,7 +53,7 @@ staleness `CLAUDE.md` says tables breed.
 for key in out-of-action lasting-wound left-for-dead new-enemy taken \
            disfigured recurring-wound death; do
   printf '%-18s ' "$key"
-  if grep -qF "$key" docs/design/09-aftermath.md \
+  if grep -qF "$key" docs/design/06-aftermath.md \
   && grep -qF "$key" specs/002-aftermath-table/check_aftermath.py; then
     echo present
   else
@@ -77,7 +77,7 @@ new document must be a label `docs/design/03-rules.md` already publishes.
 grep -oE '\*\*[A-Z][a-zA-Z ]+\*\*' docs/design/03-rules.md | tr -d '*' | sort -u > /tmp/wyrd-labels
 
 # Capitalised terms in the new document that are not sentence-initial.
-grep -oE '[a-z,] [A-Z][a-z]+' docs/design/09-aftermath.md \
+grep -oE '[a-z,] [A-Z][a-z]+' docs/design/06-aftermath.md \
   | sed -E 's/^[a-z,] //' | sort -u
 ```
 
@@ -91,7 +91,7 @@ setting should own.
 ## 5. The index no longer says "not yet written"
 
 ```bash
-grep -n 'Aftermath' docs/design/07-tables.md
+grep -n 'Aftermath' docs/design/04-tables.md
 ```
 
 The row must name the roll (`d100 + 5 × points below zero`), the uniqueness (`repeatable`), and link
@@ -112,7 +112,7 @@ promise — the table is where they live now. No changelog, no "previously".
 The check no script performs, and the fault class `CLAUDE.md` ranks hardest to see: two documents
 describing one thing differently, both internally coherent.
 
-Read `docs/design/03-rules.md` §2 and §3 against `docs/design/09-aftermath.md`, and confirm each of these
+Read `docs/design/03-rules.md` §2 and §3 against `docs/design/06-aftermath.md`, and confirm each of these
 resolves to exactly one reading:
 
 - when the Aftermath roll happens, relative to the fight and to the critical

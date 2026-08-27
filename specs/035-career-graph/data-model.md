@@ -1,8 +1,8 @@
 # Phase 1 Data Model: Career graph — skill counts and succession
 
 Careers are rows in a setting's `careers.yaml` lookup table
-([`26-authoring-a-setting.md`](../../docs/design/26-authoring-a-setting.md)), not Wyrd entities
-([`27-entities.md`](../../docs/design/27-entities.md); see `research.md` for why). This document
+([`24-authoring-a-setting.md`](../../docs/design/24-authoring-a-setting.md)), not Wyrd entities
+([`25-entities.md`](../../docs/design/25-entities.md); see `research.md` for why). This document
 describes the shape of that row, not a schema validator (out of scope, FR-009).
 
 ## Career
@@ -33,7 +33,7 @@ describes the shape of that row, not a schema validator (out of scope, FR-009).
 
 A character's relationship to a career is not stored on the `Career` row — it is computed from
 the character's own advance history inside that career, per
-[`05-character-creation.md`](../../docs/design/05-character-creation.md) §3 and §5.
+[`11-character-creation.md`](../../docs/design/11-character-creation.md) §3 and §5.
 
 **A career is complete for a given character when every skill in that career's `skills` list has
 been opened and raised to the career's cap.**
@@ -42,7 +42,7 @@ This derived fact feeds two existing effects, both already named in the corpus a
 redefined here:
 
 - the **+1 maximum Stamina** "durable toughening" bonus
-  ([`05-character-creation.md`](../../docs/design/05-character-creation.md), "Why Stamina is 6")
+  ([`11-character-creation.md`](../../docs/design/11-character-creation.md), "Why Stamina is 6")
 - **eligibility for a non-entry career**: a character may choose career *B* (where *B.entry is
   false*) once **any one** career in *B.prerequisites* is complete for that character (OR
   semantics). A **specialist** keeps completing careers along one chain of successive

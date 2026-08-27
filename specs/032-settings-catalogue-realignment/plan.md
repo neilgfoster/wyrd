@@ -13,7 +13,7 @@ shared worlds), correct `CLAUDE.md`'s repository table to the same naming conven
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+, standard library only (`docs/design/20-tooling.md` §2)
+**Language/Version**: Python 3.11+, standard library only (`docs/design/27-tooling.md` §2)
 
 **Primary Dependencies**: none — `gh` CLI via `subprocess`, same as `tools/backlog.py`
 

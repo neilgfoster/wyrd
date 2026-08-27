@@ -13,7 +13,7 @@ identically, which made the Fault Line prose rather than mechanism (#58).
 Three places in the existing Taint machinery could plausibly carry the fix:
 
 1. **Which transformation is rolled** — the Fault Line selects among effects on
-   [`10-transformations.md`](../design/10-transformations.md)'s table instead of leaving the roll
+   [`07-transformations.md`](../design/07-transformations.md)'s table instead of leaving the roll
    uniform.
 2. **How the hidden threshold reads** — the secretly-rolled 1d6+2 that decides how many
    Transformations a character endures before being lost is skewed by direction.
@@ -39,7 +39,7 @@ invisibly with the way Taint already bends the Wyrd die), and it touches no exis
 ## Alternatives considered and rejected
 
 **Direction-keyed transformation rows.** Restructure
-[`10-transformations.md`](../design/10-transformations.md) so each severity tier offers a small set
+[`07-transformations.md`](../design/07-transformations.md) so each severity tier offers a small set
 of direction-keyed effects, and the Fault Line picks among them instead of the 1d6 roll alone.
 Rejected on two grounds. First, that table was only just settled (#18, merged) after resolving a
 genuine body/mind collision in §4 — reopening its shape this soon to fork it by direction risks
@@ -51,10 +51,10 @@ closed vocabulary, and the engine is setting-agnostic, so any taxonomy invented 
 as genre rather than mechanism, the fault CLAUDE.md calls "mechanic names carrying genre."
 
 **A skew on the hidden threshold.** The secretly-rolled 1d6+2 (range 3–8, written once at a
-character's first Transformation — [`10-transformations.md`](../design/10-transformations.md)) could
+character's first Transformation — [`07-transformations.md`](../design/07-transformations.md)) could
 be biased up or down by direction, so some Fault Lines endure more Transformations before a
 character is lost than others. Rejected because that number is, by design, never shown to the
-player "in any form, including as unease" ([`23-diegesis.md`](../design/23-diegesis.md)) — a mechanical
+player "in any form, including as unease" ([`13-diegesis.md`](../design/13-diegesis.md)) — a mechanical
 difference the player can never observe or reason about is a weaker answer to #58's own acceptance
 criterion ("two characters at equal Taint with different Fault Lines differ mechanically") than one
 that shows up in play the next time Exposure is resisted.

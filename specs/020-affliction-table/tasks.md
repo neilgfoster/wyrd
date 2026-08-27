@@ -12,14 +12,14 @@
 
 ## Phase 2 — Design document
 
-- [ ] T003 Write `docs/design/11-afflictions.md`: the fiction-chosen §1 test fired on every Trauma
+- [ ] T003 Write `docs/design/08-afflictions.md`: the fiction-chosen §1 test fired on every Trauma
   point past 6 (FR-001), the twelve-row `1d12` table with rows phrased as behaviour and carrying an
   applicable effect (FR-002, FR-003), the repeatable-family statement and what a repeat draw does
   (FR-004), the restated Taint/Trauma split matching `03a-3-transformations.md` (FR-005), and the
   computed cadence (FR-006). [US1, US2, US3]
 - [ ] T004 Update `docs/design/03-rules.md` §5 in place: name the test, point at the new document, no
   changelog language. [FR-007]
-- [ ] T005 Update `docs/design/07-tables.md`'s index row for Afflictions: roll, link, no longer "not
+- [ ] T005 Update `docs/design/04-tables.md`'s index row for Afflictions: roll, link, no longer "not
   yet written". [FR-008]
 - [ ] T006 Add the hub row for `03a-4-afflictions.md` to `README.md` for reachability.
 
@@ -32,7 +32,7 @@
 
 ## Phase 4 — Verification
 
-- [ ] T009 `grep` `docs/design/11-afflictions.md` and the touched files for setting/system vocabulary
+- [ ] T009 `grep` `docs/design/08-afflictions.md` and the touched files for setting/system vocabulary
   and tonal register; confirm none, and that no row presumes a particular moral reading of mental
   harm. [FR-009]
 - [ ] T010 Run `python3 tools/check_docs.py` — must pass. [SC-002]

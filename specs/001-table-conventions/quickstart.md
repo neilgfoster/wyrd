@@ -14,17 +14,17 @@ does not exist yet.
 ## 1. The document exists and is reachable
 
 ```bash
-test -f docs/design/07-tables.md && echo present
+test -f docs/design/04-tables.md && echo present
 grep -rn "03a-tables" design/ README.md
 ```
 
 Expected: the file is present, and `docs/design/02-architecture.md`, `docs/design/03-rules.md`,
-`docs/design/20-tooling.md` and `docs/design/26-authoring-a-setting.md` each link to it. A reader arriving at
+`docs/design/27-tooling.md` and `docs/design/24-authoring-a-setting.md` each link to it. A reader arriving at
 any of the four documents that mention tables finds the conventions from there (SC-001).
 
 ## 2. The five structural questions are answered
 
-Read `docs/design/07-tables.md` and confirm each of these is stated, not implied:
+Read `docs/design/04-tables.md` and confirm each of these is stated, not implied:
 
 | Question | Requirement |
 |---|---|
@@ -40,12 +40,12 @@ Expected: a reader who has seen none of the sibling issues can answer all five w
 ## 3. The index matches the rest of the design set
 
 ```bash
-grep -n "tables/" docs/design/02-architecture.md docs/design/20-tooling.md
+grep -n "tables/" docs/design/02-architecture.md docs/design/27-tooling.md
 ```
 
 Expected: both list the same five families — criticals, aftermath, transformations, afflictions,
-oracles — and all five appear in the index in `docs/design/07-tables.md`. The two sets match exactly
-(SC-002). `docs/design/20-tooling.md:84` omitted afflictions before this change; confirm it no longer
+oracles — and all five appear in the index in `docs/design/04-tables.md`. The two sets match exactly
+(SC-002). `docs/design/27-tooling.md:84` omitted afflictions before this change; confirm it no longer
 does.
 
 ## 4. Every rule's table reference resolves
@@ -59,18 +59,18 @@ the index does not know about (SC-005).
 
 ## 5. The index is append-only in practice
 
-Inspect the index table in `docs/design/07-tables.md`. Expected: adding a sixth family is one new row
+Inspect the index table in `docs/design/04-tables.md`. Expected: adding a sixth family is one new row
 and touches no other line (SC-003). If a sibling would have to edit prose elsewhere to add its
 family, the index is doing too much.
 
 ## 6. Nothing new was invented
 
 ```bash
-grep -n -iE "version|schema_version" docs/design/07-tables.md
+grep -n -iE "version|schema_version" docs/design/04-tables.md
 ```
 
 Expected: the document introduces no version, no storage location and no override key beyond those
-`docs/design/19-state.md` and `docs/design/26-authoring-a-setting.md` already define (SC-007). Specifically:
+`docs/design/22-state.md` and `docs/design/24-authoring-a-setting.md` already define (SC-007). Specifically:
 no per-table version field anywhere.
 
 ## 7. No setting or system vocabulary
@@ -86,8 +86,8 @@ FR-016). The illustrative rows in the contract are deliberately placeholders for
 
 ## 8. The design set still agrees with itself
 
-Read `docs/design/07-tables.md` against `docs/design/02-architecture.md`, `docs/design/20-tooling.md`,
-`docs/design/22-evolution.md` and `docs/design/26-authoring-a-setting.md`. Expected: no statement in the new
+Read `docs/design/04-tables.md` against `docs/design/02-architecture.md`, `docs/design/27-tooling.md`,
+`docs/design/29-evolution.md` and `docs/design/24-authoring-a-setting.md`. Expected: no statement in the new
 document contradicts any of them, and where one did, that document was updated in the same change
 (SC-006, FR-015). This is fault class 3 and grep does not find it — both documents read as coherent
 on their own.

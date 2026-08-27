@@ -18,7 +18,7 @@
 
 ## Phase 2 — Design
 
-- [x] T006 `docs/design/05-character-creation.md`: the ordered steps.
+- [x] T006 `docs/design/11-character-creation.md`: the ordered steps.
 - [x] T007 The starting values, each with its reason.
 - [x] T008 What a setting must provide for creation to run.
 - [x] T009 Hand-off to advancement; succession uses the same procedure.

@@ -4,7 +4,7 @@ A chronicle may run for a decade. The engine will not stand still for a decade: 
 tuned, tables grow, subsystems get replaced, bugs get fixed. A chronicle begun under
 engine 0.1 must still be playable under engine 2.0 — and must still be *the same chronicle*.
 
-This is the same problem as [`21-maintenance.md`](21-maintenance.md), one level up, and it
+This is the same problem as [`28-maintenance.md`](28-maintenance.md), one level up, and it
 takes the same shape: **the past is a fact; only the future is negotiable.**
 
 ---
@@ -48,7 +48,7 @@ benefit of the layering in [`02-architecture.md`](02-architecture.md).
 ## Version pinning
 
 `chronicle.yaml` carries the versions and the migration history, in the shape defined in
-[`19-state.md`](19-state.md) — engine and setting each with a `version` and a
+[`22-state.md`](22-state.md) — engine and setting each with a `version` and a
 `created_under`, plus an append-only `migrations` list. Entities carry their own
 `schema_version`, and derived entities the `converted:` rules that produced them.
 
@@ -94,7 +94,7 @@ exists. Every Behavioural migration answers this explicitly, and the honest defa
 ### Era boundaries are the natural seam
 
 Where a change is large enough to feel different at the table, apply it at an **era
-boundary** ([`18-campaign.md`](18-campaign.md)). Eras already exist, already carry a tonal
+boundary** ([`19-campaign.md`](19-campaign.md)). Eras already exist, already carry a tonal
 shift, and are already git-tagged. "The world works differently now" is absorbed far more
 gracefully between eras than mid-arc — and it costs nothing to wait.
 
@@ -185,7 +185,7 @@ The first few are already implicit in the existing docs and should be extracted:
 Three things move earlier than they otherwise would:
 
 1. **Version pinning and `migrations[]` in the schema from the first commit** — engine,
-   setting, state format and conversion rules, per [`19-state.md`](19-state.md).
+   setting, state format and conversion rules, per [`22-state.md`](22-state.md).
    Retrofitting provenance is impossible, because the history you would describe has already
    happened.
 2. Provenance stamping on log entries **from the first beat**, for the same reason.

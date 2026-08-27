@@ -7,7 +7,7 @@
 **Status**: Draft
 
 **Input**: Issue [#18](https://github.com/neilgfoster/wyrd/issues/18) — define the transformation
-table (`docs/design/10-transformations.md`): the Taint thresholds, a severity per row, proof the
+table (`docs/design/07-transformations.md`): the Taint thresholds, a severity per row, proof the
 threshold re-roll loop terminates, the body-versus-mind split, the hidden threshold, and Dread.
 
 ## Why this exists
@@ -128,7 +128,7 @@ modifier in the engine is.
   transformed character is seen.
 - **FR-007**: `docs/design/03-rules.md` §4 MUST be updated in place to match, without changelog
   language.
-- **FR-008**: `docs/design/07-tables.md`'s index MUST carry the transformation family's row, no longer
+- **FR-008**: `docs/design/04-tables.md`'s index MUST carry the transformation family's row, no longer
   marked "not yet written".
 - **FR-009**: No setting or system name may appear anywhere the change touches in `design/`,
   verified by grep. No row may bake in a tonal register.

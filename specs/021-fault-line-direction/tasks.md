@@ -9,7 +9,7 @@
   events versus unaligned-Exposure events it takes to cross the next transformation threshold
   (every multiple of 3, per `03a-3-transformations.md`), and confirm the tier-worse step never
   exceeds 3 at the major-tier ceiling case. [FR-007, SC-002]
-- [ ] T002 In the same script, diff-check `docs/design/10-transformations.md` against its content at
+- [ ] T002 In the same script, diff-check `docs/design/07-transformations.md` against its content at
   the start of this branch and fail loudly if it changed. [FR-006, SC-003]
 - [ ] T003 Run the script and capture its output for the design document. [FR-007]
 
@@ -35,7 +35,7 @@
 - [ ] T009 `grep` the touched files for setting/system vocabulary; confirm none.
 - [ ] T010 Run `python3 tools/check_docs.py` — must pass.
 - [ ] T011 Run `python3 tools/backlog.py check` — must pass.
-- [ ] T012 Confirm `docs/design/10-transformations.md` is unchanged in the diff against `main`, per
+- [ ] T012 Confirm `docs/design/07-transformations.md` is unchanged in the diff against `main`, per
   FR-006/SC-003.
 
 ## Dependencies

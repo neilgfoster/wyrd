@@ -11,10 +11,10 @@ already uses wikilinks — so the obvious move is to convert the documents and b
 That move is wrong here, and it is wrong for a reason that is easy to miss because it depends on who
 is reading.
 
-**Wyrd already uses wikilinks, but for data.** [`27-entities.md`](../design/27-entities.md) describes the
+**Wyrd already uses wikilinks, but for data.** [`25-entities.md`](../design/25-entities.md) describes the
 world mesh as "human-editable, diff-legible, and — because they link with `[[wikilinks]]` — a working
-graph". [`20-tooling.md`](../design/20-tooling.md) says state is YAML with `[[wikilink]]` frontmatter, read
-by a small internal parser. [`21-maintenance.md`](../design/21-maintenance.md) runs a referential-integrity
+graph". [`27-tooling.md`](../design/27-tooling.md) says state is YAML with `[[wikilink]]` frontmatter, read
+by a small internal parser. [`28-maintenance.md`](../design/28-maintenance.md) runs a referential-integrity
 check across every `[[link]]`. The entity model *is* an Obsidian graph, by design and before Obsidian
 was involved.
 

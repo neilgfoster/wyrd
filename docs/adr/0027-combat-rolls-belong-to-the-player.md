@@ -51,7 +51,7 @@ computed the other way round. The opponent's dice are never consulted, in either
 where both parties genuinely act on the fiction — a tug-of-war of wills, a race for the same
 outcome named by the GM as two actors — is not converted. Combat is the only place a static
 opponent number stands in for a roll, because combat is the only place the opponent side already
-had a schema for that number ([`06-the-adversary.md`](../design/06-the-adversary.md)). This record
+had a schema for that number ([`12-the-adversary.md`](../design/12-the-adversary.md)). This record
 narrows ADR 0016's remaining scope; it does not retire it.
 
 ## Consequences

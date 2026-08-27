@@ -6,9 +6,9 @@
 
 Define Standing where Upkeep already spends it (`docs/design/16-session.md`), give it a place among
 the other open-ended tracks in `docs/design/03-rules.md`, and specify the gear schema
-`docs/design/26-authoring-a-setting.md` has promised since it first named `gear.yaml`. Wealth (coin)
+`docs/design/24-authoring-a-setting.md` has promised since it first named `gear.yaml`. Wealth (coin)
 is reconciled with Standing rather than modelled as a second parallel resource. Encumbrance stays
-a GM judgment call, matching `docs/design/23-diegesis.md`'s existing "realistic, not logistic" rule —
+a GM judgment call, matching `docs/design/13-diegesis.md`'s existing "realistic, not logistic" rule —
 no new numeric mechanism. The casual/martial distinction gets a concrete consequence path through
 Standing rather than a second, unrelated mechanic. Record the decisions as an ADR, and validate
 the gear schema with a script in the shape of `tools/check_bestiary.py`.
@@ -55,7 +55,7 @@ precedent rather than inventing a new validation shape.
   Trauma, Strain, Resolve, Fate; §2 gains the wealth/coin definition, the encumbrance rule, and
   the casual/martial consequence, next to the existing weapon/armour/damage material it already
   depends on.
-- `docs/design/26-authoring-a-setting.md` — the `gear.yaml` line expanded into the field list a setting
+- `docs/design/24-authoring-a-setting.md` — the `gear.yaml` line expanded into the field list a setting
   author needs: weapon fields (damage, damage type, casual/martial, price,
   availability/legality) and armour fields (rank, price, availability/legality).
 - `docs/adr/0033-standing-and-the-material-economy.md` — records: Standing kept and defined

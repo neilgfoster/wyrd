@@ -90,7 +90,7 @@ inside a bucket reinstate exactly the judgement call being removed. Rejected.
 
 **The board's native manual item order.** No schema change, but position is not exposed as a stable
 sortable value by the API, so the deterministic read path would rest on scraping an ordering that
-GitHub does not promise. Fails `docs/design/20-tooling.md` §1. Rejected.
+GitHub does not promise. Fails `docs/design/27-tooling.md` §1. Rejected.
 
 **A file in the repo.** Trivially scriptable and visible in git history, and forbidden: `CLAUDE.md`
 says there is no backlog file, "because two lists of the same work drift — which is the fault class
@@ -99,7 +99,7 @@ in ADR 0010 because it is the option someone will propose again.
 
 ## 6. Placement of the script
 
-`docs/design/20-tooling.md` §3 lays out `engine/wyrd/` for the game engine's CLI. This tool is not engine
+`docs/design/27-tooling.md` §3 lays out `engine/wyrd/` for the game engine's CLI. This tool is not engine
 behaviour — it reads GitHub, it has no bearing on play, and it must never ship to a chronicle. It
 goes in `tools/`, which is already the established name for repo-side tooling in the wyrd family
 (`wyrd-research` uses `tools/pull.py`). Keeping it out of `engine/` also keeps the engine free of a

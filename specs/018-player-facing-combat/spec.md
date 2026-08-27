@@ -83,7 +83,7 @@ to two-sided opposed tests, and the knock-on decisions #44 named — not the map
 ### User Story 1 - A player attacks, and the opponent never rolls (Priority: P1)
 
 A player declares an attack. They roll once, against a single percentage derived from their attack
-skill and the opponent's relevant skill (or `baseline`, [`03d-the-adversary.md`](../../docs/design/06-the-adversary.md)
+skill and the opponent's relevant skill (or `baseline`, [`03d-the-adversary.md`](../../docs/design/12-the-adversary.md)
 §3). The opponent's dice never come out.
 
 **Why this priority**: This is the conversion. Nothing else in the feature is meaningful until an

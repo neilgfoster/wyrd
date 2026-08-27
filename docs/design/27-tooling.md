@@ -103,7 +103,7 @@ engine/wyrd/
 ```
 
 What `tables.py` loads and how a result is looked up is defined in
-[`07-tables.md`](07-tables.md).
+[`04-tables.md`](04-tables.md).
 
 `TOOLS` drives **both** `describe` and the argparse dispatch, so discovery and execution can
 never drift. Each entry carries:
@@ -167,7 +167,7 @@ engine skill.
 ## 4. How settings adjust the tooling
 
 A setting may extend, retune, rename or disable what the engine provides, and may never add a
-mechanism ([`26-authoring-a-setting.md`](26-authoring-a-setting.md)). The tooling has to
+mechanism ([`24-authoring-a-setting.md`](24-authoring-a-setting.md)). The tooling has to
 honour that **without settings ever shipping code.**
 
 ### Declarative only
@@ -197,7 +197,7 @@ engine defaults  →  setting overrides  →  chronicle houserules
 
 Last wins, and each layer may only narrow what the previous allowed. The resolved
 configuration is written into the chronicle at bootstrap and versioned with everything else
-([`19-state.md`](19-state.md)), so a chronicle never depends on re-resolving it later.
+([`22-state.md`](22-state.md)), so a chronicle never depends on re-resolving it later.
 
 ### The four kinds, and what each costs
 
@@ -243,7 +243,7 @@ overridable set, applied to the model's own view.
 
 Setting overrides are validated at load and carry a version like any other content. A change
 to them is a **structural** change for chronicles that pinned the old version
-([`22-evolution.md`](22-evolution.md)) — the representation moves, the history does not.
+([`29-evolution.md`](29-evolution.md)) — the representation moves, the history does not.
 
 ---
 
@@ -278,7 +278,7 @@ fiction; that is the one place not to economise.
 - `rules.py` and `tables.py` are pure — unit tests, no fixtures
 - Dice distributions are asserted statistically, with the expected values stated in the
   tests themselves rather than referenced elsewhere
-- State invariants from [`19-state.md`](19-state.md) are enforced on **every** write and
+- State invariants from [`22-state.md`](22-state.md) are enforced on **every** write and
   tested directly
 - Golden chronicles: a saved state plus a scripted sequence of verbs, asserting the
   resulting state — this is what catches rule drift across refactors

@@ -28,7 +28,7 @@ accepted ADR ever be touched — will plausibly be asked again the next time a d
 **An ADR's reasoning is immutable. A relative path inside it is repaired like any other link in
 the repository when the file it points at moves.**
 
-Concretely: if `docs/design/09-aftermath.md` is later renamed or moved, every ADR linking to it
+Concretely: if `docs/design/06-aftermath.md` is later renamed or moved, every ADR linking to it
 gets that one link's target updated to match, in the same pass that performs the move — the
 same mechanical, mapping-driven, verified repair `tools/check_docs.py` already exists to
 validate. Nothing else in the ADR changes: not its Context, Decision, Alternatives rejected, or

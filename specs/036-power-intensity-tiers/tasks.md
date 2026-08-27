@@ -9,13 +9,13 @@ in sequence, with the doc read before the validator is written against it).
 ## Phase 1: Documentation (User Stories 1 & 2 — P1)
 
 - [X] T001 Add `intensity_tiers` to the schema table and document it in
-  `docs/design/14-systems-of-power.md`: the field itself (optional, list), each tier's four
+  `docs/design/09-systems-of-power.md`: the field itself (optional, list), each tier's four
   sub-fields (`label`, `difficulty`, `cost_multiplier`, `ill_omen_taint_bonus`), the resolution
   rule (`effective cost = base * cost_multiplier`, `effective Ill Omen Taint = base +
   ill_omen_taint_bonus`, both still applied through the existing win-or-lose/Taint-accrual rules
   — no new resolution path), and an explicit statement that the field is optional and does not
   require any existing declared system of power to change (FR-001–FR-004, FR-007, FR-008; SC-004)
-- [X] T002 Extend the worked example in `docs/design/14-systems-of-power.md` (or add a second
+- [X] T002 Extend the worked example in `docs/design/09-systems-of-power.md` (or add a second
   worked example) showing ember-craft with a three-tier `intensity_tiers` declaration
   (minor/moderate/major) and walk through resolution at one non-default tier, mirroring the
   existing worked-example prose style (FR-004; SC-001)

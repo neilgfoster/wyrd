@@ -10,7 +10,7 @@ state, apply thresholds, decide what a result means.
 ## Decision
 
 **If a script can do it, a script does it.** The model is reserved for judgement
-([`../20-tooling.md`](../design/20-tooling.md)).
+([`../20-tooling.md`](../design/27-tooling.md)).
 
 The test, in order: does it have a single correct answer given the state? Could the player
 catch the GM getting it wrong? Must it hold across years and context resets? Is it

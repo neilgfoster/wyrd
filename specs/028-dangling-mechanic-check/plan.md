@@ -19,7 +19,7 @@ historical instance from issue #59.
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+, standard library only (`docs/design/20-tooling.md` section 2)
+**Language/Version**: Python 3.11+, standard library only (`docs/design/27-tooling.md` section 2)
 
 **Primary Dependencies**: None — `pathlib`, `re`, `argparse`, `json`, `sys` only, matching `check_docs.py`
 
@@ -33,7 +33,7 @@ historical instance from issue #59.
 
 **Performance Goals**: N/A — `design/` is on the order of tens of files; a full scan must complete well under a second, same order as `check_docs.py`
 
-**Constraints**: No third-party dependencies, no daemon/server, auditable top to bottom (`docs/design/20-tooling.md` section 2)
+**Constraints**: No third-party dependencies, no daemon/server, auditable top to bottom (`docs/design/27-tooling.md` section 2)
 
 **Scale/Scope**: One new script (`tools/check_dangling_mechanics.py`) plus its test module (`tools/test_check_dangling_mechanics.py`); no changes to existing scripts or design documents required for the check itself to exist and pass
 

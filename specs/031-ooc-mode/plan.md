@@ -8,7 +8,7 @@
 
 Give the engine a single-character trigger (`?`) that switches the handling of one player
 message to out-of-character (OOC): the diegetic contract of
-[`docs/design/23-diegesis.md`](../../docs/design/23-diegesis.md) is suspended for that response (raw
+[`docs/design/13-diegesis.md`](../../docs/design/13-diegesis.md) is suspended for that response (raw
 numbers on request), the exchange never enters the chronicle as fiction, and the response
 carries an unmistakable textual marker. This is [ADR 0037](../../docs/adr/0037-out-of-character-mode-is-a-prefix-trigger.md)'s
 load-bearing fork (a one-character prefix over a slash command), made concrete as a new design
@@ -43,7 +43,7 @@ validator-checked schema — this is a GM-contract/session-flow change, not a da
 | `docs/adr/0037-out-of-character-mode-is-a-prefix-trigger.md` (new) | records the load-bearing fork |
 | `docs/README.md` | links the new document so `tools/check_docs.py` finds it reachable |
 | `docs/design/01-principles.md` | one-line cross-reference at the point that currently implies everything typed is in-character speech and action |
-| `docs/design/23-diegesis.md` | one-line cross-reference at "Mechanical detail is always available on request", pointing to the new document as where the *request mechanism* is specified |
+| `docs/design/13-diegesis.md` | one-line cross-reference at "Mechanical detail is always available on request", pointing to the new document as where the *request mechanism* is specified |
 | `docs/design/16-session.md` | one-line cross-reference near "The player never hears the words beat, rally or arc" / session-flow section, noting OOC mode as the escape hatch that does not itself become part of a beat |
 
 ## Technical Context

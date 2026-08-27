@@ -4,7 +4,7 @@ What a character is made of, and on what scale. The ruleset
 ([`03-rules.md`](03-rules.md)) rolls against these values; this document says what they are.
 
 Every name here is an **engine** name. What a setting calls any of it is the setting's business
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md)), and renames are presentation-only.
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md)), and renames are presentation-only.
 
 ---
 
@@ -18,7 +18,7 @@ Every name here is an **engine** name. What a setting calls any of it is the set
 | **Fate** and **Luck** | the death valve, and the tested counterweight | [`03-rules.md`](03-rules.md) §1, §3 |
 | **A career**, and a career history | where competence comes from, and a biography | [`03-rules.md`](03-rules.md) §6 |
 | **A Loyalty** | what they serve, or what they are — the thing that decides who will share a road with them | [`16-session.md`](16-session.md) |
-| **What has happened to them** | wounds, Marks, Reputation, Allegiances, Holdings, Bonds | [`19-state.md`](19-state.md), [`03-rules.md`](03-rules.md) §6 |
+| **What has happened to them** | wounds, Marks, Reputation, Allegiances, Holdings, Bonds | [`22-state.md`](22-state.md), [`03-rules.md`](03-rules.md) §6 |
 
 **Nothing else is numeric.** There are no characteristics, no attributes, no derived statistics. A
 skill percentage is the only number a character rolls against, and difficulty modifies *it* rather
@@ -33,7 +33,7 @@ Why there is no layer beneath skills is recorded in
 
 The engine guarantees the number: what it means, how it opens, how it grows, what bounds it. The
 setting supplies the name and decides which skills exist at all
-([`26-authoring-a-setting.md`](26-authoring-a-setting.md), the engine/setting contract).
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md), the engine/setting contract).
 
 ### The scale
 
@@ -45,7 +45,7 @@ setting supplies the name and decides which skills exist at all
 | **Rolled as** | `d100`, succeed at or under | [`03-rules.md`](03-rules.md) §1 |
 
 What a given percentage *means* — from "you would be guessing" to "it is part of who you are" — is
-tabulated once, in [`23-diegesis.md`](23-diegesis.md), because that is where the engine's own
+tabulated once, in [`13-diegesis.md`](13-diegesis.md), because that is where the engine's own
 vocabulary for describing a character to their player lives. It is not repeated here.
 
 A character has a skill or does not — and **not having it does not mean not trying.** An untrained
@@ -83,7 +83,7 @@ happened**, and the value is carried in state rather than assumed:
 | The rule says | It means |
 |---|---|
 | *the skill being tested* | whichever skill the current roll named |
-| *the skill the wound bears on* | recorded on the wound when it was taken ([`19-state.md`](19-state.md)) |
+| *the skill the wound bears on* | recorded on the wound when it was taken ([`22-state.md`](22-state.md)) |
 | *a skill the career grants* | read from the setting's career graph |
 
 This is what allows one engine to run a setting of swordsmen and a setting of void-pilots without a
@@ -91,7 +91,7 @@ mapping table between them.
 
 ### Wounds bind to a skill
 
-A lasting wound with a `skill: -N` effect ([`09-aftermath.md`](09-aftermath.md)) records
+A lasting wound with a `skill: -N` effect ([`06-aftermath.md`](06-aftermath.md)) records
 **which** skill it bears on, taken from the roll that caused it. The wound to a sword arm burdens the
 skill the sword arm was used for, under whatever name this setting gives it.
 
@@ -109,9 +109,9 @@ limitation lost at a downtime ([`03-rules.md`](03-rules.md) §6).
 rule reads off it — a baseline, maximum Stamina, an armour rank, skills, and what its blows are —
 and none of the tracks, no career, no Loyalty and no advancement. Every track above accrues, and a
 thing met once has nowhere to accrue to. The block is in
-[`06-the-adversary.md`](06-the-adversary.md); why it is thin rather than a second character is in
+[`12-the-adversary.md`](12-the-adversary.md); why it is thin rather than a second character is in
 [ADR 0025](../adr/0025-an-adversary-is-a-thin-block.md).
 
 A **named antagonist** is not an exception to that. It is a `character` entity
-([`27-entities.md`](27-entities.md)) which also carries an adversary block — the person layer from
+([`25-entities.md`](25-entities.md)) which also carries an adversary block — the person layer from
 this document and the fighting layer from that one, rather than a third model.

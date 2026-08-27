@@ -5,7 +5,7 @@
 
 ## Context
 
-[`29-chronicle-bootstrap.md`](../design/29-chronicle-bootstrap.md) has always promised guided character
+[`23-chronicle-bootstrap.md`](../design/23-chronicle-bootstrap.md) has always promised guided character
 creation from a setting's careers and names, and nothing said how many skills at what values, what
 starting Stamina was, what starting Luck was, or what `mortality` set Fate to. An agent running
 bootstrap had to invent those numbers, and two runs would not agree.
@@ -36,12 +36,12 @@ either uses those doors or invents a second set that would then have to be kept 
 - Name, a Drive, a Bond, a place of origin — from the setting's tables.
 
 The procedure is the engine's; the options are the setting's. There is one procedure, and a setting
-may **retune** the values, which [`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md) already
+may **retune** the values, which [`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md) already
 names as a permitted override.
 
 Starting Stamina was **computed**, not picked — see
 [`check_creation.py`](../../specs/008-character-creation/check_creation.py) and
-[`05-character-creation.md`](../design/05-character-creation.md) §2.
+[`11-character-creation.md`](../design/11-character-creation.md) §2.
 
 ## Consequences
 
@@ -64,7 +64,7 @@ optimisation problem that talent trees and feats were rejected for
 **Creation invents no door.** [`03-rules.md`](../design/03-rules.md) §6 has exactly three ways to spend an
 advance, and creation uses two of them. An earlier draft opened *every* career skill for free, which
 is not a door the economy has — and it left a starting character holding five to nine skills at 25%,
-which [`23-diegesis.md`](../design/23-diegesis.md) calls "never really done this; you would be guessing". A
+which [`13-diegesis.md`](../design/13-diegesis.md) calls "never really done this; you would be guessing". A
 character guessing at their own profession. Spending for what they have fixes it and removes a
 special case at the same time.
 
@@ -82,12 +82,12 @@ could never develop.
 **Eight, and a floor of two skills, are both ceilings rather than preferences.** Eight puts every
 opened skill in the *trained* band at every legal spread. The floor of two exists because without it
 eight advances on a single skill would open at 60% — *expert*
-([`23-diegesis.md`](../design/23-diegesis.md)) — and beginning expert is what a chronicle is for. A career
+([`13-diegesis.md`](../design/13-diegesis.md)) — and beginning expert is what a chronicle is for. A career
 is not one skill, so the floor costs nothing a character would plausibly want.
 
 **Bootstrap becomes deterministic.** Two runs against the same setting and the same answers produce
 the same character. That is what makes it scriptable rather than a conversation the model has to get
-right ([`20-tooling.md`](../design/20-tooling.md) §1).
+right ([`27-tooling.md`](../design/27-tooling.md) §1).
 
 **A career's skill list is now load-bearing.** Taking *every* granted skill means a career declaring
 twenty skills produces a character with twenty skills at 25%, and one declaring four produces a
@@ -132,7 +132,7 @@ career are chasing different lists.
 
 **Let the setting supply the whole procedure.** Maximum flexibility and it breaks the hard rule that
 a setting may extend, retune, rename or disable but never add a mechanism
-([`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)). Two settings would soon have
+([`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md)). Two settings would soon have
 incompatible creation, and the bootstrap script would have to become a general interpreter.
 
 **Fate falling as mortality rises.** The grimmer reading: a deadlier world gives fewer escapes. It

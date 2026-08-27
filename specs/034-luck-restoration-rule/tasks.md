@@ -35,7 +35,7 @@ restoration rule is stated with no follow-on question, and that it names the sam
 - [X] T003 [US1] Update `docs/design/03-rules.md` §1 (Luck) to state the restoration rule
       explicitly, referencing ADR 0039, immediately after the existing "costs 1 Luck for the rest
       of the arc, pass or fail" sentence
-- [X] T004 [US1] Cross-check the new `03-rules.md` text against `docs/design/18-campaign.md`'s
+- [X] T004 [US1] Cross-check the new `03-rules.md` text against `docs/design/19-campaign.md`'s
       arc/era structure (spec.md Acceptance Scenario 2) and adjust wording only if needed so both
       documents describe the same top-level-arc boundary — do not alter `18-campaign.md` itself
 

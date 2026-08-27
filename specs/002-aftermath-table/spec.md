@@ -7,7 +7,7 @@
 **Status**: Draft
 
 **Input**: GitHub issue #16 — "The Aftermath table". Define the Aftermath table family in its own
-design document, conforming to the conventions established by #15 (`docs/design/07-tables.md`), so that
+design document, conforming to the conventions established by #15 (`docs/design/04-tables.md`), so that
 a combatant who drops in combat can be resolved without a judgement call the rules do not cover.
 Out of scope: Stamina recovery and whether lasting wounds ever heal (R1.2 of epic #1).
 
@@ -23,13 +23,13 @@ Out of scope: Stamina recovery and whether lasting wounds ever heal (R1.2 of epi
 Five outcome shapes are promised in that sentence and none exists. This is the load-bearing table in
 the engine: deferred resolution is the whole reason a single-character chronicle survives lethal
 combat, and every other document that mentions mortality — the tone contract's `mortality` knob
-(`docs/design/01-principles.md`), the bootstrap question "how lethal?" (`docs/design/29-chronicle-bootstrap.md`),
-the setting-authoring conversion surface (`docs/design/26-authoring-a-setting.md`) — points at a table
+(`docs/design/01-principles.md`), the bootstrap question "how lethal?" (`docs/design/23-chronicle-bootstrap.md`),
+the setting-authoring conversion surface (`docs/design/24-authoring-a-setting.md`) — points at a table
 whose rows nobody has written.
 
 It is also a hard gate. R1.2 of epic #1 (Stamina recovery, and whether lasting wounds ever heal)
 cannot be specified until this lands, because "lasting wound" currently has no definition to give a
-fate to. `docs/design/19-state.md` already carries a `wounds: []` field on the player character with no
+fate to. `docs/design/22-state.md` already carries a `wounds: []` field on the player character with no
 schema behind it.
 
 Sibling dependency #15 has merged, so the conventions this family must satisfy — the row schema, the
@@ -42,7 +42,7 @@ fixed and are not re-litigated here.
 
 - Q: Issue #16 names `design/03a-1-aftermath.md`, but the index #15 merged assigns `03a-1-` to
   criticals and `03a-2-` to aftermath. Which wins? → A: The index. The document is
-  `docs/design/09-aftermath.md`; the issue's path is stale and the issue is corrected rather than the
+  `docs/design/06-aftermath.md`; the issue's path is stale and the issue is corrected rather than the
   index renumbered.
 - Q: Does a character who spends Fate to avoid a death result still take an Aftermath result? → A:
   Yes. Fate closes the death rows only; the result is re-read on the worst non-death row, so the
@@ -80,7 +80,7 @@ should require a judgement the document does not cover.
 3. **Given** a rolled row, **When** its effect is applied, **Then** every mechanic the effect names
    already exists in the engine, or is defined by this feature.
 4. **Given** a resolved Aftermath roll, **When** the outcome is recorded, **Then** the record
-   carries the table's key alongside the engine version, per `docs/design/07-tables.md`.
+   carries the table's key alongside the engine version, per `docs/design/04-tables.md`.
 
 ---
 
@@ -89,7 +89,7 @@ should require a judgement the document does not cover.
 A character walks away from a fight permanently marked. That mark has to be a thing state can hold,
 that a later session can render diegetically, and that R1.2 can eventually give a recovery rule to.
 
-**Why this priority**: `docs/design/19-state.md` already declares `wounds: []` with nothing defining an
+**Why this priority**: `docs/design/22-state.md` already declares `wounds: []` with nothing defining an
 entry. This is the gate on R1.2, and a wound that exists only in prose cannot be given a fate.
 
 **Independent Test**: Apply a lasting-wound result and write the resulting entry into a character's
@@ -101,7 +101,7 @@ nothing in the entry is a description masquerading as an effect.
 1. **Given** a row whose effect is a lasting wound, **When** it is applied, **Then** a structured
    wound record is added to the character's `wounds` list.
 2. **Given** a wound record, **When** it is rendered for the player, **Then** it is rendered
-   diegetically per `docs/design/23-diegesis.md` — never as a raw score.
+   diegetically per `docs/design/13-diegesis.md` — never as a raw score.
 3. **Given** a wound record, **When** a future rule needs to ask whether it has healed, **Then** the
    record carries enough structure for that question to be asked, even though this feature does not
    answer it.
@@ -177,7 +177,7 @@ requires reading the player-character rules and guessing whether they transfer.
    player spends Fate for them, **Then** the companion survives and is not better off, per
    `docs/design/03-rules.md`'s existing rule for spending Fate for someone else.
 3. **Given** a companion who dies, **When** state is updated, **Then** their `status` moves to a
-   value `docs/design/19-state.md` already declares.
+   value `docs/design/22-state.md` already declares.
 
 ### Edge Cases
 
@@ -193,7 +193,7 @@ requires reading the player-character rules and guessing whether they transfer.
 - **Multiple combatants down at the end of one fight.** Resolution order must not change any
   individual outcome.
 - **A "new enemy" result.** The enemy has to become something the world can act with, not a note —
-  `docs/design/27-entities.md` already fixes what a `character` with `role: nemesis` carries, including an
+  `docs/design/25-entities.md` already fixes what a `character` with `role: nemesis` carries, including an
   `objective` block that advances while the player is elsewhere.
 - **A "capture" result.** Capture removes a character from the party without killing them; what
   state records that, and what open loop the chronicle carries as a result, must be stated.
@@ -209,10 +209,10 @@ requires reading the player-character rules and guessing whether they transfer.
 
 **The table itself**
 
-- **FR-001**: The engine MUST define the Aftermath family in `docs/design/09-aftermath.md`, one table
+- **FR-001**: The engine MUST define the Aftermath family in `docs/design/06-aftermath.md`, one table
   to the file, named for the family's key, at the path the tables index already reserves for it.
 - **FR-002**: The document MUST declare the family's roll as **`d100 + (5 × points below zero)`**,
-  explicitly, per `docs/design/07-tables.md`'s rule that the roll belongs to the family and not to the
+  explicitly, per `docs/design/04-tables.md`'s rule that the roll belongs to the family and not to the
   engine.
 - **FR-003**: The modifier MUST be derived from the points below zero the ruleset already computes
   for the critical, so a worse blow reads further down the table. A combatant who dropped by 1 and
@@ -265,7 +265,7 @@ requires reading the player-character rules and guessing whether they transfer.
   only difference MUST be that companions have no Fate of their own, so a death row stands unless
   the player is present, able to act, and spends Fate for them per `docs/design/03-rules.md` section 3.
   No companion-specific rows, modifier or table may be introduced.
-- **FR-018**: A "new enemy" result MUST create an entity conforming to `docs/design/27-entities.md`, not
+- **FR-018**: A "new enemy" result MUST create an entity conforming to `docs/design/25-entities.md`, not
   a free-text note.
 - **FR-019**: A "disfigurement" result MUST feed the engine's existing Dread track rather than
   introducing a second social-consequence mechanic.
@@ -276,7 +276,7 @@ requires reading the player-character rules and guessing whether they transfer.
 
 - **FR-021**: `docs/design/03-rules.md` MUST link to the new document and MUST NOT continue to describe
   the table as though it were undefined.
-- **FR-022**: The tables index in `docs/design/07-tables.md` MUST have its Aftermath row completed — its
+- **FR-022**: The tables index in `docs/design/04-tables.md` MUST have its Aftermath row completed — its
   roll and uniqueness stated, and its "not yet written" placeholder replaced with a link.
 - **FR-023**: Any other design document whose description of Aftermath this feature changes MUST be
   updated in place, describing the present, with no changelog or "previously we…" note.
@@ -302,7 +302,7 @@ requires reading the player-character rules and guessing whether they transfer.
   its mechanical effect separately from its description, and is legible to a later recovery rule.
 - **Recurring wound**: a wound record whose effect fires at the start of every future fight rather
   than once.
-- **New enemy**: a `character` entity per `docs/design/27-entities.md`, with a role, a disposition and an
+- **New enemy**: a `character` entity per `docs/design/25-entities.md`, with a role, a disposition and an
   objective that advances while the player is elsewhere.
 
 ## Success Criteria *(mandatory)*
@@ -324,21 +324,21 @@ requires reading the player-character rules and guessing whether they transfer.
 - **SC-005**: The Fate interaction and the companion question each resolve to exactly one reading
   when the new document and `docs/design/03-rules.md` are read against each other.
 - **SC-006**: A grep over all added and changed files returns no setting name and no system name.
-- **SC-007**: `docs/design/07-tables.md`'s index has no remaining "not yet written" placeholder in the
+- **SC-007**: `docs/design/04-tables.md`'s index has no remaining "not yet written" placeholder in the
   Aftermath row, and every cell in that row matches what the new document actually declares.
 - **SC-008**: R1.2 can be specified against the wound record as defined, without needing a further
   decision from this feature.
 
 ## Assumptions
 
-- **The document is `docs/design/09-aftermath.md`, not `design/03a-1-aftermath.md`.** Issue #16 names
+- **The document is `docs/design/06-aftermath.md`, not `design/03a-1-aftermath.md`.** Issue #16 names
   the latter, but it was written before #15 merged; the index that #15 established assigns `03a-1-`
   to criticals and `03a-2-` to aftermath. Per `CLAUDE.md`, where a spec and a design document
   disagree the design document is the engine's description, so the index wins and the issue's path
   is treated as stale. Confirmed by the operator (see Clarifications); issue #16's acceptance
   criteria should be corrected to match rather than the index renumbered.
 - **This feature is design-only.** There is no `engine/` directory in the repository yet, so
-  `engine/tables/aftermath.yaml` is not created here even though `docs/design/07-tables.md` states where
+  `engine/tables/aftermath.yaml` is not created here even though `docs/design/04-tables.md` states where
   engine tables will live. The design document is the deliverable; the data file follows when the
   engine does. Verification scripts written for SC-003 and SC-004 are checks against the document,
   not engine code.

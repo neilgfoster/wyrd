@@ -95,7 +95,7 @@ time, with an error naming which system of power and which tier is at fault).
 ## Confirm the doc states the field is optional
 
 ```bash
-grep -A2 "intensity_tiers" docs/design/14-systems-of-power.md | head -5
+grep -A2 "intensity_tiers" docs/design/09-systems-of-power.md | head -5
 ```
 
 **Expected outcome**: prose stating `intensity_tiers` is optional and does not require any

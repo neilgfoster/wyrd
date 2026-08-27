@@ -8,7 +8,7 @@ becomes expensive.
 
 Maintenance is therefore an engine function, not a chore.
 
-Per [`20-tooling.md`](20-tooling.md), **almost all of this is deterministic.** Only two
+Per [`27-tooling.md`](27-tooling.md), **almost all of this is deterministic.** Only two
 operations need a model, both are Haiku-tier, and both **propose rather than apply**.
 
 ---
@@ -59,7 +59,7 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
 ### 1. `integrity` — the state is self-consistent
 
 - schema validation of every file
-- **invariants** from [`19-state.md`](19-state.md): `career_skill` is the lowest career
+- **invariants** from [`22-state.md`](22-state.md): `career_skill` is the lowest career
   skill; `stamina.max` only grew with it; `fortune.current <= fate.max`; Spent iff
   `resolve <= taint and taint > 0`; `tension` in 0..6; transformations vs `hidden_threshold`
 - **referential integrity**: every thread hook, threat connection, `parent` and `[[link]]`
@@ -69,7 +69,7 @@ Structured output, one entry per finding, with a stable `code` so skills can rea
   the future
 - **version sanity**: every file carries a `schema_version` the engine understands; no entity
   claims a version newer than the engine; `migrations` is ordered and unbroken; every derived
-  entity names conversion rules that exist ([`19-state.md`](19-state.md))
+  entity names conversion rules that exist ([`22-state.md`](22-state.md))
 
 Everything here is Repair-tier except status contradictions, which are reported and
 proposed.
@@ -102,7 +102,7 @@ Always safe. Always automatic.
 
 ### 5. `budget` — the always-loaded tier stays small
 
-Session start loads the always-tier ([`19-state.md`](19-state.md)). That tier has a
+Session start loads the always-tier ([`22-state.md`](22-state.md)). That tier has a
 **budget**, and `doctor` reports against it:
 
 | File | Target |
@@ -127,7 +127,7 @@ The only genuinely hard check: does the entity store contradict the log? A chara
 resolved whose resolution never appears.
 
 This is bulk structured comparison against files that already exist, with a right answer —
-squarely Haiku-tier per [`20-tooling.md`](20-tooling.md). It runs as a subagent, reads the
+squarely Haiku-tier per [`27-tooling.md`](27-tooling.md). It runs as a subagent, reads the
 archive, and **emits proposals only**:
 
 ```json

@@ -7,7 +7,7 @@
 
 The engine has no concept of magic or the supernatural at all — grepping `docs/design/` and
 `README.md` finds nothing. Every catalogued setting has practitioners of some kind, and
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)'s hard rule — *"A setting may extend,
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md)'s hard rule — *"A setting may extend,
 retune or disable what the engine provides. It may never add a mechanism the engine does not
 have"* — forbids leaving this for a setting to invent. #96 asks for an engine-level mechanism
 general enough that a setting declares one or more systems of power as data, specific enough that
@@ -57,7 +57,7 @@ this feature.
 caster and a Taint-fuelled invoker do not share a resolution path — they would need separate
 engine code, separate state fields, and separate rules for how each interacts with declaration,
 assistance and the Wyrd die. That is exactly what
-[`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md)'s hard rule exists to prevent
+[`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md)'s hard rule exists to prevent
 accumulating: "New mechanisms go in the core, for everyone. This is the rule that keeps Wyrd a
 single system rather than a family of incompatible forks."
 
@@ -77,10 +77,10 @@ schema.
 
 ## Consequences
 
-**[`14-systems-of-power.md`](../design/14-systems-of-power.md) is a new design document**,
+**[`09-systems-of-power.md`](../design/09-systems-of-power.md) is a new design document**,
 specifying the schema, the resolution rule (a pointer to `03-rules.md` §1, not a restatement), the
 cost application, and the Ill Omen consequence via the existing transformation-threshold path
-([`10-transformations.md`](../design/10-transformations.md)) — no new consequence table.
+([`07-transformations.md`](../design/07-transformations.md)) — no new consequence table.
 
 **`tools/check_power_systems.py` is the schema's validator**, following `check_bestiary.py` and
 `check_gear.py`'s established shape exactly: required/optional field split, unrecognised-field
@@ -89,7 +89,7 @@ is what actually enforces this ADR's decision at the tooling level, the same way
 enforces the bestiary and gear schemas' closure.
 
 **No new track.** Casting spends Strain and, optionally, Resolve — both already exist
-([`03-rules.md`](../design/03-rules.md), [`19-state.md`](../design/19-state.md)) — and an Ill Omen feeds Taint
+([`03-rules.md`](../design/03-rules.md), [`22-state.md`](../design/22-state.md)) — and an Ill Omen feeds Taint
 through the accrual path that already exists. `19-state.md`'s reuse guidance and the issue's own
 "prefer reuse over a new track" are both satisfied without argument.
 

@@ -20,17 +20,17 @@
 
 ## The rules
 
-- [x] T011 `docs/design/08-criticals.md` — the family: key, die, modifier, lowest possible total, uniqueness, extra fields, and why each is what it is (FR-003, FR-004, FR-006).
+- [x] T011 `docs/design/05-criticals.md` — the family: key, die, modifier, lowest possible total, uniqueness, extra fields, and why each is what it is (FR-003, FR-004, FR-006).
 - [x] T012 The four damage types, with the rationale for the set and how a setting renames one it has no fiction for (FR-001, FR-010).
 - [x] T013 The four tables, one per type, rows of range / key / effect / description (FR-002, FR-004, FR-005).
 - [x] T014 When a critical is rolled, and the boundary with Aftermath stated from this side (FR-008).
 - [x] T015 The mortal blow: what it marks, how Aftermath reads it, and that Fate and `mortality: low` still answer it unchanged (FR-008).
 - [x] T016 What this table does not touch — Trauma, Stamina recovery — so neither is charged twice (FR-009).
 - [x] T017 What a setting may replace and may not, with the override example (FR-010).
-- [x] T018 `docs/design/07-tables.md` — the Criticals index row gains its link and its stated uniqueness (FR-011).
+- [x] T018 `docs/design/04-tables.md` — the Criticals index row gains its link and its stated uniqueness (FR-011).
 - [x] T019 `docs/design/03-rules.md` §2 — the critical rule points at the new file and names the four types (FR-011).
-- [x] T020 `docs/design/09-aftermath.md` — the criticals/Aftermath boundary table gains the mortal blow, and the death-row section gains its mirror (FR-008, FR-011).
-- [x] T021 `docs/design/26-authoring-a-setting.md` — the override example verified against the published keys (FR-011).
+- [x] T020 `docs/design/06-aftermath.md` — the criticals/Aftermath boundary table gains the mortal blow, and the death-row section gains its mirror (FR-008, FR-011).
+- [x] T021 `docs/design/24-authoring-a-setting.md` — the override example verified against the published keys (FR-011).
 - [x] T022 Write every section in place, present tense, no changelog and no "previously we…" note.
 
 ## The record

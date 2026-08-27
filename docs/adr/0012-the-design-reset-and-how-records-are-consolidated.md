@@ -14,12 +14,12 @@ Six instances, none found by reading:
 
 | Referenced | Where | Defined |
 |---|---|---|
-| engine characteristics | [`26-authoring-a-setting.md`](../design/26-authoring-a-setting.md), the conversion contract | no |
+| engine characteristics | [`24-authoring-a-setting.md`](../design/24-authoring-a-setting.md), the conversion contract | no |
 | **Standing** | [`16-session.md`](../design/16-session.md), charged by Upkeep | no |
 | `party_effective` | [`03-rules.md`](../design/03-rules.md) §7, the danger formula | no |
 | damage-type critical tables | [`03-rules.md`](../design/03-rules.md) §2 | no |
 | the skill list | [`03-rules.md`](../design/03-rules.md) §1 | no |
-| the wound schema | [`19-state.md`](../design/19-state.md) | since the Aftermath family |
+| the wound schema | [`22-state.md`](../design/22-state.md) | since the Aftermath family |
 
 The structural cause is that **no document says what a character is**. The design goes from
 resolution straight to combat, so five of the six follow from one absence.

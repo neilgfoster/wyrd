@@ -8,7 +8,7 @@ the moved files, using the mapping as its only source of truth. Run once, then d
 
 **Rationale**: This move happens exactly once — the whole point of settling the numbering
 convention is that it does not need doing again. A permanent script for a one-time migration
-would be dead code the moment it finishes, and `docs/design/20-tooling.md`'s "stdlib only" principle
+would be dead code the moment it finishes, and `docs/design/27-tooling.md`'s "stdlib only" principle
 governs *engine* tooling, not a throwaway repo-surgery script. `tools/check_docs.py`, which does
 need to keep running, is retargeted rather than replaced.
 
@@ -34,12 +34,12 @@ renumbering-free-but-directory-change or the design-doc renumbering at all).
 
 ## Decision: open-issue line-number citations are flagged, not silently rewritten
 
-**Decision**: An open issue citing `docs/design/26-authoring-a-setting.md:157` gets its path rewritten
-to `docs/design/26-authoring-a-setting.md` but the update explicitly notes the line number may no
+**Decision**: An open issue citing `docs/design/24-authoring-a-setting.md:157` gets its path rewritten
+to `docs/design/24-authoring-a-setting.md` but the update explicitly notes the line number may no
 longer point at the same content, rather than either stripping it or assuming it still holds.
 
 **Rationale**: This move renumbers files but does not touch their content, so most line numbers
-probably still hold -- but "probably" is not "computed," and docs/design/20-tooling.md's own
+probably still hold -- but "probably" is not "computed," and docs/design/27-tooling.md's own
 deterministic-over-inference principle says not to assert what wasn't checked. Flagging costs one
 sentence per issue; asserting a wrong line number costs someone's trust in the citation.
 

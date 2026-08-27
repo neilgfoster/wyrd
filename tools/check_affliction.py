@@ -2,7 +2,7 @@
 """Compute the affliction sawtooth's cadence, rather than asserting it.
 
 docs/design/03-rules.md section 5: at 6+ Trauma, test on every further point; on a
-failure take an Affliction (docs/design/11-afflictions.md) and lose 6 Trauma. Trauma
+failure take an Affliction (docs/design/08-afflictions.md) and lose 6 Trauma. Trauma
 itself accrues 1 per critical taken and 1 per failed Terror test (both ordinary,
 frequent events), plus occasional GM-discretion additions this script does not
 model (rare, and undefined in size).
