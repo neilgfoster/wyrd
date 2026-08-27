@@ -2,16 +2,18 @@
 
 How the pieces separate, and what is code versus prose.
 
-## Four repositories
+## Six repositories
 
-Wyrd is four kinds of thing with four different lifecycles, so it is four repositories.
+Wyrd is six kinds of thing with six different lifecycles, so it is six repositories.
 
 | Repo | Holds | Changes |
 |---|---|---|
 | **`wyrd`** | the engine — rules, CLI, GM contract, design | when a rule changes |
-| **`wyrd-<setting>`** | one setting: world, content, indexes, corpus | when content is added |
+| **`wyrd-setting-template`** | the skeleton a new setting is cloned from | rarely |
+| **`wyrd-setting-<name>`** | one setting: world, content, indexes, corpus | when content is added |
 | **`wyrd-chronicle-template`** | cloned to start a chronicle | rarely |
 | **`wyrd-chronicle-<name>`** | one per chronicle — its state and entities | every beat |
+| **`wyrd-research`** | corpus, mining notes, extractions, source tooling — never public | when a source is mined |
 
 There is one setting repository **per setting**, not per genre. A chronicle **references** an
 engine version and a setting version; a setting declares a minimum engine version. Nothing
@@ -58,25 +60,27 @@ unpublishable may enter it.
 
 ```
 wyrd/                          # the engine
-├─ engine/                     # rules, tables, the CLI
-├─ doc/                        # how and why
+├─ engine/                     # rules, tables, the CLI -- not yet built (#133, #90)
+├─ docs/                       # how and why
 ├─ settings.yaml               # the catalogue of known settings
 └─ tools/
 
-wyrd-<setting>/
+wyrd-setting-<name>/
 ├─ setting.yaml                # identity, engine compatibility, tone, overrides
 ├─ setting/                    # lookup tables: voice, careers, gear, names, calendar
 │  └─ rules/                   # overrides only
 ├─ entities/                   # character · place · organisation · arc · beat ·
 │                              # creature · item · tracker · thread · lore
-└─ index/                      # documents · nouns · terms · tables · arcs
+├─ index/                      # documents · nouns · terms · tables · arcs
+├─ corpus/                     # per-setting corpus material
+└─ library/                    # source catalogue for this setting
 
 wyrd-chronicle-<name>/
 ├─ chronicle.yaml              # pins engine and setting versions; calendar; intent
 ├─ engine/                     # copied at bootstrap. Read-only.
 ├─ setting/                    # copied at bootstrap. Read-only.
 ├─ overlay/                    # deltas to setting entities
-├─ entities/                   # entities this chronicle created, including the player character
+├─ codex/                      # entities this chronicle created, including the player character
 ├─ log/
 └─ recap.md
 ```
