@@ -629,3 +629,100 @@ answer.
 **What this pass does not prove**: Invocation (the GM spending a character's own Taint point to
 impose a penalty), a second Transformation reaching the hidden threshold and the character being
 lost, and Dread's own social effects were not exercised here and remain untested by this document.
+
+---
+
+## 9. Economy and progression: advancement, career completion, Standing and coin
+
+Part of #134 (the autonomous playtest epic), #150. Senna Vask, continuing her arc: `wayfarer`
+career (`tracking`, `blade`, `evasion`, `lockpicking`, `herbalism`, `bargaining`), currently
+`tracking: 35`, `blade: 35`, `evasion: 30`, Stamina `6/6`.
+
+**Nothing is rolled in this section.** Advancement, career completion, Standing and coin are all
+deterministic spend/lookup mechanics, per `03-rules.md` §6 and §2 — the same "nothing was rolled"
+property §1 of this document already noted for creation.
+
+### A session's advances
+
+Three triggers fire this session, each at most once (`03-rules.md` §6):
+
+- **Learned** — she discovers the debt-collector who took her wasn't acting alone.
+- **Drove** — she goes back for her brother Talen even though it costs her the lead on the debt,
+  acting on her Drive ("to never be trapped again") at real cost.
+- **Endured** — she survived the bounty-hunter exchange (§7) that dropped her below 0 Stamina.
+
+Three advances awarded, within the stated 1–3 per session. Spent:
+
+- **+5%** to `blade` — `35% → 40%`.
+- **+5%** to `tracking` — `35% → 40%`.
+- **open** `lockpicking` at **25%** — a new wayfarer skill, not previously opened.
+
+### Completing the wayfarer career
+
+Wayfarer's cap is **70%** on every skill it grants. Reaching every one of `tracking`, `blade`,
+`evasion`, `lockpicking`, `herbalism` and `bargaining` at 70% takes many further sessions of the
+same deterministic spending shown above — summarized here rather than played advance-by-advance,
+since nothing about spending an advance involves a roll or a judgement call that summarizing would
+lose (the same reasoning `05-where creation hands off` already gives for treating creation and
+ordinary advancement as one procedure).
+
+**All six wayfarer skills reach 70%.** Per `03-rules.md` §6: **+1 maximum Stamina** (`6 → 7`) and
+a permanent **Mark**. This is the wayfarer career's only durable toughening, tracked per
+career-instance — if Senna later left a second career unfinished, this rule would grant nothing
+for that abandoned instance, but the wayfarer completion just played stands regardless of what she
+does next.
+
+### Changing career
+
+Senna spends **1 advance** to change career, to `hedge-healer` — an entry career, a free choice
+per `03-rules.md` §6 ("changing career is a free choice of any entry career"). Her wayfarer
+skills (`tracking 70`, `blade 70`, `evasion 70`, `lockpicking 70`, `herbalism 70`, `bargaining
+70`) and her Mark stay on her sheet — nothing in the spend table or the career-history rule says a
+change erases what was already earned, and `10-the-character.md`'s "a career, and a career
+history" phrasing (singular career, plural history) reads as exactly this: one active career at a
+time, with the record of every prior one kept. Future advances open and raise only skills
+`hedge-healer` grants; the wayfarer skills stay frozen at their completed values until she reads
+the description of her Fault Line, Drive and skill 70 as prompt for further training later.
+
+### Standing — the martial-weapon rule
+
+Among the bounty hunter's effects (§7) was a martial blade — illegal to carry openly in most
+civilised places. Walking into a town gate with it visible: **−1 Standing**, the moment it's seen
+(`03-rules.md` §2), not a fine, not automatic violence. Played: the gate guard's eyes go to the
+blade first and her name second; nothing happens, but something is now owed that wasn't before.
+
+### Upkeep — both branches
+
+Away from home, Upkeep costs Standing or coin (`16-session.md`). Both branches, played once each
+for completeness:
+
+- **Pay in Standing.** Current Standing is spent down by 1. The favour it bought — a door that
+  used to open for her — is gone until rebuilt in play.
+- **Pay in coin instead.** Coin drops by an amount equal to her *current* Standing (not a fixed
+  fee) — the position itself is kept, the money is what's spent instead.
+
+### Gear and coin
+
+A `gear.yaml` price is invented for this exercise only, per this document's own §1 convention (no
+setting name, answers no question about any real setting): a set of lockpicks at **12 coin**.
+Senna has 40 coin; she buys the picks. Coin `40 → 28`. No itemized ledger — "a small number the
+player can state a total for," exactly as `03-rules.md` §2 states it.
+
+### Findings
+
+**Nothing was rolled, and nothing forced a judgement call the rules didn't already answer.** The
+trigger-award cap (1–3, one of each kind per session), the deterministic spend table, the 70% cap,
+the completion grant, the free career change, and both Upkeep branches all resolved exactly as
+`03-rules.md` §2 and §6 describe.
+
+**One inference, not a gap, worth naming.** Nothing explicitly states that a completed career's
+skills survive a later career change — this playtest read the career-history language
+(`10-the-character.md`) and the absence of any stated reset as sufficient grounds to keep them,
+rather than as a genuine ambiguity needing a follow-up issue. If a future reading disagrees, that
+reading has this playtest's own reasoning to argue against directly.
+
+**What this pass does not prove**: the maximum-Stamina ceiling at 10 (already computed exactly by
+`check_advancement.py`, not re-derived here by grinding four full career completions by hand), a
+non-entry career reached through satisfied prerequisites (only a free entry-career change was
+played), and a second career left unfinished (to confirm it grants nothing) were not exercised
+here and remain untested by this document.
