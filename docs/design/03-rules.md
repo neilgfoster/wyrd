@@ -604,6 +604,15 @@ existing rule does not already answer.
 - **Fortune** — renewable daily, equal to the Fate score. Spend to reroll, defend again, act
   sooner, dodge a misfortune, or break a tie. Always the player's choice.
 
+**Fortune, Resolve and the Bargain (§4) compose freely on the very same failed roll — nothing
+bounds how many a character spends chasing one result.** A character with the resources to spare
+may fail, take the Bargain, fail again, spend Resolve, fail again, and spend every remaining
+Fortune point, all against the same original test. This is deliberate, not an unexamined gap: a
+character throwing everything they have at one make-or-break moment is a real story beat, and it
+is not a guaranteed win — spending every resource still leaves the character subject to the same
+odds every other roll uses
+([ADR 0046](../adr/0046-reroll-resources-stack-unbounded-on-one-roll.md)).
+
 When Fate is spent the character **survives and is not better off**. The blow was glancing;
 everything goes black; they wake later — tended by companions, or imprisoned, or stripped and
 left in a ditch. The GM chooses where they wake, which makes Fate the chronicle's
@@ -679,7 +688,9 @@ Three routes, deliberately in both directions:
 
 1. **The Bargain** — you failed something that mattered and have no Fortune left. You may
    **choose** to take 1 Taint to reroll. Always the player's choice; the GM may mention the
-   option exists and never applies it.
+   option exists and never applies it. **May compose with Resolve and Fortune (§3) on the same
+   failed roll, without limit** — see §3's own statement of this
+   ([ADR 0046](../adr/0046-reroll-resources-stack-unbounded-on-one-roll.md)).
 2. **Exposure** — resist with a test. Minor `1`, moderate `2`, major `3`, reduced by degrees
    of success. Sources are a setting matter, and should include **moral** ones as well as
    supernatural — giving in to despair or cruelty is exposure.
