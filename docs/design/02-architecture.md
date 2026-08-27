@@ -60,7 +60,7 @@ unpublishable may enter it.
 
 ```
 wyrd/                          # the engine
-├─ engine/                     # rules, tables, the CLI -- not yet built (#133, #90)
+├─ engine/                     # rules, tables, the CLI -- fully specified, not yet built (#90)
 ├─ docs/                       # how and why
 ├─ settings.yaml               # the catalogue of known settings
 └─ tools/
@@ -80,7 +80,7 @@ wyrd-chronicle-<name>/
 ├─ engine/                     # copied at bootstrap. Read-only.
 ├─ setting/                    # copied at bootstrap. Read-only.
 ├─ overlay/                    # deltas to setting entities
-├─ codex/                      # entities this chronicle created, including the player character
+├─ entities/                   # entities this chronicle created, including the player character
 ├─ log/
 └─ recap.md
 ```
