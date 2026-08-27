@@ -5,11 +5,13 @@ How an action actually resolves against state: the base mechanism every mechanic
 Terror tests, systems of power, advancement rolls all use the same shape.
 
 This document covers the propose/commit/discard mechanism, cascading resolution (a mutation that
-crosses a threshold and spawns a further roll, inside the same proposal), and partial reroll (a
+crosses a threshold and spawns a further roll, inside the same proposal), partial reroll (a
 player spending Fortune/Resolve/the Bargain against one step of a proposed result, without
-disturbing what didn't depend on it). **Omen carryover** across more than one roll is not yet
-specified — see the parent epic's remaining child for that, extending this same document once
-landed rather than fragmenting into a separate one for what is genuinely one mechanism.
+disturbing what didn't depend on it), and Omen carryover (a pending ±10 modifier crossing more
+than one of an actor's own rolls, whether inside one batch or across separately committed ones).
+Combat's own outcome-conditional resolution chain (attack succeeding → roll damage → armour →
+possible critical) is a related, separately tracked open question (#200), not yet specified
+here.
 
 ---
 
@@ -220,3 +222,61 @@ by the reroll happening elsewhere in the same proposal.**
 **Committing this proposal** applies Taint `+2` (from step `0`'s failed reroll and the Bargain's
 cost) and nothing from step `1` — the same outcome step `1` would have committed to on its own,
 confirming the independent branch was never at risk from a reroll it had nothing to do with.
+
+## Omen carryover
+
+**An Ill or Fair Omen applies to the roller's own next roll, in the order play actually produces
+them** (`03-rules.md` §1, [ADR 0042](../adr/0042-opposed-and-combat-omens-carry-a-plus-minus-10-modifier.md))
+— whatever kind of roll that next one is, whichever mechanic invokes it. A single proposal can
+contain more than one of one actor's own rolls (§ A worked example, above), so the pending
+modifier has to be tracked across the steps of one proposal, not only within a single roll's own
+resolution.
+
+**Where the pending modifier lives.** An actor's committed state carries a `pending_omen` field
+(`null`, `+10`, or `−10`) — persistent, not batch-local, because an Omen can carry forward from
+one committed proposal into the *next* one the same actor makes, until it is spent or the scene
+or fight ends. `propose` reads this field at the start of resolving a batch and applies it to
+that actor's first roll in the batch; nothing changes about it until the batch commits. Reading
+it does not consume it — if the batch is later discarded rather than committed, the actor's
+persistent `pending_omen` is exactly as it was before `propose` was ever called, the same
+"nothing writes until commit" property every other piece of staged state already has.
+
+**Within one batch**, each roll checks whether an earlier step belonging to the same actor
+produced an Omen: if so, that step's own pending modifier applies, and is then spent — a further
+Omen read later in the same batch **replaces** the still-pending one rather than stacking with
+it, exactly as `03-rules.md` already states for Omens generally.
+
+**A step that consumes another step's Omen depends on it**, the same `depends_on` edge cascading
+resolution and partial reroll already use for any other kind of dependency. This is what makes
+partial reroll correct here without any new mechanism: if the Omen-*producing* step is rerolled
+(§ Partial reroll, above), the Omen-*consuming* step is already in its downstream set — it is
+discarded and freshly re-resolved too, picking up whatever modifier (if any) the reroll's own new
+outcome actually produces, never the stale one from a roll that no longer happened.
+
+### A worked example: an Omen carries across a batch, then unwinds correctly on reroll
+
+A character invented for this exercise, `alertness: 10`, `climbing: 45`. Two unrelated ordinary
+tests, proposed together as step `0` and step `1` — step `1` does not otherwise depend on step
+`0`'s mutation (neither test implies one), only on whatever Omen step `0` happens to produce.
+Real `d100` draws, seeded `20260861`:
+
+- Step `0` (`eff. 10`): roll **99** — fails. Units `9` — **Fair Omen**.
+- Step `1` (`eff. 45`): the pending Fair Omen applies, `eff. 55`. Roll **5** — succeeds (and
+  would have succeeded without the bonus too, `5 ≤ 45` — this particular roll doesn't turn on
+  the modifier; the modifier's presence is still real, not decorative).
+
+**`propose`** stages both, step `1` depending on step `0` via the Omen it consumed.
+
+The player spends **Resolve** against step `0`'s failure: `+20`, `eff. 30`. `reroll` computes the
+downstream set for step `0`: step `1` is in it, via the Omen dependency, even though it never
+depended on step `0`'s mutation. Both are discarded and freshly resolved:
+
+- Step `0` reroll: roll **12** — succeeds against `eff. 30`. Units `2` — no Omen this time.
+- Step `1`, downstream, re-resolves with **no** pending modifier (step `0`'s reroll produced
+  none): `eff. 45`. Roll **71** — **fails**, genuinely differently from the original proposal's
+  step `1` (which succeeded, carrying a bonus that no longer exists).
+
+**This is the property that matters**: step `1`'s second result is not "the same roll with a
+different label" — it is a fresh roll, resolved against the actual state of the batch after the
+reroll, which correctly no longer includes an Omen that stopped being true the moment the step
+that produced it was undone.
