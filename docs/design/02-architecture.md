@@ -163,8 +163,33 @@ mechanical, not optional.
 
 ## Code versus prose
 
-**A small deterministic CLI** (`wyrd`) does the things the GM must not be trusted to do
-freehand:
+**The boundary is not "combat versus everything else" — it is whether getting something wrong
+would be a computable error or a bad creative call.** Code owns anything **deterministic given
+the current state and mechanically checkable** — a number, a threshold, a roll, a state
+mutation, an entity lookup: there is one right answer, and the GM contract's own first principle
+("the dice bind the GM... never chooses an outcome and then justifies it," §1) already says a
+human must not be trusted to produce it freehand. Prose owns anything that genuinely **requires
+creative judgment** — what an NPC wants, whether a stakes rise is earned, how a scene is framed,
+which register a line is delivered in — because no computable test exists for "is this the right
+creative choice," and a setting's own tone contract is exactly where that judgment is supposed to
+live (§7). A parameter a GM *supplies* to a code call (which skill this counts as, which
+declaration bonus was earned) is still a prose decision, even though the call itself is code —
+the judgment and the arithmetic are different things, and only the arithmetic moves.
+
+Checked against the GM contract's own principles (`01-principles.md`): §1 (the dice bind the
+GM) and §2 (persist before narrate) are code-enforced by `propose`/`commit`
+([ADR 0050](../adr/0050-action-resolution-proposes-before-it-commits.md)) — they were always
+computable rules, just unenforced until this document specified them. **§6 (one chronicle per
+session) is also structural, not prose** — every verb already takes an explicit chronicle path
+rather than reading a "current chronicle" global, and name collisions are checked per chronicle
+mechanically ([`21-parallel-chronicles.md`](21-parallel-chronicles.md)); nothing about
+*preventing* the failure needs creative judgment, only *deciding what happens in the fiction*
+once two chronicles' content might collide does. §3 (the world is independent), §4 (significance
+must be earned), §5 (how an old event is narrated going forward), and §7 (honour the declared
+tone) stay prose in full — none of them has a computable right answer at all, only ones a human
+can judge.
+
+**A small deterministic CLI** (`wyrd`) is what this test puts on the code side:
 
 ```
 wyrd propose --actor A --mechanic M [--skill S] [--target T] [--difficulty D]
@@ -207,6 +232,23 @@ outstanding) is a known follow-up, not resolved by this document.
 
 Maintenance is a first-class engine function, not a chore — see
 [`28-maintenance.md`](28-maintenance.md).
+
+**The same test applied to `16-session.md`'s session-structure elements**, since a mechanic
+being *about* narrative pacing doesn't make every part of it prose:
+
+| Element | Code | Prose |
+|---|---|---|
+| A Rally's recoveries (`+1 Strain`, `+1 Stamina`) and the commit | the numbers and the write | — |
+| A Rally's advance award | — | whether this beat *earned* one (§4, significance) |
+| Downtime's Upkeep cost | the Standing-loss/coin-spend arithmetic, once chosen | **which** to spend (a player choice, not code's) |
+| Downtime's Undertaking | the mechanical effect of whichever is chosen | **which** of the six (a player choice) |
+| Rest (Stamina to max) | entirely — automatic, no choice exists | — |
+| Session shape (Single beat / Interlude / Downtime / Extended) | — | entirely — the GM's own pacing read, explicitly never announced |
+| The session loop's `ORIENT`/`RECAP` steps | — | entirely — narrating what changed |
+
+**A player's or GM's choice supplied as a parameter to a code call is not itself code's
+decision**, even when the call it feeds is code — the same distinction the "supplies" language
+above already draws for a declaration bonus.
 
 Everything else is **skills** — prompt-level instructions the GM follows:
 
