@@ -507,6 +507,15 @@ real design question, not a documentation typo, and one with a genuine balance c
 an opponent can ever land a telling blow against a purely-defending player character). Raised
 separately as a follow-up issue rather than resolved inline here.
 
+**Resolved in [ADR 0044](../adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md):**
+a failed defence roll can trigger a telling blow, via the virtual-roll symmetry
+`check_conversion.py`'s own modelling above already assumed. Under that resolved reading, all
+three of the blows Senna took in this exchange should be re-checked against the virtual-roll
+formula rather than assumed non-telling — not re-played here, since #162's own synthesis pass
+(§13) already accounts for this finding as fixed and this section's own worked numbers stand as a
+historical record of the ambiguity as it was found, not a claim about what the resolved rule
+produces.
+
 **Everything else resolved cleanly**: the critical and Aftermath rolls read their tables exactly as
 published, the death-band sampling landed within a few points of the published 35% figure at three
 of six, the Fate spend closed the death row exactly as `06-aftermath.md` describes, the crowd
@@ -999,7 +1008,7 @@ pass independently.
 | Pass | Finding | Tracked as | Status |
 |---|---|---|---|
 | §6 (resolution/opposed) | No fault found | — | closed, nothing to track |
-| §7 (combat/harm) | Telling blow via a failed defence roll has no stated per-roll procedure | #155 | open |
+| §7 (combat/harm) | Telling blow via a failed defence roll has no stated per-roll procedure | #155 | **fixed** (ADR 0044) |
 | §8 (condition tracks) | Resolve has no gain mechanic, cannot be spent as designed | #157 | **fixed** (ADR 0043) |
 | §9 (economy/progression) | Career-change skill retention — a stated inference, not a gap | — | resolved by the playtest's own reasoning, no issue needed |
 | §10 (systems of power) | Cost structure doesn't discourage spamming failed high-tier invocations | #163 | open |
@@ -1009,7 +1018,7 @@ pass independently.
 | §12 (combination) | Systems-of-power/combat Omen scope boundary confirmed clean | — | confirmed, not a finding |
 
 **Nothing from any pass's Findings section is untracked.** Every real gap has either landed a fix
-(#157) or has its own open, board-ranked issue (#155, #163, #167).
+(#157, #155) or has its own open, board-ranked issue (#163, #167).
 
 ### Two recurrences, called out explicitly
 

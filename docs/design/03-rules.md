@@ -283,8 +283,17 @@ each field — is in [`12-the-adversary.md`](12-the-adversary.md).
   `effective%` computed the other way round — `clip(50 + (defence_skill −
   attacker_skill_or_baseline), 5, 95)` — instead of the opponent rolling an attack. Failure means
   the blow lands; success means it does not.
-- **Degrees** are read from the roll exactly as in §1 — `tens(effective%) − tens(roll)` — using
-  `effective%` as the skill value.
+- **Degrees, on the attack roll**, are read from the roll exactly as in §1 —
+  `tens(effective%) − tens(roll)` — using `effective%` as the skill value; the attack roll must
+  succeed for the hit to land at all, so degrees are always available.
+- **Degrees, on a failed defence roll**, are read from a virtual roll rather than the natural
+  one — the roll that lands the blow is a *failure* of the defender, which has no degrees of its
+  own to read under §1's success-only convention. Reflect it: `virtual_eff = 100 − eff_def`,
+  `virtual_roll = 101 − r` (where `r` is the natural failed roll), then apply §1's same formula —
+  `tens(virtual_eff) − tens(virtual_roll)` — to the virtual inputs
+  ([ADR 0044](../adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md)). A blow landed
+  via a badly-missed defence roll is exactly as capable of being telling as a decisively-won
+  attack.
 - **The Wyrd die always belongs to the player** making the roll, attack or defence — there is no
   roll on the opponent's side for it to belong to instead.
 - **An Omen carries the same ±10 next-roll modifier here as §1's opposed tests** — combat's
