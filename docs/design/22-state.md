@@ -288,14 +288,19 @@ against a proposal that hasn't been confirmed, since a proposal isn't state yet.
 - `fortune.current ≤ fate.max`
 - a tracker's `value` stays within `0..max`
 
-**Active triggers** — under `31-action-resolution.md`'s cascading resolution, these are not
-merely checked; a mutation crossing one of them *spawns* the further roll the crossing calls for,
-inside the same proposal, before anything commits:
+**Active triggers, staged inside a proposal** — under `31-action-resolution.md`'s cascading
+resolution, these are not merely checked; a mutation crossing one of them *spawns* the further
+roll the crossing calls for, inside the same proposal, before anything commits:
 
 - `taint` crossing a multiple of 3 spawns a Transformation roll
 - `trauma ≥ 6` spawns a test on every further gain, and a failed test spawns an Affliction roll
-- a tracker's `value` reaching `max` fires and resets
 - `transformations` count exceeding `hidden_threshold` sets `status: lost`
+
+**Active triggers, outside the proposal surface** — a generic tracker reaching `max` fires and
+resets, but this currently happens through `wyrd track`'s own immediate write
+([`02-architecture.md`](02-architecture.md)), not through `propose`/`commit` — `track`, like
+`damage`, predates the propose/commit mechanism and is not yet staged the same way (a known
+follow-up, stated there rather than silently assumed reconciled here).
 
 **Derived, not stored** — a character is **Spent** iff `resolve.current ≤ max(taint, trauma)`,
 with each axis exempted at `0` ([ADR 0049](../adr/0049-resolve-counters-both-taint-and-trauma.md)) —
