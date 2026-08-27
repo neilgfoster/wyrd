@@ -1,7 +1,7 @@
 # ADR 0039 — Luck resets to maximum at the start of each top-level arc
 
 **Date:** 2026-08-26
-**Status:** Accepted
+**Status:** Superseded by [ADR 0041](../0041-luck-merges-into-fortune.md)
 
 ## Context
 

@@ -15,7 +15,7 @@ Every name here is an **engine** name. What a setting calls any of it is the set
 | **Skills** | percentages, under names the setting supplies | §2 below |
 | **Stamina** | current and maximum; cuts, bruises and losing control of the fight. Spent in the exchange, restored at a Rally and at a downtime | [`03-rules.md`](03-rules.md) §2 |
 | **The tracks** | Taint, Trauma, Strain, Resolve, Dread — those the setting has not disabled | [`03-rules.md`](03-rules.md) §4–5 |
-| **Fate** and **Luck** | the death valve, and the tested counterweight | [`03-rules.md`](03-rules.md) §1, §3 |
+| **Fate** and **Fortune** | the death valve, and the daily-renewable counterweight | [`03-rules.md`](03-rules.md) §3 |
 | **A career**, and a career history | where competence comes from, and a biography | [`03-rules.md`](03-rules.md) §6 |
 | **A Loyalty** | what they serve, or what they are — the thing that decides who will share a road with them | [`16-session.md`](16-session.md) |
 | **What has happened to them** | wounds, Marks, Reputation, Allegiances, Holdings, Bonds | [`22-state.md`](22-state.md), [`03-rules.md`](03-rules.md) §6 |

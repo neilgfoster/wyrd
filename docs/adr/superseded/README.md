@@ -25,4 +25,4 @@ otherwise, the same way it checks the live index in [`../../README.md`](../../RE
 
 | | | |
 |---|---|---|
-| — | *(none yet)* | No decision has been superseded. |
+| [0039](0039-luck-resets-at-the-top-level-arc-boundary.md) | Luck resets to maximum at the start of each top-level arc | Superseded by [ADR 0041](../0041-luck-merges-into-fortune.md) — Luck merged into Fortune |

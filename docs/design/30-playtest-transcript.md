@@ -66,19 +66,15 @@ place.
 
 Set to **6**, current and maximum.
 
-### Step 5 — Luck
-
-Set to **40**, current and maximum.
-
-### Step 6 — Fate
+### Step 5 — Fate
 
 `mortality: standard` → Fate **3**, current and maximum. Fortune **3**, renewed daily.
 
-### Step 7 — the tracks
+### Step 6 — the tracks
 
 `Taint 0`, `Trauma 0`, `Strain 0`, `Resolve 0`, `Dread 0`. Nothing has happened yet.
 
-### Step 8 — name, place, Drive, Misfortune, Bond
+### Step 7 — name, place, Drive, Misfortune, Bond
 
 - **Name:** Senna Vask.
 - **Place:** born in a fen-town at the edge of the map, the kind of place a road runs through and
@@ -87,7 +83,7 @@ Set to **40**, current and maximum.
 - **Misfortune:** marked by a debt that cannot be repaid.
 - **Bond:** her brother, Talen — still owed to the same creditor she got clear of.
 
-### Step 9 — write the Fault Line
+### Step 8 — write the Fault Line
 
 One sentence, combining the Drive and the Misfortune above, per the fixed gap below: **Senna's
 Taint deepens whenever a way out is bought by leaving someone else in the trap she just left.** The
@@ -102,7 +98,6 @@ role: player
 career: wayfarer
 skills: {tracking: 35, blade: 35, evasion: 30}
 stamina: {current: 6, max: 6}
-luck: {current: 40, max: 40}
 fate: {current: 3, max: 3}
 fortune: {current: 3, max: 3}
 taint: 0

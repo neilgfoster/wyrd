@@ -17,7 +17,7 @@ would.
 |---|---|---|
 | **Never shown** | hidden threshold, thread heat, party tension, bond values, character stats, difficulty numbers, Threat imminence | nothing — these are engine state |
 | **Diegetic only** | stamina, skills, taint, trauma, strain, reputation, wounds, inventory | prose, from the character's own perspective |
-| **Countable** | Fate, Fortune, Luck | prose that is still *countable*, because the player must decide whether to spend them |
+| **Countable** | Fate, Fortune | prose that is still *countable*, because the player must decide whether to spend them |
 
 The countable class is the only compromise, and it is forced: a resource you must choose to
 spend has to be legible. It can still be said in the character's idiom — *"there is one more

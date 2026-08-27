@@ -303,7 +303,7 @@ second act than any heir.
 | Inherited | Not inherited |
 |---|---|
 | Open **threads**, at their current heat | Skills, careers, advances |
-| The **enemies** the predecessor made | Stamina, Luck, Fate |
+| The **enemies** the predecessor made | Stamina, Fate |
 | Active **Threats** and their Imminence | Reputation *(a new label starts, possibly hostile)* |
 | What the world **believes** about the predecessor | Taint, transformations, afflictions |
 | The **unresolved situation** itself | Any assumption of goodwill |

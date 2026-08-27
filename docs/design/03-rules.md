@@ -11,7 +11,7 @@ Every label here is a **default**. A setting renames or disables what it likes
 | **Trauma** | long-term mental accrual, breaking into Afflictions | Insanity · Scars · Sanity |
 | **Strain** | short-term pressure, recovered at a Rally | Stress · Fatigue · Wear |
 | **Resolve** | the spendable counterweight to Taint | Hope · Faith · Nerve |
-| **Fate** | the death valve | Fate · Luck · Destiny |
+| **Fate** | the death valve | Fate · Destiny · Providence |
 | **Transformation** | the permanent change at a Taint threshold | Mutation · Gift · Mark |
 | **Affliction** | the lasting condition at a Trauma threshold | Derangement · Disorder |
 | **Dread** | how frightening your changes make you to others | Fear points |
@@ -217,16 +217,6 @@ long task, it is a wall.** Bring a helper, lower the difficulty, or do not attem
 
 **An interval must be worth a beat of prose**, or it is not worth a roll. Work that produces no
 scene worth writing is not an extended task; it is a single test, or it simply happens.
-
-### Luck
-
-A percentage the player *may choose* to test to dodge a misfortune or break a tie. Testing
-Luck costs 1 Luck for the rest of the arc, pass or fail. Always the player's choice.
-
-**Luck resets to maximum at the start of each top-level arc** ([ADR 0039](../adr/0039-luck-resets-at-the-top-level-arc-boundary.md)) — the arc level
-[`19-campaign.md`](19-campaign.md) gives a job the deeper, recursive arcs beneath it do not.
-Spending Luck inside a nested arc does not restore it early; only its enclosing top-level arc
-ending does.
 
 **Invoking a system of power** — a setting's declared mechanism for supernatural or extraordinary
 effort — is an ordinary test governed entirely by this section; see
@@ -557,8 +547,8 @@ existing rule does not already answer.
 ## 3. Fate and Fortune
 
 - **Fate** — few, permanent, spent to **avoid death**. Gone when spent; new ones are rare.
-- **Fortune** — renewable daily, equal to the Fate score. Spend to reroll, defend again, or
-  act sooner.
+- **Fortune** — renewable daily, equal to the Fate score. Spend to reroll, defend again, act
+  sooner, dodge a misfortune, or break a tie. Always the player's choice.
 
 When Fate is spent the character **survives and is not better off**. The blow was glancing;
 everything goes black; they wake later — tended by companions, or imprisoned, or stripped and
