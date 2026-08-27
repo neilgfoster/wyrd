@@ -28,6 +28,22 @@ particular book, it belongs in that setting's `rename:` block, not here.
 
 ---
 
+**Before the ruleset uses them: Skill and Stamina.** Two terms this document assumes from its
+first line, defined in full in [`10-the-character.md`](10-the-character.md) —
+
+- **Skill** — a percentage, under a name the setting supplies (10-the-character.md §2). This is
+  what every roll below tests against. **Engine-fixed**: the mechanism (a percentage, tested
+  against `d100`) is not a setting choice; the skill *list* and its *names* are.
+- **Stamina** — current and maximum, spent in an exchange and restored at a Rally or a downtime
+  (§2 below, and 10-the-character.md). **Engine-fixed**: the starting value, cap and recovery
+  rule are the engine's; a setting may retune the starting figure, never the mechanism.
+
+Everything above the line (Taint, Trauma, Strain, Resolve, Fate, Transformation, Affliction,
+Dread, Standing, the Wyrd die) is **renamable presentation, engine-fixed mechanism** in the same
+sense — the table only lists the ones a setting typically has reason to rename.
+
+---
+
 ## 1. Resolution
 
 > **Roll `d100`. Succeed at or under your `skill%`.**
