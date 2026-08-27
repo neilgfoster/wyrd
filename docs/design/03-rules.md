@@ -546,6 +546,14 @@ which is a property of the damage scale rather than of this rule
 ([`check_recovery.py`](../../specs/014-stamina-recovery/check_recovery.py),
 [ADR 0020](../adr/0020-stamina-recovers-on-the-clocks-the-engine-has.md)).
 
+**A consumable healing item — a potion, a draught, battlefield medicine — has no mechanical effect
+on Stamina.** It is flavour a setting is free to describe, but it does not advance a recovery
+clock, restore a point outright, or otherwise shortcut Rally, downtime, or Mend. Recovery lives
+entirely on the clocks the engine already has ([ADR 0020](../adr/0020-stamina-recovers-on-the-clocks-the-engine-has.md));
+an item that bypassed them would be the third clock that decision explicitly rejected. This is a
+position, not a silence: **Stamina is not meat**, so there is nothing for a potion to mend that the
+existing rule does not already answer.
+
 ## 3. Fate and Fortune
 
 - **Fate** — few, permanent, spent to **avoid death**. Gone when spent; new ones are rare.
