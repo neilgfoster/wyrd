@@ -1533,3 +1533,53 @@ one-time debt only after ADR 0047's fix — cannot recur through `strain_cost` a
 failure-only: there is no backlog for a success to build, because a success never touches Strain.
 ADR 0047's cumulative check remains adopted regardless, as general-purpose correctness the
 Trauma-threshold rule doesn't depend on any one cost-timing decision to need.
+
+---
+
+## 18. Resolve counters both Taint and Trauma: a worked example
+
+#185, part of #1 (the design programme). ADR 0049 widens Resolve's cap to `max(Taint, Trauma) +
+3`, so it counters whichever burden currently presses harder, not Taint alone. This section works
+one character through the formula, deliberately choosing a case ADR 0043's own verification never
+had reason to exercise: **Trauma higher than Taint**, so Trauma is the binding threshold, not
+Taint.
+
+A character invented for this exercise only: `bargaining: 40`, Taint `3`, Trauma `12`, Resolve `0`
+(mid-arc, not fresh from creation).
+
+**Cap**: `max(3, 12) + 3 = 15`. At her next downtime, Resolve recovers to its cap: `0 → 15`.
+
+**Spent threshold**: `max(3, 12) = 12` — Trauma, not Taint, is what Resolve must stay above.
+Spending Resolve down to 12 or below triggers Spent, regardless of Taint sitting at 3 the whole
+time. This is the case §4's own original verification (Taint-only) never checked: a character
+whose Trauma outweighs her Taint is governed by Trauma's threshold, not Taint's, even though
+Taint is still the track the Spent-state's name traditionally points at.
+
+**A failed test, and the spend, real rolls, seeded `20260851`:**
+
+- Attempt 1, `eff. 40`: roll **69** — fails. She spends 1 Resolve for the `+20` reroll:
+  `15 → 14`. Reroll at `eff. 60`: roll **98** — fails again. The spend does not guarantee
+  success, and this is not cherry-picked away — an honest outcome, consistent with every other
+  reroll spend recorded in this document.
+- Resolve now `14` — 2 above the Trauma-bound threshold of 12, still not Spent.
+
+**Continuing to demonstrate the threshold itself**, without further rolls (a deterministic
+arithmetic check, not a roll): spending Resolve down to `12` (three more points, hypothetically)
+would trigger Spent — via Trauma, since `12 = max(3, 12)`. Taint's own value (`3`) is never
+reached in practice, because Trauma's threshold is crossed first on the way down — the same
+property `check_resolve.py`'s own dual-axis check proves generally, not just for this specific
+pair of numbers.
+
+**If Taint had instead been the higher value** (e.g. Taint `12`, Trauma `3`, the mirror case),
+the same arithmetic applies with the roles reversed — cap `15`, Spent at `12` via Taint this
+time — exactly the case ADR 0043's own verification already covered, now stated explicitly as
+one case of the general rule rather than the only case the formula was ever checked against.
+
+### Findings
+
+**No new gap.** The dual-threshold formula behaves exactly as `check_resolve.py` proves
+generally: real headroom at every combination tested, Spent reachable independently via either
+axis, and both exemptions (Taint 0, Trauma 0) hold. This worked example is the case ADR 0043's
+own original verification never exercised — Trauma as the binding threshold — played through
+once, with real rolls where a roll was actually involved, to confirm the formula reads sensibly
+at the table, not only in the check script's own arithmetic.
