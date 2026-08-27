@@ -515,3 +515,117 @@ clearing test needed no roll and no judgement call, and Stamina recovery matched
 
 **What this pass does not prove**: ranged attacks, breaking off, surprise, and a mortal-blow result
 (the worst row of any critical table) were not exercised here and remain untested by this document.
+
+---
+
+## 8. Condition tracks: Taint, Trauma, Strain — and a gap found in Resolve
+
+Part of #134 (the autonomous playtest epic), #149. Senna Vask, continuing her arc: `blade: 35`,
+`evasion: 30`, `tracking: 35`, Fault Line — *"Taint deepens whenever a way out is bought by
+leaving someone else in the trap she just left."* This pass exercises Taint (both gain routes, a
+threshold crossing, the hidden threshold), Trauma (the sawtooth to an Affliction), and Strain (a
+Rally recovery) — and finds a real gap in Resolve along the way.
+
+Every roll is a real draw from Python's `random`, seeded `20260830`, in the order presented.
+Where a scene needed repeated real attempts to reach the outcome a mechanic requires (a failure,
+to demonstrate the Bargain; 6+ Trauma, to reach the Affliction test), every attempt is reported —
+none discarded — the same honest-sampling discipline §7's death-band exercise established.
+
+### Taint — the Bargain
+
+Senna tries something under pressure, `eff. 30`, and keeps trying as the scene demands it:
+
+- Attempt 1: roll **8** — success.
+- Attempt 2: roll **30** — success. Wyrd die: **Ill Omen**.
+- Attempt 3: roll **60** — **fails.**
+
+No Fortune left. She takes the Bargain: **1 Taint to reroll.** Reroll: **14** — succeeds. Taint
+`0 → 1`.
+
+### Taint — Exposure, biased by the Fault Line
+
+A moderate (2) Exposure source that runs with the grain of her Fault Line — she buys her own way
+past a locked gate, and someone behind her doesn't make it through before it seals. Resist,
+`eff. 35`: roll **86** — **fails.** Biased one tier worse: moderate `2` becomes major `3`. Taint
+`1 → 4` — **crossing the threshold at 3.**
+
+### The Transformation, and the hidden threshold
+
+Threshold crossed, roll the transformation table: `1d6` = **6** → **severity 4**: *"A major,
+irreversible change to what the character is, bodily."* Taint drops by the severity rolled:
+`4 → 0`. Below the threshold in one roll — no re-roll loop needed this time (`check_transformation.py`
+already proves the loop terminates in the worst case; this one just didn't need it). Dread `+4`
+(equal to the severity, per `07-transformations.md`).
+
+**Her first Transformation** — the GM secretly rolls the hidden threshold: `1d6+2` = **3**. Never
+shown to the player, written once, standing for the rest of her chronicle: she can survive two
+more Transformations before she is lost to the opposition.
+
+### Taint — Exposure, ordinary (does not run with the Fault Line)
+
+A minor (1) Exposure source unrelated to her Fault Line's direction — no bias applies. Resist,
+`eff. 35`: roll **70** — **fails.** Taint `0 → 1`.
+
+### Trauma — the sawtooth to an Affliction
+
+Terror tests, `eff. 30`, until 6+ Trauma is reached (each failure costs 1 Trauma; §5's
+"routed" cost):
+
+| # | Roll | Result |
+|---|---|---|
+| 1 | 76 | routed, Trauma → 1 |
+| 2 | 37 | routed, Trauma → 2 |
+| 3 | 70 | routed, Trauma → 3 (Ill Omen) |
+| 4 | 41 | routed, Trauma → 4 |
+| 5 | 4 | holds |
+| 6 | 27 | holds |
+| 7 | 63 | routed, Trauma → 5 |
+| 8 | 79 | routed, Trauma → 6 (Fair Omen) |
+
+At 6 Trauma, the next point tests (a fiction-chosen skill, pass/fail, no degrees, per §5 and
+`08-afflictions.md`). Test: `eff. 30`, roll **72** — **fails.** Affliction rolled, `1d12` = **11**:
+*"Strangers and casual acquaintances react to the character at one step worse on the reaction
+ladder by default, until the character spends a scene establishing otherwise."* Trauma drops by
+6, per the sawtooth: `6 → 0`.
+
+### Strain — accrual and a Rally
+
+Mental tests, `eff. 30`, across a stretch of the same scene:
+
+| # | Roll | Result |
+|---|---|---|
+| 1 | 67 | fails, Strain → 1 |
+| 2 | 42 | fails, Strain → 2 |
+| 3 | 65 | fails, Strain → 3 |
+| 4 | 67 | fails, Strain → 4 |
+
+At the next Rally: Strain `4 → 3`, per §5's "recovered at a Rally" (matching Stamina's own
+1-per-Rally rate — §2's own "Strain's rate, at Strain's trigger" line).
+
+### Findings
+
+**A real gap found in Resolve, not exercised by this pass.** `03-rules.md` §4 states Resolve is
+"spendable, renewable. Spend for a bonus after a failed roll," and §4 states "when Resolve falls
+to equal Taint, the character is Spent." Neither §4 nor any other document names an amount for
+either half: how much Resolve a spend costs, what size bonus it buys, or — the more fundamental
+gap — **any way Resolve is ever gained at all.** `11-character-creation.md` sets it to 0 at
+creation, and nothing in `docs/design/` states a trigger that raises it above 0. Read literally,
+Resolve can never be spent (there is nothing to spend from 0 without going negative, which is
+never stated as legal), and the Spent state — "Resolve fallen to Taint" — could only ever be true
+at the moment Taint is *also* 0, i.e. before a character has done anything, which is exactly
+backwards from what the state is clearly meant to represent (a character worn down by what has
+happened to them, not one nothing has happened to yet). This pass therefore could not exercise
+Resolve or a Spent state at all — not because the scene didn't call for it, but because the
+mechanic as written has no path to a positive value. Raised as a follow-up issue rather than
+invented here.
+
+**Everything else resolved cleanly.** The Bargain, both Exposure routes (including the Fault
+Line's one-tier bias, applied exactly once and only to the biased route), the threshold crossing,
+the transformation roll and its Dread, the hidden threshold, the Trauma sawtooth to an Affliction,
+and Strain's Rally recovery all played out against `03-rules.md` §4–5,
+`07-transformations.md` and `08-afflictions.md` without a judgement call the rules didn't already
+answer.
+
+**What this pass does not prove**: Invocation (the GM spending a character's own Taint point to
+impose a penalty), a second Transformation reaching the hidden threshold and the character being
+lost, and Dread's own social effects were not exercised here and remain untested by this document.
