@@ -1196,3 +1196,91 @@ verification script (`specs/057-systems-of-power-spam-brake/check_spam_brake.py`
 0043–0045) to scenarios that were played before those decisions existed. Where a replay produces
 a materially different outcome (§7's dropped round, §10's Trauma accrual), that difference is the
 expected, intended effect of the fix landing — not a new finding to raise as its own issue.
+
+---
+
+## 15. Systems of power: minor-tier spam, the typical caster-in-an-encounter case
+
+#176, part of #134. §10/§14's spam sequences both used `major` tier, where `strain_cost` (8)
+already exceeds a starting character's maximum Stamina (6) — a side effect nobody chose on
+purpose, raised in conversation after §14 landed: does ADR 0045's threshold cross on nearly every
+single failure at that tier regardless of the "occasional crossing, not automatic" distinction it
+was meant to draw? This pass checks the tier a magic-focused character actually leans on in most
+encounters — `minor`, not the most-ambitious declaration a schema allows — with real play, not
+arithmetic alone.
+
+Kester, unchanged: `ember-craft: 50`, `strain_cost: 2`, `ill_omen_taint: 1`, Stamina `6/6`
+(maximum Stamina `6`, the modulus ADR 0045 uses). `minor` tier: `eff. 50`, no cost multiplier, no
+Ill Omen Taint bonus.
+
+Real `d100` draws, seeded `20260850`, 26 attempts — the same count as §10/§14's major-tier
+sequence, for a direct rate comparison, even though a real encounter more plausibly runs 8–12
+rounds (called out separately below):
+
+| # | Roll | Result | Strain | Ill Omen | Taint | Trauma |
+|---|---|---|---|---|---|---|
+| 1 | 1 | success | 2 | no | 0 | 0 |
+| 2 | 57 | fail | 4 | no | 0 | 0 |
+| 3 | 5 | success | 6 | no | 0 | 0 |
+| 4 | 84 | fail | 2 | no | 0 | 1 |
+| 5 | 19 | success | 4 | no | 0 | 1 |
+| 6 | 42 | success | 6 | no | 0 | 1 |
+| 7 | 81 | fail | 2 | no | 0 | 2 |
+| 8 | 45 | success | 4 | no | 0 | 2 |
+| 9 | 13 | success | 6 | no | 0 | 2 |
+| 10 | 3 | success | 8 | no | 0 | 2 |
+| 11 | 96 | fail | 10 | no | 0 | 2 |
+| 12 | 87 | fail | 12 | no | 0 | 2 |
+| 13 | 21 | success | 14 | no | 0 | 2 |
+| 14 | 62 | fail | 16 | no | 0 | 2 |
+| 15 | 35 | success | 18 | no | 0 | 2 |
+| 16 | 37 | success | 20 | no | 0 | 2 |
+| 17 | 44 | success | 22 | no | 0 | 2 |
+| 18 | 16 | success | 24 | no | 0 | 2 |
+| 19 | 19 | success | 26 | no | 0 | 2 |
+| 20 | 37 | success | 28 | no | 0 | 2 |
+| 21 | 26 | success | 30 | no | 0 | 2 |
+| 22 | 46 | success | 32 | no | 0 | 2 |
+| 23 | 26 | success | 34 | no | 0 | 2 |
+| 24 | 39 | success | 36 | no | 0 | 2 |
+| 25 | 41 | success | 38 | no | 0 | 2 |
+| 26 | 58 | fail | 40 | no | 0 | 2 |
+
+**7 of 26 attempts failed, matching the roughly 50% base rate. Final: Strain 40, Taint 0, Trauma
+2.** Only **2 of those 7 failures (29%) crossed a multiple of maximum Stamina** and cost Trauma —
+attempts 4 and 7, both early, while Strain was still low enough for a single `strain_cost: 2`
+gain to cross a fresh multiple of 6. From attempt 11 onward, Strain climbs past 6 entirely on
+**successes** (which never check or reset the threshold, per ADR 0045 — only a failure does), so
+by the time later failures (11, 12, 14, 26) land, Strain is already sitting well above the next
+multiple mid-band rather than crossing it, and none of them trigger Trauma. No Ill Omen came up
+in 26 attempts at `minor` tier's un-widened 10% band (Taint stayed at `0` throughout, so the
+die-bending widening never engaged either) — a real, disclosed feature of this particular seed,
+not a claim about the underlying rate.
+
+**The first 12 attempts** (a more realistic single-encounter length): **5 of 12 fail, Trauma
+after 12 attempts: 2** — both crossings already landed by then.
+
+### Findings
+
+**The threshold behaves as intended at minor tier — confirmed by play, not just arithmetic.**
+Where §10/§14's `major`-tier sequence crossed the threshold on very close to every single failure
+(`strain_cost` 8 exceeding maximum Stamina 6 means almost any failure crosses at least one
+multiple), this `minor`-tier sequence crossed on only **29%** of its failures — a materially
+different, and clearly intended, rate. A magic-focused character leaning on their bread-and-
+butter invocation across an ordinary encounter is not quietly accruing Trauma on every miss; the
+brake reserves its bite for the tier `09-systems-of-power.md` already calls the most ambitious
+one, exactly as ADR 0045 argued it would, now checked against real play rather than only the
+tier's own numbers on paper.
+
+**No new gap found, and no new design decision needed.** The `major`-tier near-certainty is a
+real, disclosed emergent property of that specific tier's cost sitting close to a starting
+character's maximum Stamina — not a flaw in the threshold rule, and not something this pass
+recommends changing: `major` tier is meant to be the schema's most consequence-heavy declaration,
+and a starting character choosing it repeatedly paying a steep, near-certain Trauma cost is
+consistent with "ties ambition to consequence," the same framing `intensity_tiers` already states
+for itself. A character with more maximum Stamina (a completed career: `7`; the ceiling: `10`)
+would see the same tier behave more gently, exactly as §10/§14's own worked figures (13–26 Trauma
+across max Stamina 6–10) already showed.
+
+**What this pass does not prove**: whether a *moderate*-tier spam sequence sits somewhere between
+these two rates was not checked, and is not assumed from either endpoint.
