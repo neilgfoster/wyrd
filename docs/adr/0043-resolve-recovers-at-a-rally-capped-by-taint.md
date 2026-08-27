@@ -87,8 +87,8 @@ the identical job with no stated reason to reach for one over the other.
 - `docs/design/03-rules.md` §4 states Resolve's gain trigger, spend amount and bonus, and cap
   formula explicitly — the three things #157 found entirely absent.
 - The Spent state is now reachable through ordinary play at any Taint above 0, by spending
-  Resolve down from its post-recovery cap to Taint's own value — 3 points of real headroom at
-  minimum, growing with Taint.
+  Resolve down from its post-recovery cap to Taint's own value — a constant 3 points of real
+  headroom at every Taint level, the same margin whether Taint is 1 or 20.
 - `docs/design/30-playtest-transcript.md`'s condition-tracks playtest (#149) and systems-of-power
   playtest (#151) both found this gap; a follow-up playtest exercising the corrected mechanic is
   not required by this ADR, but the next condition-tracks-adjacent pass should confirm it plays
