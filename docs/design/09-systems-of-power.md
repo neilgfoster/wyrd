@@ -49,6 +49,19 @@ applies; the declared `resolve_cost`, if present, applies identically. Failing a
 costs what attempting it costs — the same shape any strenuous, risky effort already has in this
 engine.
 
+**Repeated failure of the same declaration, in the same scene, costs Trauma on top of that.** A
+failed invocation that immediately follows another failed invocation of the *same* system of
+power costs 1 Trauma, through the engine's existing Trauma-gain list
+([`03-rules.md`](03-rules.md) §5) — the same rate "1 per failed Terror test" already uses, not a
+new one. The first failure of a scene is free of this; a success, or failing a *different* system
+of power, resets the streak. This composes with `strain_cost`/`resolve_cost` unchanged — it does
+not replace them, and it is not itself scaled by `intensity_tiers` (a `major`-tier failure and a
+`minor`-tier failure of the same power cost the same 1 Trauma on repetition; the tier's own
+`cost_multiplier`/`ill_omen_taint_bonus` already price ambition on the Strain/Taint side).
+Strain's own reset at a Rally is unaffected — this brake targets the one thing that reset let pass
+consequence-free: retrying the same failing declaration, over and over, before the Rally arrives
+([ADR 0045](../adr/0045-repeated-failed-invocations-cost-trauma.md)).
+
 ## Intensity tiers
 
 **`intensity_tiers` is optional, and a system of power with none declared behaves exactly as

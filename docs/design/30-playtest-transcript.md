@@ -828,6 +828,16 @@ bite. Raised as a follow-up issue: the cost structure needs either a Strain cap/
 cost that scales with attempts within a scene, or some other brake — a real design decision, not
 decided here.
 
+**Resolved in [ADR 0045](../adr/0045-repeated-failed-invocations-cost-trauma.md):** a failed
+invocation immediately following another failed invocation of the *same* system of power, in the
+same scene, now costs 1 Trauma on top of its stated Strain/Resolve cost, the first failure of a
+scene remaining free. `specs/057-systems-of-power-spam-brake/check_spam_brake.py` re-runs a
+comparable 26-attempt `major`-tier spam sequence and confirms the brake accrues real, non-zero
+Trauma (25, crossing the Affliction threshold) where the published rule accrued none — and that
+ordinary play (one isolated failure among successes, this pass's own "ordinary use" sequence
+above) still costs nothing extra. Not re-played against this exact sequence's own logged rolls,
+which were not fully disclosed roll-by-roll above; the re-run uses a fresh seed instead.
+
 **The Resolve gap (#157) recurs independently**, strengthening the case that it needs resolving
 before systems of power with a declared `resolve_cost` are usable at all.
 
@@ -1011,14 +1021,14 @@ pass independently.
 | §7 (combat/harm) | Telling blow via a failed defence roll has no stated per-roll procedure | #155 | **fixed** (ADR 0044) |
 | §8 (condition tracks) | Resolve has no gain mechanic, cannot be spent as designed | #157 | **fixed** (ADR 0043) |
 | §9 (economy/progression) | Career-change skill retention — a stated inference, not a gap | — | resolved by the playtest's own reasoning, no issue needed |
-| §10 (systems of power) | Cost structure doesn't discourage spamming failed high-tier invocations | #163 | open |
+| §10 (systems of power) | Cost structure doesn't discourage spamming failed high-tier invocations | #163 | **fixed** (ADR 0045) |
 | §10 (systems of power) | Resolve gap recurs for any `resolve_cost` declaration | #157 | **fixed** (same fix as §8's finding) |
 | §11 (solo procedures) | No fault found (one stale scope note, self-corrected) | — | closed, nothing to track |
 | §12 (combination) | Reroll resources (Bargain, Resolve, Fortune) stack unbounded on one roll | #167 | open |
 | §12 (combination) | Systems-of-power/combat Omen scope boundary confirmed clean | — | confirmed, not a finding |
 
 **Nothing from any pass's Findings section is untracked.** Every real gap has either landed a fix
-(#157, #155) or has its own open, board-ranked issue (#163, #167).
+(#157, #155, #163) or has its own open, board-ranked issue (#167).
 
 ### Two recurrences, called out explicitly
 

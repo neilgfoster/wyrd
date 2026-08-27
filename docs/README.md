@@ -85,6 +85,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0042](adr/0042-opposed-and-combat-omens-carry-a-plus-minus-10-modifier.md) | Opposed-test and combat Omens carry a ±10 modifier on the roller's own next roll |
 | [0043](adr/0043-resolve-recovers-at-a-rally-capped-by-taint.md) | Resolve recovers at a Rally, capped at Taint plus 3 |
 | [0044](adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md) | A telling blow via a failed defence roll is computed by the same symmetric procedure the damage-multiplier modelling already assumed |
+| [0045](adr/0045-repeated-failed-invocations-cost-trauma.md) | A repeated failed invocation of the same system of power costs Trauma |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
