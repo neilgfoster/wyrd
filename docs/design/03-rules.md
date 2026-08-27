@@ -110,6 +110,17 @@ resolves as a single player-facing roll, exactly as combat's attack and defence 
    opponent's side for it to belong to instead.
 5. **Assistance** (below), declaration and the untrained-10% rule apply exactly as they do to any
    other roll; nothing about this shape treats them differently.
+6. **An Omen also carries a ±10 modifier on the roller's own next roll** — an Ill Omen −10, a
+   Fair Omen +10 — on top of the narrative framing above (§1's "something also goes wrong /
+   breaks your way" still applies; this adds a measured cost or gain to it, not a replacement for
+   it). **The roller's own next roll**, since the opponent never rolls and the die always belongs
+   to the player: the very next roll of any kind that character makes, whether another opposed
+   test or a combat roll (§2), in the order play actually produces them. **Does not stack** — a
+   second Omen before the pending modifier is spent replaces it, never adds to it — and **lapses
+   unused** if the scene or fight ends first. Scoped to opposed tests and combat, where the same
+   roll shape governs both; an ordinary (non-opposed) test's Omen stays narrative-only
+   ([ADR 0042](../adr/0042-opposed-and-combat-omens-carry-a-plus-minus-10-modifier.md),
+   [`check_omen_effect.py`](../../specs/049-combat-omen-mechanical-effect/check_omen_effect.py)).
 
 **A contest between two player-controlled entities** — a player character and a companion, or two
 companions, in genuine tension with no NPC/opponent side — has no opponent skill to set
@@ -276,6 +287,10 @@ each field — is in [`12-the-adversary.md`](12-the-adversary.md).
   `effective%` as the skill value.
 - **The Wyrd die always belongs to the player** making the roll, attack or defence — there is no
   roll on the opponent's side for it to belong to instead.
+- **An Omen carries the same ±10 next-roll modifier here as §1's opposed tests** — combat's
+  attack and defence rolls are that same shape ([ADR 0027](../adr/0027-combat-rolls-belong-to-the-player.md)),
+  so the modifier rule is the same rule, not a second one
+  ([ADR 0042](../adr/0042-opposed-and-combat-omens-carry-a-plus-minus-10-modifier.md)).
 - **Assistance** (§1) applies identically to the attack roll and the defence roll.
 - **Stamina is not meat.** It is cuts, bruises, and losing control of the fight.
 - **Armour subtracts dice:** light `1d3`, modest `1d6`, heavy `2d6`. A shield raises one rank.
