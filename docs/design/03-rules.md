@@ -639,11 +639,27 @@ rely on the player's, which is precisely what makes it cost something.
 
 Two paired scores, because a one-way meter is a worse model than a balance.
 
-- **Resolve** — spendable, renewable. Spend for a bonus after a failed roll.
+- **Resolve** — spendable, renewable. Spend **1** for a **+20 bonus to an immediate reroll** of
+  the failed test — distinct from Fortune's plain reroll (§3): Fortune buys a fresh roll at the
+  same odds, Resolve buys a better one, and costs the resource that measures how much fight is
+  left rather than the one that measures luck.
 - **Taint** — accrues and sticks.
 
+**Resolve recovers at the same cadence Strain already uses: +1 at a Rally, and back up to its
+cap at a downtime** — the same rate ADR 0020 already fixed for Stamina and Strain, reused rather
+than a third number invented for a third track. **Resolve's cap is the character's current Taint
+plus 3** — one threshold-interval of headroom, the same spacing that already governs
+Transformations (§4 below), so a fully-rested character always has real Resolve to spend down
+before reaching Taint, not a cap that sits exactly on the Spent line it is meant to measure the
+distance to
+([ADR 0043](../adr/0043-resolve-recovers-at-a-rally-capped-by-taint.md),
+[`check_resolve.py`](../../specs/052-resolve-recovery-mechanic/check_resolve.py)).
+
 **When Resolve falls to equal Taint, the character is Spent** — they will not press a
-struggle and will withdraw from danger. At Taint 0 they can never be Spent, however tired.
+struggle and will withdraw from danger. **At Taint 0 they can never be Spent, however tired** —
+stated as its own rule, not derived from the cap formula: a character who has accrued no Taint
+at all has nothing yet for Resolve to be a counterweight *to*, so the state is exempted outright
+rather than left to a formula that would otherwise make it reachable at Taint 0 too.
 
 The same Taint score therefore means different things at different times, and recovery is
 part of the loop rather than an afterthought.
