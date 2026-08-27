@@ -86,8 +86,8 @@ term for "a village with something under it."**
 It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
 scenarios *chain* into a meta-campaign.
 
-Scope is **the whole library, not one shelf of it** — an investigation written for another world, a Maelstrom
-village haunting and a magazine six-pager are equally valid inputs, judged on theme
+Scope is **the whole library, not one shelf of it** — an investigation written for another world, a
+folk-horror village haunting and a magazine six-pager are equally valid inputs, judged on theme
 ([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
 what conversion costs.
 
