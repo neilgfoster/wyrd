@@ -82,6 +82,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0038](adr/0038-an-adr-path-is-repaired-not-its-reasoning.md) | An ADR's path references are repaired when a target moves; its reasoning is never edited |
 | [0040](adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md) | Ancestry widens creation's skill pool, never its budget |
 | [0041](adr/0041-luck-merges-into-fortune.md) | Luck merges into Fortune |
+| [0042](adr/0042-combat-omens-carry-a-plus-minus-10-modifier.md) | In combat, an Omen carries a ±10 modifier on the roller's own next roll |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
