@@ -826,3 +826,85 @@ before systems of power with a declared `resolve_cost` are usable at all.
 Taint consequence at all, per `09-systems-of-power.md`'s own stated behaviour), and a system of
 power sharing a skill with a mundane use of the same skill, were not exercised here and remain
 untested by this document.
+
+---
+
+## 11. Solo procedures and session/campaign structure
+
+Part of #134 (the autonomous playtest epic), #152. Senna Vask, continuing her arc, at the
+`hedge-healer` career (§9), a lasting wound from her first Transformation still on record, Talen
+(her brother) now travelling with her as a companion.
+
+**Every roll below is a real `d100`/`d6` draw from Python's `random`, seeded `20260832`, in the
+order presented.** Advancement, Bond/Tension and the session-loop steps involve no dice, per
+§9's own "nothing is rolled" convention where it applies.
+
+### A full session shape
+
+Following `16-session.md`'s session loop: **LOAD** (chronicle, Senna, Talen, the open thread from
+§10's bounty-hunter aftermath) → **ORIENT** (three weeks have passed since the last beat) →
+**RECAP** (three sentences, stating the elapsed time up front) → **BEAT** (Senna and Talen seek the
+harbourmaster for word of the crew that's still hunting them) → roll, narrate, persist → **RALLY**:
+recover 1 Strain, recover 1 Stamina, the GM assesses and may award an advance, state is written and
+committed. **No mid-beat stop was needed** — the beat closed cleanly at the Rally, exactly the
+"clean stopping point" §16 describes.
+
+### An oracle answer
+
+The fiction hasn't settled whether the harbourmaster already knows about the crew — a real
+yes/no question, and one that could plausibly be asked again (does she act on it later, does she
+deny it if pressed) — so it's oracle-bound, not decided by GM fiat. Declared band: **Likely**
+(T=70). Roll **26** — inside `6–70`: **yes**. The harbourmaster knows. This is now a settled fact,
+recorded, not re-invented if the question resurfaces.
+
+### An oracle prompt
+
+The harbourmaster's real objective hasn't been established — an NPC-objective gap, per
+`15-oracle-prompts.md`'s scoped families. Roll **23**, landing in the `21–30` row:
+`prove_worth` — "Wants to prove their worth to someone whose opinion matters more than they'll
+admit." Played: she helps not out of civic duty, but because the harbour authority above her
+has never taken her seriously, and this is a chance to matter.
+
+### A companion beat, and Bond offsetting Tension
+
+Talen, present and playing his own hand: he recognises one of the crew from the docks and says
+nothing to Senna at first — his own `objective.wants` (established at his introduction, unread by
+any roll) taking precedence over hers. When it comes out, it's the kind of event that would
+ordinarily add Tension — but Talen's `bond: +1` (built across the sessions since he rejoined her)
+means the event that would add 1 Tension instead adds **0**, per `16-session.md`'s Bond table
+exactly. Played: Senna is annoyed, not betrayed — the Bond absorbs what the raw event would have
+cost.
+
+### A journey leg, with a hazard
+
+Travelling on to the harbourmaster's outpost, `hazard_rating: 3` (30% per leg). Roll **9** —
+**triggered**. Sub-table roll (`1d6`): **4**. Played per the matched entry (invented for this
+exercise, following `20-journeys.md`'s own convention that a triggered hazard resolves through the
+core roll against a named skill, or is pure narration if none is named): a delay, not a fight — a
+washed-out crossing costs them half a day.
+
+### Fortune's actual refresh — not an arc-boundary reset
+
+The original scope for this pass (drafted before #137 landed) expected to confirm Fortune resets
+at a top-level arc boundary. That was Luck's old rule (ADR 0039), retired when Luck merged into
+Fortune (ADR 0041) — Fortune keeps its own original trigger, **renewable daily**
+(`03-rules.md` §3), not tied to arc boundaries at all. Playing a full in-fiction day past without
+Fortune being spent confirms it renews on schedule regardless — nothing here needed the arc
+machinery this section originally expected to exercise.
+
+### Findings
+
+**No fault found.** The session loop, the oracle answer and prompt tables, the Bond/Tension
+interplay, and the journey hazard roll all resolved against their stated mechanics without
+inventing anything the rules didn't already answer. The one adjustment — Fortune's refresh, not
+an arc-boundary reset — was not a gap in the rules; it was this playtest's own pre-existing scope
+description going stale after #137 landed, corrected here rather than played against a rule that
+no longer exists.
+
+**What this pass does not prove**: succession (a character dying, being lost, or retiring, and a
+successor taking up the thread) was not exercised — forcing it here would mean manufacturing a
+death or loss to fit the playtest's schedule rather than letting it arise from play, which is
+exactly the kind of curated outcome this document's own dice discipline exists to avoid. A Loyalty
+change and its Tension-break consequence, and a downtime's Recover/Cultivate/Learn/Ask
+undertakings (only Mend has been played, in an earlier downtime not detailed here), remain
+untested by this document.
