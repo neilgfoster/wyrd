@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Compute whether a +/-10 combat-Omen roll modifier meaningfully shifts expected damage per
-round and fight length, against the figures ADR 0028/check_conversion.py already published
+"""Compute whether a +/-10 Omen roll modifier meaningfully shifts expected damage per round and
+fight length in combat, against the figures ADR 0028/check_conversion.py already published
 without it.
 
-CLAUDE.md: where a claim can be checked by a script, check it. #159 proposes that a combat Ill
-Omen applies -10 to the roller's own next roll in the same fight, and a Fair Omen +10 -- the
-roller being the player, since the opponent never rolls (ADR 0027) and the Wyrd die "always
-belongs to the player making the roll, attack or defence" (03-rules.md sec2). Because the
-opponent never rolls, every Omen in a fight belongs to the player, and "the roller's own next
-roll" is simply the player's next roll of any kind (attack or defence), in chronological order.
+CLAUDE.md: where a claim can be checked by a script, check it. #159/ADR 0042 apply an Ill Omen as
+-10 to the roller's own next roll, and a Fair Omen as +10, for both opposed tests (03-rules.md
+sec1) and combat (sec2) -- the same roll shape (ADR 0027/0035), so the same modifier rule. This
+script checks the combat instance specifically, since that's the one with a multi-round
+fight-length model (check_conversion.py) to compare against; opposed tests outside combat have no
+equivalent structure for the modifier to compound across, so this is the higher-stakes case to
+verify. The roller is the player, since the opponent never rolls (ADR 0027) and the Wyrd die
+"always belongs to the player making the roll" (03-rules.md sec1). Because the opponent never
+rolls, every Omen in a fight belongs to the player, and "the roller's own next roll" is simply the
+player's next roll of any kind (attack or defence), in chronological order.
 
 This reuses specs/018-player-facing-combat/check_conversion.py's own numbers (armour, weapon,
 telling threshold, PAIRINGS) rather than re-deriving them, and extends its per-round Markov model

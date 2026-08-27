@@ -1,4 +1,4 @@
-# Feature Specification: Combat Omens carry a ±10 modifier on the roller's next roll
+# Feature Specification: Opposed-test and combat Omens carry a ±10 modifier on the roller's next roll
 
 **Feature Branch**: `049-combat-omen-mechanical-effect`
 
@@ -70,15 +70,18 @@ whether it crosses a materiality threshold.
 
 ### Functional Requirements
 
-- **FR-001**: In combat, an Ill Omen MUST apply −10, and a Fair Omen +10, to the roller's own
-  next roll (attack or defence) in the same fight.
+- **FR-001**: In an opposed test or combat, an Ill Omen MUST apply −10, and a Fair Omen +10, to
+  the roller's own next roll.
 - **FR-002**: The modifier MUST NOT stack — a second Omen before the pending modifier is spent
   replaces it.
 - **FR-003**: An unspent modifier MUST lapse if the fight ends before the character rolls again.
 - **FR-004**: The mechanical effect MUST be additive to the existing narrative framing (§1's
   "something also goes wrong/breaks your way"), never a replacement for it.
-- **FR-005**: This MUST be scoped to combat only — an ordinary (non-combat) test's Omen stays
-  narrative-only, per the existing default.
+- **FR-005**: This MUST be scoped to the player-facing-roll shape opposed tests and combat share
+  (ADR 0027/0035) — an ordinary (non-opposed) test's Omen stays narrative-only, per the existing
+  default. Combat is not a separate case from opposed tests; scoping to "combat only" would split
+  one mechanism into two behaviours with no stated reason for the split (found during PR review,
+  before merge, and corrected here rather than left as a follow-up).
 - **FR-006**: The shift in expected damage per round this mechanic introduces MUST be computed
   against `check_conversion.py`'s own representative pairing span, and checked against a stated
   materiality threshold, before concluding ADR 0028's figures don't need re-deriving.

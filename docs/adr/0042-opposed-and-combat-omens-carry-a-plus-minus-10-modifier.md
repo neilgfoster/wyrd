@@ -1,4 +1,4 @@
-# ADR 0042 — In combat, an Omen carries a ±10 modifier on the roller's own next roll
+# ADR 0042 — Opposed-test and combat Omens carry a ±10 modifier on the roller's own next roll
 
 **Date:** 2026-08-27
 **Status:** Accepted
@@ -17,25 +17,39 @@ Raised during an operator feedback round on 2026-08-27, after three playtest-epi
 — the documented default working as designed, but the operator's read of the actual play was that
 combat specifically wants the Omen to carry weight, not just flavor.
 
+**The scope widened once during review, before this record was accepted.** The first draft of
+this decision scoped the modifier to combat's attack and defence rolls alone. But combat's rolls
+are not a separate mechanism from the opposed test §1 already describes — `03-rules.md` says so
+directly: "This generalises what combat already did. ADR 0027 converted combat's attack and
+defence rolls to this shape; ADR 0035 extends it to every opposed test where one side is an
+NPC/opponent." Scoping the modifier to combat only would have split one mechanism into two
+behaviours (a lockpicking contest's Omen staying flavour-only while an identical-shaped attack
+roll got teeth) for no structural reason — exactly the kind of undocumented asymmetry this
+session's own review kept finding elsewhere. Corrected before merge, per the operator's own
+challenge, rather than left as a known gap to raise separately.
+
 ## Decision
 
-**In combat (`03-rules.md` §2's attack and defence rolls), an Ill Omen applies −10 to the
-roller's own next roll in the same fight; a Fair Omen applies +10.** The mechanical effect is
-additive to the existing narrative framing, not a replacement for it — the GM still narrates
-"something also goes wrong," and now that something also measurably costs (or buys) ten points on
-the character's next roll.
+**An Ill Omen applies −10 to the roller's own next roll in the same fight or scene; a Fair Omen
+applies +10 — for both opposed tests (`03-rules.md` §1) and combat (§2), since combat's
+attack/defence roll is that same shape, not a second one.** The mechanical effect is additive to
+the existing narrative framing, not a replacement for it — the GM still narrates "something also
+goes wrong," and now that something also measurably costs (or buys) ten points on the character's
+next roll.
 
 **Precisely scoped:**
 
-- **The roller's own next roll**, not the opponent's — since the opponent never rolls
-  (`ADR 0027`), every Omen in a fight belongs to the player (the Wyrd die "always belongs to the
-  player making the roll, attack or defence," `03-rules.md` §2), and so does its consequence.
-  "Next roll" is the very next roll of any kind (attack or defence) the same character makes, in
-  the order the fight actually produces them — the same round's defence roll if the Omen fell on
-  that round's attack, or the following round's attack roll if it fell on a defence.
+- **Opposed tests and combat, not ordinary (non-opposed) tests.** An ordinary test's Omen keeps
+  the narrative-only default; only the player-facing-roll shape ADR 0027/0035 established
+  (opposed tests and combat, which share that shape) carries the modifier.
+- **The roller's own next roll**, not the opponent's — since the opponent never rolls in either
+  shape (ADR 0027), every Omen belongs to the player (the Wyrd die "always belongs to the player
+  making the roll," `03-rules.md` §1), and so does its consequence. "Next roll" is the very next
+  roll of any kind — another opposed test, a combat attack, a combat defence — the same character
+  makes, in the order play actually produces them.
 - **Does not stack.** A second Omen before the pending modifier is spent replaces it; it does not
   add to it.
-- **Lapses unused** if the fight ends before the character rolls again.
+- **Lapses unused** if the scene or fight ends before the character rolls again.
 - **Does not interact with the opt-in Omen consequences already established** (the crowd-shooting
   rule, systems of power's Ill-Omen-Taint). Those are a different kind of consequence — a
   narrative branch or a track cost, not a roll modifier — and apply independently alongside this
@@ -56,22 +70,36 @@ points riding on what that costs her next roll, which is exactly the shape §2's
 not meat" register already uses elsewhere: a mechanical fact rendered through a fictional lens,
 never the other way round.
 
+**It covers the whole player-facing-roll shape, not one instance of it.** Combat and opposed
+tests are the same mechanism under ADR 0027/0035; a modifier that applied to only one of them
+would need its own justification for the split, and none exists. Scoping to "the shape this
+modifier's own reasoning actually applies to" is simpler than scoping to "combat" and hoping the
+boundary never gets tested by an opposed test that isn't combat.
+
 **The maths were checked rather than assumed** (`specs/049-combat-omen-mechanical-effect/check_omen_effect.py`),
 extending `specs/018-player-facing-combat/check_conversion.py`'s own Markov model with one extra
 state dimension (the pending modifier) rather than re-deriving its numbers differently. Across the
 same representative pairing span ADR 0028 already used, the shift in expected damage per round
 tops out at **0.029** — under a tenth of a Stamina point per round, in either direction, at every
-pairing — well under the materiality threshold this feature set for itself. See Consequences below
-for the full table.
+pairing — well under the materiality threshold this feature set for itself. This figure was
+computed against combat specifically (the only one of the two shapes with a fight-length model to
+check against); opposed tests outside combat have no equivalent multi-round structure for the
+modifier to compound across, so the same reasoning that keeps combat's shift small applies there
+even more directly. See Consequences below for the full table.
 
 ## Alternatives rejected
 
-**Leave Omens narrative-only in combat too, matching the documented default everywhere else.**
-The status quo, and a legitimate position — three playtests already exercised it faithfully with
-no mechanical complaint from the rules themselves. Rejected because the operator, reviewing the
-same actual play, judged it under-weighted specifically in combat: "these should carry a material
-benefit," not just color, in the one context where a roll's outcome is already tracked in hard
-numbers (Stamina, degrees) rather than left to pure fiction.
+**Leave Omens narrative-only everywhere, matching the documented default.** The status quo, and a
+legitimate position — three playtests already exercised it faithfully with no mechanical
+complaint from the rules themselves. Rejected because the operator, reviewing the same actual
+play, judged it under-weighted in the player-facing-roll shape specifically: "these should carry
+a material benefit," not just color, in the one context where a roll's outcome is already tracked
+in hard numbers rather than left to pure fiction.
+
+**Scope the modifier to combat only, leaving other opposed tests narrative-only.** The first
+draft of this decision. Rejected on review: combat's roll is not a distinct mechanism from the
+opposed test, so this would have been an arbitrary split of one shape into two behaviours, with
+no stated reason for where the line fell.
 
 **Apply the modifier to the opponent instead of the roller.** Considered and explicitly rejected
 by the operator's own confirmed proposal ("+10/-10... to the roller's own next roll"). Since the
@@ -80,8 +108,9 @@ target is the player's own next roll, whichever side of the exchange it resolves
 
 ## Consequences
 
-- `docs/design/03-rules.md` §2 states the modifier explicitly, alongside its existing narrative
-  framing, scoped to combat only — ordinary (non-combat) tests keep the narrative-only default.
+- `docs/design/03-rules.md` §1 states the modifier as part of the opposed-test shape itself;
+  §2 (combat) now points at that same rule rather than restating a combat-specific version of it
+  — one rule, read from two places, not two rules that could drift apart.
 - `specs/049-combat-omen-mechanical-effect/check_omen_effect.py` extends
   `specs/018-player-facing-combat/check_conversion.py`'s fight model with a pending-modifier
   state dimension, computed rather than assumed, confirming ADR 0028's published damage-multiplier

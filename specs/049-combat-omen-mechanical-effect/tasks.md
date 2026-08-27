@@ -1,4 +1,4 @@
-# Tasks: Combat Omens carry a ±10 modifier on the roller's next roll
+# Tasks: Opposed-test and combat Omens carry a ±10 modifier on the roller's next roll
 
 - [X] **T001** Write ADR 0042 recording the decision, its precise scope (FR-002/003/004/005),
       and the rejected alternative (FR-007).

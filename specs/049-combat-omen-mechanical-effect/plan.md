@@ -1,4 +1,4 @@
-# Implementation Plan: Combat Omens carry a ±10 modifier on the roller's next roll
+# Implementation Plan: Opposed-test and combat Omens carry a ±10 modifier on the roller's next roll
 
 **Branch**: `049-combat-omen-mechanical-effect` | **Date**: 2026-08-27 | **Spec**: [spec.md](spec.md)
 
@@ -21,7 +21,9 @@ verification script; the rule itself is Markdown.
 `python3 -m pytest -q`.
 
 **Constraints**: No stacking, lapses unused (FR-002/FR-003). Additive to narrative framing, not a
-replacement (FR-004). Scoped to combat only (FR-005). The verification script must reuse
+replacement (FR-004). Scoped to opposed tests and combat, which share the same player-facing-roll
+shape (FR-005) — not combat alone, corrected during PR review before merge. The verification
+script must reuse
 `check_conversion.py`'s own numbers (armour, weapon, telling threshold, PAIRINGS) rather than
 re-deriving them differently, and must use probability-bucket grouping rather than per-natural-roll
 enumeration — an early version enumerating 100 rolls per roll, per round, per growing state, was
@@ -59,7 +61,7 @@ specs/049-combat-omen-mechanical-effect/
 ### Repository changes
 
 ```text
-docs/adr/0042-combat-omens-carry-a-plus-minus-10-modifier.md   # new
+docs/adr/0042-opposed-and-combat-omens-carry-a-plus-minus-10-modifier.md   # new
 docs/README.md                                                 # ADR index entry added
 docs/design/03-rules.md                                        # sec2 gains the Omen rule
 ```
