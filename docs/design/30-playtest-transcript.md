@@ -1095,7 +1095,7 @@ inputs):
 **Round 2 is now a telling blow.** The weapon roll (`1d8 = 4`, already drawn) doubles to `8`
 before armour subtracts its already-rolled `1d3 = 1`: `7` through, not `3`. Senna: `4 (post-round
 1) − 7 = −3`. **She drops in Round 2, not Round 3** — Round 3 never happens under the corrected
-timeline; the Fair Omen still pending from Round 2's own attack roll lapses unused, exactly as
+timeline; the **Fair Omen** still pending from Round 2's own attack roll lapses unused, exactly as
 the Omen rule states for a scene that ends first.
 
 **The critical and Aftermath rolls, reusing the same dice, recomputed with the new modifier.**
