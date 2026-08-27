@@ -84,8 +84,8 @@ def markdown_files(root: pathlib.Path) -> list[pathlib.Path]:
 def strip_code(text: str) -> str:
     """Remove fenced blocks and inline spans.
 
-    Wikilinks legitimately appear in docs/design/25-entities.md, 19-state.md, 20-tooling.md and
-    08-maintenance.md -- always inside a YAML example or an inline span describing the
+    Wikilinks legitimately appear in docs/design/25-entities.md, 22-state.md, 27-tooling.md and
+    28-maintenance.md -- always inside a YAML example or an inline span describing the
     convention. Allowing them exactly there, and nowhere else, is checkable without an
     allowlist of filenames that would itself go stale.
     """
