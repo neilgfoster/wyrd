@@ -176,7 +176,6 @@ wyrd reroll <proposal-id> --step N --resource resolve|fortune|bargain
                                         # discards step N's downstream set, re-resolves it;
                                         # leaves the rest of the proposal untouched; the
                                         # proposal id stays open
-wyrd damage <target> <expr>            # applies damage, stamina, criticals
 wyrd track <id> taint +1               # mutates a track, fires thresholds
 wyrd advance-time <days>               # calendar, threat activation, expected-value events
 wyrd threat-check                      # per-threat activation roll
@@ -198,10 +197,13 @@ wyrd log --last N | --since <beat>     # Archival tier, in beat order; no full-t
 
 **`propose`/`commit`/`discard` are the base action-resolution mechanism**
 ([`31-action-resolution.md`](31-action-resolution.md), [ADR 0050](../adr/0050-action-resolution-proposes-before-it-commits.md))
-— every mechanic in `03-rules.md` resolves through them, staged and re-derivable rather than
-written immediately. `damage` and `track` above still write immediately, predating this
-mechanism; reconciling them onto the same propose/commit shape is a known follow-up, not
-resolved by this document.
+— every mechanic in `03-rules.md` resolves through them, staged and re-derivable, including
+combat's own attack/damage/armour/critical chain
+([`31-action-resolution.md`](31-action-resolution.md)'s "The combat resolution chain") — there
+is no separate `damage` verb; a `combat-attack`/`combat-defence` `propose` call stages it in
+full. `track` above still writes immediately, predating this mechanism; reconciling it onto the
+same propose/commit shape (the generic-tracker case `22-state.md`'s Invariants already flags as
+outstanding) is a known follow-up, not resolved by this document.
 
 Maintenance is a first-class engine function, not a chore — see
 [`28-maintenance.md`](28-maintenance.md).
