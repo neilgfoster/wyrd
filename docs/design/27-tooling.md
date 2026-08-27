@@ -266,6 +266,40 @@ the GM's context.
 The GM session itself stays on the capable model. Wyrd's whole value is the quality of the
 fiction; that is the one place not to economise.
 
+### The actual target, stated precisely
+
+**The target is not "the GM session runs on Haiku."** An earlier, looser framing of this goal
+(raised alongside #133) said exactly that — "Haiku-sufficient, even if not fully achievable" —
+and it is worth correcting explicitly rather than leaving two documents implying different
+things, since this section already decided otherwise, with a stated reason (§5 above, "that is
+the one place not to economise"). Running narration, voice, motive and judgement on Haiku is not
+deferred or aspirational; it is rejected, on the same grounds §5 already gives.
+
+**The real target is that the capable model's own job shrinks to exactly what genuinely needs
+it — narration, character voice and motive, arc adaptation, and judgement about what a result
+means — and nothing else leaks onto it.** Everything with a computable right answer is already
+supposed to be off the capable model's plate entirely, per §1's own decision procedure and §5's
+own tiering table; the target is that this is actually true of the CLI surface as specified, not
+merely intended.
+
+**Verified by auditing the CLI surface against §5's own table, not by running a model at all.**
+For each thing a session actually needs — loading context (`31-action-resolution.md`'s
+`session-context`/`get`/`find`), resolving a test (`propose`/`commit`/`reroll`), mutating a track
+(`track`), regenerating `recap.md`, matching arc hooks, formatting a result into a sentence — the
+check is: does it already have a "no model" or "Haiku" answer under §1/§5, or does it genuinely
+require narrative judgement? `02-architecture.md`'s "Code versus prose" boundary
+(#188) already performs exactly this classification for every GM-contract principle and every
+session-structure element; nothing in that classification needed the capable model for anything
+with a computable answer. That audit, not a live model run, is what "the target holds" means
+here — a model tier can be *stated* as achieved by inspection of what work is left, since the
+work itself either has a right answer or it doesn't.
+
+**What is not yet achievable, stated plainly rather than implied**: whether the *narration*
+itself — the part deliberately kept on the capable model — could ever run acceptably on a
+smaller one is explicitly not a goal this document tracks toward. It is not "not yet achieved";
+it is the one thing §5 already decided never to attempt, and restating it as a deferred target
+would misrepresent a settled decision as an open question.
+
 ### Rule of thumb
 
 > If you can write the acceptance test, it does not need a large model.
