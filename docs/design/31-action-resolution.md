@@ -4,14 +4,13 @@ How an action actually resolves against state: the base mechanism every mechanic
 [`03-rules.md`](03-rules.md) composes with. Not combat-specific — resolution, Exposure,
 Terror tests, systems of power, advancement rolls all use the same shape.
 
-This document covers the propose/commit/discard mechanism, cascading resolution (a mutation that
-crosses a threshold and spawns a further roll, inside the same proposal), partial reroll (a
-player spending Fortune/Resolve/the Bargain against one step of a proposed result, without
-disturbing what didn't depend on it), and Omen carryover (a pending ±10 modifier crossing more
-than one of an actor's own rolls, whether inside one batch or across separately committed ones).
-Combat's own outcome-conditional resolution chain (attack succeeding → roll damage → armour →
-possible critical) is a related, separately tracked open question (#200), not yet specified
-here.
+This document covers the propose/commit/discard mechanism; cascading resolution, in both its
+shapes (a mutation crossing a threshold, and a roll's own outcome calling for a further roll —
+combat's attack/damage/armour/critical chain is the second shape's own worked example); partial
+reroll (a player spending Fortune/Resolve/the Bargain against one step of a proposed result,
+without disturbing what didn't depend on it); and Omen carryover (a pending ±10 modifier crossing
+more than one of an actor's own rolls, whether inside one batch or across separately committed
+ones).
 
 ---
 
@@ -99,18 +98,30 @@ no longer resolves — as if the roll had never been proposed.
 
 ## Cascading resolution
 
-**A staged mutation that crosses a threshold spawns a further step inside the same proposal,
-rather than requiring prose to notice the threshold and call the engine again.** Every track
-with a threshold already has its own rule for what happens at it — Taint every 3 points rolls a
-Transformation ([`07-transformations.md`](07-transformations.md)); Trauma past 6 tests on every
-further point, and a failed test rolls an Affliction
-([`08-afflictions.md`](08-afflictions.md)); a Strain gain crossing a multiple of maximum Stamina
-costs Trauma ([ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md)),
-which can itself cross Trauma's own threshold. `propose` checks every mutation it stages against
-its track's threshold rule and, on a crossing, stages the further roll(s) that rule calls for as
-additional steps in the same proposal — recursively, since a sub-roll's own mutation can cross a
-further threshold in turn (Taint's own every-3 spacing already allows more than one crossing from
-a single large gain).
+**A resolved step spawns a further step inside the same proposal whenever the mechanic's own
+rule calls for one, rather than requiring prose to notice and call the engine again.** Two
+distinct triggers produce this, and both stage the same way:
+
+- **A mutation crosses a threshold.** Every track with a threshold already has its own rule for
+  what happens at it — Taint every 3 points rolls a Transformation
+  ([`07-transformations.md`](07-transformations.md)); Trauma past 6 tests on every further point,
+  and a failed test rolls an Affliction ([`08-afflictions.md`](08-afflictions.md)); a Strain gain
+  crossing a multiple of maximum Stamina costs Trauma
+  ([ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md)), which can
+  itself cross Trauma's own threshold; Stamina crossing below `0` rolls a critical
+  ([`05-criticals.md`](05-criticals.md)) — the same shape, one more instance of it, not a
+  special case. `propose` checks every mutation it stages against its field's own threshold rule
+  and, on a crossing, stages the further roll(s) that rule calls for.
+- **A roll's own outcome calls for a further roll**, independent of any mutation or threshold —
+  a landed attack rolling weapon damage is the clearest instance: nothing about the attack roll's
+  own mutation crosses anything; the mechanic's own rule simply says a hit is followed by a
+  damage roll (§ The combat resolution chain, below).
+
+Both stage as additional steps in the same proposal — recursively, since a sub-roll's own
+mutation can cross a further threshold in turn (Taint's own every-3 spacing already allows more
+than one crossing from a single large gain), and a sub-roll's own outcome can call for another
+sub-roll in turn (damage calling for armour, which reduces it before the resulting mutation is
+even computed).
 
 **Each staged step records what it depends on** — the sub-roll a crossing spawns depends on the
 mutation that crossed it, which depends on the roll that produced that mutation. This is what
@@ -129,6 +140,57 @@ explicitly rolled "after the fight, once they have dropped"
 ([`06-aftermath.md`](06-aftermath.md)), a deliberately deferred consequence, not an immediate
 one. Cascading resolution only ever stages what the triggering rule itself says happens
 immediately; a rule that defers its own consequence stays deferred.
+
+### The combat resolution chain
+
+**A landed attack's damage, armour, and any resulting critical are outcome-triggered cascade
+steps, not a threshold crossing** — the second of the two trigger shapes above. Concretely, from
+a single `combat-attack` step:
+
+1. The attack step's own roll data already carries `degrees` (per `03-rules.md` §1's formula,
+   fed the same as any other roll) — **no separate roll decides telling blow**; it is read
+   directly off the attack (or, for a defence roll that lands a blow, the virtual-roll degrees
+   [ADR 0044](../adr/0044-telling-blow-via-a-failed-defence-roll-is-symmetric.md) already
+   computes) crossing 6.
+2. If the roll landed the blow, a `weapon-damage` step is staged, depending on the landing step:
+   rolls the weapon's damage dice, doubled first if step 1 read a telling blow (`03-rules.md` §2:
+   "the order matters").
+3. An `armour` step is staged alongside it, also depending on the landing step: rolls the
+   armour's own dice, independently of the weapon roll.
+4. The two combine into the actual Stamina mutation (`stamina.current -= max(1, damage −
+   armour)`) — not a further roll, just arithmetic over two already-resolved steps.
+5. **That mutation is then checked against Stamina's own threshold**, exactly like any other
+   mutation under cascading resolution's first trigger shape: crossing below `0` stages a
+   `critical` step, which produces a wound-record mutation from whichever damage-type table
+   applies.
+
+Nothing here is a new mechanism — step 5 reuses the threshold-crossing trigger already specified
+above; steps 1–4 are the outcome-triggered shape, staged the same way.
+
+### A worked example: the combat chain, through propose/commit
+
+The same real rolls already played in `30-playtest-transcript.md` §7 and re-checked in §14,
+reused here to show the chain through `propose`/`commit`, not fresh dice: Senna Vask's Round 2
+defence roll (`eff. 30`) against the bounty hunter — roll **86**, a failure that lands the blow,
+and — per ADR 0044's virtual-roll formula — a telling one (`degrees 6`).
+
+- Step `0` (`combat-defence`): roll `86`, fails, lands the blow, `degrees: 6` — telling.
+- Step `1` (`weapon-damage`, depends on step `0`): the bounty hunter's `1d8` — roll **4**,
+  doubled to **8** because step `0` read telling.
+- Step `2` (`armour`, depends on step `0`): Senna's light armour, `1d3` — roll **1**.
+- Mutation, combining steps `1`–`2`: `stamina.current -= max(1, 8 − 1) = 7`. Senna was at `4`
+  (post-Round-1) going in — this mutation crosses `0`, landing at `−3`.
+- Step `3` (`critical`, depends on the Stamina mutation): `1d6` — roll **3**, `+ 3` points below
+  zero `= 6`, `critical-slashing`'s `6–9` band — `slashing-scored`, a wound record with
+  `dread: +1`.
+
+**`propose`** returns all four steps and their mutations in one call — the telling blow, the
+doubled damage, the armour reduction, the Stamina crossing below `0`, and the critical's own
+wound-record mutation — without prose ever separately noticing "this landed, so roll damage" or
+"that took her below 0, so roll a critical." **Committing this proposal** applies all of it
+atomically: Stamina `4 → −3`, plus the wound record — exactly what §14's own hand-worked
+recomputation already found, now shown as one staged, re-derivable proposal instead of a
+sequence of separate manual steps.
 
 ### A worked example: a Taint-threshold cascade into a Transformation
 
