@@ -140,6 +140,8 @@ resolve: {current: 0}        # max is computed (max(taint, trauma) + 3), never s
 taint: 0
 trauma: 0
 strain: 0
+pending_omen: null           # null | +10 | -10 — carries to this character's own next roll,
+                              # across committed proposals, until spent or the scene/fight ends
 hidden_threshold: null       # SECRET — set at first Transformation, never rendered
 fault_line: null
 transformations: []
