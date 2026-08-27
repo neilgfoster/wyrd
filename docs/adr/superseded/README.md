@@ -26,3 +26,4 @@ otherwise, the same way it checks the live index in [`../../README.md`](../../RE
 | | | |
 |---|---|---|
 | [0039](0039-luck-resets-at-the-top-level-arc-boundary.md) | Luck resets to maximum at the start of each top-level arc | Superseded by [ADR 0041](../0041-luck-merges-into-fortune.md) — Luck merged into Fortune |
+| [0045](0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md) | A failed invocation that pushes Strain past a multiple of maximum Stamina costs Trauma | Superseded by [ADR 0047](../0047-strain-threshold-crossing-checks-cumulative-strain.md) — the crossing check must read cumulative Strain, not a before/after delta scoped to one invocation |

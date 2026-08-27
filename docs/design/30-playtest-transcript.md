@@ -828,13 +828,14 @@ bite. Raised as a follow-up issue: the cost structure needs either a Strain cap/
 cost that scales with attempts within a scene, or some other brake — a real design decision, not
 decided here.
 
-**Resolved in [ADR 0045](../adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md):**
-a failed invocation that pushes accumulated Strain past a multiple of the character's maximum
-Stamina now costs 1 Trauma on top of its stated Strain/Resolve cost, with Strain carrying forward
-at its remainder. `specs/057-systems-of-power-spam-brake/check_spam_brake.py` re-runs a comparable
-26-attempt `major`-tier spam sequence and confirms real, non-zero Trauma accrues (13–26 depending
-on the character's maximum Stamina, always crossing the Affliction threshold) where the published
-rule accrued none — that ordinary play and mostly-successful play both stay untouched — and that
+**Resolved in [ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md)**
+(originally [ADR 0045](../adr/superseded/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md),
+corrected per §16 below): a failed invocation that leaves accumulated Strain containing a
+multiple of the character's maximum Stamina now costs 1 Trauma per multiple on top of its stated
+Strain/Resolve cost, with Strain carrying forward at its remainder. `specs/057-systems-of-power-spam-brake/check_spam_brake.py`
+re-runs a comparable 26-attempt `major`-tier spam sequence and confirms real, non-zero Trauma
+accrues where the published rule accrued none — that ordinary play and mostly-successful play
+both stay untouched — and that
 the brake is immune to a rotation exploit an earlier same-power-streak design was not (a
 two-power-alternating re-run of this exact roll sequence produces identical Trauma to spamming one
 power, at every maximum Stamina tested, since the check never reads which power failed). Not
@@ -1284,3 +1285,117 @@ across max Stamina 6–10) already showed.
 
 **What this pass does not prove**: whether a *moderate*-tier spam sequence sits somewhere between
 these two rates was not checked, and is not assumed from either endpoint.
+
+---
+
+## 16. Correcting §10/§14/§15's Trauma figures: the threshold check was letting a success erase a crossing
+
+#178, part of #134. Discussing §15's own headline finding — "only 29% of failures cost Trauma at
+minor tier" — surfaced a real bug in how the threshold check was implemented, not just narrated:
+it compared each failed invocation's own before-and-after Strain (a delta scoped to one roll), so
+if a *success* was the invocation that carried Strain past a multiple of maximum Stamina, no
+failure afterward would ever be charged for that boundary — only for the next one further out.
+§15's own attempt 26 is the case in point: it failed while Strain was already 6.3× maximum
+Stamina, built up almost entirely by successes, and cost zero Trauma under the old check.
+
+**Resolved in [ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md)**,
+superseding [ADR 0045](../adr/superseded/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md):
+the check now reads Strain's *current, cumulative* total on a failure, not a before/after delta —
+`gained = (strain − 1) // max_stamina`. No new bookkeeping is needed: Strain is never reduced on
+a success, so its own magnitude, left alone through any run of them, already carries forward
+everything a failure needs to catch up on. **The original §7/§8/§10/§14/§15 text is not edited**
+— this section states the corrected figures.
+
+### §10/§14's major-tier sequence, corrected (seed `20260842`)
+
+| # | Roll | Result | Strain | Ill Omen | Taint | Trauma |
+|---|---|---|---|---|---|---|
+| 1 | 73 | fail | 2 | no | 0 | 1 |
+| 2 | 32 | fail | 4 | no | 0 | 2 |
+| 3 | 84 | fail | 6 | no | 0 | 3 |
+| 4 | 51 | fail | 2 | no | 0 | 5 (+2) |
+| 5 | 44 | fail | 4 | no | 0 | 6 |
+| 6 | 19 | fail | 6 | no | 0 | 7 |
+| 7 | 19 | fail | 2 | no | 0 | 3 (+2, Affliction) |
+| 8 | 5 | **success** | 10 | no | 0 | 3 |
+| 9 | 7 | **success** | 18 | no | 0 | 3 |
+| 10 | 33 | fail | 2 | no | 0 | 7 (+4) |
+| 11 | 2 | **success** | 10 | no | 0 | 7 |
+| 12 | 63 | fail | 6 | no | 0 | 3 (+2, Affliction) |
+| 13 | 95 | fail | 2 | no | 0 | 5 (+2) |
+| 14 | 19 | fail | 4 | no | 0 | 6 |
+| 15 | 72 | fail | 6 | no | 0 | 1 (+1, Affliction) |
+| 16 | 43 | fail | 2 | no | 0 | 3 (+2) |
+| 17 | 45 | fail | 4 | no | 0 | 4 |
+| 18 | 22 | fail | 6 | no | 0 | 5 |
+| 19 | 90 | fail | 2 | **YES** | 4 | 7 (+2) |
+| 20 | 63 | fail | 4 | no | 4 | 8 |
+| 21 | 40 | fail | 6 | **YES** | 8 | 9 |
+| 22 | 25 | fail | 2 | no | 8 | 11 (+2) |
+| 23 | 65 | fail | 4 | no | 8 | 12 |
+| 24 | 21 | fail | 6 | **YES** | 12 | 7 (+1, Affliction) |
+| 25 | 89 | fail | 2 | no | 12 | 3 (+2, Affliction) |
+| 26 | 14 | fail | 4 | no | 12 | 4 |
+
+**23 of 26 fail. Final: Strain 4, Taint 12, Trauma 4 — five Afflictions rolled along the way**
+(attempts 7, 12, 15, 24, 25), against §10/§14's original (uncorrected) figures of Trauma 7 with
+three Afflictions. Taint also lands materially higher (12 vs. 8) — not because the corrected
+check touches Ill Omen at all, but because the same 26 rolls simply produce a different Ill
+Omen/Taint history once the die-bending widening (`03-rules.md` §1, engaging past 3 Taint) has
+more Trauma-crossing events to interact with across the run.
+
+### §15's minor-tier sequence, corrected (seed `20260850`)
+
+| # | Roll | Result | Strain | Trauma |
+|---|---|---|---|---|
+| 1 | 1 | success | 2 | 0 |
+| 2 | 57 | fail | 4 | 0 |
+| 3 | 5 | success | 6 | 0 |
+| 4 | 84 | fail | 2 | 1 (+1) |
+| 5 | 19 | success | 4 | 1 |
+| 6 | 42 | success | 6 | 1 |
+| 7 | 81 | fail | 2 | 2 (+1) |
+| 8 | 45 | success | 4 | 2 |
+| 9 | 13 | success | 6 | 2 |
+| 10 | 3 | success | 8 | 2 |
+| 11 | 96 | fail | 4 | 3 (+1) |
+| 12 | 87 | fail | 6 | 3 |
+| 13 | 21 | success | 8 | 3 |
+| 14 | 62 | fail | 4 | 4 (+1) |
+| 15 | 35 | success | 6 | 4 |
+| 16 | 37 | success | 8 | 4 |
+| 17 | 44 | success | 10 | 4 |
+| 18 | 16 | success | 12 | 4 |
+| 19 | 19 | success | 14 | 4 |
+| 20 | 37 | success | 16 | 4 |
+| 21 | 26 | success | 18 | 4 |
+| 22 | 46 | success | 20 | 4 |
+| 23 | 26 | success | 22 | 4 |
+| 24 | 39 | success | 24 | 4 |
+| 25 | 41 | success | 26 | 4 |
+| 26 | 58 | fail | 4 | 2 (+4, Affliction) |
+
+**Attempt 26 is the case that found the bug: it failed while Strain (26, before this roll's own
++2) was already 4.3× maximum Stamina — built almost entirely by the run of successes from
+attempts 15–25 — and now correctly charges 4 Trauma in one go, crossing the Affliction floor and
+triggering a real Affliction roll. Total Trauma gained across the run: 8** (against §15's original
+figure of 2), netted to a **final Trauma of 2** after that one Affliction's `−6`. `7/26` still
+fail, matching the original fail count exactly — the correction changes *how much a failure that
+already happened costs*, not the odds of failing.
+
+### Findings
+
+**A real, previously-undetected implementation gap, found by re-reading a playtest result rather
+than by inspecting the rule in the abstract.** The corrected check produces meaningfully more
+Trauma in both sequences — confirming the erasure §15 exposed was real, not a hypothetical, and
+that it specifically favoured the case the fix was named for in the first place: a skilled,
+mostly-successful character. `specs/057-systems-of-power-spam-brake/check_spam_brake.py`
+re-verifies every property ADR 0045 originally established (real Trauma on spam across the whole
+maximum-Stamina range, zero on ordinary play, immunity to the #172 rotation exploit) still holds
+under the corrected check, plus a new direct demonstration that the corrected check never gives
+*less* Trauma than the superseded one on the same rolls, and gives strictly more on both of these
+sequences specifically.
+
+**No new design decision beyond the correction itself.** ADR 0047 changes only how the crossing
+is detected — failure-only gating, the maximum-Stamina modulus, the remainder-carry-forward
+shape, and the disabled-track degradation are all unchanged from ADR 0045.

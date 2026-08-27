@@ -49,24 +49,30 @@ applies; the declared `resolve_cost`, if present, applies identically. Failing a
 costs what attempting it costs — the same shape any strenuous, risky effort already has in this
 engine.
 
-**A failed invocation that pushes accumulated Strain past a multiple of the character's maximum
-Stamina costs Trauma on top of that.** Strain still accrues exactly as above, win or lose; only a
-*failed* invocation is checked against the threshold — a success that happens to cross the same
-multiple costs nothing extra. When a failed invocation's resulting Strain crosses one or more
-multiples of maximum Stamina, the character gains 1 Trauma per multiple crossed, through the
-engine's existing Trauma-gain list ([`03-rules.md`](03-rules.md) §5) — the same rate "1 per failed
-Terror test" already uses, not a new one — and Strain carries forward at its remainder past the
-last multiple crossed, the same "further point past the floor" shape Trauma's own Affliction test
-already uses ([`08-afflictions.md`](08-afflictions.md)), not reset to zero outright. This composes
-with `strain_cost`/`resolve_cost` unchanged — it does not replace them, and it is not itself
-scaled by `intensity_tiers` (the tier's own `cost_multiplier`/`ill_omen_taint_bonus` already price
-ambition on the Strain/Taint side; a bigger `strain_cost` per attempt simply reaches the threshold
-sooner, without any separate scaling rule needed here). Strain's own reset at a Rally is
-unaffected — this brake targets the one thing that reset let pass consequence-free: retrying a
-failing declaration, over and over, before the Rally arrives — and because the check reads only
-the character's own Strain total and maximum Stamina, never which system of power produced the
-failure, it applies identically whether the same power is retried or a player rotates between
-several known systems of power ([ADR 0045](../adr/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md)).
+**A failed invocation that leaves accumulated Strain containing a multiple of the character's
+maximum Stamina costs Trauma on top of that.** Strain still accrues exactly as above, win or
+lose; only a *failed* invocation is checked against the threshold — a success that happens to
+carry Strain past a multiple costs nothing extra at the moment it is rolled, but that multiple is
+not forgiven: Strain itself is never reduced on a success, so it keeps accumulating,
+unexamined, through any run of them. **The check reads Strain's current, cumulative total, not a
+before/after delta scoped to the one invocation that just resolved** — the first failure that
+comes along, however long after, gains 1 Trauma per multiple of maximum Stamina its own
+resolution leaves outstanding, catching up on everything a run of successes silently carried past
+in between, not only the span since its own immediately-prior roll. Strain carries forward at its
+remainder past the highest multiple charged, the same "further point past the floor" shape
+Trauma's own Affliction test already uses ([`08-afflictions.md`](08-afflictions.md)), not reset
+to zero outright. This composes with `strain_cost`/`resolve_cost` unchanged — it does not replace
+them, and it is not itself scaled by `intensity_tiers` (the tier's own `cost_multiplier`/
+`ill_omen_taint_bonus` already price ambition on the Strain/Taint side; a bigger `strain_cost` per
+attempt simply reaches a multiple sooner, without any separate scaling rule needed here). Strain's
+own reset at a Rally is unaffected — this brake targets the one thing that reset let pass
+consequence-free: retrying a failing declaration, over and over, before the Rally arrives — and
+because the check reads only the character's own Strain total and maximum Stamina, never which
+system of power produced the failure, it applies identically whether the same power is retried or
+a player rotates between several known systems of power
+([ADR 0047](../adr/0047-strain-threshold-crossing-checks-cumulative-strain.md), superseding
+[ADR 0045](../adr/superseded/0045-failed-invocation-crossing-max-stamina-in-strain-costs-trauma.md)'s
+narrower before/after check, which let a success permanently erase a crossing).
 
 **When a setting has disabled Strain and/or Trauma** (`overrides.disable`,
 [`24-authoring-a-setting.md`](24-authoring-a-setting.md)), this brake applies no consequence at
