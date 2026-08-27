@@ -678,19 +678,24 @@ Two paired scores, because a one-way meter is a worse model than a balance.
 
 **Resolve recovers at the same cadence Strain already uses: +1 at a Rally, and back up to its
 cap at a downtime** — the same rate ADR 0020 already fixed for Stamina and Strain, reused rather
-than a third number invented for a third track. **Resolve's cap is the character's current Taint
-plus 3** — one threshold-interval of headroom, the same spacing that already governs
-Transformations (§4 below), so a fully-rested character always has real Resolve to spend down
-before reaching Taint, not a cap that sits exactly on the Spent line it is meant to measure the
-distance to
-([ADR 0043](../adr/0043-resolve-recovers-at-a-rally-capped-by-taint.md),
+than a third number invented for a third track. **Resolve counters both Taint and Trauma —
+its cap is the higher of the character's current Taint or Trauma, plus 3** — one
+threshold-interval of headroom, the same spacing that already governs Transformations (§4
+below), so a fully-rested character always has real Resolve to spend down before reaching
+whichever of the two is currently more demanding, not a cap that sits exactly on the Spent line
+it is meant to measure the distance to
+([ADR 0049](../adr/0049-resolve-counters-both-taint-and-trauma.md),
 [`check_resolve.py`](../../specs/052-resolve-recovery-mechanic/check_resolve.py)).
 
-**When Resolve falls to equal Taint, the character is Spent** — they will not press a
-struggle and will withdraw from danger. **At Taint 0 they can never be Spent, however tired** —
-stated as its own rule, not derived from the cap formula: a character who has accrued no Taint
-at all has nothing yet for Resolve to be a counterweight *to*, so the state is exempted outright
-rather than left to a formula that would otherwise make it reachable at Taint 0 too.
+**When Resolve falls to meet whichever of Taint or Trauma is higher, the character is Spent** —
+they will not press a struggle and will withdraw from danger, whichever burden is behind it.
+**At Taint 0 they can never be Spent-via-Taint; at Trauma 0 they can never be Spent-via-Trauma,
+however tired** — stated as its own rule for each, not derived from the cap formula: a
+character who has accrued neither has nothing yet for Resolve to be a counterweight *to* on that
+axis, so each is exempted outright rather than left to a formula that would otherwise make it
+reachable at 0 too. Overall Spent is true whenever either un-exempted axis reaches it — a
+character can be Spent purely from Trauma with no Taint at all, or purely from Taint with no
+Trauma at all, or from neither if both sit at 0.
 
 The same Taint score therefore means different things at different times, and recovery is
 part of the loop rather than an afterthought.

@@ -1,7 +1,7 @@
 # ADR 0043 — Resolve recovers at a Rally, capped at Taint plus 3
 
 **Date:** 2026-08-27
-**Status:** Accepted
+**Status:** Superseded by [ADR 0049](../0049-resolve-counters-both-taint-and-trauma.md)
 
 ## Context
 
