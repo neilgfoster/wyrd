@@ -134,10 +134,9 @@ career: <career-id>
 career_history: []
 skills: {}                   # name -> percentage
 stamina: {current: 0, max: 0}
-luck: {current: 0, max: 0}
 fate: {current: 0, max: 0}
 fortune: {current: 0}
-resolve: {current: 0, max: 0}
+resolve: {current: 0}        # max is computed (max(taint, trauma) + 3), never stored — ADR 0049
 taint: 0
 trauma: 0
 strain: 0
