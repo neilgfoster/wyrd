@@ -121,12 +121,40 @@ setting, the entities it has created itself, its log, and its recap
 
 ## Memory tiers
 
-By session 40 the log is far larger than any context window. Three tiers:
+By session 40 the log is far larger than any context window. Three tiers, each backed by a
+named CLI command rather than left as a manifest the GM assembles by hand:
 
-1. **Always loaded** — `chronicle.yaml`, the player character, present companions, hot
-   threads, `recap.md`, plus the engine contract. Chosen by **query, not manifest**. Target: a few thousand tokens.
-2. **On demand** — any other entity, fetched by id or name when a scene needs them.
+1. **Always loaded** — `chronicle.yaml`, the player character, companions with
+   `status: with-party`, threads with `heat ≥ 3`, `recap.md`, plus the engine contract —
+   [`22-state.md`](22-state.md)'s own "Load policy" table, restated here as a command rather
+   than left as a table with no CLI behind it. Chosen by **query, not manifest**:
+   `wyrd session-context` runs exactly that query and returns all of it as one structured
+   result. Target: a few thousand tokens. This is a narrower slice than the *general* open-thread
+   set below — a thread can be `status: open` without being hot enough to load automatically.
+2. **On demand** — any other entity, fetched by id or by query when a scene needs them.
+   `wyrd get <id>` resolves one entity to its **effective** form (`setting/<id>` +
+   `overlay/<id>`, or `entities/<id>` if chronicle-native — [`22-state.md`](22-state.md)'s
+   existing definition, unchanged here). `wyrd find --type T [--status S] [--tag G]` runs a
+   general query when the id isn't known; `wyrd party`, `wyrd threads`, and `wyrd threats` are
+   thin named wrappers over `find`, for the query patterns [`22-state.md`](22-state.md) already
+   names as queries rather than files — `party` is `role: companion` + `status: with-party`,
+   `threads` is the *full* `status: open` set ordered by `heat` (broader than session-context's
+   `heat ≥ 3` slice — this is the general query, not the always-loaded one), `threats` is
+   entities with a `threat` block and `imminence > 0` — so a lightweight model reaches for a
+   name it already knows instead of constructing the right filter arguments from scratch.
+   Fetching an id that doesn't resolve is an error, distinct from a `find` that legitimately
+   matches nothing.
 3. **Archival** — `log/`. Rarely read; exists so the history is recoverable and auditable.
+   `wyrd log --last N` or `wyrd log --since <beat>` reads it, in beat order. **Full-text or
+   semantic search over the log is explicitly deferred** — the tier is rarely read by design,
+   `--last`/`--since` already covers the real common need (recent history), and search over
+   years of log history is a materially bigger, separately-scoped feature with its own indexing
+   question, not a corollary of this one.
+
+Every query/fetch command above returns **structured, machine-parseable output by default** —
+the same "full structured result" shape `wyrd roll` already uses. Rendering any of it
+diegetically for the player is a GM-contract/skill concern (§ Code versus prose below), not the
+CLI's — the CLI states facts, prose tells the story.
 
 **Compaction** runs at session end: what mattered is promoted into the entity store and the recap
 is regenerated. This is the step that makes multi-year play possible, and it must be
@@ -147,6 +175,16 @@ wyrd save / wyrd load / wyrd validate  # atomic writes, schema validation
 wyrd recap                             # regenerate recap.md from state
 wyrd doctor [--repair|--propose]       # chronicle health: integrity, decay, budget
 wyrd optimise                          # reindex, recompact, canonicalise
+
+wyrd session-context                   # the Always-loaded tier, one call: player character,
+                                        # present companions, open threads, recap, contract
+wyrd get <id>                          # one entity, resolved to its effective form; errors on
+                                        # an id that doesn't resolve
+wyrd find --type T [--status S] [--tag G]   # entities matching every given filter
+wyrd party                             # role:companion, status:with-party — a named `find`
+wyrd threads                           # status:open threads, ordered by heat — a named `find`
+wyrd threats                           # entities with an active threat block — a named `find`
+wyrd log --last N | --since <beat>     # Archival tier, in beat order; no full-text search (deferred)
 ```
 
 Maintenance is a first-class engine function, not a chore — see
