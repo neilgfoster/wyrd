@@ -81,6 +81,35 @@ class OpposedTestVerbTest(unittest.TestCase):
         second = verbs.opposed_test(skill=70, opponent=30, seed=42)
         self.assertEqual(first, second)
 
+    def test_passes_declaration_and_helper_through(self):
+        result = verbs.opposed_test(
+            skill=50, opponent=50, declaration="specific", helper_skill=45, seed=1
+        )
+        self.assertEqual(result["effective_pct"], 64)
+
+
+class DeclarationBonusVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.declaration_bonus("specific")
+        self.assertEqual(result["verb"], "declaration-bonus")
+        self.assertEqual(result["category"], "specific")
+        self.assertEqual(result["bonus"], 10)
+        self.assertFalse(result["no_roll"])
+
+    def test_removes_risk_shape(self):
+        result = verbs.declaration_bonus("removes_risk")
+        self.assertIsNone(result["bonus"])
+        self.assertTrue(result["no_roll"])
+
+
+class AssistanceBonusVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.assistance_bonus(45)
+        self.assertEqual(result["verb"], "assistance-bonus")
+        self.assertEqual(result["helper_skill"], 45)
+        self.assertTrue(result["can_attempt"])
+        self.assertEqual(result["bonus"], 4)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -45,14 +45,82 @@ def _wyrd_die(natural_roll: int) -> str:
     return "none"
 
 
-def opposed_test(skill: int, opponent: int, seed: int | None = None) -> dict:
+#: docs/design/03-rules.md "Declaration" subsection. `None` is the sentinel for "so
+#: well-judged it removes the risk" -- not a numeric bonus, a signal to skip the roll entirely.
+DECLARATION_BONUSES = {
+    "specific": 10,
+    "specific_leveraging": 20,
+    "brief": 0,
+    "against_nature": -20,
+    "removes_risk": None,
+}
+
+
+def declaration_bonus(category: str) -> int | None:
+    """Look up a declaration category's fixed point value (or `None` for "no roll").
+
+    Never derives a value from length -- the caller (GM/model) judges which category a
+    declared action falls into; this function only holds the closed table of point values
+    (docs/design/27-tooling.md's deterministic-over-inference split).
+    """
+    if category not in DECLARATION_BONUSES:
+        raise ValueError(f"no such category: {category}")
+    return DECLARATION_BONUSES[category]
+
+
+def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> int:
+    """A helper's contribution: a tenth of their own skill, rounded down, capped at +10.
+
+    Zero if they could not attempt the task alone (docs/design/03-rules.md "Assistance":
+    "someone who could not attempt it alone cannot improve someone who is attempting it").
+    Whether they could attempt it is supplied by the caller, not derived here.
+    """
+    if not can_attempt:
+        return 0
+    return min(helper_skill // 10, 10)
+
+
+def opposed_test(
+    skill: int,
+    opponent: int,
+    seed: int | None = None,
+    declaration: str | None = None,
+    helper_skill: int | None = None,
+    helper_can_attempt: bool = True,
+) -> dict:
     """Resolve a single player-facing opposed test (docs/design/03-rules.md "Opposed tests").
 
     One roll, on the acting side only -- the opponent's dice are never consulted. Degrees of
     success are reported only when the roll succeeds; a failure "simply fails the action"
     with no degrees comparison performed. The Wyrd die is read independently of success.
+
+    `declaration` and `helper_skill` are optional modifiers (specs/077-declaration-assistance)
+    added to `skill` before `effective_pct` is computed. Calling with neither is identical to
+    calling this function before those modifiers existed -- no default behavior change.
+    `declaration == "removes_risk"` skips the roll entirely and reports automatic success.
     """
-    effective_pct = max(5, min(95, 50 + (skill - opponent)))
+    bonus_from_declaration = declaration_bonus(declaration) if declaration is not None else 0
+    if bonus_from_declaration is None:  # "removes_risk"
+        return {
+            "verb": "opposed-test",
+            "skill": skill,
+            "opponent": opponent,
+            "declaration": declaration,
+            "helper_skill": helper_skill,
+            "effective_pct": None,
+            "roll": None,
+            "success": True,
+            "degrees": None,
+            "wyrd": "none",
+            "no_roll": True,
+            "seed": seed,
+        }
+
+    bonus_from_assistance = (
+        assistance_bonus(helper_skill, helper_can_attempt) if helper_skill is not None else 0
+    )
+    effective_skill = skill + bonus_from_declaration + bonus_from_assistance
+    effective_pct = max(5, min(95, 50 + (effective_skill - opponent)))
     roll = roll_d100(sides=100, seed=seed)
     wyrd = _wyrd_die(roll)
     success = roll <= effective_pct
@@ -61,10 +129,13 @@ def opposed_test(skill: int, opponent: int, seed: int | None = None) -> dict:
         "verb": "opposed-test",
         "skill": skill,
         "opponent": opponent,
+        "declaration": declaration,
+        "helper_skill": helper_skill,
         "effective_pct": effective_pct,
         "roll": roll,
         "success": success,
         "degrees": degrees,
         "wyrd": wyrd,
+        "no_roll": False,
         "seed": seed,
     }

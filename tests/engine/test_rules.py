@@ -8,6 +8,7 @@ from __future__ import annotations
 import pathlib
 import sys
 import unittest
+import unittest.mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
@@ -137,6 +138,97 @@ class OpposedTestTest(unittest.TestCase):
         first = rules.opposed_test(skill=70, opponent=30, seed=42)
         second = rules.opposed_test(skill=70, opponent=30, seed=42)
         self.assertEqual(first, second)
+
+
+class DeclarationBonusTest(unittest.TestCase):
+    def test_specific(self):
+        self.assertEqual(rules.declaration_bonus("specific"), 10)
+
+    def test_specific_leveraging(self):
+        self.assertEqual(rules.declaration_bonus("specific_leveraging"), 20)
+
+    def test_brief_is_zero_not_missing(self):
+        self.assertEqual(rules.declaration_bonus("brief"), 0)
+
+    def test_against_nature(self):
+        self.assertEqual(rules.declaration_bonus("against_nature"), -20)
+
+    def test_removes_risk_is_none_sentinel(self):
+        self.assertIsNone(rules.declaration_bonus("removes_risk"))
+
+    def test_unrecognized_category_raises(self):
+        with self.assertRaises(ValueError):
+            rules.declaration_bonus("bogus")
+
+
+class AssistanceBonusTest(unittest.TestCase):
+    def test_thirty_percent(self):
+        self.assertEqual(rules.assistance_bonus(30), 3)
+
+    def test_forty_five_percent_rounds_down(self):
+        self.assertEqual(rules.assistance_bonus(45), 4)
+
+    def test_ninety_percent_not_capped_yet(self):
+        self.assertEqual(rules.assistance_bonus(90), 9)
+
+    def test_hundred_percent_capped_at_ten(self):
+        self.assertEqual(rules.assistance_bonus(100), 10)
+
+    def test_all_multiples_of_ten(self):
+        for skill in range(0, 101, 10):
+            self.assertEqual(rules.assistance_bonus(skill), min(skill // 10, 10))
+
+    def test_cannot_attempt_zeroes_the_bonus(self):
+        self.assertEqual(rules.assistance_bonus(100, can_attempt=False), 0)
+
+
+class OpposedTestModifiersTest(unittest.TestCase):
+    def test_no_modifiers_matches_pre_223_shape_and_values(self):
+        # Same skill/opponent/seed as #222's own test_seed_reproducibility -- confirms the
+        # existing three-argument call is unaffected by this feature's new parameters.
+        result = rules.opposed_test(skill=70, opponent=30, seed=42)
+        self.assertEqual(result["effective_pct"], 90)
+        self.assertIsNone(result["declaration"])
+        self.assertIsNone(result["helper_skill"])
+        self.assertFalse(result["no_roll"])
+
+    def test_no_modifiers_is_stable_across_many_calls(self):
+        for skill in range(0, 101, 5):
+            for opponent in range(0, 101, 5):
+                with_defaults = rules.opposed_test(skill=skill, opponent=opponent, seed=1)
+                explicit_none = rules.opposed_test(
+                    skill=skill, opponent=opponent, seed=1, declaration=None, helper_skill=None
+                )
+                self.assertEqual(with_defaults, explicit_none)
+
+    def test_declaration_and_assistance_compose_into_effective_pct(self):
+        result = rules.opposed_test(
+            skill=50, opponent=50, declaration="specific", helper_skill=45, seed=1
+        )
+        self.assertEqual(result["effective_pct"], 64)  # 50 + 10 + 4
+
+    def test_removes_risk_produces_no_roll_and_automatic_success(self):
+        with unittest.mock.patch("wyrd.rules.roll_d100") as mock_roll:
+            result = rules.opposed_test(skill=50, opponent=50, declaration="removes_risk")
+        mock_roll.assert_not_called()
+        self.assertTrue(result["no_roll"])
+        self.assertTrue(result["success"])
+        self.assertIsNone(result["roll"])
+        self.assertIsNone(result["effective_pct"])
+        self.assertIsNone(result["degrees"])
+
+    def test_unrecognized_declaration_raises_before_any_roll(self):
+        with unittest.mock.patch("wyrd.rules.roll_d100") as mock_roll:
+            with self.assertRaises(ValueError):
+                rules.opposed_test(skill=50, opponent=50, declaration="bogus")
+        mock_roll.assert_not_called()
+
+    def test_helper_who_cannot_attempt_contributes_nothing(self):
+        with_helper = rules.opposed_test(
+            skill=50, opponent=50, helper_skill=100, helper_can_attempt=False, seed=1
+        )
+        without_helper = rules.opposed_test(skill=50, opponent=50, seed=1)
+        self.assertEqual(with_helper["effective_pct"], without_helper["effective_pct"])
 
 
 if __name__ == "__main__":

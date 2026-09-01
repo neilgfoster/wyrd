@@ -40,8 +40,34 @@ def _build_parser() -> argparse.ArgumentParser:
         opposed_parser.add_argument("--skill", type=int, required=True)
         opposed_parser.add_argument("--opponent", type=int, required=True)
         opposed_parser.add_argument("--seed", type=int, default=None)
+        opposed_parser.add_argument("--declaration", default=None)
+        opposed_parser.add_argument("--helper-skill", type=int, default=None)
+        opposed_parser.add_argument(
+            "--helper-cannot-attempt", dest="helper_can_attempt", action="store_false"
+        )
+
+    if "declaration-bonus" in TOOLS:
+        declaration_parser = subparsers.add_parser(
+            "declaration-bonus", help=TOOLS["declaration-bonus"]["description"]
+        )
+        declaration_parser.add_argument("--category", required=True)
+
+    if "assistance-bonus" in TOOLS:
+        assistance_parser = subparsers.add_parser(
+            "assistance-bonus", help=TOOLS["assistance-bonus"]["description"]
+        )
+        assistance_parser.add_argument("--helper-skill", type=int, required=True)
+        assistance_parser.add_argument("--can-attempt", type=_parse_bool, default=True)
 
     return parser
+
+
+def _parse_bool(text: str) -> bool:
+    if text.lower() in ("true", "1", "yes"):
+        return True
+    if text.lower() in ("false", "0", "no"):
+        return False
+    raise argparse.ArgumentTypeError(f"expected a boolean, got {text!r}")
 
 
 def _run_describe(args: argparse.Namespace) -> dict:
@@ -61,7 +87,28 @@ def _run_roll(args: argparse.Namespace) -> dict:
 
 
 def _run_opposed_test(args: argparse.Namespace) -> dict:
-    return verbs.opposed_test(skill=args.skill, opponent=args.opponent, seed=args.seed)
+    try:
+        return verbs.opposed_test(
+            skill=args.skill,
+            opponent=args.opponent,
+            seed=args.seed,
+            declaration=args.declaration,
+            helper_skill=args.helper_skill,
+            helper_can_attempt=args.helper_can_attempt,
+        )
+    except ValueError as exc:
+        return {"error": {"verb": "opposed-test", "reason": str(exc)}}
+
+
+def _run_declaration_bonus(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.declaration_bonus(args.category)
+    except ValueError as exc:
+        return {"error": {"verb": "declaration-bonus", "reason": str(exc)}}
+
+
+def _run_assistance_bonus(args: argparse.Namespace) -> dict:
+    return verbs.assistance_bonus(helper_skill=args.helper_skill, can_attempt=args.can_attempt)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -74,6 +121,10 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_roll(args)
     elif args.verb == "opposed-test":
         result = _run_opposed_test(args)
+    elif args.verb == "declaration-bonus":
+        result = _run_declaration_bonus(args)
+    elif args.verb == "assistance-bonus":
+        result = _run_assistance_bonus(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

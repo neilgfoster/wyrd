@@ -52,8 +52,72 @@ TOOLS: dict[str, dict] = {
                 "skill": {"type": "integer"},
                 "opponent": {"type": "integer"},
                 "seed": {"type": "integer"},
+                "declaration": {
+                    "type": "string",
+                    "enum": [
+                        "specific",
+                        "specific_leveraging",
+                        "brief",
+                        "against_nature",
+                        "removes_risk",
+                    ],
+                },
+                "helper_skill": {"type": "integer", "minimum": 0, "maximum": 100},
+                "helper_can_attempt": {"type": "boolean", "default": True},
             },
             "required": ["skill", "opponent"],
+        },
+    },
+    "declaration-bonus": {
+        "name": "declaration-bonus",
+        "description": (
+            "Look up the fixed point value for a declaration category (specific, "
+            "specific_leveraging, brief, against_nature, removes_risk). Never derives a "
+            "bonus from length -- the caller judges the category from the actual "
+            "declared action."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "enum": [
+                        "specific",
+                        "specific_leveraging",
+                        "brief",
+                        "against_nature",
+                        "removes_risk",
+                    ],
+                },
+            },
+            "required": ["category"],
+        },
+    },
+    "assistance-bonus": {
+        "name": "assistance-bonus",
+        "description": (
+            "Look up a helper's assistance bonus: a tenth of their own skill, rounded "
+            "down, capped at +10. Zero if they could not attempt the task alone."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "helper_skill": {"type": "integer", "minimum": 0, "maximum": 100},
+                "can_attempt": {"type": "boolean", "default": True},
+            },
+            "required": ["helper_skill"],
         },
     },
 }

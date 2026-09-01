@@ -27,6 +27,8 @@ def to_text(obj: dict) -> str:
     if obj.get("verb") == "roll":
         return f"d{obj['sides']}: {obj['result']}"
     if obj.get("verb") == "opposed-test":
+        if obj.get("no_roll"):
+            return "opposed-test: success (no roll -- the plan simply works)"
         outcome = "success" if obj["success"] else "failure"
         detail = (
             f"degrees {obj['degrees']}, wyrd: {obj['wyrd']}"
@@ -34,6 +36,12 @@ def to_text(obj: dict) -> str:
             else f"wyrd: {obj['wyrd']}"
         )
         return f"opposed-test: {outcome} ({detail})"
+    if obj.get("verb") == "declaration-bonus":
+        if obj["no_roll"]:
+            return f"declaration-bonus: {obj['category']} (no roll)"
+        return f"declaration-bonus: {obj['category']} ({obj['bonus']:+d})"
+    if obj.get("verb") == "assistance-bonus":
+        return f"assistance-bonus: helper {obj['helper_skill']}% -> {obj['bonus']:+d}"
     if obj.get("verb") == "describe":
         tools = obj.get("tools", [])
         return ", ".join(tool["name"] for tool in tools) if tools else "(no tools)"

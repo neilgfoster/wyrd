@@ -25,36 +25,36 @@ None needed — extends #221/#222's existing modules directly.
 
 ## Phase 2: Tests (write first, confirm they fail)
 
-- [ ] T001 [P] [US1] Add to `tests/engine/test_rules.py`: `declaration_bonus("specific")` == 10,
+- [x] T001 [P] [US1] Add to `tests/engine/test_rules.py`: `declaration_bonus("specific")` == 10,
       `declaration_bonus("specific_leveraging")` == 20, `declaration_bonus("brief")` == 0,
       `declaration_bonus("against_nature")` == -20, `declaration_bonus("removes_risk")` is
       `None` (SC-001); `declaration_bonus("bogus")` raises `ValueError` (FR-002)
-- [ ] T002 [P] [US2] Add to `tests/engine/test_rules.py`: `assistance_bonus(30)` == 3,
+- [x] T002 [P] [US2] Add to `tests/engine/test_rules.py`: `assistance_bonus(30)` == 3,
       `assistance_bonus(45)` == 4, `assistance_bonus(100)` == 10 (cap binds, not coincidence —
       also check `assistance_bonus(90)` == 9 to confirm the cap isn't hit early), across all of
       0/10/.../100 (SC-002); `assistance_bonus(100, can_attempt=False)` == 0
-- [ ] T003 [US3] Add to `tests/engine/test_rules.py`: `opposed_test(skill=70, opponent=30,
+- [x] T003 [US3] Add to `tests/engine/test_rules.py`: `opposed_test(skill=70, opponent=30,
       seed=1)` (no new kwargs) produces byte-identical output to the pre-#223 call across 100
       (skill, opponent, seed) triples, proving no behavior change for existing callers (SC-003,
       FR-005) — depends on T001/T002 existing so `opposed_test`'s signature already has the new
       parameters to call without them
-- [ ] T004 [US3] Add to `tests/engine/test_rules.py`: `opposed_test(skill=50, opponent=50,
+- [x] T004 [US3] Add to `tests/engine/test_rules.py`: `opposed_test(skill=50, opponent=50,
       declaration="specific", helper_skill=45, seed=1)` has `effective_pct == 64` (50+10+4,
       clipped as #222 already clips); `declaration="removes_risk"` produces `no_roll: True,
       success: True, roll: None, effective_pct: None, degrees: None` and calls the dice
       primitive zero times (mock `rules.roll_d100` and assert not called, SC-004); an
       unrecognized `declaration` raises before any roll happens
-- [ ] T005 [P] [US1] Add to `tests/engine/test_verbs.py`: `verbs.declaration_bonus("specific")`
+- [x] T005 [P] [US1] Add to `tests/engine/test_verbs.py`: `verbs.declaration_bonus("specific")`
       returns the shape from data-model.md
-- [ ] T006 [P] [US2] Add to `tests/engine/test_verbs.py`: `verbs.assistance_bonus(45)` returns
+- [x] T006 [P] [US2] Add to `tests/engine/test_verbs.py`: `verbs.assistance_bonus(45)` returns
       the shape from data-model.md
-- [ ] T007 [P] [US1] Add to `tests/engine/test_client.py`: `describe --name declaration-bonus`
+- [x] T007 [P] [US1] Add to `tests/engine/test_client.py`: `describe --name declaration-bonus`
       matches contracts/cli.md; `declaration-bonus --category specific_leveraging` returns
       `{"bonus": 20, ...}`; `declaration-bonus --category bogus` returns a structured error
-- [ ] T008 [P] [US2] Add to `tests/engine/test_client.py`: `describe --name assistance-bonus`
+- [x] T008 [P] [US2] Add to `tests/engine/test_client.py`: `describe --name assistance-bonus`
       matches contracts/cli.md; `assistance-bonus --helper-skill 45` returns `{"bonus": 4, ...}`;
       `--can-attempt false` zeroes the bonus
-- [ ] T009 [US3] Add to `tests/engine/test_client.py`: `opposed-test --skill 50 --opponent 50
+- [x] T009 [US3] Add to `tests/engine/test_client.py`: `opposed-test --skill 50 --opponent 50
       --declaration specific --helper-skill 45 --seed 1` returns `effective_pct: 64`;
       `--declaration removes_risk` returns `no_roll: true, roll: null`
 
@@ -62,37 +62,37 @@ None needed — extends #221/#222's existing modules directly.
 
 ## Phase 3: Implementation
 
-- [ ] T010 [P] [US1] Implement `DECLARATION_BONUSES` dict and `declaration_bonus(category: str)
+- [x] T010 [P] [US1] Implement `DECLARATION_BONUSES` dict and `declaration_bonus(category: str)
       -> int | None` in `engine/wyrd/rules.py`, raising `ValueError` for an unrecognized category
-- [ ] T011 [P] [US2] Implement `assistance_bonus(helper_skill: int, can_attempt: bool = True) ->
+- [x] T011 [P] [US2] Implement `assistance_bonus(helper_skill: int, can_attempt: bool = True) ->
       int` in `engine/wyrd/rules.py`: `min(helper_skill // 10, 10)` if `can_attempt` else `0`
-- [ ] T012 [US3] Extend `opposed_test` in `engine/wyrd/rules.py` with `declaration: str | None =
+- [x] T012 [US3] Extend `opposed_test` in `engine/wyrd/rules.py` with `declaration: str | None =
       None`, `helper_skill: int | None = None`, `helper_can_attempt: bool = True`: when
       `declaration == "removes_risk"`, return immediately with `no_roll: True` and no call to
       `roll_d100`; otherwise sum `declaration_bonus(declaration)` (if supplied) and
       `assistance_bonus(helper_skill, helper_can_attempt)` (if `helper_skill` supplied) into the
       skill used for `effective_pct`, and include `declaration`/`helper_skill`/`no_roll: False`
       in the result — depends on T010, T011
-- [ ] T013 [P] [US1] Add `declaration-bonus` to `TOOLS` in `engine/wyrd/catalog.py`, matching
+- [x] T013 [P] [US1] Add `declaration-bonus` to `TOOLS` in `engine/wyrd/catalog.py`, matching
       contracts/cli.md
-- [ ] T014 [P] [US2] Add `assistance-bonus` to `TOOLS` in `engine/wyrd/catalog.py`, matching
+- [x] T014 [P] [US2] Add `assistance-bonus` to `TOOLS` in `engine/wyrd/catalog.py`, matching
       contracts/cli.md
-- [ ] T015 [US3] Extend the `opposed-test` entry's `inputSchema` in `catalog.py` with the three
+- [x] T015 [US3] Extend the `opposed-test` entry's `inputSchema` in `catalog.py` with the three
       new optional properties, per contracts/cli.md
-- [ ] T016 [P] [US1] Implement `declaration_bonus(category)` verb wrapper in
+- [x] T016 [P] [US1] Implement `declaration_bonus(category)` verb wrapper in
       `engine/wyrd/verbs.py`
-- [ ] T017 [P] [US2] Implement `assistance_bonus(helper_skill, can_attempt=True)` verb wrapper in
+- [x] T017 [P] [US2] Implement `assistance_bonus(helper_skill, can_attempt=True)` verb wrapper in
       `engine/wyrd/verbs.py`
-- [ ] T018 [US3] Extend the `opposed_test` verb wrapper in `verbs.py` to pass the three new
+- [x] T018 [US3] Extend the `opposed_test` verb wrapper in `verbs.py` to pass the three new
       kwargs through to `rules.opposed_test` — depends on T012
-- [ ] T019 [P] [US1] Add the `declaration-bonus` subcommand to `engine/wyrd/client.py`: `wrap
+- [x] T019 [P] [US1] Add the `declaration-bonus` subcommand to `engine/wyrd/client.py`: `wrap
       ValueError` from an unrecognized category into the structured `{"error": ...}` shape, per
       contracts/cli.md
-- [ ] T020 [P] [US2] Add the `assistance-bonus` subcommand to `client.py`: `--helper-skill`
+- [x] T020 [P] [US2] Add the `assistance-bonus` subcommand to `client.py`: `--helper-skill`
       required int, `--can-attempt` optional bool (default true)
-- [ ] T021 [US3] Extend the `opposed-test` subcommand in `client.py` with `--declaration`,
+- [x] T021 [US3] Extend the `opposed-test` subcommand in `client.py` with `--declaration`,
       `--helper-skill`, `--helper-cannot-attempt` (store-true) — depends on T018
-- [ ] T022 Add `to_text` cases for `declaration-bonus` and `assistance-bonus` results in
+- [x] T022 Add `to_text` cases for `declaration-bonus` and `assistance-bonus` results in
       `engine/wyrd/render.py`, and update the `opposed-test` case to include declaration/
       assistance context when present
 
@@ -102,8 +102,8 @@ None needed — extends #221/#222's existing modules directly.
 
 ## Phase 4: Polish
 
-- [ ] T023 Run every step of `specs/077-declaration-assistance/quickstart.md` by hand and confirm
-- [ ] T024 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
+- [x] T023 Run every step of `specs/077-declaration-assistance/quickstart.md` by hand and confirm
+- [x] T024 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
       tests/engine/`, fix anything flagged
 
 ---
