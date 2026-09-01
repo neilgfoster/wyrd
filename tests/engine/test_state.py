@@ -167,6 +167,14 @@ class ListOfMappingRoundTripTest(unittest.TestCase):
         text = state.dump_yaml(data)
         self.assertEqual(state.parse_yaml(text), data)
 
+    def test_sequence_sharing_parent_key_indentation_parses(self):
+        # Legal YAML lets a sequence sit at its parent key's own indentation rather than
+        # nested under it -- both forms are valid, and a hand-edited file might use either.
+        text = "career_history:\n- soldier\n- wanderer\nskills:\n  stealth: 45\n"
+        parsed = state.parse_yaml(text)
+        self.assertEqual(parsed["career_history"], ["soldier", "wanderer"])
+        self.assertEqual(parsed["skills"], {"stealth": 45})
+
 
 if __name__ == "__main__":
     unittest.main()
