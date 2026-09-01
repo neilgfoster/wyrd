@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import career, character, rules, state
+from wyrd import career, character, creation, rules, state
 
 
 def roll(
@@ -158,3 +158,31 @@ def validate_allocation(
     """Resolve the `validate-allocation` verb."""
     result = career.validate_allocation(actions, career_data, ancestry)
     return {"verb": "validate-allocation", **result}
+
+
+def create_character(
+    path: pathlib.Path,
+    name: str,
+    career_data: dict,
+    actions: list[dict],
+    loyalty: str,
+    mortality: str,
+    fault_line: str,
+    ancestry: dict | None = None,
+    drives: list | None = None,
+    misfortune=None,
+) -> dict:
+    """Resolve the `create-character` verb."""
+    result = creation.create_character(
+        path=path,
+        name=name,
+        career=career_data,
+        actions=actions,
+        loyalty=loyalty,
+        mortality=mortality,
+        fault_line=fault_line,
+        ancestry=ancestry,
+        drives=drives,
+        misfortune=misfortune,
+    )
+    return {"verb": "create-character", **result}

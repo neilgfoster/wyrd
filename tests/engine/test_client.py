@@ -390,5 +390,78 @@ class ValidateAllocationCliTest(unittest.TestCase):
             )
 
 
+class CreateCharacterCliTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = str(pathlib.Path(self._tmp.name) / "aria.md")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "create-character"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "create-character")
+
+    def test_valid_creation_produces_a_loadable_file(self):
+        career_json = json.dumps({"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True})
+        actions_json = json.dumps(
+            [{"action": "open", "skill": "stealth"}, {"action": "open", "skill": "swordplay"}]
+            + [{"action": "raise", "skill": "stealth"}] * 6
+        )
+        exit_code, output = _run(
+            [
+                "create-character",
+                "--path",
+                self.path,
+                "--name",
+                "Aria",
+                "--career-json",
+                career_json,
+                "--actions-json",
+                actions_json,
+                "--loyalty",
+                "the-old-guard",
+                "--mortality",
+                "standard",
+                "--fault-line",
+                "She trusts no one.",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertTrue(payload["valid"])
+        exit_code, load_output = _run(["character-load", "--path", self.path])
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(load_output)["frontmatter"]["name"], "Aria")
+
+    def test_rejected_allocation_writes_no_file(self):
+        career_json = json.dumps({"skills": {"stealth": 55}, "entry_point": True})
+        exit_code, output = _run(
+            [
+                "create-character",
+                "--path",
+                self.path,
+                "--name",
+                "X",
+                "--career-json",
+                career_json,
+                "--actions-json",
+                "[]",
+                "--loyalty",
+                "x",
+                "--mortality",
+                "standard",
+                "--fault-line",
+                "x",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertFalse(payload["valid"])
+        self.assertFalse(pathlib.Path(self.path).exists())
+
+
 if __name__ == "__main__":
     unittest.main()
