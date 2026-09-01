@@ -53,9 +53,12 @@ def _dump_block(data, indent: int, lines: list[str]) -> None:
             if isinstance(value, (dict, list)) and value:
                 lines.append(f"{pad}{key}:")
                 _dump_block(value, indent + 2, lines)
+            elif isinstance(value, dict):
+                lines.append(f"{pad}{key}: {{}}")
+            elif isinstance(value, list):
+                lines.append(f"{pad}{key}: []")
             else:
-                scalar = "{}" if isinstance(value, (dict, list)) else _dump_scalar(value)
-                lines.append(f"{pad}{key}: {scalar}")
+                lines.append(f"{pad}{key}: {_dump_scalar(value)}")
     elif isinstance(data, list):
         for item in data:
             if isinstance(item, dict) and item:
@@ -65,7 +68,7 @@ def _dump_block(data, indent: int, lines: list[str]) -> None:
                 item_lines: list[str] = []
                 _dump_block(item, indent + 2, item_lines)
                 first, *rest = item_lines
-                lines.append(f"{pad}- {first[indent + 2:]}")
+                lines.append(f"{pad}- {first[indent + 2 :]}")
                 lines.extend(rest)
             else:
                 lines.append(f"{pad}- {_dump_scalar(item)}")
@@ -119,7 +122,7 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
             continue
         if text.startswith("- "):
             rest = text[2:].strip()
-            if ":" in rest and not rest.startswith(("\"", "'")):
+            if ":" in rest and not rest.startswith(('"', "'")):
                 key, _, val = rest.partition(":")
                 sub_lines = [(lineno, indent + 2, f"{key.strip()}:{val}")]
                 j = i + 1
@@ -139,7 +142,12 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
         key = key.strip()
         val = val.strip()
         if val:
-            mapping[key] = None if val == "{}" else _scalar(val)
+            if val == "{}":
+                mapping[key] = {}
+            elif val == "[]":
+                mapping[key] = []
+            else:
+                mapping[key] = _scalar(val)
             i += 1
             continue
         j = i + 1
@@ -183,16 +191,9 @@ def default_state() -> dict:
     return {"schema_version": _SCHEMA_VERSION, "last_roll": None}
 
 
-def save(state: dict, path: pathlib.Path = DEFAULT_STATE_PATH) -> None:
-    """Write `state` to `path`, atomically.
-
-    Writes to a temp file in the same directory, then `os.replace()`s it onto `path`. A
-    reader of `path` never observes a partially-written file: it is either the previous
-    fully-valid state, or this fully-valid state (FR-007).
-    """
-    path = pathlib.Path(path)
+def _atomic_write_text(text: str, path: pathlib.Path) -> None:
+    """Write `text` to `path`, atomically -- shared by `save` and `save_entity` (FR-007)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = dump_yaml(state)
     fd, tmp_name = tempfile.mkstemp(
         dir=str(path.parent) or ".", prefix=f".{path.name}.", suffix=".tmp"
     )
@@ -206,6 +207,67 @@ def save(state: dict, path: pathlib.Path = DEFAULT_STATE_PATH) -> None:
         if os.path.exists(tmp_name):
             os.remove(tmp_name)
         raise
+
+
+def save(state: dict, path: pathlib.Path = DEFAULT_STATE_PATH) -> None:
+    """Write `state` to `path`, atomically.
+
+    Writes to a temp file in the same directory, then `os.replace()`s it onto `path`. A
+    reader of `path` never observes a partially-written file: it is either the previous
+    fully-valid state, or this fully-valid state (FR-007).
+    """
+    path = pathlib.Path(path)
+    _atomic_write_text(dump_yaml(state), path)
+
+
+_FRONTMATTER_DELIMITER = "---"
+
+
+def parse_entity(text: str) -> tuple[dict, str]:
+    """Split an entity file into its YAML frontmatter and its markdown body.
+
+    docs/design/25-entities.md: "a markdown file with YAML frontmatter. The frontmatter is
+    the schema, the body is the prose." Only the first two `---`-only lines delimit the
+    frontmatter block; any further `---` line belongs to the body untouched (e.g. a
+    horizontal rule in prose).
+    """
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != _FRONTMATTER_DELIMITER:
+        raise StateError("entity file must open with a '---' frontmatter delimiter")
+    for i in range(1, len(lines)):
+        if lines[i].strip() == _FRONTMATTER_DELIMITER:
+            frontmatter_text = "".join(lines[1:i])
+            body = "".join(lines[i + 1 :])
+            return parse_yaml(frontmatter_text), body
+    raise StateError("entity file is missing its closing '---' frontmatter delimiter")
+
+
+def dump_entity(frontmatter: dict, body: str = "") -> str:
+    """Serialize a frontmatter mapping and a body back into an entity file."""
+    return f"{_FRONTMATTER_DELIMITER}\n{dump_yaml(frontmatter)}{_FRONTMATTER_DELIMITER}\n{body}"
+
+
+def save_entity(frontmatter: dict, body: str, path: pathlib.Path) -> None:
+    """Write an entity file (frontmatter + body) to `path`, atomically."""
+    path = pathlib.Path(path)
+    _atomic_write_text(dump_entity(frontmatter, body), path)
+
+
+def load_entity(path: pathlib.Path) -> tuple[dict, str]:
+    """Read an entity file from `path`, returning its (frontmatter, body).
+
+    Raises `StateError` naming the file if it does not exist or fails to parse -- there is
+    no "default empty entity" the way `load()` has a default chronicle state, since an
+    entity file is expected to already exist before something asks to load it.
+    """
+    path = pathlib.Path(path)
+    if not path.exists():
+        raise StateError(f"{path}: no such entity file")
+    text = path.read_text(encoding="utf-8")
+    try:
+        return parse_entity(text)
+    except StateError as exc:
+        raise StateError(f"{path}: {exc}") from exc
 
 
 def load(path: pathlib.Path = DEFAULT_STATE_PATH) -> dict:

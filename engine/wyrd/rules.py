@@ -145,6 +145,12 @@ def opposed_test(
 #: "Group tests"), same as the untrained rate for any other test.
 UNTRAINED_SKILL = 10
 
+#: docs/design/10-the-character.md section 2, "The scale": a skill opens at this value when an
+#: advance grants it, and rises by this amount per further advance. Career-cap enforcement is
+#: out of scope here -- no career graph exists in the engine yet (#210).
+SKILL_OPEN_VALUE = 25
+SKILL_ADVANCE_STEP = 5
+
 GROUP_TEST_MODES = ("most_capable", "least_capable")
 
 

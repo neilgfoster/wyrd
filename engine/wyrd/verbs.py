@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import rules, state
+from wyrd import character, rules, state
 
 
 def roll(
@@ -123,3 +123,30 @@ def resolve_extended_interval(
         seed=seed,
         **opposed_test_kwargs,
     )
+
+
+def character_save(path: pathlib.Path, frontmatter: dict, body: str = "") -> dict:
+    """Resolve the `character-save` verb."""
+    character.save(frontmatter, body, path)
+    return {"verb": "character-save", "path": str(path), "saved": True}
+
+
+def character_load(path: pathlib.Path) -> dict:
+    """Resolve the `character-load` verb."""
+    frontmatter, body = character.load(path)
+    return {
+        "verb": "character-load",
+        "path": str(path),
+        "frontmatter": frontmatter,
+        "body": body,
+    }
+
+
+def skill_scale() -> dict:
+    """Resolve the `skill-scale` verb."""
+    return {
+        "verb": "skill-scale",
+        "open_value": rules.SKILL_OPEN_VALUE,
+        "advance_step": rules.SKILL_ADVANCE_STEP,
+        "untrained": rules.UNTRAINED_SKILL,
+    }

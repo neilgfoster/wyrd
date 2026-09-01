@@ -351,5 +351,13 @@ class ResolveExtendedIntervalTest(unittest.TestCase):
         self.assertEqual(result["verb"], "extended-task-interval")
 
 
+class SkillScaleTest(unittest.TestCase):
+    def test_open_value(self):
+        self.assertEqual(rules.SKILL_OPEN_VALUE, 25)
+
+    def test_advance_step(self):
+        self.assertEqual(rules.SKILL_ADVANCE_STEP, 5)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -98,5 +98,75 @@ class StateRoundTripTest(unittest.TestCase):
         self.assertEqual(state.load(self.path), prior)
 
 
+class EntityFrontmatterTest(unittest.TestCase):
+    def test_parse_entity_splits_frontmatter_and_body(self):
+        text = "---\nid: aria\n---\nSome prose.\n"
+        frontmatter, body = state.parse_entity(text)
+        self.assertEqual(frontmatter, {"id": "aria"})
+        self.assertEqual(body, "Some prose.\n")
+
+    def test_body_may_contain_further_dashes_unsplit(self):
+        text = "---\nid: aria\n---\nBefore.\n\n---\n\nAfter.\n"
+        frontmatter, body = state.parse_entity(text)
+        self.assertEqual(frontmatter, {"id": "aria"})
+        self.assertEqual(body, "Before.\n\n---\n\nAfter.\n")
+
+    def test_dump_entity_round_trips_through_parse_entity(self):
+        frontmatter = {"id": "aria", "skills": {"stealth": 45}}
+        body = "Prose.\n"
+        text = state.dump_entity(frontmatter, body)
+        parsed_frontmatter, parsed_body = state.parse_entity(text)
+        self.assertEqual(parsed_frontmatter, frontmatter)
+        self.assertEqual(parsed_body, body)
+
+    def test_missing_opening_delimiter_raises(self):
+        with self.assertRaises(state.StateError):
+            state.parse_entity("id: aria\n")
+
+    def test_missing_closing_delimiter_raises(self):
+        with self.assertRaises(state.StateError):
+            state.parse_entity("---\nid: aria\n")
+
+    def test_save_entity_and_load_entity_round_trip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "aria.md"
+            state.save_entity({"id": "aria"}, "Prose.\n", path)
+            frontmatter, body = state.load_entity(path)
+            self.assertEqual(frontmatter, {"id": "aria"})
+            self.assertEqual(body, "Prose.\n")
+
+    def test_load_entity_missing_file_raises(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(state.StateError):
+                state.load_entity(pathlib.Path(tmp) / "missing.md")
+
+
+class ListOfMappingRoundTripTest(unittest.TestCase):
+    def test_list_of_mappings_round_trips(self):
+        data = {
+            "wounds": [
+                {"id": "a", "effect": {"skill": -10}, "bears_on": "stealth"},
+                {"id": "b", "effect": {"dread": 1}},
+            ]
+        }
+        text = state.dump_yaml(data)
+        self.assertEqual(state.parse_yaml(text), data)
+
+    def test_list_of_scalars_still_round_trips(self):
+        data = {"career_history": ["soldier", "wanderer"]}
+        text = state.dump_yaml(data)
+        self.assertEqual(state.parse_yaml(text), data)
+
+    def test_empty_list_round_trips_as_empty_list_not_null(self):
+        data = {"transformations": []}
+        text = state.dump_yaml(data)
+        self.assertEqual(state.parse_yaml(text), data)
+
+    def test_empty_dict_round_trips_as_empty_dict_not_null(self):
+        data = {"reputation": {}}
+        text = state.dump_yaml(data)
+        self.assertEqual(state.parse_yaml(text), data)
+
+
 if __name__ == "__main__":
     unittest.main()

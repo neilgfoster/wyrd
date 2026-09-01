@@ -25,33 +25,33 @@ None needed beyond what #221-#224 already provide.
 
 ## Phase 2: Tests (write first, confirm they fail)
 
-- [ ] T001 [P] [US1] Add to `tests/engine/test_state.py`: `parse_entity(text)` splits frontmatter
+- [x] T001 [P] [US1] Add to `tests/engine/test_state.py`: `parse_entity(text)` splits frontmatter
       and body correctly for a file with `---\n<yaml>\n---\n<body>`; a body containing further
       `---` lines is preserved as part of the body, not re-split; `dump_entity(frontmatter,
       body)` round-trips through `parse_entity` exactly
-- [ ] T002 [P] [US1] Add to `tests/engine/test_state.py`: `dump_yaml`/`parse_yaml` round-trip a
+- [x] T002 [P] [US1] Add to `tests/engine/test_state.py`: `dump_yaml`/`parse_yaml` round-trip a
       value containing a list of mappings (e.g. `wounds`-shaped data with nested `effect` dicts)
       exactly, and a list of plain scalars still round-trips as before (no regression)
-- [ ] T003 [US1] Create `tests/engine/test_character.py`: a full player-character frontmatter
+- [x] T003 [US1] Create `tests/engine/test_character.py`: a full player-character frontmatter
       populated with every field named in data-model.md round-trips through
       `character.save`/`character.load` with zero field discrepancies (SC-001); the loaded
       entity's body text is preserved unchanged
-- [ ] T004 [US2] Add to `tests/engine/test_character.py`: a wound with `effect: {damage: 5}` is
+- [x] T004 [US2] Add to `tests/engine/test_character.py`: a wound with `effect: {damage: 5}` is
       rejected on load with an error naming the wound and the invalid key (FR-003); a wound with
       `effect: {skill: -10}` and no `bears_on` is rejected (FR-004); the same effect with
       `bears_on` set loads successfully; a `stamina_max`/`dread` effect with no `bears_on` loads
       successfully (FR-004's "not required" case); a `recurring: true` wound with a non-null
       `closed` is rejected (FR-005) — six cases total (SC-002)
-- [ ] T005 [US2] Add to `tests/engine/test_character.py`: `active_wound_effects` on a mixed list
+- [x] T005 [US2] Add to `tests/engine/test_character.py`: `active_wound_effects` on a mixed list
       of one open, one closed (non-recurring), and one recurring wound returns exactly the open
       and recurring wounds' effects, excluding the closed one (SC-003); the closed wound is still
       present in the original `wounds` list passed in (FR-007, checked on the input, not
       mutated)
-- [ ] T006 [P] Add to `tests/engine/test_rules.py`: `rules.SKILL_OPEN_VALUE == 25`,
+- [x] T006 [P] Add to `tests/engine/test_rules.py`: `rules.SKILL_OPEN_VALUE == 25`,
       `rules.SKILL_ADVANCE_STEP == 5` (SC-004)
-- [ ] T007 [P] Add to `tests/engine/test_verbs.py`: `verbs.character_save`/`character_load`
+- [x] T007 [P] Add to `tests/engine/test_verbs.py`: `verbs.character_save`/`character_load`
       round-trip via a temp path; `verbs.skill_scale()` returns the documented shape
-- [ ] T008 [P] Add to `tests/engine/test_client.py`: `describe --name character-save`/
+- [x] T008 [P] Add to `tests/engine/test_client.py`: `describe --name character-save`/
       `character-load`/`skill-scale` match contracts/cli.md; `character-save`/`character-load`
       round-trip via the CLI; an invalid wound is a structured error via the CLI; `skill-scale`
       returns the documented values
@@ -60,39 +60,39 @@ None needed beyond what #221-#224 already provide.
 
 ## Phase 3: Implementation
 
-- [ ] T009 [US1] Implement `parse_entity(text: str) -> tuple[dict, str]` and
+- [x] T009 [US1] Implement `parse_entity(text: str) -> tuple[dict, str]` and
       `dump_entity(frontmatter: dict, body: str) -> str` in `engine/wyrd/state.py`: split on the
       first two `---`-only lines; parse the frontmatter block with the existing `parse_yaml`;
       return the remaining text as `body`, unchanged
-- [ ] T010 [US1] Extend `_dump_block`/`_parse_block` in `state.py` to support a list item that is
+- [x] T010 [US1] Extend `_dump_block`/`_parse_block` in `state.py` to support a list item that is
       a non-empty mapping (first key inline after `- `, remaining keys indented two further),
       per research.md's ported pattern; verify no regression on the existing scalar-list and
       nested-dict-value cases already covered by #221-#224's tests
-- [ ] T011 [US1] Create `engine/wyrd/character.py`: `PLAYER_CHARACTER_FIELDS` (the field list
+- [x] T011 [US1] Create `engine/wyrd/character.py`: `PLAYER_CHARACTER_FIELDS` (the field list
       from data-model.md, for documentation/reference — not itself an enforced allow-list in
       this feature, per spec.md's scope), `load(path) -> tuple[dict, str]` (frontmatter, body) —
       calls `state`'s file read + `parse_entity`, then `validate_character`, `save(frontmatter,
       body, path)` — validates, then writes via `state`'s atomic write + `dump_entity`
-- [ ] T012 [US2] Implement `validate_wound(wound: dict) -> None` in `character.py`: raise
+- [x] T012 [US2] Implement `validate_wound(wound: dict) -> None` in `character.py`: raise
       `state.StateError` naming the wound's `id` for each violated rule (FR-003, FR-004, FR-005),
       checked in that order
-- [ ] T013 [US2] Implement `validate_character(frontmatter: dict) -> None` in `character.py`:
+- [x] T013 [US2] Implement `validate_character(frontmatter: dict) -> None` in `character.py`:
       call `validate_wound` for every entry in `frontmatter.get("wounds", [])` — depends on T012
-- [ ] T014 [US2] Implement `active_wound_effects(wounds: list[dict]) -> list[dict]` in
+- [x] T014 [US2] Implement `active_wound_effects(wounds: list[dict]) -> list[dict]` in
       `character.py`: filter to `closed is None`, return `{"wound_id", "effect", "bears_on"}` per
       data-model.md (omit `bears_on` key entirely when absent, rather than `null`, to match
       contracts/cli.md's shape)
-- [ ] T015 [P] Add `SKILL_OPEN_VALUE = 25`, `SKILL_ADVANCE_STEP = 5` to `engine/wyrd/rules.py`,
+- [x] T015 [P] Add `SKILL_OPEN_VALUE = 25`, `SKILL_ADVANCE_STEP = 5` to `engine/wyrd/rules.py`,
       next to the existing `UNTRAINED_SKILL`
-- [ ] T016 [P] Add `character-save`, `character-load`, `skill-scale` entries to `TOOLS` in
+- [x] T016 [P] Add `character-save`, `character-load`, `skill-scale` entries to `TOOLS` in
       `engine/wyrd/catalog.py`, matching contracts/cli.md
-- [ ] T017 [P] Implement `character_save`, `character_load`, `skill_scale` verb wrappers in
+- [x] T017 [P] Implement `character_save`, `character_load`, `skill_scale` verb wrappers in
       `engine/wyrd/verbs.py` — `skill_scale` returns `rules.SKILL_OPEN_VALUE`,
       `rules.SKILL_ADVANCE_STEP`, `rules.UNTRAINED_SKILL` in one structured result
-- [ ] T018 [P] Add `character-save --path --frontmatter-json --body`, `character-load --path`,
+- [x] T018 [P] Add `character-save --path --frontmatter-json --body`, `character-load --path`,
       and `skill-scale` subcommands to `engine/wyrd/client.py`; wrap `state.StateError` from an
       invalid wound into the structured `{"error": ...}` shape, per contracts/cli.md
-- [ ] T019 Add `to_text` cases for the three new verbs in `engine/wyrd/render.py`
+- [x] T019 Add `to_text` cases for the three new verbs in `engine/wyrd/render.py`
 
 **Checkpoint**: `python3 -m unittest discover -s tests/engine` passes.
 
@@ -100,9 +100,9 @@ None needed beyond what #221-#224 already provide.
 
 ## Phase 4: Polish
 
-- [ ] T020 Run every step of `specs/079-character-entity-schema/quickstart.md` by hand and
+- [x] T020 Run every step of `specs/079-character-entity-schema/quickstart.md` by hand and
       confirm
-- [ ] T021 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
+- [x] T021 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
       tests/engine/`, fix anything flagged
 
 ---
