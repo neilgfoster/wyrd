@@ -32,4 +32,28 @@ TOOLS: dict[str, dict] = {
             "required": [],
         },
     },
+    "opposed-test": {
+        "name": "opposed-test",
+        "description": (
+            "Resolve a single player-facing opposed test: one roll on the acting side "
+            "only, against effective% derived from the skill gap. The opponent's dice "
+            "are never consulted. Use this whenever a player character or companion is "
+            "opposed by an NPC/opponent."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "skill": {"type": "integer"},
+                "opponent": {"type": "integer"},
+                "seed": {"type": "integer"},
+            },
+            "required": ["skill", "opponent"],
+        },
+    },
 }

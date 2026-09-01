@@ -26,6 +26,14 @@ def to_text(obj: dict) -> str:
         return f"error: {error.get('reason', error)}"
     if obj.get("verb") == "roll":
         return f"d{obj['sides']}: {obj['result']}"
+    if obj.get("verb") == "opposed-test":
+        outcome = "success" if obj["success"] else "failure"
+        detail = (
+            f"degrees {obj['degrees']}, wyrd: {obj['wyrd']}"
+            if obj["success"]
+            else f"wyrd: {obj['wyrd']}"
+        )
+        return f"opposed-test: {outcome} ({detail})"
     if obj.get("verb") == "describe":
         tools = obj.get("tools", [])
         return ", ".join(tool["name"] for tool in tools) if tools else "(no tools)"

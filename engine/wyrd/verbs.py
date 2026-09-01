@@ -34,3 +34,13 @@ def roll(
         "seed": seed,
         "state_written": True,
     }
+
+
+def opposed_test(skill: int, opponent: int, seed: int | None = None) -> dict:
+    """Resolve the `opposed-test` verb.
+
+    A thin wrapper over `rules.opposed_test` -- no state read or write, unlike `roll`.
+    Nothing yet depends on a stored opposed-test result, so none is persisted
+    (specs/076-opposed-test-resolution/research.md's "No state I/O" decision).
+    """
+    return rules.opposed_test(skill=skill, opponent=opponent, seed=seed)
