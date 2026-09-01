@@ -36,11 +36,46 @@ def roll(
     }
 
 
-def opposed_test(skill: int, opponent: int, seed: int | None = None) -> dict:
+def opposed_test(
+    skill: int,
+    opponent: int,
+    seed: int | None = None,
+    declaration: str | None = None,
+    helper_skill: int | None = None,
+    helper_can_attempt: bool = True,
+) -> dict:
     """Resolve the `opposed-test` verb.
 
     A thin wrapper over `rules.opposed_test` -- no state read or write, unlike `roll`.
     Nothing yet depends on a stored opposed-test result, so none is persisted
     (specs/076-opposed-test-resolution/research.md's "No state I/O" decision).
     """
-    return rules.opposed_test(skill=skill, opponent=opponent, seed=seed)
+    return rules.opposed_test(
+        skill=skill,
+        opponent=opponent,
+        seed=seed,
+        declaration=declaration,
+        helper_skill=helper_skill,
+        helper_can_attempt=helper_can_attempt,
+    )
+
+
+def declaration_bonus(category: str) -> dict:
+    """Resolve the `declaration-bonus` verb."""
+    bonus = rules.declaration_bonus(category)
+    return {
+        "verb": "declaration-bonus",
+        "category": category,
+        "bonus": bonus,
+        "no_roll": bonus is None,
+    }
+
+
+def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> dict:
+    """Resolve the `assistance-bonus` verb."""
+    return {
+        "verb": "assistance-bonus",
+        "helper_skill": helper_skill,
+        "can_attempt": can_attempt,
+        "bonus": rules.assistance_bonus(helper_skill, can_attempt),
+    }

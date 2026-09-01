@@ -124,6 +124,77 @@ class OpposedTestCliTest(unittest.TestCase):
             client.main(["opposed-test", "--skill", "70"])
         self.assertNotEqual(ctx.exception.code, 0)
 
+    def test_declaration_and_helper_flags_compose(self):
+        exit_code, output = _run(
+            [
+                "opposed-test",
+                "--skill",
+                "50",
+                "--opponent",
+                "50",
+                "--declaration",
+                "specific",
+                "--helper-skill",
+                "45",
+                "--seed",
+                "1",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["effective_pct"], 64)
+
+    def test_removes_risk_flag_returns_no_roll(self):
+        exit_code, output = _run(
+            ["opposed-test", "--skill", "50", "--opponent", "50", "--declaration", "removes_risk"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertTrue(payload["no_roll"])
+        self.assertIsNone(payload["roll"])
+
+
+class DeclarationBonusCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "declaration-bonus"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "declaration-bonus")
+
+    def test_specific_leveraging(self):
+        exit_code, output = _run(["declaration-bonus", "--category", "specific_leveraging"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["bonus"], 20)
+
+    def test_unrecognized_category_is_structured_error(self):
+        exit_code, output = _run(["declaration-bonus", "--category", "bogus"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+
+
+class AssistanceBonusCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "assistance-bonus"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "assistance-bonus")
+
+    def test_helper_skill(self):
+        exit_code, output = _run(["assistance-bonus", "--helper-skill", "45"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["bonus"], 4)
+
+    def test_cannot_attempt_flag(self):
+        exit_code, output = _run(
+            ["assistance-bonus", "--helper-skill", "100", "--can-attempt", "false"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["bonus"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
