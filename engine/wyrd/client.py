@@ -103,6 +103,21 @@ def _build_parser() -> argparse.ArgumentParser:
         allocation_parser.add_argument("--ancestry-json", default=None)
         allocation_parser.add_argument("--actions-json", required=True)
 
+    if "create-character" in TOOLS:
+        creation_parser = subparsers.add_parser(
+            "create-character", help=TOOLS["create-character"]["description"]
+        )
+        creation_parser.add_argument("--path", required=True)
+        creation_parser.add_argument("--name", required=True)
+        creation_parser.add_argument("--career-json", required=True)
+        creation_parser.add_argument("--ancestry-json", default=None)
+        creation_parser.add_argument("--actions-json", required=True)
+        creation_parser.add_argument("--loyalty", required=True)
+        creation_parser.add_argument("--mortality", required=True)
+        creation_parser.add_argument("--drives-json", default="[]")
+        creation_parser.add_argument("--misfortune", default=None)
+        creation_parser.add_argument("--fault-line", required=True)
+
     return parser
 
 
@@ -214,6 +229,25 @@ def _run_validate_allocation(args: argparse.Namespace) -> dict:
     return verbs.validate_allocation(actions, career_data, ancestry)
 
 
+def _run_create_character(args: argparse.Namespace) -> dict:
+    career_data = json.loads(args.career_json)
+    ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
+    actions = json.loads(args.actions_json)
+    drives = json.loads(args.drives_json)
+    return verbs.create_character(
+        path=args.path,
+        name=args.name,
+        career_data=career_data,
+        actions=actions,
+        loyalty=args.loyalty,
+        mortality=args.mortality,
+        fault_line=args.fault_line,
+        ancestry=ancestry,
+        drives=drives,
+        misfortune=args.misfortune,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -240,6 +274,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_skill_scale(args)
     elif args.verb == "validate-allocation":
         result = _run_validate_allocation(args)
+    elif args.verb == "create-character":
+        result = _run_create_character(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

@@ -178,5 +178,48 @@ class ValidateAllocationVerbTest(unittest.TestCase):
         self.assertIn("error", result)
 
 
+class CreateCharacterVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_accepted_creation_shape(self):
+        path = pathlib.Path(self._tmp.name) / "aria.md"
+        career_data = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+        actions = [
+            {"action": "open", "skill": "stealth"},
+            {"action": "open", "skill": "swordplay"},
+        ] + [{"action": "raise", "skill": "stealth"}] * 6
+        result = verbs.create_character(
+            path=path,
+            name="Aria",
+            career_data=career_data,
+            actions=actions,
+            loyalty="x",
+            mortality="standard",
+            fault_line="x",
+        )
+        self.assertEqual(result["verb"], "create-character")
+        self.assertTrue(result["valid"])
+        self.assertTrue(path.exists())
+
+    def test_rejected_creation_writes_nothing(self):
+        path = pathlib.Path(self._tmp.name) / "bad.md"
+        career_data = {"skills": {"stealth": 55}, "entry_point": True}
+        result = verbs.create_character(
+            path=path,
+            name="X",
+            career_data=career_data,
+            actions=[],
+            loyalty="x",
+            mortality="standard",
+            fault_line="x",
+        )
+        self.assertFalse(result["valid"])
+        self.assertFalse(path.exists())
+
+
 if __name__ == "__main__":
     unittest.main()

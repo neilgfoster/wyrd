@@ -246,4 +246,42 @@ TOOLS: dict[str, dict] = {
             "required": ["career_json", "actions_json"],
         },
     },
+    "create-character": {
+        "name": "create-character",
+        "description": (
+            "Run the 8-step character-creation procedure: validate an advance allocation "
+            "and, on success, produce a complete player-character entity with the fixed "
+            "starting values from docs/design/11-character-creation.md section 2."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "name": {"type": "string"},
+                "career_json": {"type": "string"},
+                "ancestry_json": {"type": "string"},
+                "actions_json": {"type": "string"},
+                "loyalty": {"type": "string"},
+                "mortality": {"type": "string", "enum": ["low", "standard", "high"]},
+                "drives_json": {"type": "string", "default": "[]"},
+                "misfortune": {"type": "string"},
+                "fault_line": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "name",
+                "career_json",
+                "actions_json",
+                "loyalty",
+                "mortality",
+                "fault_line",
+            ],
+        },
+    },
 }

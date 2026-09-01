@@ -49,6 +49,10 @@ def to_text(obj: dict) -> str:
         return f"character-save: {obj['path']}"
     if obj.get("verb") == "character-load":
         return f"character-load: {obj['path']} ({obj['frontmatter'].get('id', '?')})"
+    if obj.get("verb") == "create-character":
+        if obj["valid"]:
+            return f"create-character: created {obj['path']} ({obj['frontmatter'].get('name')})"
+        return f"create-character: rejected ({obj['error']})"
     if obj.get("verb") == "validate-allocation":
         if obj["valid"]:
             skills = ", ".join(f"{k}: {v}%" for k, v in obj["skills"].items())
