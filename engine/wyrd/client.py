@@ -59,7 +59,31 @@ def _build_parser() -> argparse.ArgumentParser:
         assistance_parser.add_argument("--helper-skill", type=int, required=True)
         assistance_parser.add_argument("--can-attempt", type=_parse_bool, default=True)
 
+    if "group-test" in TOOLS:
+        group_parser = subparsers.add_parser("group-test", help=TOOLS["group-test"]["description"])
+        group_parser.add_argument("--member-skills", type=_parse_member_skills, required=True)
+        group_parser.add_argument("--mode", required=True)
+        group_parser.add_argument("--opponent", type=int, required=True)
+        group_parser.add_argument("--seed", type=int, default=None)
+
+    if "extended-task-interval" in TOOLS:
+        interval_parser = subparsers.add_parser(
+            "extended-task-interval", help=TOOLS["extended-task-interval"]["description"]
+        )
+        interval_parser.add_argument("--skill", type=int, required=True)
+        interval_parser.add_argument("--opponent", type=int, required=True)
+        interval_parser.add_argument("--progress", type=int, required=True)
+        interval_parser.add_argument("--target", type=int, required=True)
+        interval_parser.add_argument("--seed", type=int, default=None)
+
     return parser
+
+
+def _parse_member_skills(text: str) -> list[int | None]:
+    """Parse a comma-separated `--member-skills` list; an empty entry means untrained."""
+    if text == "":
+        return []
+    return [int(item) if item != "" else None for item in text.split(",")]
 
 
 def _parse_bool(text: str) -> bool:
@@ -111,6 +135,28 @@ def _run_assistance_bonus(args: argparse.Namespace) -> dict:
     return verbs.assistance_bonus(helper_skill=args.helper_skill, can_attempt=args.can_attempt)
 
 
+def _run_group_test(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.group_test(
+            member_skills=args.member_skills,
+            mode=args.mode,
+            opponent=args.opponent,
+            seed=args.seed,
+        )
+    except ValueError as exc:
+        return {"error": {"verb": "group-test", "reason": str(exc)}}
+
+
+def _run_extended_task_interval(args: argparse.Namespace) -> dict:
+    return verbs.resolve_extended_interval(
+        skill=args.skill,
+        opponent=args.opponent,
+        progress=args.progress,
+        target=args.target,
+        seed=args.seed,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -125,6 +171,10 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_declaration_bonus(args)
     elif args.verb == "assistance-bonus":
         result = _run_assistance_bonus(args)
+    elif args.verb == "group-test":
+        result = _run_group_test(args)
+    elif args.verb == "extended-task-interval":
+        result = _run_extended_task_interval(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

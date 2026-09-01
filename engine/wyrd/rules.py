@@ -139,3 +139,84 @@ def opposed_test(
         "no_roll": False,
         "seed": seed,
     }
+
+
+#: A member with no relevant skill at all is tested at this flat rate (docs/design/03-rules.md
+#: "Group tests"), same as the untrained rate for any other test.
+UNTRAINED_SKILL = 10
+
+GROUP_TEST_MODES = ("most_capable", "least_capable")
+
+
+def select_group_skill(member_skills: list[int | None], mode: str) -> int:
+    """Select which member's skill a group test is actually rolled against.
+
+    `None` in `member_skills` means "no relevant skill at all" and is substituted with the
+    untrained rate before selection -- never excluded, per docs/design/03-rules.md: "Leaving
+    them behind is a decision available to the party," not something this function decides.
+    """
+    if not member_skills:
+        raise ValueError("member_skills must not be empty")
+    if mode not in GROUP_TEST_MODES:
+        raise ValueError(f"no such mode: {mode}")
+    effective_skills = [UNTRAINED_SKILL if skill is None else skill for skill in member_skills]
+    return max(effective_skills) if mode == "most_capable" else min(effective_skills)
+
+
+def group_test(
+    member_skills: list[int | None],
+    mode: str,
+    opponent: int,
+    seed: int | None = None,
+    **opposed_test_kwargs,
+) -> dict:
+    """Resolve a group test: one selection, one roll (docs/design/03-rules.md "Group tests").
+
+    "The party's composition shows in the skill tested, never in the number of dice" -- this
+    delegates entirely to `opposed_test` for the actual roll, so a group test can never
+    accidentally roll more than once regardless of how many members are listed.
+    """
+    selected_skill = select_group_skill(member_skills, mode)
+    result = opposed_test(selected_skill, opponent, seed=seed, **opposed_test_kwargs)
+    return {
+        **result,
+        "verb": "group-test",
+        "member_skills": member_skills,
+        "mode": mode,
+        "selected_skill": selected_skill,
+    }
+
+
+def resolve_extended_interval(
+    skill: int,
+    opponent: int,
+    progress: int,
+    target: int,
+    seed: int | None = None,
+    **opposed_test_kwargs,
+) -> dict:
+    """Resolve one interval of an extended task (docs/design/03-rules.md "Extended tasks").
+
+    One test per interval. A success adds its degrees, minimum 1 -- a bare success never
+    stalls the work. A failed interval is spent and gains nothing. Progress is not persisted
+    here; the caller carries it into the next interval's call.
+    """
+    result = opposed_test(skill, opponent, seed=seed, **opposed_test_kwargs)
+    if result["no_roll"]:
+        # No numeric degrees exists for a no-roll declaration; the minimum-1 floor is the
+        # closest documented rule for "a success adds its degrees, minimum 1"
+        # (specs/078-group-tests-extended-tasks/research.md's Assumption).
+        gained = 1
+    elif result["success"]:
+        gained = max(1, result["degrees"])
+    else:
+        gained = 0
+    new_progress = progress + gained
+    return {
+        **result,
+        "verb": "extended-task-interval",
+        "progress": new_progress,
+        "target": target,
+        "gained": gained,
+        "done": new_progress >= target,
+    }

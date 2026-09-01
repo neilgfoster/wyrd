@@ -120,4 +120,54 @@ TOOLS: dict[str, dict] = {
             "required": ["helper_skill"],
         },
     },
+    "group-test": {
+        "name": "group-test",
+        "description": (
+            "Resolve a group test: select the most- or least-capable member's skill "
+            "(untrained 10% for a member with none relevant), then resolve one opposed "
+            "test against it. A group rolls once, never once per member."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "member_skills": {"type": "array", "items": {"type": ["integer", "null"]}},
+                "mode": {"type": "string", "enum": ["most_capable", "least_capable"]},
+                "opponent": {"type": "integer"},
+                "seed": {"type": "integer"},
+            },
+            "required": ["member_skills", "mode", "opponent"],
+        },
+    },
+    "extended-task-interval": {
+        "name": "extended-task-interval",
+        "description": (
+            "Resolve one interval of an extended task: one opposed test, adding "
+            "max(1, degrees) to progress on success, nothing on failure. Reports whether "
+            "the task is now done. Does not persist progress -- the caller carries it "
+            "into the next interval."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "skill": {"type": "integer"},
+                "opponent": {"type": "integer"},
+                "progress": {"type": "integer", "minimum": 0},
+                "target": {"type": "integer", "minimum": 1},
+                "seed": {"type": "integer"},
+            },
+            "required": ["skill", "opponent", "progress", "target"],
+        },
+    },
 }
