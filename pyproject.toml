@@ -1,0 +1,8 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+# Standard-library-only, zero-dependency engine (docs/design/27-tooling.md section 2) --
+# lint rules stay to the defaults plus import hygiene; no framework-specific rule sets apply.
+select = ["E", "F", "I", "UP"]

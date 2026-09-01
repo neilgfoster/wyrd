@@ -60,7 +60,7 @@ unpublishable may enter it.
 
 ```
 wyrd/                          # the engine
-├─ engine/                     # rules, tables, the CLI -- fully specified, not yet built (#90)
+├─ engine/                     # rules, tables, the CLI -- fully specified, build underway (#90)
 ├─ docs/                       # how and why
 ├─ settings.yaml               # the catalogue of known settings
 └─ tools/
