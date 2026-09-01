@@ -42,6 +42,13 @@ def to_text(obj: dict) -> str:
         return f"declaration-bonus: {obj['category']} ({obj['bonus']:+d})"
     if obj.get("verb") == "assistance-bonus":
         return f"assistance-bonus: helper {obj['helper_skill']}% -> {obj['bonus']:+d}"
+    if obj.get("verb") == "group-test":
+        outcome = "success" if obj["success"] else "failure"
+        return f"group-test: {obj['mode']} -> skill {obj['selected_skill']}%, {outcome}"
+    if obj.get("verb") == "extended-task-interval":
+        done = " (done)" if obj["done"] else ""
+        progress = f"{obj['progress']}/{obj['target']}"
+        return f"extended-task-interval: +{obj['gained']} -> {progress}{done}"
     if obj.get("verb") == "describe":
         tools = obj.get("tools", [])
         return ", ".join(tool["name"] for tool in tools) if tools else "(no tools)"

@@ -111,5 +111,27 @@ class AssistanceBonusVerbTest(unittest.TestCase):
         self.assertEqual(result["bonus"], 4)
 
 
+class GroupTestVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.group_test(
+            member_skills=[70, 45, 30], mode="most_capable", opponent=50, seed=1
+        )
+        self.assertEqual(result["verb"], "group-test")
+        self.assertEqual(result["selected_skill"], 70)
+        self.assertEqual(result["mode"], "most_capable")
+        self.assertEqual(result["member_skills"], [70, 45, 30])
+
+
+class ResolveExtendedIntervalVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.resolve_extended_interval(
+            skill=45, opponent=50, progress=2, target=4, seed=1
+        )
+        self.assertEqual(result["verb"], "extended-task-interval")
+        self.assertEqual(result["target"], 4)
+        self.assertIn("gained", result)
+        self.assertIn("done", result)
+
+
 if __name__ == "__main__":
     unittest.main()

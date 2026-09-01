@@ -79,3 +79,47 @@ def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> dict:
         "can_attempt": can_attempt,
         "bonus": rules.assistance_bonus(helper_skill, can_attempt),
     }
+
+
+def group_test(
+    member_skills: list[int | None],
+    mode: str,
+    opponent: int,
+    seed: int | None = None,
+    **opposed_test_kwargs,
+) -> dict:
+    """Resolve the `group-test` verb.
+
+    A thin wrapper over `rules.group_test` -- no state read or write, matching
+    `opposed_test`'s own no-state-I/O precedent.
+    """
+    return rules.group_test(
+        member_skills=member_skills,
+        mode=mode,
+        opponent=opponent,
+        seed=seed,
+        **opposed_test_kwargs,
+    )
+
+
+def resolve_extended_interval(
+    skill: int,
+    opponent: int,
+    progress: int,
+    target: int,
+    seed: int | None = None,
+    **opposed_test_kwargs,
+) -> dict:
+    """Resolve the `extended-task-interval` verb.
+
+    A thin wrapper over `rules.resolve_extended_interval`. Does not persist `progress` --
+    the caller carries the returned value into the next interval's call.
+    """
+    return rules.resolve_extended_interval(
+        skill=skill,
+        opponent=opponent,
+        progress=progress,
+        target=target,
+        seed=seed,
+        **opposed_test_kwargs,
+    )

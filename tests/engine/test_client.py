@@ -196,5 +196,95 @@ class AssistanceBonusCliTest(unittest.TestCase):
         self.assertEqual(payload["bonus"], 0)
 
 
+class GroupTestCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "group-test"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "group-test")
+
+    def test_most_capable(self):
+        exit_code, output = _run(
+            [
+                "group-test",
+                "--member-skills",
+                "70,45,30",
+                "--mode",
+                "most_capable",
+                "--opponent",
+                "50",
+                "--seed",
+                "1",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["selected_skill"], 70)
+
+    def test_untrained_member_via_empty_entry(self):
+        exit_code, output = _run(
+            [
+                "group-test",
+                "--member-skills",
+                "70,,30",
+                "--mode",
+                "least_capable",
+                "--opponent",
+                "50",
+                "--seed",
+                "1",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["selected_skill"], 10)
+
+    def test_empty_member_list_is_structured_error(self):
+        exit_code, output = _run(
+            ["group-test", "--member-skills", "", "--mode", "most_capable", "--opponent", "50"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+
+    def test_unrecognized_mode_is_structured_error(self):
+        exit_code, output = _run(
+            ["group-test", "--member-skills", "50", "--mode", "bogus", "--opponent", "50"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+
+
+class ExtendedTaskIntervalCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "extended-task-interval"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "extended-task-interval")
+
+    def test_interval_shape(self):
+        exit_code, output = _run(
+            [
+                "extended-task-interval",
+                "--skill",
+                "45",
+                "--opponent",
+                "50",
+                "--progress",
+                "2",
+                "--target",
+                "4",
+                "--seed",
+                "1",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["target"], 4)
+        self.assertIn("gained", payload)
+        self.assertIn("done", payload)
+
+
 if __name__ == "__main__":
     unittest.main()

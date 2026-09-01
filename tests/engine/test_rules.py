@@ -231,5 +231,125 @@ class OpposedTestModifiersTest(unittest.TestCase):
         self.assertEqual(with_helper["effective_pct"], without_helper["effective_pct"])
 
 
+class SelectGroupSkillTest(unittest.TestCase):
+    def test_most_capable(self):
+        self.assertEqual(rules.select_group_skill([70, 45, 30], "most_capable"), 70)
+
+    def test_least_capable(self):
+        self.assertEqual(rules.select_group_skill([70, 45, 30], "least_capable"), 30)
+
+    def test_untrained_member_substitutes_flat_rate(self):
+        self.assertEqual(rules.select_group_skill([70, None, 30], "least_capable"), 10)
+
+    def test_untrained_member_does_not_win_most_capable(self):
+        self.assertEqual(rules.select_group_skill([70, None, 30], "most_capable"), 70)
+
+    def test_empty_list_raises(self):
+        with self.assertRaises(ValueError):
+            rules.select_group_skill([], "most_capable")
+
+    def test_unrecognized_mode_raises(self):
+        with self.assertRaises(ValueError):
+            rules.select_group_skill([50], "bogus")
+
+
+class GroupTestTest(unittest.TestCase):
+    def test_selects_and_resolves_against_most_capable(self):
+        result = rules.group_test(
+            member_skills=[70, 45, 30], mode="most_capable", opponent=50, seed=1
+        )
+        self.assertEqual(result["selected_skill"], 70)
+        direct = rules.opposed_test(70, 50, seed=1)
+        self.assertEqual(result["effective_pct"], direct["effective_pct"])
+        self.assertEqual(result["roll"], direct["roll"])
+        self.assertEqual(result["success"], direct["success"])
+        self.assertEqual(result["degrees"], direct["degrees"])
+        self.assertEqual(result["wyrd"], direct["wyrd"])
+
+    def test_rolls_exactly_once_regardless_of_party_size(self):
+        for member_skills in ([50], [70, 45, 30], list(range(10, 101, 10))):
+            with unittest.mock.patch("wyrd.rules.roll_d100", wraps=rules.roll_d100) as mock_roll:
+                rules.group_test(
+                    member_skills=member_skills, mode="most_capable", opponent=50, seed=1
+                )
+            self.assertEqual(mock_roll.call_count, 1)
+
+    def test_verb_field_is_group_test_not_opposed_test(self):
+        result = rules.group_test(member_skills=[50], mode="most_capable", opponent=50, seed=1)
+        self.assertEqual(result["verb"], "group-test")
+
+
+class ResolveExtendedIntervalTest(unittest.TestCase):
+    def test_bare_success_still_gains_minimum_one(self):
+        # Find a seed where effective_pct's tens digit equals the roll's tens digit (degrees 0).
+        for seed in range(1000):
+            probe = rules.opposed_test(45, 50, seed=seed)  # effective_pct 45
+            if probe["success"] and probe["degrees"] == 0:
+                break
+        else:
+            self.fail("no bare-success seed found under 1000")
+        result = rules.resolve_extended_interval(
+            skill=45, opponent=50, progress=2, target=4, seed=seed
+        )
+        self.assertEqual(result["gained"], 1)
+        self.assertEqual(result["progress"], 3)
+
+    def test_gain_matches_max_one_and_degrees_across_range(self):
+        for seed in range(200):
+            result = rules.resolve_extended_interval(
+                skill=70, opponent=30, progress=0, target=100, seed=seed
+            )
+            if result["success"]:
+                self.assertEqual(result["gained"], max(1, result["degrees"]))
+            else:
+                self.assertEqual(result["gained"], 0)
+
+    def test_failure_gains_nothing_and_progress_unchanged(self):
+        found = 0
+        for seed in range(1000):
+            result = rules.resolve_extended_interval(
+                skill=30,
+                opponent=70,
+                progress=2,
+                target=4,
+                seed=seed,  # effective_pct 10
+            )
+            if not result["success"]:
+                self.assertEqual(result["gained"], 0)
+                self.assertEqual(result["progress"], 2)
+                found += 1
+                if found >= 20:
+                    break
+        self.assertGreaterEqual(found, 20)
+
+    def test_done_is_false_below_target_and_true_at_target(self):
+        below = rules.resolve_extended_interval(skill=95, opponent=5, progress=3, target=5, seed=1)
+        # progress 3 + gained (>=1) could land at or above target=5 only if gained>=2; force a
+        # controlled check instead by asserting the done flag matches the arithmetic directly.
+        self.assertEqual(below["done"], below["progress"] >= 5)
+
+        at_target = rules.resolve_extended_interval(
+            skill=95, opponent=5, progress=4, target=5, seed=1
+        )
+        self.assertTrue(at_target["done"])
+        self.assertGreaterEqual(at_target["progress"], 5)
+
+    def test_removes_risk_gains_minimum_one_with_no_roll(self):
+        with unittest.mock.patch("wyrd.rules.roll_d100") as mock_roll:
+            result = rules.resolve_extended_interval(
+                skill=50, opponent=50, progress=0, target=4, declaration="removes_risk"
+            )
+        mock_roll.assert_not_called()
+        self.assertEqual(result["gained"], 1)
+        self.assertEqual(result["progress"], 1)
+        self.assertFalse(result["done"])
+
+    def test_verb_field_is_extended_task_interval(self):
+        result = rules.resolve_extended_interval(
+            skill=50, opponent=50, progress=0, target=4, seed=1
+        )
+        self.assertEqual(result["verb"], "extended-task-interval")
+
+
 if __name__ == "__main__":
     unittest.main()
