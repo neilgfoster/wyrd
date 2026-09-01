@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import character, rules, state
+from wyrd import career, character, rules, state
 
 
 def roll(
@@ -150,3 +150,11 @@ def skill_scale() -> dict:
         "advance_step": rules.SKILL_ADVANCE_STEP,
         "untrained": rules.UNTRAINED_SKILL,
     }
+
+
+def validate_allocation(
+    actions: list[dict], career_data: dict, ancestry: dict | None = None
+) -> dict:
+    """Resolve the `validate-allocation` verb."""
+    result = career.validate_allocation(actions, career_data, ancestry)
+    return {"verb": "validate-allocation", **result}

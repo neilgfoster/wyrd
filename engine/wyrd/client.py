@@ -95,6 +95,14 @@ def _build_parser() -> argparse.ArgumentParser:
     if "skill-scale" in TOOLS:
         subparsers.add_parser("skill-scale", help=TOOLS["skill-scale"]["description"])
 
+    if "validate-allocation" in TOOLS:
+        allocation_parser = subparsers.add_parser(
+            "validate-allocation", help=TOOLS["validate-allocation"]["description"]
+        )
+        allocation_parser.add_argument("--career-json", required=True)
+        allocation_parser.add_argument("--ancestry-json", default=None)
+        allocation_parser.add_argument("--actions-json", required=True)
+
     return parser
 
 
@@ -195,6 +203,17 @@ def _run_skill_scale(args: argparse.Namespace) -> dict:
     return verbs.skill_scale()
 
 
+def _run_validate_allocation(args: argparse.Namespace) -> dict:
+    # Malformed JSON is a genuine caller mistake distinct from a rejected-but-well-formed
+    # allocation; per contracts/cli.md it propagates as an uncaught, non-zero-exit failure
+    # rather than the structured {"error": ...} shape (that shape is reserved for a
+    # well-formed allocation's own documented validation result).
+    career_data = json.loads(args.career_json)
+    ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
+    actions = json.loads(args.actions_json)
+    return verbs.validate_allocation(actions, career_data, ancestry)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -219,6 +238,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_character_load(args)
     elif args.verb == "skill-scale":
         result = _run_skill_scale(args)
+    elif args.verb == "validate-allocation":
+        result = _run_validate_allocation(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

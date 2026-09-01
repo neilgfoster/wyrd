@@ -223,4 +223,27 @@ TOOLS: dict[str, dict] = {
         },
         "inputSchema": {"type": "object", "properties": {}, "required": []},
     },
+    "validate-allocation": {
+        "name": "validate-allocation",
+        "description": (
+            "Validate an 8-advance allocation against a career (optionally widened by an "
+            "ancestry), per docs/design/11-character-creation.md section 3. Does not "
+            "generate an allocation -- a character is chosen, not rolled (ADR 0014)."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "career_json": {"type": "string"},
+                "ancestry_json": {"type": "string"},
+                "actions_json": {"type": "string"},
+            },
+            "required": ["career_json", "actions_json"],
+        },
+    },
 }
