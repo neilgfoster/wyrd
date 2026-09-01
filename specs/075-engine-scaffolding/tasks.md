@@ -166,10 +166,11 @@ All three user stories are independently verified and wired together.
 
 - [x] T014 Run every step of `specs/075-engine-scaffolding/quickstart.md` by hand from the repo
       root and confirm each expected result matches
-- [ ] T015 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
+- [x] T015 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
       tests/engine/` if `ruff` is configured for this repo (check `pyproject.toml`/`ruff.toml`
       first); if no ruff config exists, skip this task rather than introducing new tooling as a
-      side effect of this feature — **skipped**: no ruff config exists in this repo
+      side effect of this feature — a repo-wide `pyproject.toml` was added by this PR (first PR
+      to include engine code), so this now runs: both checks pass clean
 - [x] T016 Update `docs/design/02-architecture.md`'s `engine/` tree comment
       ("fully specified, not yet built (#90)") to reflect that `engine/wyrd/{catalog,client,
       verbs,rules,state,render}.py` now exist, once this PR merges — per CLAUDE.md's rule that

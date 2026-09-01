@@ -54,7 +54,8 @@ def _dump_block(data, indent: int, lines: list[str]) -> None:
                 lines.append(f"{pad}{key}:")
                 _dump_block(value, indent + 2, lines)
             else:
-                lines.append(f"{pad}{key}: {_dump_scalar(value) if not isinstance(value, (dict, list)) else '{}'}")
+                scalar = "{}" if isinstance(value, (dict, list)) else _dump_scalar(value)
+                lines.append(f"{pad}{key}: {scalar}")
     elif isinstance(data, list):
         for item in data:
             if isinstance(item, dict):
@@ -151,7 +152,9 @@ def save(state: dict, path: pathlib.Path = DEFAULT_STATE_PATH) -> None:
     path = pathlib.Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     text = dump_yaml(state)
-    fd, tmp_name = tempfile.mkstemp(dir=str(path.parent) or ".", prefix=f".{path.name}.", suffix=".tmp")
+    fd, tmp_name = tempfile.mkstemp(
+        dir=str(path.parent) or ".", prefix=f".{path.name}.", suffix=".tmp"
+    )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
             handle.write(text)
