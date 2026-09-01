@@ -158,5 +158,25 @@ class SkillScaleVerbTest(unittest.TestCase):
         self.assertEqual(result["untrained"], 10)
 
 
+class ValidateAllocationVerbTest(unittest.TestCase):
+    def test_accepted_allocation_shape(self):
+        career_data = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+        actions = [
+            {"action": "open", "skill": "stealth"},
+            {"action": "open", "skill": "swordplay"},
+        ] + [{"action": "raise", "skill": "stealth"}] * 6
+        result = verbs.validate_allocation(actions, career_data)
+        self.assertEqual(result["verb"], "validate-allocation")
+        self.assertTrue(result["valid"])
+        self.assertEqual(result["skills"]["stealth"], 55)
+
+    def test_rejected_allocation_shape(self):
+        career_data = {"skills": {"stealth": 55}, "entry_point": True}
+        result = verbs.validate_allocation([], career_data)
+        self.assertEqual(result["verb"], "validate-allocation")
+        self.assertFalse(result["valid"])
+        self.assertIn("error", result)
+
+
 if __name__ == "__main__":
     unittest.main()

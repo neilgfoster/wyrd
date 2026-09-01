@@ -348,5 +348,47 @@ class SkillScaleCliTest(unittest.TestCase):
         self.assertEqual(payload["untrained"], 10)
 
 
+class ValidateAllocationCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "validate-allocation"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "validate-allocation")
+
+    def test_valid_allocation(self):
+        career_json = json.dumps({"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True})
+        actions_json = json.dumps(
+            [{"action": "open", "skill": "stealth"}, {"action": "open", "skill": "swordplay"}]
+            + [{"action": "raise", "skill": "stealth"}] * 6
+        )
+        exit_code, output = _run(
+            [
+                "validate-allocation",
+                "--career-json",
+                career_json,
+                "--actions-json",
+                actions_json,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertTrue(payload["valid"])
+
+    def test_invalid_allocation_still_exits_zero(self):
+        career_json = json.dumps({"skills": {"stealth": 55}, "entry_point": True})
+        exit_code, output = _run(
+            ["validate-allocation", "--career-json", career_json, "--actions-json", "[]"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertFalse(payload["valid"])
+
+    def test_malformed_json_exits_non_zero(self):
+        with self.assertRaises(json.JSONDecodeError):
+            client.main(
+                ["validate-allocation", "--career-json", "not json", "--actions-json", "[]"]
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
