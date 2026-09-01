@@ -284,4 +284,80 @@ TOOLS: dict[str, dict] = {
             ],
         },
     },
+    "propose": {
+        "name": "propose",
+        "description": (
+            "Resolve one roll against an actor's own state (looked up by the engine, not "
+            "supplied by the caller) and stage any implied mutation. Writes nothing -- "
+            "state on disk is unchanged until a matching commit. Returns a proposal id."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "actor": {"type": "string"},
+                "mechanic": {"type": "string", "enum": ["ordinary-test", "exposure"]},
+                "skill": {"type": "string"},
+                "target": {"type": "string"},
+                "difficulty": {
+                    "type": "string",
+                    "enum": [
+                        "easy",
+                        "average",
+                        "challenging",
+                        "difficult",
+                        "hard",
+                        "very_hard",
+                    ],
+                    "default": "average",
+                },
+                "declaration_bonus": {"type": "integer", "default": 0},
+                "tier": {"type": "string", "enum": ["minor", "moderate", "major"]},
+                "seed": {"type": "integer"},
+            },
+            "required": ["actor", "mechanic"],
+        },
+    },
+    "commit": {
+        "name": "commit",
+        "description": (
+            "Apply exactly a proposal's staged mutations to state, atomically, and "
+            "invalidate the id. Errors, rather than silently no-opping, if the id does "
+            "not resolve to a currently-open proposal."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {"proposal_id": {"type": "string"}},
+            "required": ["proposal_id"],
+        },
+    },
+    "discard": {
+        "name": "discard",
+        "description": (
+            "Invalidate a proposal id without writing anything. Errors if the id does "
+            "not resolve to a currently-open proposal."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {"proposal_id": {"type": "string"}},
+            "required": ["proposal_id"],
+        },
+    },
 }
