@@ -28,8 +28,8 @@ Single project, per plan.md: `engine/wyrd/` for source, `tests/engine/` for test
 
 **Purpose**: Project initialization
 
-- [ ] T001 Create `engine/wyrd/__init__.py` (empty package marker) and `tests/engine/__init__.py`
-- [ ] T002 [P] Create empty `engine/wyrd/render.py` with a `to_json(obj: dict) -> str` and
+- [x] T001 Create `engine/wyrd/__init__.py` (empty package marker) and `tests/engine/__init__.py`
+- [x] T002 [P] Create empty `engine/wyrd/render.py` with a `to_json(obj: dict) -> str` and
       `to_text(obj: dict) -> str` stub pair (json.dumps with sorted keys; text stub raises
       NotImplementedError until US3 fills it in)
 
@@ -55,14 +55,14 @@ confirming identical results — no CLI or state layer needed (spec User Story 1
 
 ### Tests for User Story 1
 
-- [ ] T003 [P] [US1] Write `tests/engine/test_rules.py`: same seed → identical result across 100
+- [x] T003 [P] [US1] Write `tests/engine/test_rules.py`: same seed → identical result across 100
       calls (SC-001); no seed → not all-identical across repeated calls (FR-003); `sides=0` and
       `sides=-5` each raise `ValueError` (FR-004); result always in `[1, sides]` for `sides=100`
       and `sides=6` (FR-001, data-model.md's Roll result validation)
 
 ### Implementation for User Story 1
 
-- [ ] T004 [US1] Implement `roll_d100(sides: int = 100, seed: int | None = None) -> int` in
+- [x] T004 [US1] Implement `roll_d100(sides: int = 100, seed: int | None = None) -> int` in
       `engine/wyrd/rules.py`: validate `sides` is a positive int (raise `ValueError` with a clear
       message otherwise, FR-004); use a locally-seeded `random.Random(seed)` instance (never the
       module-level global, per research.md) so one call's seed cannot affect another's result;
@@ -83,7 +83,7 @@ independent of any dice/CLI code (spec User Story 2's own test).
 
 ### Tests for User Story 2
 
-- [ ] T005 [P] [US2] Write `tests/engine/test_state.py`: save-then-load round trip recovers an
+- [x] T005 [P] [US2] Write `tests/engine/test_state.py`: save-then-load round trip recovers an
       identical value for every field in data-model.md's Chronicle state shape (SC-002); loading
       before any save creates the file rather than failing (edge case in spec.md); loading a
       hand-corrupted file raises a clear, specific error rather than silently defaulting
@@ -93,12 +93,12 @@ independent of any dice/CLI code (spec User Story 2's own test).
 
 ### Implementation for User Story 2
 
-- [ ] T006 [US2] Implement `save(state: dict, path: Path) -> None` in `engine/wyrd/state.py`:
+- [x] T006 [US2] Implement `save(state: dict, path: Path) -> None` in `engine/wyrd/state.py`:
       serialize with the restricted internal reader/writer per `docs/design/02-architecture.md`
       (no third-party YAML dependency, per `docs/design/27-tooling.md` section 2 and research.md);
       write to a temp file in the same directory, then `os.replace()` onto `path` (atomic,
       FR-007)
-- [ ] T007 [US2] Implement `load(path: Path) -> dict` in `engine/wyrd/state.py`: return the
+- [x] T007 [US2] Implement `load(path: Path) -> dict` in `engine/wyrd/state.py`: return the
       minimal Chronicle state shape from data-model.md (`schema_version`, `last_roll`); if `path`
       does not exist, return the default empty shape rather than failing (edge case in spec.md);
       if the file exists but fails to parse, raise a clear, specific exception naming the file
@@ -123,28 +123,28 @@ neither US1 nor US2 internals, only the catalog data structure itself.
 
 ### Tests for User Story 3
 
-- [ ] T008 [P] [US3] Write `tests/engine/test_client.py`: `describe` (no args) returns the full
+- [x] T008 [P] [US3] Write `tests/engine/test_client.py`: `describe` (no args) returns the full
       `TOOLS` catalog as JSON containing a `roll` entry matching contracts/cli.md's shape;
       `describe --name roll` returns just that entry; `describe --name bogus` returns the
       structured `{"error": {...}}` shape from contracts/cli.md, not a traceback, and exits 0
       (contracts/cli.md's exit-code contract)
-- [ ] T009 [P] [US3] Write `tests/engine/test_verbs.py`: `verbs.roll(sides=100, seed=1)` returns
+- [x] T009 [P] [US3] Write `tests/engine/test_verbs.py`: `verbs.roll(sides=100, seed=1)` returns
       the Roll result shape from data-model.md and writes `last_roll` to state (`state_written:
       true`, matching the same value `state.load()` then returns) — the end-to-end wiring
       contracts/cli.md's `roll` output depends on
 
 ### Implementation for User Story 3
 
-- [ ] T010 [US3] Define the `TOOLS` catalog in `engine/wyrd/catalog.py`: one entry for `roll`
+- [x] T010 [US3] Define the `TOOLS` catalog in `engine/wyrd/catalog.py`: one entry for `roll`
       with `name`, `description`, `annotations` (`readOnlyHint: false`, `destructiveHint: false`,
       `idempotentHint: false`, `openWorldHint: false`), and a flat `inputSchema` (`sides`
       optional int ≥1 default 100, `seed` optional int) — exactly the shape in contracts/cli.md's
       `describe` example. Pure data, per `27-tooling.md` section 3.
-- [ ] T011 [US3] Implement `roll(sides: int = 100, seed: int | None = None) -> dict` in
+- [x] T011 [US3] Implement `roll(sides: int = 100, seed: int | None = None) -> dict` in
       `engine/wyrd/verbs.py`: call `rules.roll_d100`, then `state.save` to persist `last_roll`
       *before* returning (principle 2 — the persist happens inside this call, not after), and
       return the Roll result shape from data-model.md with `state_written: true`
-- [ ] T012 [US3] Implement `engine/wyrd/client.py`: argparse dispatch built from `catalog.TOOLS`
+- [x] T012 [US3] Implement `engine/wyrd/client.py`: argparse dispatch built from `catalog.TOOLS`
       (iterate the catalog to build subcommands, per `27-tooling.md` section 3's "built FROM the
       catalog" requirement — no hardcoded second list of verb names); a `describe` verb (whole
       catalog, or `--name X` for one entry, or the structured error from contracts/cli.md for an
@@ -153,7 +153,7 @@ neither US1 nor US2 internals, only the catalog data structure itself.
       structured `{"error": {...}}` shape rather than propagating as a traceback (exit code 0
       per contracts/cli.md); an unhandled/unexpected failure (e.g. `load()`'s parse error from
       T007) propagates and exits non-zero
-- [ ] T013 [US3] Fill in `render.to_text` in `engine/wyrd/render.py`: a short human-readable line
+- [x] T013 [US3] Fill in `render.to_text` in `engine/wyrd/render.py`: a short human-readable line
       per contracts/cli.md (e.g. `d100: 42` for a roll result), used when `client.py` is invoked
       with `--format text`
 
@@ -164,13 +164,13 @@ All three user stories are independently verified and wired together.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T014 Run every step of `specs/075-engine-scaffolding/quickstart.md` by hand from the repo
+- [x] T014 Run every step of `specs/075-engine-scaffolding/quickstart.md` by hand from the repo
       root and confirm each expected result matches
 - [ ] T015 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
       tests/engine/` if `ruff` is configured for this repo (check `pyproject.toml`/`ruff.toml`
       first); if no ruff config exists, skip this task rather than introducing new tooling as a
-      side effect of this feature
-- [ ] T016 Update `docs/design/02-architecture.md`'s `engine/` tree comment
+      side effect of this feature — **skipped**: no ruff config exists in this repo
+- [x] T016 Update `docs/design/02-architecture.md`'s `engine/` tree comment
       ("fully specified, not yet built (#90)") to reflect that `engine/wyrd/{catalog,client,
       verbs,rules,state,render}.py` now exist, once this PR merges — per CLAUDE.md's rule that
       design documents describe the present
