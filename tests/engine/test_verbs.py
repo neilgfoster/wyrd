@@ -133,5 +133,30 @@ class ResolveExtendedIntervalVerbTest(unittest.TestCase):
         self.assertIn("done", result)
 
 
+class CharacterVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "aria.md"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_save_then_load_round_trip(self):
+        verbs.character_save(path=self.path, frontmatter={"id": "aria"}, body="Prose.\n")
+        loaded = verbs.character_load(path=self.path)
+        self.assertEqual(loaded["verb"], "character-load")
+        self.assertEqual(loaded["frontmatter"], {"id": "aria"})
+        self.assertEqual(loaded["body"], "Prose.\n")
+
+
+class SkillScaleVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.skill_scale()
+        self.assertEqual(result["verb"], "skill-scale")
+        self.assertEqual(result["open_value"], 25)
+        self.assertEqual(result["advance_step"], 5)
+        self.assertEqual(result["untrained"], 10)
+
+
 if __name__ == "__main__":
     unittest.main()

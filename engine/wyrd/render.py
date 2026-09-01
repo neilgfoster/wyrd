@@ -45,6 +45,15 @@ def to_text(obj: dict) -> str:
     if obj.get("verb") == "group-test":
         outcome = "success" if obj["success"] else "failure"
         return f"group-test: {obj['mode']} -> skill {obj['selected_skill']}%, {outcome}"
+    if obj.get("verb") == "character-save":
+        return f"character-save: {obj['path']}"
+    if obj.get("verb") == "character-load":
+        return f"character-load: {obj['path']} ({obj['frontmatter'].get('id', '?')})"
+    if obj.get("verb") == "skill-scale":
+        return (
+            f"skill-scale: opens {obj['open_value']}%, +{obj['advance_step']}%/advance, "
+            f"untrained {obj['untrained']}%"
+        )
     if obj.get("verb") == "extended-task-interval":
         done = " (done)" if obj["done"] else ""
         progress = f"{obj['progress']}/{obj['target']}"

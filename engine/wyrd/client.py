@@ -11,10 +11,12 @@ Python 3.11+, standard library only.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 
 from wyrd import render, state, verbs
 from wyrd.catalog import TOOLS
+from wyrd.state import StateError
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -75,6 +77,23 @@ def _build_parser() -> argparse.ArgumentParser:
         interval_parser.add_argument("--progress", type=int, required=True)
         interval_parser.add_argument("--target", type=int, required=True)
         interval_parser.add_argument("--seed", type=int, default=None)
+
+    if "character-save" in TOOLS:
+        save_parser = subparsers.add_parser(
+            "character-save", help=TOOLS["character-save"]["description"]
+        )
+        save_parser.add_argument("--path", required=True)
+        save_parser.add_argument("--frontmatter-json", required=True)
+        save_parser.add_argument("--body", default="")
+
+    if "character-load" in TOOLS:
+        load_parser = subparsers.add_parser(
+            "character-load", help=TOOLS["character-load"]["description"]
+        )
+        load_parser.add_argument("--path", required=True)
+
+    if "skill-scale" in TOOLS:
+        subparsers.add_parser("skill-scale", help=TOOLS["skill-scale"]["description"])
 
     return parser
 
@@ -157,6 +176,25 @@ def _run_extended_task_interval(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_character_save(args: argparse.Namespace) -> dict:
+    try:
+        frontmatter = json.loads(args.frontmatter_json)
+        return verbs.character_save(path=args.path, frontmatter=frontmatter, body=args.body)
+    except (StateError, json.JSONDecodeError) as exc:
+        return {"error": {"verb": "character-save", "reason": str(exc)}}
+
+
+def _run_character_load(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.character_load(path=args.path)
+    except StateError as exc:
+        return {"error": {"verb": "character-load", "reason": str(exc)}}
+
+
+def _run_skill_scale(args: argparse.Namespace) -> dict:
+    return verbs.skill_scale()
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -175,6 +213,12 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_group_test(args)
     elif args.verb == "extended-task-interval":
         result = _run_extended_task_interval(args)
+    elif args.verb == "character-save":
+        result = _run_character_save(args)
+    elif args.verb == "character-load":
+        result = _run_character_load(args)
+    elif args.verb == "skill-scale":
+        result = _run_skill_scale(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

@@ -170,4 +170,57 @@ TOOLS: dict[str, dict] = {
             "required": ["skill", "opponent", "progress", "target"],
         },
     },
+    "character-save": {
+        "name": "character-save",
+        "description": (
+            "Save a player-character entity to a file, validating wound rules before writing."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "frontmatter": {"type": "object"},
+                "body": {"type": "string", "default": ""},
+            },
+            "required": ["path", "frontmatter"],
+        },
+    },
+    "character-load": {
+        "name": "character-load",
+        "description": (
+            "Load a player-character entity from a file, validating its wounds against "
+            "the documented load-error rules."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {"path": {"type": "string"}},
+            "required": ["path"],
+        },
+    },
+    "skill-scale": {
+        "name": "skill-scale",
+        "description": (
+            "Report the skill-scale constants: the value a skill opens at, the amount it "
+            "rises per advance, and the untrained flat rate."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {"type": "object", "properties": {}, "required": []},
+    },
 }

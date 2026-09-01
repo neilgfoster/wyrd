@@ -286,5 +286,67 @@ class ExtendedTaskIntervalCliTest(unittest.TestCase):
         self.assertIn("done", payload)
 
 
+class CharacterCliTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = str(pathlib.Path(self._tmp.name) / "aria.md")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_describe_by_name(self):
+        for name in ("character-save", "character-load"):
+            exit_code, output = _run(["describe", "--name", name])
+            self.assertEqual(exit_code, 0)
+            payload = json.loads(output)
+            self.assertEqual(payload["name"], name)
+
+    def test_save_then_load_round_trip(self):
+        exit_code, _ = _run(
+            [
+                "character-save",
+                "--path",
+                self.path,
+                "--frontmatter-json",
+                '{"id": "aria"}',
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        exit_code, output = _run(["character-load", "--path", self.path])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["frontmatter"], {"id": "aria"})
+
+    def test_invalid_wound_is_structured_error(self):
+        exit_code, output = _run(
+            [
+                "character-save",
+                "--path",
+                self.path,
+                "--frontmatter-json",
+                '{"id": "x", "wounds": [{"id": "w1", "effect": {"skill": -10}}]}',
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+
+
+class SkillScaleCliTest(unittest.TestCase):
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "skill-scale"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "skill-scale")
+
+    def test_returns_documented_values(self):
+        exit_code, output = _run(["skill-scale"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["open_value"], 25)
+        self.assertEqual(payload["advance_step"], 5)
+        self.assertEqual(payload["untrained"], 10)
+
+
 if __name__ == "__main__":
     unittest.main()
