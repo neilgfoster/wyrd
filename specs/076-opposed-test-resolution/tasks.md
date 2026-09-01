@@ -31,23 +31,23 @@ exist and this feature extends them directly.
 
 ## Phase 2: Tests (write first, confirm they fail)
 
-- [ ] T001 [P] [US1] Add to `tests/engine/test_rules.py`: `effective_pct` matches
+- [x] T001 [P] [US1] Add to `tests/engine/test_rules.py`: `effective_pct` matches
       `clip(50 + (skill - opponent), 5, 95)` across a spread of (skill, opponent) pairs including
       an even match (50/50 → 50), a wide gap clipped high (95/5 → 95) and low (5/95 → 5), and at
       least 1000 generated pairs asserted against the formula computed independently in the test
       itself (SC-001)
-- [ ] T002 [P] [US1] Add to `tests/engine/test_rules.py`: success is `true` iff `roll <=
+- [x] T002 [P] [US1] Add to `tests/engine/test_rules.py`: success is `true` iff `roll <=
       effective_pct`, for both a passing and failing seed at a fixed `effective_pct`
-- [ ] T003 [P] [US2] Add to `tests/engine/test_rules.py`: on success, `degrees` equals
+- [x] T003 [P] [US2] Add to `tests/engine/test_rules.py`: on success, `degrees` equals
       `tens(effective_pct) - tens(roll)` exactly, for several seeds (SC-002); on failure,
       `degrees` is `None` (FR-005)
-- [ ] T004 [P] [US3] Add to `tests/engine/test_rules.py`: for all ten units digits 0-9, crossed
+- [x] T004 [P] [US3] Add to `tests/engine/test_rules.py`: for all ten units digits 0-9, crossed
       with both a success and a failure case (20 total), `wyrd` matches the table (`0` →
       `"ill_omen"`, `9` → `"fair_omen"`, else `"none"`) regardless of `success` (SC-003, FR-007)
-- [ ] T005 [P] [US1] Add to `tests/engine/test_verbs.py`: `verbs.opposed_test(skill=70,
+- [x] T005 [P] [US1] Add to `tests/engine/test_verbs.py`: `verbs.opposed_test(skill=70,
       opponent=30, seed=1)` returns the shape from data-model.md and performs no state write
       (assert no `chronicle_state.yaml` is created in a clean temp cwd)
-- [ ] T006 [P] [US1] Add to `tests/engine/test_client.py`: `describe --name opposed-test` returns
+- [x] T006 [P] [US1] Add to `tests/engine/test_client.py`: `describe --name opposed-test` returns
       the catalog entry from contracts/cli.md; `opposed-test --skill 70 --opponent 30 --seed 1`
       returns the documented JSON shape; `--format text` renders the documented line; a missing
       required argument exits non-zero (argparse's own behavior)
@@ -56,28 +56,28 @@ exist and this feature extends them directly.
 
 ## Phase 3: Implementation
 
-- [ ] T007 [US1] Implement `opposed_test(skill: int, opponent: int, seed: int | None = None) ->
+- [x] T007 [US1] Implement `opposed_test(skill: int, opponent: int, seed: int | None = None) ->
       dict` in `engine/wyrd/rules.py`: compute `effective_pct = max(5, min(95, 50 + (skill -
       opponent)))`; call `roll_d100(sides=100, seed=seed)` for the single roll (reusing #221's
       primitive, never re-rolling); determine `success = roll <= effective_pct`
-- [ ] T008 [US3] In the same function, read the Wyrd die from `roll % 10` as a single shared step
+- [x] T008 [US3] In the same function, read the Wyrd die from `roll % 10` as a single shared step
       before branching on `success` (research.md's independence decision): `0` → `"ill_omen"`,
       `9` → `"fair_omen"`, else `"none"`
-- [ ] T009 [US2] In the same function, set `degrees = tens(effective_pct) - tens(roll)` only when
+- [x] T009 [US2] In the same function, set `degrees = tens(effective_pct) - tens(roll)` only when
       `success` is `true`, else `degrees = None`; return the full result shape from
       data-model.md
-- [ ] T010 [US1] Add the `opposed-test` entry to `TOOLS` in `engine/wyrd/catalog.py`, matching
+- [x] T010 [US1] Add the `opposed-test` entry to `TOOLS` in `engine/wyrd/catalog.py`, matching
       contracts/cli.md's `describe` shape exactly (`readOnlyHint: true`, since this verb performs
       no state write)
-- [ ] T011 [US1] Implement `opposed_test(skill: int, opponent: int, seed: int | None = None) ->
+- [x] T011 [US1] Implement `opposed_test(skill: int, opponent: int, seed: int | None = None) ->
       dict` in `engine/wyrd/verbs.py`: a thin wrapper calling `rules.opposed_test` directly, with
       **no** `state.save`/`state.load` call (unlike `verbs.roll`)
-- [ ] T012 [US1] Add the `opposed-test` subcommand to `engine/wyrd/client.py`: `--skill` and
+- [x] T012 [US1] Add the `opposed-test` subcommand to `engine/wyrd/client.py`: `--skill` and
       `--opponent` required ints, `--seed` optional int, dispatching to `verbs.opposed_test`; no
       structured-error path is needed for this verb (any integer skill/opponent pair is valid
       input, per contracts/cli.md's exit-code note) — a missing required argument is argparse's
       own usage error
-- [ ] T013 [US3] Add a `to_text` case for `opposed-test` results in `engine/wyrd/render.py`,
+- [x] T013 [US3] Add a `to_text` case for `opposed-test` results in `engine/wyrd/render.py`,
       matching contracts/cli.md's documented text format for both success and failure
 
 **Checkpoint**: `python3 -m unittest discover -s tests/engine` passes, including all new cases.
@@ -86,11 +86,11 @@ exist and this feature extends them directly.
 
 ## Phase 4: Polish
 
-- [ ] T014 Run every step of `specs/076-opposed-test-resolution/quickstart.md` by hand from the
+- [x] T014 Run every step of `specs/076-opposed-test-resolution/quickstart.md` by hand from the
       repo root and confirm each expected result matches
-- [ ] T015 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
+- [x] T015 [P] Run `ruff check engine/ tests/engine/` and `ruff format --check engine/
       tests/engine/` (config now exists, per #221's follow-up) and fix anything flagged
-- [ ] T016 Update `docs/design/02-architecture.md`'s `engine/` tree comment if this feature
+- [x] T016 Update `docs/design/02-architecture.md`'s `engine/` tree comment if this feature
       changes what's true about the engine's build status (likely no change needed — #221
       already moved it to "build underway"; only revisit if this feature's landing changes that
       wording's accuracy)

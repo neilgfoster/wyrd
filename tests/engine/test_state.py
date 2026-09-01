@@ -87,7 +87,10 @@ class StateRoundTripTest(unittest.TestCase):
 
         import unittest.mock as mock
 
-        new_state = {"schema_version": 1, "last_roll": {"verb": "roll", "sides": 100, "result": 1, "seed": 1}}
+        new_state = {
+            "schema_version": 1,
+            "last_roll": {"verb": "roll", "sides": 100, "result": 1, "seed": 1},
+        }
         with mock.patch("wyrd.state.os.replace", side_effect=OSError("boom")):
             with self.assertRaises(OSError):
                 state.save(new_state, self.path)

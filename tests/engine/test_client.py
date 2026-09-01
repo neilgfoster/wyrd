@@ -50,6 +50,13 @@ class DescribeTest(unittest.TestCase):
         self.assertIn("error", payload)
         self.assertEqual(payload["error"]["verb"], "describe")
 
+    def test_describe_by_name_returns_opposed_test_entry(self):
+        exit_code, output = _run(["describe", "--name", "opposed-test"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["name"], "opposed-test")
+        self.assertTrue(payload["annotations"]["readOnlyHint"])
+
 
 class RollCliTest(unittest.TestCase):
     def setUp(self):
@@ -92,6 +99,30 @@ class RollCliTest(unittest.TestCase):
         payload = json.loads(output)
         loaded = state.load(state.DEFAULT_STATE_PATH)
         self.assertEqual(loaded["last_roll"]["result"], payload["result"])
+
+
+class OpposedTestCliTest(unittest.TestCase):
+    def test_json_output_shape(self):
+        exit_code, output = _run(
+            ["opposed-test", "--skill", "70", "--opponent", "30", "--seed", "1"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["verb"], "opposed-test")
+        self.assertEqual(payload["effective_pct"], 90)
+
+    def test_text_output(self):
+        exit_code, output = _run(
+            ["--format", "text", "opposed-test", "--skill", "70", "--opponent", "30", "--seed", "1"]
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertTrue(output.startswith("opposed-test:"))
+
+    def test_missing_required_argument_exits_non_zero(self):
+        buffer = io.StringIO()
+        with contextlib.redirect_stderr(buffer), self.assertRaises(SystemExit) as ctx:
+            client.main(["opposed-test", "--skill", "70"])
+        self.assertNotEqual(ctx.exception.code, 0)
 
 
 if __name__ == "__main__":

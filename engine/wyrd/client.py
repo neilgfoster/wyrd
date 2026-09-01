@@ -33,6 +33,14 @@ def _build_parser() -> argparse.ArgumentParser:
         roll_parser.add_argument("--sides", type=int, default=100)
         roll_parser.add_argument("--seed", type=int, default=None)
 
+    if "opposed-test" in TOOLS:
+        opposed_parser = subparsers.add_parser(
+            "opposed-test", help=TOOLS["opposed-test"]["description"]
+        )
+        opposed_parser.add_argument("--skill", type=int, required=True)
+        opposed_parser.add_argument("--opponent", type=int, required=True)
+        opposed_parser.add_argument("--seed", type=int, default=None)
+
     return parser
 
 
@@ -52,6 +60,10 @@ def _run_roll(args: argparse.Namespace) -> dict:
         return {"error": {"verb": "roll", "reason": str(exc)}}
 
 
+def _run_opposed_test(args: argparse.Namespace) -> dict:
+    return verbs.opposed_test(skill=args.skill, opponent=args.opponent, seed=args.seed)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -60,6 +72,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_describe(args)
     elif args.verb == "roll":
         result = _run_roll(args)
+    elif args.verb == "opposed-test":
+        result = _run_opposed_test(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2
