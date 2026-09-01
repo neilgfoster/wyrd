@@ -58,9 +58,15 @@ def _dump_block(data, indent: int, lines: list[str]) -> None:
                 lines.append(f"{pad}{key}: {scalar}")
     elif isinstance(data, list):
         for item in data:
-            if isinstance(item, dict):
-                lines.append(f"{pad}-")
-                _dump_block(item, indent + 2, lines)
+            if isinstance(item, dict) and item:
+                # First key inline after "- ", remaining keys indented two further -- the
+                # conventional list-of-mappings style, matching what the reader below expects
+                # (tools/check_bestiary.py's reader already relies on this same shape).
+                item_lines: list[str] = []
+                _dump_block(item, indent + 2, item_lines)
+                first, *rest = item_lines
+                lines.append(f"{pad}- {first[indent + 2:]}")
+                lines.extend(rest)
             else:
                 lines.append(f"{pad}- {_dump_scalar(item)}")
     else:
@@ -88,7 +94,14 @@ def _scalar(text: str):
 
 
 def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
+    """Parse one block (a mapping or a list) at the given indentation.
+
+    A list item may be a scalar (`- value`) or a mapping whose first key sits inline after
+    the dash and whose remaining keys are indented two further (`- id: x\\n    effect: ...`)
+    -- the same shape tools/check_bestiary.py's reader already relies on.
+    """
     i = start
+    items: list = []
     mapping: dict = {}
     while i < len(lines):
         lineno, ind, text = lines[i]
@@ -96,11 +109,32 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
             break
         if ind > indent:
             raise StateError(f"line {lineno}: unexpected indentation")
+        if items and not text.startswith("- "):
+            # A mapping sitting at its parent key's own indentation ends where a sequence's
+            # sibling key would begin -- without this a following key would be read as part
+            # of the list.
+            break
         if text == "{}":
             i += 1
             continue
+        if text.startswith("- "):
+            rest = text[2:].strip()
+            if ":" in rest and not rest.startswith(("\"", "'")):
+                key, _, val = rest.partition(":")
+                sub_lines = [(lineno, indent + 2, f"{key.strip()}:{val}")]
+                j = i + 1
+                while j < len(lines) and lines[j][1] > indent:
+                    sub_lines.append(lines[j])
+                    j += 1
+                value, _ = _parse_block(sub_lines, 0, indent + 2)
+                items.append(value)
+                i = j
+                continue
+            items.append(_scalar(rest))
+            i += 1
+            continue
         if ":" not in text:
-            raise StateError(f"line {lineno}: expected 'key: value'")
+            raise StateError(f"line {lineno}: expected 'key: value' or '- item'")
         key, _, val = text.partition(":")
         key = key.strip()
         val = val.strip()
@@ -112,10 +146,17 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
         if j < len(lines) and lines[j][1] > indent:
             value, j = _parse_block(lines, j, lines[j][1])
             mapping[key] = value
+        elif j < len(lines) and lines[j][1] == indent and lines[j][2].startswith("- "):
+            # A sequence may share its parent key's own indentation rather than being
+            # indented under it -- both are legal YAML.
+            value, j = _parse_block(lines, j, indent)
+            mapping[key] = value
         else:
             mapping[key] = None
         i = j
-    return mapping, i
+    if items and mapping:
+        raise StateError("a block is either a list or a mapping, never both")
+    return (items if items else mapping), i
 
 
 def parse_yaml(text: str) -> dict:
