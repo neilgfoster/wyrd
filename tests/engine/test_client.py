@@ -508,7 +508,16 @@ class ProposeCommitDiscardCliTest(unittest.TestCase):
         proposed = json.loads(output)
         self.assertEqual(proposed["roll"]["roll"], 77)
         self.assertEqual(
-            proposed["mutations"], [{"entity": self.path, "field": "taint", "op": "+", "value": 2}]
+            proposed["mutations"],
+            [
+                {
+                    "entity": self.path,
+                    "field": "taint",
+                    "op": "+",
+                    "value": 2,
+                    "produced_by_step": 0,
+                }
+            ],
         )
 
         exit_code, output = _run(["character-load", "--path", self.path])
