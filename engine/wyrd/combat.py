@@ -15,6 +15,11 @@ costs a parting blow from every opponent still engaged. A ranged attack from an 
 is Difficult; one at a target engaged with someone else is Challenging, and an Ill Omen on that
 shot hits the ally instead.
 
+"Getting away, and the pursuit" (specs/088-escape-and-pursuit): leaving the scene entirely is a
+group test in the "everyone must get through" shape, at a difficulty set by how many pursuers
+are able and willing to follow -- one is Challenging, each further pursuer one rung harder. A
+success clears the scene; a failure resumes it exactly as it was.
+
 A combat scene is chronicle-scoped, not per-entity (specs/086-turn-order-round-structure/spec.md
 Assumptions) -- it lives under a `combat` key in the same chronicle state `state.py` already
 reads/writes atomically.
@@ -26,7 +31,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import resolution, state
+from wyrd import resolution, rules, state
 
 #: docs/design/03-rules.md section 2 "Surprise and ambush": the ambush bonus, and the round it
 #: stops applying after.
@@ -254,6 +259,81 @@ def break_off(
         for opponent, gear in opponent_attacks.items()
     ]
     return resolution.propose_batch(requests, seed=seed)
+
+
+#: docs/design/03-rules.md section 2 "Breaking off, and getting away": the pursuit ladder --
+#: one pursuer is Challenging, each further pursuer one rung harder. There is no rung below
+#: Very Hard, so four or more pursuers all floor out there.
+PURSUIT_DIFFICULTIES = ["challenging", "difficult", "hard", "very_hard"]
+
+
+def escape_difficulty(pursuer_count: int) -> str | None:
+    """Convert a pursuer count to the escape test's difficulty (docs/design/03-rules.md
+    section 2's pursuit ladder). `None` means "no one able or willing to follow -- no test,
+    you simply go"."""
+    if pursuer_count < 0:
+        raise ValueError(f"pursuer_count must not be negative, got {pursuer_count}")
+    if pursuer_count == 0:
+        return None
+    return PURSUIT_DIFFICULTIES[min(pursuer_count - 1, len(PURSUIT_DIFFICULTIES) - 1)]
+
+
+def escape_scene(
+    party_skills: dict[str, int | None],
+    pursuer_count: int,
+    *,
+    seed: int | None = None,
+    state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
+) -> dict:
+    """docs/design/03-rules.md section 2: "Getting away from the scene is a group test, in the
+    *everyone must get through* shape ... the party escapes as fast as its slowest member."
+    Resolved via `rules.group_test` in `"least_capable"` mode -- the same mode the "everyone
+    must get through" shape already names, never reimplemented here.
+
+    `party_skills`: `{"<member path>": skill_or_None}`, the same shape `select_group_skill`
+    already expects per member (`None` meaning "no relevant skill at all", substituted with the
+    untrained rate, never excluded).
+
+    On success, or on the no-test (zero-pursuer) case, the chronicle's `combat` scene is
+    removed entirely -- the party has left. On failure, state is left untouched: "the fight
+    resumes, and it resumes where the slowest member is," which is already where combat state
+    already has them, so there is nothing further to change (spec.md FR-005).
+    """
+    if not party_skills:
+        raise ValueError("party_skills must not be empty")
+    slowest_member = min(
+        party_skills,
+        key=lambda member: (
+            rules.UNTRAINED_SKILL if party_skills[member] is None else party_skills[member]
+        ),
+    )
+    difficulty = escape_difficulty(pursuer_count)
+    if difficulty is None:
+        current = state.load(state_path)
+        current.pop("combat", None)
+        state.save(current, state_path)
+        return {
+            "escaped": True,
+            "no_test": True,
+            "difficulty": None,
+            "roll": None,
+            "slowest_member": slowest_member,
+        }
+
+    opponent = 50 - resolution.DIFFICULTY_BONUSES[difficulty]
+    result = rules.group_test(list(party_skills.values()), "least_capable", opponent, seed=seed)
+    escaped = bool(result["success"])
+    if escaped:
+        current = state.load(state_path)
+        current.pop("combat", None)
+        state.save(current, state_path)
+    return {
+        **result,
+        "escaped": escaped,
+        "no_test": False,
+        "difficulty": difficulty,
+        "slowest_member": slowest_member,
+    }
 
 
 #: docs/design/03-rules.md section 1's difficulty ladder, reused here for the two named
