@@ -998,5 +998,35 @@ class RerollAcrossOmenProducersTest(ResolutionTestBase):
         self.assertEqual(after["pending_omen"], 10)
 
 
+class OmenAttributionSameValueTest(ResolutionTestBase):
+    """A step that consumes a pending Omen and then rolls a fresh Omen of the *same* value must
+    still become the new attributed producer -- a later step's depends_on must point at it, not
+    at the earlier step whose value merely happened to match (adversarial review's second pass
+    on PR 242)."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"] = {"a": 10, "b": 45, "c": 45}
+        frontmatter["pending_omen"] = None
+        character.save(frontmatter, "", self.path)
+
+    def test_third_request_depends_on_the_second_not_the_first(self):
+        result = resolution.propose_batch(
+            [
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "a"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "b"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "c"},
+            ],
+            seed=40,
+        )
+        self.assertEqual(result["steps"][0]["roll"]["wyrd_die"], "fair_omen")
+        self.assertEqual(result["steps"][1]["roll"]["wyrd_die"], "fair_omen")  # same value, +10
+        # No mutation staged for step 1 -- the value didn't actually change (FR-006) -- but
+        # attribution must still move to step 1.
+        self.assertEqual([m["produced_by_step"] for m in result["steps"][1]["mutations"]], [])
+        self.assertEqual(result["steps"][2]["depends_on"], [1])  # not [0]
+
+
 if __name__ == "__main__":
     unittest.main()

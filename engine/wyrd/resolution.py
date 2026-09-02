@@ -783,9 +783,20 @@ def _stage_requests(
             new_token = fresh_omen
         elif consumed:
             new_token = None
-        if new_token != omen["token"]:
-            omen["token"] = new_token
-            omen["producing_step"] = base_id if new_token is not None else None
+        value_changed = new_token != omen["token"]
+        # Attribution (`producing_step`) updates whenever THIS step freshly produced an Omen,
+        # even if that Omen happens to carry the same value as what was already pending -- the
+        # value not changing (so no mutation needs staging, FR-006) is a separate question from
+        # who a *later* request's depends_on edge must now point at. Getting this wrong would
+        # leave a later consumer pointing at a stale producer, so a reroll of the step that
+        # actually produced the still-pending value would never pull that consumer into its
+        # downstream set (adversarial review on PR 242's second pass).
+        if fresh_omen is not None:
+            omen["producing_step"] = base_id
+        elif value_changed:
+            omen["producing_step"] = None
+        omen["token"] = new_token
+        if value_changed:
             top_step["mutations"].append(
                 {
                     "entity": request["actor"],
