@@ -1348,5 +1348,219 @@ class AftermathTest(unittest.TestCase):
                 character.validate_wound(wound)
 
 
+class MortalBlowsFateDeathTest(unittest.TestCase):
+    """specs/092-mortal-blows-fate-death: mortal-critical forcing, the Fate-spend re-read,
+    `mortality: low`'s unconditional closure, and companion status transitions."""
+
+    def _stage(self, *, points_below_zero=3, mortal=False, mortality="standard", seed=1):
+        steps: list[dict] = []
+        resolution._stage_aftermath(
+            steps,
+            entity="pc",
+            points_below_zero=points_below_zero,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=seed),
+            bears_on_skill="swordplay",
+            mortal=mortal,
+            mortality=mortality,
+        )
+        return steps
+
+    # -- Story 1: a mortal critical forces death ---------------------------------------------
+
+    def test_mortal_forces_death_regardless_of_roll(self):
+        # points_below_zero=1 -> a low total that would ordinarily land on out-of-action.
+        steps = self._stage(points_below_zero=1, mortal=True)
+        roll = steps[0]["roll"]
+        self.assertEqual(roll["key"], "death")
+        self.assertTrue(roll["forced_mortal"])
+        # the underlying roll/total are still recorded as actually rolled.
+        self.assertEqual(roll["total"], roll["roll"] + roll["modifier"])
+
+    def test_non_mortal_leaves_existing_behaviour_untouched(self):
+        steps = self._stage(points_below_zero=1, mortal=False)
+        roll = steps[0]["roll"]
+        self.assertFalse(roll["forced_mortal"])
+        self.assertIsNone(roll["closed_by"])
+        self.assertFalse(roll["fate_spent"])
+
+    # -- Story 4: mortality: low closes death unconditionally --------------------------------
+
+    def test_mortality_low_closes_a_rolled_death(self):
+        steps = self._stage(points_below_zero=25, mortality="low")  # well past 111
+        roll = steps[0]["roll"]
+        self.assertEqual(roll["key"], "recurring-wound")
+        self.assertEqual(roll["closed_by"], "mortality")
+        self.assertFalse(roll["fate_spent"])
+        wound = steps[0]["mutations"][0]["value"]
+        self.assertEqual(wound["effect"], {"skill": -10})
+
+    def test_mortality_low_closes_a_mortal_forced_death(self):
+        steps = self._stage(points_below_zero=1, mortal=True, mortality="low")
+        roll = steps[0]["roll"]
+        self.assertEqual(roll["key"], "recurring-wound")
+        self.assertTrue(roll["forced_mortal"])
+        self.assertEqual(roll["closed_by"], "mortality")
+
+    def test_mortality_standard_and_high_leave_death_standing(self):
+        for mortality in ("standard", "high"):
+            with self.subTest(mortality=mortality):
+                steps = self._stage(points_below_zero=25, mortality=mortality)
+                self.assertEqual(steps[0]["roll"]["key"], "death")
+                self.assertIsNone(steps[0]["roll"]["closed_by"])
+
+    def test_invalid_mortality_rejected(self):
+        with self.assertRaises(ValueError):
+            self._stage(mortality="grim")
+
+    # -- Story 2: a spent Fate point re-reads death -------------------------------------------
+
+    def test_close_death_row_rewrites_and_spends_fate(self):
+        steps = self._stage(points_below_zero=25)
+        pc_state = {"fate": {"current": 2}}
+        mutations = resolution.close_death_row(
+            steps, 0, "pc", pc_state, spender_state=pc_state, spender_entity="pc"
+        )
+        roll = steps[0]["roll"]
+        self.assertEqual(roll["key"], "recurring-wound")
+        self.assertEqual(roll["closed_by"], "fate")
+        self.assertTrue(roll["fate_spent"])
+        self.assertEqual(pc_state["fate"]["current"], 1)
+        self.assertEqual(pc_state["wounds"][0]["effect"], {"skill": -10})
+        fate_mutation = next(m for m in mutations if m["field"] == "fate.current")
+        self.assertEqual(fate_mutation["entity"], "pc")
+        self.assertEqual(fate_mutation["value"], 1)
+
+    def test_close_death_row_rejects_no_fate(self):
+        steps = self._stage(points_below_zero=25)
+        pc_state = {"fate": {"current": 0}}
+        with self.assertRaises(ValueError):
+            resolution.close_death_row(
+                steps, 0, "pc", pc_state, spender_state=pc_state, spender_entity="pc"
+            )
+        self.assertEqual(steps[0]["roll"]["key"], "death")
+
+    def test_close_death_row_rejects_non_death_step(self):
+        steps = self._stage(points_below_zero=1)  # out-of-action
+        pc_state = {"fate": {"current": 2}}
+        with self.assertRaises(ValueError):
+            resolution.close_death_row(
+                steps, 0, "pc", pc_state, spender_state=pc_state, spender_entity="pc"
+            )
+
+    def test_close_death_row_rejects_already_closed(self):
+        for mortality in ("mortality-closed", "fate-closed"):
+            with self.subTest(mortality=mortality):
+                if mortality == "mortality-closed":
+                    steps = self._stage(points_below_zero=25, mortality="low")
+                    pc_state = {"fate": {"current": 2}}
+                else:
+                    steps = self._stage(points_below_zero=25)
+                    pc_state = {"fate": {"current": 2}}
+                    resolution.close_death_row(
+                        steps, 0, "pc", pc_state, spender_state=pc_state, spender_entity="pc"
+                    )
+                with self.assertRaises(ValueError):
+                    resolution.close_death_row(
+                        steps, 0, "pc", pc_state, spender_state=pc_state, spender_entity="pc"
+                    )
+
+    # -- Story 3: a Fate spend for a companion requires presence and ability -----------------
+
+    def test_companion_spend_succeeds_when_player_present_and_able(self):
+        steps = self._stage(points_below_zero=25)
+        companion_state = {"role": "companion"}
+        pc_state = {"fate": {"current": 2}, "stamina": {"current": 3}}
+        resolution.close_death_row(
+            steps,
+            0,
+            "companion",
+            companion_state,
+            spender_state=pc_state,
+            spender_entity="pc",
+            spender_present=True,
+        )
+        self.assertEqual(steps[0]["roll"]["key"], "recurring-wound")
+        self.assertEqual(pc_state["fate"]["current"], 1)
+        self.assertEqual(companion_state["wounds"][0]["effect"], {"skill": -10})
+
+    def test_companion_spend_rejected_when_player_absent(self):
+        steps = self._stage(points_below_zero=25)
+        companion_state = {"role": "companion"}
+        pc_state = {"fate": {"current": 2}, "stamina": {"current": 3}}
+        with self.assertRaises(ValueError):
+            resolution.close_death_row(
+                steps,
+                0,
+                "companion",
+                companion_state,
+                spender_state=pc_state,
+                spender_entity="pc",
+                spender_present=False,
+            )
+        self.assertEqual(steps[0]["roll"]["key"], "death")
+        self.assertEqual(pc_state["fate"]["current"], 2)
+
+    def test_companion_spend_rejected_when_player_unable_to_act(self):
+        steps = self._stage(points_below_zero=25)
+        companion_state = {"role": "companion"}
+        pc_state = {"fate": {"current": 2}, "stamina": {"current": -1}}
+        with self.assertRaises(ValueError):
+            resolution.close_death_row(
+                steps,
+                0,
+                "companion",
+                companion_state,
+                spender_state=pc_state,
+                spender_entity="pc",
+                spender_present=True,
+            )
+        self.assertEqual(steps[0]["roll"]["key"], "death")
+
+    def test_companion_spend_deducts_the_players_own_fate(self):
+        steps = self._stage(points_below_zero=25)
+        companion_state = {"role": "companion", "fate": {"current": 99}}
+        pc_state = {"fate": {"current": 2}, "stamina": {"current": 0}}
+        resolution.close_death_row(
+            steps,
+            0,
+            "companion",
+            companion_state,
+            spender_state=pc_state,
+            spender_entity="pc",
+        )
+        self.assertEqual(pc_state["fate"]["current"], 1)
+        self.assertEqual(companion_state["fate"]["current"], 99)
+
+    # -- Story 5: companion status transitions -----------------------------------------------
+
+    def test_standing_death_sets_companion_status_dead(self):
+        companion_state = {"role": "companion"}
+        mutation = resolution.apply_companion_status(companion_state, "death")
+        self.assertEqual(mutation["value"], "dead")
+        self.assertEqual(companion_state["status"], "dead")
+
+    def test_taken_sets_companion_status_away(self):
+        companion_state = {"role": "companion"}
+        mutation = resolution.apply_companion_status(companion_state, "taken")
+        self.assertEqual(mutation["value"], "away")
+        self.assertEqual(companion_state["status"], "away")
+
+    def test_other_rows_leave_status_unchanged(self):
+        for key in (
+            "out-of-action",
+            "lasting-wound",
+            "left-for-dead",
+            "new-enemy",
+            "disfigured",
+            "recurring-wound",
+        ):
+            with self.subTest(key=key):
+                companion_state = {"role": "companion", "status": "with-party"}
+                mutation = resolution.apply_companion_status(companion_state, key)
+                self.assertIsNone(mutation)
+                self.assertEqual(companion_state["status"], "with-party")
+
+
 if __name__ == "__main__":
     unittest.main()
