@@ -134,6 +134,11 @@ def _build_parser() -> argparse.ArgumentParser:
         )
         propose_parser.add_argument("--weapon-dice", default=None)
         propose_parser.add_argument("--armour-dice", default=None)
+        propose_parser.add_argument(
+            "--damage-type",
+            default=None,
+            choices=(None, "slashing", "piercing", "blunt", "searing"),
+        )
         propose_parser.add_argument("--seed", type=int, default=None)
 
     if "commit" in TOOLS:
@@ -295,6 +300,7 @@ def _run_propose(args: argparse.Namespace) -> dict:
             tier=args.tier,
             weapon_dice=args.weapon_dice,
             armour_dice=args.armour_dice,
+            damage_type=args.damage_type,
             seed=args.seed,
         )
     except (ValueError, StateError) as exc:

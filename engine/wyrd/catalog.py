@@ -323,6 +323,10 @@ TOOLS: dict[str, dict] = {
                 "tier": {"type": "string", "enum": ["minor", "moderate", "major"]},
                 "weapon_dice": {"type": "string"},
                 "armour_dice": {"type": "string"},
+                "damage_type": {
+                    "type": "string",
+                    "enum": ["slashing", "piercing", "blunt", "searing"],
+                },
                 "seed": {"type": "integer"},
             },
             "required": ["actor", "mechanic"],
