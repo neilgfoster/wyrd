@@ -553,5 +553,136 @@ class EscapeSceneTest(unittest.TestCase):
                 self.assertEqual(result["difficulty"], difficulty)
 
 
+class CrowdRuleTest(unittest.TestCase):
+    """docs/design/03-rules.md section 2 "Crowds". crowd_member (swordplay 10, Stamina 1, no
+    armour) vs character (swordplay 50): gap 40 qualifies. crowd's own attack skill 30, weapon
+    1d8, armour 1d3."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        self.actor = pathlib.Path(self._tmp.name) / "actor.md"
+        self.crowd = pathlib.Path(self._tmp.name) / "crowd.md"
+        character.save({"id": "actor", "skills": {"swordplay": 50}}, "", self.actor)
+        character.save(
+            {
+                "id": "crowd",
+                "skills": {"swordplay": 30},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.crowd,
+        )
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+        combat.close(self.actor, self.crowd, state_path=self.path)
+        combat.advance_round(state_path=self.path)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_qualification_lookup_boundary_values(self):
+        # Stamina 1 vs 2
+        self.assertTrue(combat.is_crowd_member(1, False, 50, 10))
+        self.assertFalse(combat.is_crowd_member(2, False, 50, 10))
+        # armoured vs not
+        self.assertFalse(combat.is_crowd_member(1, True, 50, 10))
+        # skill gap 20 (qualifies) vs 19 (does not)
+        self.assertTrue(combat.is_crowd_member(1, False, 30, 10))
+        self.assertFalse(combat.is_crowd_member(1, False, 29, 10))
+
+    def test_crowd_ease_by_body_count(self):
+        self.assertEqual(combat.crowd_ease(1), 0)
+        self.assertEqual(combat.crowd_ease(2), 10)
+        self.assertEqual(combat.crowd_ease(3), 20)
+        self.assertEqual(combat.crowd_ease(4), 20)
+
+    def test_crowd_ease_rejects_zero_or_negative(self):
+        with self.assertRaises(ValueError):
+            combat.crowd_ease(0)
+
+    def test_register_and_query_body_count(self):
+        combat.register_crowd(self.crowd, 5, state_path=self.path)
+        self.assertEqual(combat.crowd_body_count(self.crowd, state_path=self.path), 5)
+
+    def test_unregistered_crowd_has_zero_bodies(self):
+        self.assertEqual(combat.crowd_body_count(self.crowd, state_path=self.path), 0)
+
+    def test_multi_round_clear_sequence(self):
+        combat.register_crowd(self.crowd, 3, state_path=self.path)
+        combat.clear_crowd_member(self.actor, self.crowd, state_path=self.path)
+        self.assertEqual(combat.crowd_body_count(self.crowd, state_path=self.path), 2)
+        self.assertFalse(combat.has_acted(self.actor, state_path=self.path))
+        combat.advance_round(state_path=self.path)
+        combat.clear_crowd_member(self.actor, self.crowd, state_path=self.path)
+        self.assertEqual(combat.crowd_body_count(self.crowd, state_path=self.path), 1)
+        combat.advance_round(state_path=self.path)
+        combat.clear_crowd_member(self.actor, self.crowd, state_path=self.path)
+        self.assertEqual(combat.crowd_body_count(self.crowd, state_path=self.path), 0)
+
+    def test_clear_raises_when_not_engaged(self):
+        stranger = pathlib.Path(self._tmp.name) / "stranger.md"
+        character.save({"id": "stranger", "skills": {"swordplay": 50}}, "", stranger)
+        combat.register_crowd(self.crowd, 3, state_path=self.path)
+        with self.assertRaises(ValueError):
+            combat.clear_crowd_member(stranger, self.crowd, state_path=self.path)
+
+    def test_clear_raises_when_crowd_empty(self):
+        combat.register_crowd(self.crowd, 1, state_path=self.path)
+        combat.clear_crowd_member(self.actor, self.crowd, state_path=self.path)
+        with self.assertRaises(ValueError):
+            combat.clear_crowd_member(self.actor, self.crowd, state_path=self.path)
+
+    def test_crowd_attack_one_body_no_ease(self):
+        combat.register_crowd(self.crowd, 1, state_path=self.path)
+        result = combat.crowd_attack(
+            self.crowd, self.actor, "swordplay", "1d8", "1d3", seed=1, state_path=self.path
+        )
+        attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+        self.assertEqual(len(attack_steps), 1)
+        self.assertEqual(attack_steps[0]["roll"]["effective_pct"], 50 + (30 - 50))
+
+    def test_crowd_attack_two_bodies_ten_ease(self):
+        combat.register_crowd(self.crowd, 2, state_path=self.path)
+        result = combat.crowd_attack(
+            self.crowd, self.actor, "swordplay", "1d8", "1d3", seed=1, state_path=self.path
+        )
+        attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+        self.assertEqual(len(attack_steps), 1)
+        self.assertEqual(attack_steps[0]["roll"]["effective_pct"], 50 + (40 - 50))
+
+    def test_crowd_attack_three_plus_bodies_capped_at_twenty_ease(self):
+        for body_count in (3, 5):
+            with self.subTest(body_count=body_count):
+                combat.register_crowd(self.crowd, body_count, state_path=self.path)
+                result = combat.crowd_attack(
+                    self.crowd,
+                    self.actor,
+                    "swordplay",
+                    "1d8",
+                    "1d3",
+                    seed=1,
+                    state_path=self.path,
+                )
+                attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+                self.assertEqual(len(attack_steps), 1)
+                self.assertEqual(attack_steps[0]["roll"]["effective_pct"], 50 + (50 - 50))
+
+    def test_crowd_parting_blow_is_one_attack_regardless_of_body_count(self):
+        combat.register_crowd(self.crowd, 5, state_path=self.path)
+        result = combat.crowd_parting_blow(
+            self.crowd, self.actor, "swordplay", "1d8", "1d3", seed=1, state_path=self.path
+        )
+        attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+        self.assertEqual(len(attack_steps), 1)
+        self.assertEqual(attack_steps[0]["roll"]["actor"], str(self.crowd))
+        self.assertEqual(attack_steps[0]["roll"]["target"], str(self.actor))
+
+
 if __name__ == "__main__":
     unittest.main()
