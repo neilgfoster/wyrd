@@ -135,6 +135,11 @@ AFTERMATH_TABLE: list[tuple[int, int, str, dict | None]] = [
 #: The open-ended last row: any total above `AFTERMATH_TABLE`'s last closed row's high.
 AFTERMATH_DEATH_KEY = "death"
 
+#: docs/design/01-principles.md "The tone contract": the closed set of `mortality` values a
+#: setting may declare. Consumed as an opaque parameter here, the same way `creation.py`'s
+#: `MORTALITY_FATE` does -- this module never interprets it beyond "is it low".
+MORTALITY_LEVELS = frozenset({"low", "standard", "high"})
+
 
 def _aftermath_band(total: int) -> tuple[str, dict | None]:
     """docs/design/06-aftermath.md: look up `total` against the aftermath table. The last row
@@ -143,6 +148,67 @@ def _aftermath_band(total: int) -> tuple[str, dict | None]:
         if low <= total <= high:
             return key, effect
     return AFTERMATH_DEATH_KEY, None
+
+
+def _worst_non_death_row() -> tuple[str, dict | None]:
+    """docs/design/06-aftermath.md "Closing the death rows": the worst non-death row a `death`
+    result is re-read onto -- derived from `AFTERMATH_TABLE`'s own last defined row (currently
+    `recurring-wound`) rather than a hardcoded key, so a future edit to the table's rows stays
+    correctly reflected here (spec.md Edge Cases, research.md)."""
+    _, _, key, effect = AFTERMATH_TABLE[-1]
+    return key, effect
+
+
+def _build_wound_mutation(
+    key: str, effect: dict | None, entity: str, step_id: int, bears_on_skill: str
+) -> dict | None:
+    """The wound-record mutation a resolved Aftermath row produces, or `None` for a row that
+    leaves nothing lasting. Factored out of `_stage_aftermath` so `close_death_row` can build the
+    same shape for whichever row a `death` result gets re-read onto (spec.md FR-003)."""
+    if effect is None:
+        return None
+    wound = {
+        "id": f"aftermath-{step_id}",
+        "from": {"table": "aftermath", "beat": step_id},
+        "closed": None,
+    }
+    if effect:
+        wound["effect"] = dict(effect)
+        if "skill" in effect:
+            wound["bears_on"] = bears_on_skill
+    if key == "recurring-wound":
+        wound["recurring"] = True
+    return {
+        "entity": entity,
+        "field": "wounds",
+        "op": "append",
+        "value": wound,
+        "produced_by_step": step_id,
+    }
+
+
+def apply_companion_status(entity_state: dict, key: str) -> dict | None:
+    """docs/design/06-aftermath.md "Companions": a companion's outcome moves their existing
+    `status` field -- `dead` where a `death` result stands, `away` while they are held
+    (`taken`) -- rather than introducing a new status value (spec.md FR-008..010).
+
+    Callers apply this only once a row is *final*: immediately for `taken` (nothing defers it),
+    and for `death` only once it is known to stand -- no Fate was spent and `mortality` did not
+    close it (`close_death_row`/`_stage_aftermath`'s `mortality` parameter handle those two
+    closures; neither ever leaves `key == "death"` afterwards). Never call this for the player's
+    own character (FR-011) -- callers are responsible for checking `entity_state.get("role") ==
+    "companion"` first, the same guard `entity_state` elsewhere in this module leaves to its
+    caller.
+    """
+    if key == AFTERMATH_DEATH_KEY:
+        new_status = "dead"
+    elif key == "taken":
+        new_status = "away"
+    else:
+        return None
+    mutation = {"field": "status", "op": "set", "value": new_status}
+    _apply_mutation(entity_state, mutation)
+    return mutation
 
 
 #: docs/design/03-rules.md sections 3-4: a reroll resource's own modifier to the rerolled roll's
@@ -451,43 +517,43 @@ def _stage_aftermath(
     depends_on_step: int,
     seed_cursor: _SeedCursor,
     bears_on_skill: str,
+    *,
+    mortal: bool = False,
+    mortality: str = "standard",
 ) -> None:
     """docs/design/06-aftermath.md: `d100 + 5 x points below zero` against the 8-row aftermath
     table, staging a wound-record mutation for whichever rows specify one (spec.md FR-001..007).
     `points_below_zero` must be positive -- Aftermath is only ever staged for a combatant who
     actually dropped (spec.md Edge Cases). Rows with no wound-producing effect (`out-of-action`,
-    `taken`, `death`) stage no mutation and no entity/status side effect of any kind -- creating
-    the `new-enemy`/`taken` rows' further consequences (nemesis/thread entities, companion status,
-    death-row re-reads) is explicitly out of scope for this feature (FR-009)."""
+    `taken`, `death`) stage no mutation and no entity/status side effect of any kind -- companion
+    status transitions (`apply_companion_status`) and the `new-enemy`/`taken` rows' further
+    consequences (nemesis/thread entities) are the caller's job, once a row is known final.
+
+    `mortal=True` (specs/092-mortal-blows-fate-death FR-001, ADR 0023, docs/design/05-
+    criticals.md "The mortal blow") forces the result onto `death` whatever the roll says -- the
+    roll and total are still recorded as actually rolled. `mortality="low"` (FR-006) then closes
+    that `death` -- forced or rolled -- onto the worst non-death row unconditionally, with no
+    Fate spent; `mortality` must be one of `MORTALITY_LEVELS`. Both closures are deterministic
+    and need no player input, so both are decided here at staging time; a Fate spend is a later
+    player choice and is `close_death_row`'s job instead (FR-002/003)."""
     if points_below_zero <= 0:
         raise ValueError(f"points_below_zero must be positive, got {points_below_zero!r}")
+    if mortality not in MORTALITY_LEVELS:
+        raise ValueError(f"no such mortality level: {mortality!r}")
     d100 = rules.roll_d100(seed=seed_cursor.next())
     modifier = 5 * points_below_zero
     total = d100 + modifier
     key, effect = _aftermath_band(total)
+    forced_mortal = bool(mortal)
+    if forced_mortal:
+        key, effect = AFTERMATH_DEATH_KEY, None
+    closed_by = None
+    if key == AFTERMATH_DEATH_KEY and mortality == "low":
+        key, effect = _worst_non_death_row()
+        closed_by = "mortality"
     step_id = len(steps)
-    mutations: list[dict] = []
-    if effect is not None:
-        wound = {
-            "id": f"aftermath-{step_id}",
-            "from": {"table": "aftermath", "beat": step_id},
-            "closed": None,
-        }
-        if effect:
-            wound["effect"] = dict(effect)
-            if "skill" in effect:
-                wound["bears_on"] = bears_on_skill
-        if key == "recurring-wound":
-            wound["recurring"] = True
-        mutations.append(
-            {
-                "entity": entity,
-                "field": "wounds",
-                "op": "append",
-                "value": wound,
-                "produced_by_step": step_id,
-            }
-        )
+    mutation = _build_wound_mutation(key, effect, entity, step_id, bears_on_skill)
+    mutations = [mutation] if mutation is not None else []
     steps.append(
         {
             "step_id": step_id,
@@ -498,12 +564,84 @@ def _stage_aftermath(
                 "total": total,
                 "table": "aftermath",
                 "key": key,
+                "forced_mortal": forced_mortal,
+                "closed_by": closed_by,
+                "fate_spent": False,
+                "bears_on_skill": bears_on_skill,
             },
             "mutations": mutations,
             "depends_on": [depends_on_step],
             "inputs": None,
         }
     )
+
+
+def close_death_row(
+    steps: list[dict],
+    step_id: int,
+    entity: str,
+    entity_state: dict,
+    *,
+    spender_state: dict,
+    spender_entity: str,
+    spender_present: bool = True,
+) -> list[dict]:
+    """docs/design/06-aftermath.md "Closing the death rows" / ADR 0009: a spent Fate point
+    deterministically re-reads a `death` result onto the worst non-death row -- no second roll,
+    no judgement call (spec.md FR-002/003). `entity`/`entity_state` are the combatant whose
+    Aftermath step this is; `spender_state`/`spender_entity` are the player's own character,
+    always -- Fate spent on a companion's behalf is the player's own, never the companion's
+    (FR-005).
+
+    Raises `ValueError` if `step_id` is not an `aftermath` step, its result is not currently
+    `death`, it was already closed (by an earlier spend or by `mortality: low`), or the spender
+    has no Fate to spend. Spending for a companion (`spender_entity != entity`) additionally
+    requires `spender_present` and the spender able to act -- inferred as `stamina.current >= 0`
+    since no separate incapacitation field exists yet (research.md); the player's own character
+    may always close its own result."""
+    step = steps[step_id]
+    if step.get("mechanic") != "aftermath":
+        raise ValueError(f"step {step_id} is not an aftermath step")
+    roll = step["roll"]
+    if roll["key"] != AFTERMATH_DEATH_KEY:
+        raise ValueError("Fate may only be spent against a death result")
+    if roll.get("closed_by") is not None:
+        raise ValueError("this result is already closed -- there is nothing left to buy")
+    if spender_entity != entity:
+        if not spender_present:
+            raise ValueError(
+                "spending Fate for a companion requires the player's character present"
+            )
+        if _get_nested(spender_state, "stamina.current") < 0:
+            raise ValueError(
+                "spending Fate for a companion requires the player's character able to act"
+            )
+    if _get_nested(spender_state, "fate.current") < 1:
+        raise ValueError("no Fate available to spend")
+
+    key, effect = _worst_non_death_row()
+    roll["key"] = key
+    roll["closed_by"] = "fate"
+    roll["fate_spent"] = True
+
+    mutations: list[dict] = []
+    fate_mutation = {
+        "entity": spender_entity,
+        "field": "fate.current",
+        "op": "-",
+        "value": 1,
+        "produced_by_step": step_id,
+    }
+    _apply_mutation(spender_state, fate_mutation)
+    mutations.append(fate_mutation)
+
+    wound_mutation = _build_wound_mutation(key, effect, entity, step_id, roll.get("bears_on_skill"))
+    if wound_mutation is not None:
+        _apply_mutation(entity_state, wound_mutation)
+        mutations.append(wound_mutation)
+        step["mutations"].append(wound_mutation)
+
+    return mutations
 
 
 def _stage_transformation_chain(
