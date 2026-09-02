@@ -123,7 +123,7 @@ def _build_parser() -> argparse.ArgumentParser:
         propose_parser = subparsers.add_parser("propose", help=TOOLS["propose"]["description"])
         propose_parser.add_argument("--actor", required=True)
         propose_parser.add_argument(
-            "--mechanic", required=True, choices=("ordinary-test", "exposure")
+            "--mechanic", required=True, choices=("ordinary-test", "exposure", "combat-attack")
         )
         propose_parser.add_argument("--skill", default=None)
         propose_parser.add_argument("--target", default=None)
@@ -132,6 +132,8 @@ def _build_parser() -> argparse.ArgumentParser:
         propose_parser.add_argument(
             "--tier", default=None, choices=(None, "minor", "moderate", "major")
         )
+        propose_parser.add_argument("--weapon-dice", default=None)
+        propose_parser.add_argument("--armour-dice", default=None)
         propose_parser.add_argument("--seed", type=int, default=None)
 
     if "commit" in TOOLS:
@@ -141,6 +143,15 @@ def _build_parser() -> argparse.ArgumentParser:
     if "discard" in TOOLS:
         discard_parser = subparsers.add_parser("discard", help=TOOLS["discard"]["description"])
         discard_parser.add_argument("proposal_id")
+
+    if "reroll" in TOOLS:
+        reroll_parser = subparsers.add_parser("reroll", help=TOOLS["reroll"]["description"])
+        reroll_parser.add_argument("proposal_id")
+        reroll_parser.add_argument("--step", type=int, required=True)
+        reroll_parser.add_argument(
+            "--resource", required=True, choices=("resolve", "fortune", "bargain")
+        )
+        reroll_parser.add_argument("--seed", type=int, default=None)
 
     return parser
 
@@ -282,6 +293,8 @@ def _run_propose(args: argparse.Namespace) -> dict:
             difficulty=args.difficulty,
             declaration_bonus=args.declaration_bonus,
             tier=args.tier,
+            weapon_dice=args.weapon_dice,
+            armour_dice=args.armour_dice,
             seed=args.seed,
         )
     except (ValueError, StateError) as exc:
@@ -300,6 +313,15 @@ def _run_discard(args: argparse.Namespace) -> dict:
         return verbs.discard(args.proposal_id)
     except ProposalError as exc:
         return {"error": {"verb": "discard", "reason": str(exc)}}
+
+
+def _run_reroll(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.reroll(
+            args.proposal_id, step=args.step, resource=args.resource, seed=args.seed
+        )
+    except (ValueError, ProposalError) as exc:
+        return {"error": {"verb": "reroll", "reason": str(exc)}}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -336,6 +358,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_commit(args)
     elif args.verb == "discard":
         result = _run_discard(args)
+    elif args.verb == "reroll":
+        result = _run_reroll(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

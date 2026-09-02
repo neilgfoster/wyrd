@@ -487,5 +487,244 @@ class MortalCriticalTest(unittest.TestCase):
         self.assertEqual(found["steps"][-1]["mechanic"], "critical")
 
 
+class IndependentBranchTest(ResolutionTestBase):
+    """research.md: Taint 0, bargaining 35 / stealth 45, two minor Exposure sources batched,
+    seed 20260854 -- reproduces docs/design/31-action-resolution.md's own worked example."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"] = {"bargaining": 35, "stealth": 45}
+        frontmatter["taint"] = 0
+        frontmatter["resolve"] = {"current": 2}
+        frontmatter["fortune"] = {"current": 2}
+        character.save(frontmatter, "", self.path)
+
+    def propose_batch(self):
+        return resolution.propose_batch(
+            [
+                {
+                    "actor": self.path,
+                    "mechanic": "exposure",
+                    "skill": "bargaining",
+                    "tier": "minor",
+                },
+                {"actor": self.path, "mechanic": "exposure", "skill": "stealth", "tier": "minor"},
+            ],
+            seed=20260854,
+        )
+
+    def test_batch_reproduces_the_two_rolls(self):
+        result = self.propose_batch()
+        self.assertEqual(result["steps"][0]["roll"]["roll"], 91)
+        self.assertEqual(result["steps"][0]["roll"]["outcome"], "fail")
+        self.assertEqual(result["steps"][1]["roll"]["roll"], 38)
+        self.assertEqual(result["steps"][1]["roll"]["outcome"], "success")
+
+    def test_reroll_leaves_the_independent_step_untouched(self):
+        result = self.propose_batch()
+        original_step_1 = result["steps"][1]
+        revised = resolution.reroll(result["proposal_id"], step=0, resource="bargain", seed=5)
+        step_1 = next(s for s in revised["steps"] if s["step_id"] == 1)
+        self.assertEqual(step_1["roll"], original_step_1["roll"])
+        self.assertEqual(step_1["mutations"], original_step_1["mutations"])
+
+    def test_reroll_combines_the_fresh_roll_with_the_bargain_cost(self):
+        result = self.propose_batch()
+        revised = resolution.reroll(result["proposal_id"], step=0, resource="bargain", seed=5)
+        step_0 = next(s for s in revised["steps"] if s["step_id"] == 0)
+        self.assertEqual(step_0["roll"]["roll"], 80)
+        self.assertEqual(step_0["roll"]["outcome"], "fail")
+        self.assertEqual(
+            step_0["mutations"],
+            [
+                {
+                    "entity": str(self.path),
+                    "field": "taint",
+                    "op": "+",
+                    "value": 1,
+                    "produced_by_step": 0,
+                },
+                {
+                    "entity": str(self.path),
+                    "field": "taint",
+                    "op": "+",
+                    "value": 1,
+                    "produced_by_step": 0,
+                },
+            ],
+        )
+
+    def test_commit_after_reroll_applies_the_revised_mutations(self):
+        before = self.load()
+        result = resolution.propose_batch(
+            [
+                {
+                    "actor": self.path,
+                    "mechanic": "exposure",
+                    "skill": "bargaining",
+                    "tier": "minor",
+                },
+                {"actor": self.path, "mechanic": "exposure", "skill": "stealth", "tier": "minor"},
+            ],
+            seed=20260854,
+        )
+        resolution.reroll(result["proposal_id"], step=0, resource="bargain", seed=5)
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(after["taint"], before["taint"] + 2)
+
+    def test_reroll_does_not_invalidate_the_proposal_id(self):
+        result = self.propose_batch()
+        pid = result["proposal_id"]
+        resolution.reroll(pid, step=0, resource="bargain", seed=5)
+        # A second reroll, against the other step, must still succeed -- the id is still open.
+        resolution.reroll(pid, step=1, resource="fortune", seed=2)
+        commit_result = resolution.commit(pid)
+        self.assertTrue(commit_result["mutations"])  # did not raise ProposalError
+
+
+class RerollCascadeTest(ResolutionTestBase):
+    """research.md: Taint 1, major Exposure, seed 5 -- a reroll discards the stale Transformation
+    and stages a fresh one."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"]["bargaining"] = 35
+        frontmatter["taint"] = 1
+        frontmatter["fortune"] = {"current": 2}
+        character.save(frontmatter, "", self.path)
+
+    def test_reroll_replaces_the_stale_cascade_with_a_fresh_one(self):
+        original = resolution.propose(
+            actor=self.path, mechanic="exposure", skill="bargaining", tier="major", seed=5
+        )
+        original_transformation = original["steps"][1]
+        self.assertEqual(original_transformation["roll"]["row"], 5)
+
+        revised = resolution.reroll(original["proposal_id"], step=0, resource="fortune", seed=6)
+        mechanics_by_id = {s["step_id"]: s["mechanic"] for s in revised["steps"]}
+        self.assertEqual(mechanics_by_id, {0: "exposure", 1: "transformation"})
+        fresh_transformation = next(s for s in revised["steps"] if s["step_id"] == 1)
+        self.assertEqual(fresh_transformation["roll"]["row"], 3)
+        self.assertNotEqual(fresh_transformation["roll"], original_transformation["roll"])
+        self.assertEqual(fresh_transformation["depends_on"], [0])
+
+    def test_no_stale_step_survives_alongside_the_fresh_one(self):
+        original = resolution.propose(
+            actor=self.path, mechanic="exposure", skill="bargaining", tier="major", seed=5
+        )
+        revised = resolution.reroll(original["proposal_id"], step=0, resource="fortune", seed=6)
+        self.assertEqual(len(revised["steps"]), 2)  # not 3 -- the original step 1 is gone
+
+
+class ResourceModifierTest(ResolutionTestBase):
+    """research.md: Taint 0, bargaining 35, minor Exposure, original seed 5, reroll seed 1 --
+    each resource's own effective_pct modifier and cost mutation."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"]["bargaining"] = 35
+        frontmatter["taint"] = 0
+        frontmatter["resolve"] = {"current": 2}
+        frontmatter["fortune"] = {"current": 2}
+        character.save(frontmatter, "", self.path)
+
+    def propose_original(self):
+        return resolution.propose(
+            actor=self.path, mechanic="exposure", skill="bargaining", tier="minor", seed=5
+        )
+
+    def test_resolve_adds_20_and_spends_resolve(self):
+        result = self.propose_original()
+        revised = resolution.reroll(result["proposal_id"], step=0, resource="resolve", seed=1)
+        step_0 = revised["steps"][0]
+        self.assertEqual(step_0["roll"]["effective_pct"], 55)
+        self.assertIn(
+            {
+                "entity": str(self.path),
+                "field": "resolve.current",
+                "op": "-",
+                "value": 1,
+                "produced_by_step": 0,
+            },
+            step_0["mutations"],
+        )
+
+    def test_fortune_is_a_plain_reroll_and_spends_fortune(self):
+        result = self.propose_original()
+        revised = resolution.reroll(result["proposal_id"], step=0, resource="fortune", seed=1)
+        step_0 = revised["steps"][0]
+        self.assertEqual(step_0["roll"]["effective_pct"], 35)
+        self.assertIn(
+            {
+                "entity": str(self.path),
+                "field": "fortune.current",
+                "op": "-",
+                "value": 1,
+                "produced_by_step": 0,
+            },
+            step_0["mutations"],
+        )
+
+    def test_bargain_is_a_plain_reroll_and_gains_taint(self):
+        result = self.propose_original()
+        revised = resolution.reroll(result["proposal_id"], step=0, resource="bargain", seed=1)
+        step_0 = revised["steps"][0]
+        self.assertEqual(step_0["roll"]["effective_pct"], 35)
+        self.assertIn(
+            {
+                "entity": str(self.path),
+                "field": "taint",
+                "op": "+",
+                "value": 1,
+                "produced_by_step": 0,
+            },
+            step_0["mutations"],
+        )
+
+    def test_unknown_resource_raises_value_error(self):
+        result = self.propose_original()
+        with self.assertRaises(ValueError):
+            resolution.reroll(result["proposal_id"], step=0, resource="luck")
+
+
+class RerollErrorCaseTest(ResolutionTestBase):
+    def test_reroll_unknown_step_raises(self):
+        result = resolution.propose(
+            actor=self.path, mechanic="ordinary-test", skill="bargaining", seed=1
+        )
+        with self.assertRaises(ValueError):
+            resolution.reroll(result["proposal_id"], step=99, resource="fortune")
+
+    def test_reroll_internal_cascade_step_raises(self):
+        frontmatter = self.load()
+        frontmatter["skills"]["bargaining"] = 35
+        frontmatter["taint"] = 1
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(
+            actor=self.path, mechanic="exposure", skill="bargaining", tier="major", seed=5
+        )
+        transformation_step_id = result["steps"][1]["step_id"]
+        with self.assertRaises(ValueError):
+            resolution.reroll(
+                result["proposal_id"], step=transformation_step_id, resource="fortune"
+            )
+
+    def test_reroll_on_closed_proposal_raises_proposal_error(self):
+        result = resolution.propose(
+            actor=self.path, mechanic="ordinary-test", skill="bargaining", seed=1
+        )
+        resolution.commit(result["proposal_id"])
+        with self.assertRaises(resolution.ProposalError):
+            resolution.reroll(result["proposal_id"], step=0, resource="fortune")
+
+    def test_reroll_on_fabricated_proposal_id_raises(self):
+        with self.assertRaises(resolution.ProposalError):
+            resolution.reroll("p-does-not-exist", step=0, resource="fortune")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -301,7 +301,10 @@ TOOLS: dict[str, dict] = {
             "type": "object",
             "properties": {
                 "actor": {"type": "string"},
-                "mechanic": {"type": "string", "enum": ["ordinary-test", "exposure"]},
+                "mechanic": {
+                    "type": "string",
+                    "enum": ["ordinary-test", "exposure", "combat-attack"],
+                },
                 "skill": {"type": "string"},
                 "target": {"type": "string"},
                 "difficulty": {
@@ -318,6 +321,8 @@ TOOLS: dict[str, dict] = {
                 },
                 "declaration_bonus": {"type": "integer", "default": 0},
                 "tier": {"type": "string", "enum": ["minor", "moderate", "major"]},
+                "weapon_dice": {"type": "string"},
+                "armour_dice": {"type": "string"},
                 "seed": {"type": "integer"},
             },
             "required": ["actor", "mechanic"],
@@ -358,6 +363,32 @@ TOOLS: dict[str, dict] = {
             "type": "object",
             "properties": {"proposal_id": {"type": "string"}},
             "required": ["proposal_id"],
+        },
+    },
+    "reroll": {
+        "name": "reroll",
+        "description": (
+            "Spend a reroll resource (resolve, fortune, bargain) against one staged step: "
+            "discard exactly its downstream set (itself and everything that depends on "
+            "it) and freshly resolve it under the resource's own modifier, re-cascading "
+            "under the same rule propose uses. Everything outside the downstream set is "
+            "untouched. Does not invalidate the proposal id -- only commit/discard do."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "proposal_id": {"type": "string"},
+                "step": {"type": "integer"},
+                "resource": {"type": "string", "enum": ["resolve", "fortune", "bargain"]},
+                "seed": {"type": "integer"},
+            },
+            "required": ["proposal_id", "step", "resource"],
         },
     },
 }

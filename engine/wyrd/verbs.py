@@ -196,6 +196,8 @@ def propose(
     difficulty: str = "average",
     declaration_bonus: int = 0,
     tier: str | None = None,
+    weapon_dice: str | None = None,
+    armour_dice: str | None = None,
     seed: int | None = None,
 ) -> dict:
     """Resolve the `propose` verb."""
@@ -207,6 +209,8 @@ def propose(
         difficulty=difficulty,
         declaration_bonus=declaration_bonus,
         tier=tier,
+        weapon_dice=weapon_dice,
+        armour_dice=armour_dice,
         seed=seed,
     )
     return {"verb": "propose", **result}
@@ -222,3 +226,9 @@ def discard(proposal_id: str) -> dict:
     """Resolve the `discard` verb."""
     result = resolution.discard(proposal_id)
     return {"verb": "discard", **result}
+
+
+def reroll(proposal_id: str, step: int, resource: str, seed: int | None = None) -> dict:
+    """Resolve the `reroll` verb."""
+    result = resolution.reroll(proposal_id, step=step, resource=resource, seed=seed)
+    return {"verb": "reroll", **result}
