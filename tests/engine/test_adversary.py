@@ -1,5 +1,5 @@
-"""docs/design/12-the-adversary.md section 2 ("The block") /
-specs/094-adversary-block-loading."""
+"""docs/design/12-the-adversary.md section 2 ("The block") / section 3 ("The baseline") /
+specs/094-adversary-block-loading / specs/095-adversary-baseline-resolution."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import pathlib
 import tempfile
 import unittest
 
-from wyrd import adversary, state
+from wyrd import adversary, rules, state
 
 VALID_ENTRY = """
 creatures:
@@ -215,6 +215,46 @@ creatures:
         self._write("schema_version: 1\n")
         with self.assertRaises(state.StateError):
             adversary.load("anyone", self.path)
+
+
+class AdversaryBaselineResolutionTest(unittest.TestCase):
+    """docs/design/12-the-adversary.md section 3 ("The baseline") /
+    specs/095-adversary-baseline-resolution."""
+
+    def setUp(self):
+        self.block = {
+            "id": "the-hunter",
+            "name": "A named antagonist",
+            "baseline": 35,
+            "stamina_max": 7,
+            "armour": "modest",
+            "skills": {"blade": 55, "stealth": 20},
+            "ranged": False,
+        }
+
+    def test_resolve_skill_unlisted_returns_baseline(self):
+        self.assertEqual(adversary.resolve_skill(self.block, "tracking"), 35)
+
+    def test_resolve_skill_listed_returns_listed_value(self):
+        self.assertEqual(adversary.resolve_skill(self.block, "blade"), 55)
+
+    def test_resolve_skill_listed_below_baseline_not_raised(self):
+        # stealth (20) sits below baseline (35) -- the baseline is not a floor.
+        self.assertEqual(adversary.resolve_skill(self.block, "stealth"), 20)
+
+    def test_resolve_skill_baseline_equal_to_untrained_still_reads_block(self):
+        block = dict(self.block, baseline=rules.UNTRAINED_SKILL)
+        self.assertEqual(adversary.resolve_skill(block, "tracking"), rules.UNTRAINED_SKILL)
+        # Changing the block's own baseline changes the result -- it traces to the field,
+        # not to the shared constant.
+        block["baseline"] = rules.UNTRAINED_SKILL + 15
+        self.assertEqual(adversary.resolve_skill(block, "tracking"), rules.UNTRAINED_SKILL + 15)
+
+    def test_select_group_skill_unaffected_by_adversary_resolution(self):
+        # rules.select_group_skill's own untrained fallback is untouched by this feature.
+        self.assertEqual(
+            rules.select_group_skill([None], mode="most_capable"), rules.UNTRAINED_SKILL
+        )
 
 
 if __name__ == "__main__":
