@@ -118,6 +118,33 @@ CRITICAL_TABLES: dict[str, tuple[list[tuple[int, int, str, dict | None]], str]] 
     "searing": (CRITICAL_SEARING_TABLE, "searing-mortal"),
 }
 
+#: docs/design/06-aftermath.md "The table": `d100 + 5 x points below zero` against 8 rows, the
+#: last open-ended. `effect` distinguishes three shapes: `None` = no wound record produced;
+#: `{}` = a wound record produced, carrying no mechanical `effect` field of its own; a non-empty
+#: dict = the wound record's own `effect`. `recurring-wound` additionally sets `recurring: True`
+#: and `bears_on` on its wound record (below, in `_stage_aftermath`).
+AFTERMATH_TABLE: list[tuple[int, int, str, dict | None]] = [
+    (6, 30, "out-of-action", None),
+    (31, 52, "lasting-wound", {}),
+    (53, 66, "left-for-dead", {}),
+    (67, 78, "new-enemy", {}),
+    (79, 88, "taken", None),
+    (89, 98, "disfigured", {"dread": 1}),
+    (99, 110, "recurring-wound", {"skill": -10}),
+]
+#: The open-ended last row: any total above `AFTERMATH_TABLE`'s last closed row's high.
+AFTERMATH_DEATH_KEY = "death"
+
+
+def _aftermath_band(total: int) -> tuple[str, dict | None]:
+    """docs/design/06-aftermath.md: look up `total` against the aftermath table. The last row
+    (`death`) is open-ended, mirroring `_critical_band`'s mortal-row fallthrough."""
+    for low, high, key, effect in AFTERMATH_TABLE:
+        if low <= total <= high:
+            return key, effect
+    return AFTERMATH_DEATH_KEY, None
+
+
 #: docs/design/03-rules.md sections 3-4: a reroll resource's own modifier to the rerolled roll's
 #: effective%. Fortune and the Bargain are a plain reroll at the same odds; Resolve adds +20.
 RESOURCE_MODIFIERS = {"resolve": 20, "fortune": 0, "bargain": 0}
@@ -409,6 +436,68 @@ def _stage_critical(
                 "table": f"critical-{damage_type}",
                 "key": key,
                 "mortal": mortal,
+            },
+            "mutations": mutations,
+            "depends_on": [depends_on_step],
+            "inputs": None,
+        }
+    )
+
+
+def _stage_aftermath(
+    steps: list[dict],
+    entity: str,
+    points_below_zero: int,
+    depends_on_step: int,
+    seed_cursor: _SeedCursor,
+    bears_on_skill: str,
+) -> None:
+    """docs/design/06-aftermath.md: `d100 + 5 x points below zero` against the 8-row aftermath
+    table, staging a wound-record mutation for whichever rows specify one (spec.md FR-001..007).
+    `points_below_zero` must be positive -- Aftermath is only ever staged for a combatant who
+    actually dropped (spec.md Edge Cases). Rows with no wound-producing effect (`out-of-action`,
+    `taken`, `death`) stage no mutation and no entity/status side effect of any kind -- creating
+    the `new-enemy`/`taken` rows' further consequences (nemesis/thread entities, companion status,
+    death-row re-reads) is explicitly out of scope for this feature (FR-009)."""
+    if points_below_zero <= 0:
+        raise ValueError(f"points_below_zero must be positive, got {points_below_zero!r}")
+    d100 = rules.roll_d100(seed=seed_cursor.next())
+    modifier = 5 * points_below_zero
+    total = d100 + modifier
+    key, effect = _aftermath_band(total)
+    step_id = len(steps)
+    mutations: list[dict] = []
+    if effect is not None:
+        wound = {
+            "id": f"aftermath-{step_id}",
+            "from": {"table": "aftermath", "beat": step_id},
+            "closed": None,
+        }
+        if effect:
+            wound["effect"] = dict(effect)
+            if "skill" in effect:
+                wound["bears_on"] = bears_on_skill
+        if key == "recurring-wound":
+            wound["recurring"] = True
+        mutations.append(
+            {
+                "entity": entity,
+                "field": "wounds",
+                "op": "append",
+                "value": wound,
+                "produced_by_step": step_id,
+            }
+        )
+    steps.append(
+        {
+            "step_id": step_id,
+            "mechanic": "aftermath",
+            "roll": {
+                "roll": d100,
+                "modifier": modifier,
+                "total": total,
+                "table": "aftermath",
+                "key": key,
             },
             "mutations": mutations,
             "depends_on": [depends_on_step],
