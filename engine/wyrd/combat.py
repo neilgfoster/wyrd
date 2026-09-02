@@ -20,6 +20,12 @@ group test in the "everyone must get through" shape, at a difficulty set by how 
 are able and willing to follow -- one is Challenging, each further pursuer one rung harder. A
 success clears the scene; a failure resumes it exactly as it was.
 
+"Crowds" (specs/089-the-crowd-rule): a crowd is tracked by body count, not per-body state. A
+character or companion engaged with a crowd clears one qualifying body for free at the start of
+their own turn -- no roll, no action spent. The crowd answers with exactly one attack a round
+regardless of body count, eased +10 per body on its target beyond the first, capped at +20; its
+parting blow is the same single, eased attack.
+
 A combat scene is chronicle-scoped, not per-entity (specs/086-turn-order-round-structure/spec.md
 Assumptions) -- it lives under a `combat` key in the same chronicle state `state.py` already
 reads/writes atomically.
@@ -334,6 +340,161 @@ def escape_scene(
         "difficulty": difficulty,
         "slowest_member": slowest_member,
     }
+
+
+#: docs/design/03-rules.md section 2 "Crowds": the three-part qualification lookup's own
+#: thresholds -- max Stamina, and the skill gap that must be met or exceeded.
+CROWD_MAX_STAMINA = 1
+CROWD_SKILL_GAP = 20
+
+#: the crowd's own attack ease: +10 per body on the target beyond the first, capped at +20
+#: (reached at three bodies).
+CROWD_EASE_PER_BODY = 10
+CROWD_EASE_CAP = 20
+
+
+def is_crowd_member(
+    opponent_max_stamina: int,
+    opponent_armoured: bool,
+    character_skill: int,
+    opponent_skill: int,
+) -> bool:
+    """docs/design/03-rules.md section 2 "Crowds": the three-part lookup. All three must hold:
+    the opponent's maximum Stamina is 1, the opponent wears no armour, and the character's
+    relevant skill is ahead of the opponent's by 20 or more."""
+    if opponent_max_stamina != CROWD_MAX_STAMINA:
+        return False
+    if opponent_armoured:
+        return False
+    return character_skill - opponent_skill >= CROWD_SKILL_GAP
+
+
+def crowd_ease(body_count: int) -> int:
+    """docs/design/03-rules.md section 2: "+10 for each body on that character beyond the
+    first, to a ceiling of +20" -- reached at three bodies."""
+    if body_count < 1:
+        raise ValueError(f"body_count must be at least 1, got {body_count}")
+    return min((body_count - 1) * CROWD_EASE_PER_BODY, CROWD_EASE_CAP)
+
+
+def register_crowd(
+    crowd: str | pathlib.Path,
+    body_count: int,
+    *,
+    state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
+) -> dict:
+    """Record `crowd`'s current body count in the combat scene, under a `crowds` dict keyed by
+    the crowd's normalized path -- the state `clear_crowd_member`/`crowd_attack` read and
+    decrement. `body_count` MUST be positive; a crowd with no bodies is not a crowd."""
+    if body_count < 1:
+        raise ValueError(f"body_count must be at least 1, got {body_count}")
+    current = state.load(state_path)
+    scene = current.get("combat")
+    if scene is None:
+        raise ValueError("no combat scene in progress -- call start_combat first")
+    scene.setdefault("crowds", {})[_normalize(crowd)] = body_count
+    state.save(current, state_path)
+    return scene
+
+
+def crowd_body_count(
+    crowd: str | pathlib.Path, *, state_path: pathlib.Path = state.DEFAULT_STATE_PATH
+) -> int:
+    """The crowd's currently-remaining body count, or 0 if it was never registered or has been
+    fully cleared."""
+    scene = _load_scene(state_path)
+    return scene.get("crowds", {}).get(_normalize(crowd), 0)
+
+
+def clear_crowd_member(
+    actor: str | pathlib.Path,
+    crowd: str | pathlib.Path,
+    *,
+    state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
+) -> dict:
+    """docs/design/03-rules.md section 2: "At the start of their turn, a character in close
+    engagement with a crowd clears one crowd member, without a roll and without spending their
+    action." Decrements the crowd's body count by exactly one; never touches `acted` (unlike
+    `close`/`break_off`, this is not the actor's one action for the turn).
+
+    Raises `ValueError` if `actor` is not currently engaged with `crowd`, or if `crowd` has no
+    bodies left to clear.
+    """
+    current = state.load(state_path)
+    scene = current.get("combat")
+    if scene is None:
+        raise ValueError("no combat scene in progress -- call start_combat first")
+    actor_norm, crowd_norm = _normalize(actor), _normalize(crowd)
+    if crowd_norm not in engaged_with(actor_norm, state_path=state_path):
+        raise ValueError(f"{actor} is not engaged with {crowd}")
+    crowds = scene.setdefault("crowds", {})
+    remaining = crowds.get(crowd_norm, 0)
+    if remaining <= 0:
+        raise ValueError(f"{crowd} has no bodies left to clear")
+    crowds[crowd_norm] = remaining - 1
+    state.save(current, state_path)
+    return scene
+
+
+def _crowd_attack_request(
+    crowd_norm: str,
+    target_norm: str,
+    skill: str,
+    weapon_dice: str,
+    armour_dice: str,
+    body_count: int,
+) -> dict:
+    return {
+        "actor": crowd_norm,
+        "mechanic": "combat-attack",
+        "target": target_norm,
+        "skill": skill,
+        "weapon_dice": weapon_dice,
+        "armour_dice": armour_dice,
+        "declaration_bonus": crowd_ease(body_count),
+    }
+
+
+def crowd_attack(
+    crowd: str | pathlib.Path,
+    target: str | pathlib.Path,
+    skill: str,
+    weapon_dice: str,
+    armour_dice: str,
+    *,
+    seed: int | None = None,
+    state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
+) -> dict:
+    """docs/design/03-rules.md section 2: "A crowd engaged with a character makes one attack on
+    them each round," eased by `crowd_ease` of its own currently-registered body count against
+    `target`. Exactly one `combat-attack` request via `resolution.propose_batch` -- never one
+    per body, regardless of how many bodies the crowd has left."""
+    body_count = crowd_body_count(crowd, state_path=state_path)
+    request = _crowd_attack_request(
+        _normalize(crowd), _normalize(target), skill, weapon_dice, armour_dice, body_count
+    )
+    return resolution.propose_batch([request], seed=seed)
+
+
+def crowd_parting_blow(
+    crowd: str | pathlib.Path,
+    actor: str | pathlib.Path,
+    skill: str,
+    weapon_dice: str,
+    armour_dice: str,
+    *,
+    seed: int | None = None,
+    state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
+) -> dict:
+    """docs/design/03-rules.md section 2: "A crowd's parting blow is one attack on the same
+    terms," not one per body -- the same eased single `combat-attack` request `crowd_attack`
+    stages, with the crowd attacking the departing `actor` instead of its usual target. Used in
+    place of `break_off` for a crowd specifically: `break_off`'s own contract stages one attack
+    per engaged opponent with no ease channel, which would both roll once per crowd body and
+    skip the ease this rule requires."""
+    return crowd_attack(
+        crowd, actor, skill, weapon_dice, armour_dice, seed=seed, state_path=state_path
+    )
 
 
 #: docs/design/03-rules.md section 1's difficulty ladder, reused here for the two named
