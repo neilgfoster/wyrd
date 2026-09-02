@@ -573,5 +573,118 @@ class ProposeCommitDiscardCliTest(unittest.TestCase):
         self.assertNotEqual(ctx.exception.code, 0)
 
 
+class RerollCliTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = str(pathlib.Path(self._tmp.name) / "senna.md")
+        exit_code, _ = _run(
+            [
+                "character-save",
+                "--path",
+                self.path,
+                "--frontmatter-json",
+                (
+                    '{"id": "senna", "skills": {"bargaining": 35, "stealth": 45}, "taint": 0, '
+                    '"resolve": {"current": 2}, "fortune": {"current": 2}}'
+                ),
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "reroll"])
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["name"], "reroll")
+
+    def test_reroll_round_trip(self):
+        exit_code, output = _run(
+            [
+                "propose",
+                "--actor",
+                self.path,
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "minor",
+                "--seed",
+                "5",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        proposed = json.loads(output)
+
+        exit_code, output = _run(
+            [
+                "reroll",
+                proposed["proposal_id"],
+                "--step",
+                "0",
+                "--resource",
+                "resolve",
+                "--seed",
+                "1",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        revised = json.loads(output)
+        self.assertEqual(revised["steps"][0]["roll"]["effective_pct"], 55)
+
+        exit_code, output = _run(["commit", proposed["proposal_id"]])
+        self.assertEqual(exit_code, 0)
+
+    def test_reroll_unknown_resource_is_argparse_rejected(self):
+        exit_code, output = _run(
+            [
+                "propose",
+                "--actor",
+                self.path,
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "minor",
+                "--seed",
+                "5",
+            ]
+        )
+        proposed = json.loads(output)
+        buffer = io.StringIO()
+        argv = ["reroll", proposed["proposal_id"], "--step", "0", "--resource", "luck"]
+        with contextlib.redirect_stderr(buffer), self.assertRaises(SystemExit) as ctx:
+            client.main(argv)
+        self.assertNotEqual(ctx.exception.code, 0)
+
+    def test_reroll_unknown_step_is_structured_error(self):
+        exit_code, output = _run(
+            [
+                "propose",
+                "--actor",
+                self.path,
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "minor",
+                "--seed",
+                "5",
+            ]
+        )
+        proposed = json.loads(output)
+        exit_code, output = _run(
+            ["reroll", proposed["proposal_id"], "--step", "99", "--resource", "fortune"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+        self.assertEqual(payload["error"]["verb"], "reroll")
+
+
 if __name__ == "__main__":
     unittest.main()

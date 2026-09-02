@@ -1,10 +1,11 @@
-"""The base propose/commit/discard resolution mechanism, with cascading resolution.
+"""The base propose/commit/discard resolution mechanism, with cascading resolution and partial
+reroll.
 
-docs/design/31-action-resolution.md "Propose, then commit" (ADR 0050): `propose` resolves a
-roll (or a whole chain of them, see "Cascading resolution" below) against an actor's own state,
-stages any implied mutation, and writes nothing; `commit` applies exactly the staged mutations
-atomically; `discard` writes nothing. Both `commit` and `discard` invalidate the proposal id so
-it can never resolve twice.
+docs/design/31-action-resolution.md "Propose, then commit" (ADR 0050): `propose`/`propose_batch`
+resolve a roll (or a whole chain of them, see "Cascading resolution" below) against one or more
+actors' own state, stage any implied mutation, and write nothing; `commit` applies exactly the
+staged mutations atomically; `discard` writes nothing. Both `commit` and `discard` invalidate the
+proposal id so it can never resolve twice.
 
 **Cascading resolution** (specs/083-cascading-resolution, extending #235's single-step case):
 a resolved step spawns a further step inside the same proposal whenever the mechanic's own rule
@@ -18,8 +19,15 @@ docs/design/31-action-resolution.md's own worked examples need (spec.md Assumpti
   staging a `critical` step (`critical-slashing` only, docs/design/05-criticals.md) on a
   crossing below zero.
 
-Partial reroll and Omen carryover are separate, later features (#237, #238) that build on the
-`depends_on` edges this module records but does not yet consume.
+**Partial reroll** (specs/084-partial-reroll, extending #236's `depends_on` edges):
+`reroll(proposal_id, step, resource)` discards exactly the downstream set of one staged
+top-level step -- itself and everything that transitively depends on it -- and freshly resolves
+it under the spent resource's own modifier (Resolve `+20`, Fortune/Bargain plain), re-cascading
+under the same rule `propose`/`propose_batch` already use. Everything outside the downstream set
+is untouched. `reroll` never invalidates the proposal id; only `commit`/`discard` do.
+
+Omen carryover is a separate, later feature (#238) that also consumes `depends_on` edges but is
+not implemented here.
 
 An actor/target is identified by its entity file path, the same identifier
 `character.load`/`character.save` already use -- there is no separate actor-id registry in this
@@ -69,15 +77,28 @@ CRITICAL_SLASHING_TABLE = [
     (18, 20, "slashing-maimed", {"stamina_max": -1, "dread": 1}),
 ]
 
+#: docs/design/03-rules.md sections 3-4: a reroll resource's own modifier to the rerolled roll's
+#: effective%. Fortune and the Bargain are a plain reroll at the same odds; Resolve adds +20.
+RESOURCE_MODIFIERS = {"resolve": 20, "fortune": 0, "bargain": 0}
+
+#: The resource's own cost, staged as a mutation on the reroll itself (docs/design/31-action-
+#: resolution.md "Partial reroll": "The resource's own cost is itself a staged mutation").
+RESOURCE_COSTS = {
+    "resolve": ("resolve.current", "-", 1),
+    "fortune": ("fortune.current", "-", 1),
+    "bargain": ("taint", "+", 1),
+}
+
 
 class ProposalError(Exception):
     """Raised when `commit`/`discard` is called against an id that is not an open proposal."""
 
 
 class _SeedCursor:
-    """A deterministic seed sequence for a whole cascade (research.md's Decision): the first
-    internal roll uses the caller's own `seed`, each subsequent one increments it by 1. `None`
-    stays `None` throughout -- unseeded real play never becomes accidentally reproducible."""
+    """A deterministic seed sequence for a whole cascade/reroll (research.md's Decision): the
+    first internal roll uses the caller's own `seed`, each subsequent one increments it by 1.
+    `None` stays `None` throughout -- unseeded real play never becomes accidentally
+    reproducible."""
 
     def __init__(self, seed: int | None):
         self._seed = seed
@@ -119,9 +140,10 @@ def _get_nested(state: dict, field: str):
 
 def _apply_mutation(state: dict, mutation: dict) -> None:
     """Apply one mutation to an in-memory state dict -- used both by `commit` (against a
-    freshly-loaded entity) and, during `propose`, against a scratch copy already held in memory
-    so a cascade can see the running effect of its own earlier steps without ever writing to
-    disk (docs/design/31-action-resolution.md: "propose... writes nothing")."""
+    freshly-loaded entity) and, during `propose`/`propose_batch`/`reroll`, against a scratch copy
+    already held in memory so a cascade can see the running effect of its own earlier steps
+    without ever writing to disk (docs/design/31-action-resolution.md: "propose... writes
+    nothing")."""
     parts = mutation["field"].split(".")
     container = state
     for part in parts[:-1]:
@@ -341,6 +363,7 @@ def _stage_critical(
             },
             "mutations": mutations,
             "depends_on": [depends_on_step],
+            "inputs": None,
         }
     )
 
@@ -404,6 +427,7 @@ def _stage_transformation_chain(
                 "roll": {"roll": row, "row": row, "severity": severity},
                 "mutations": mutations,
                 "depends_on": [depends_on_step],
+                "inputs": None,
             }
         )
         for mutation in mutations:
@@ -459,6 +483,7 @@ def _stage_combat_attack(
     if weapon_dice is None or armour_dice is None:
         raise ValueError("combat-attack requires weapon_dice and armour_dice")
 
+    attack_step_id = len(steps)
     attacker_value = actor_state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
     defender_value = target_state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
     opposed = rules.opposed_test(attacker_value, defender_value, seed=seed_cursor.next())
@@ -479,11 +504,12 @@ def _stage_combat_attack(
     }
     steps.append(
         {
-            "step_id": 0,
+            "step_id": attack_step_id,
             "mechanic": "combat-attack",
             "roll": roll_data,
             "mutations": [],
             "depends_on": [],
+            "inputs": None,
         }
     )
     if not landed:
@@ -504,7 +530,8 @@ def _stage_combat_attack(
                 "doubled": telling,
             },
             "mutations": [],
-            "depends_on": [0],
+            "depends_on": [attack_step_id],
+            "inputs": None,
         }
     )
 
@@ -530,7 +557,8 @@ def _stage_combat_attack(
                 "net_damage": net_damage,
             },
             "mutations": [stamina_mutation],
-            "depends_on": [0],
+            "depends_on": [attack_step_id],
+            "inputs": None,
         }
     )
     _apply_mutation(target_state, stamina_mutation)
@@ -539,6 +567,138 @@ def _stage_combat_attack(
         _stage_critical(
             steps, target, -stamina_after, armour_step_id, seed_cursor, bears_on_skill=skill
         )
+
+
+def _normalize_request(raw_request: dict) -> dict:
+    """`propose`/`propose_batch`'s own kwargs, normalized to plain strings/None so a request can
+    be stored verbatim on its step as `inputs` (what `reroll` later needs to redo it) and
+    compared/reused without re-parsing paths."""
+    target = raw_request.get("target")
+    return {
+        "actor": str(pathlib.Path(raw_request["actor"])),
+        "mechanic": raw_request["mechanic"],
+        "skill": raw_request.get("skill"),
+        "target": str(pathlib.Path(target)) if target is not None else None,
+        "difficulty": raw_request.get("difficulty", "average"),
+        "declaration_bonus": raw_request.get("declaration_bonus", 0),
+        "tier": raw_request.get("tier"),
+        "weapon_dice": raw_request.get("weapon_dice"),
+        "armour_dice": raw_request.get("armour_dice"),
+    }
+
+
+def _stage_request(
+    steps: list[dict],
+    request: dict,
+    state_cache: dict[str, dict],
+    seed_cursor: _SeedCursor,
+    *,
+    declaration_bonus_delta: int = 0,
+) -> None:
+    """Stage one top-level request (a `propose`/`propose_batch` entry, or a `reroll`'s fresh
+    re-resolution) into `steps`, tagging its own first step with `inputs=request` so it can later
+    be rerolled. `declaration_bonus_delta` is `reroll`'s resource modifier (0 for a fresh
+    propose)."""
+    if request["mechanic"] not in _PUBLIC_MECHANICS:
+        raise ValueError(f"no such mechanic: {request['mechanic']}")
+
+    def load_state(path_text: str) -> dict:
+        if path_text not in state_cache:
+            frontmatter, _ = character.load(pathlib.Path(path_text))
+            state_cache[path_text] = frontmatter
+        return state_cache[path_text]
+
+    actor_state = load_state(request["actor"])
+    target_state = load_state(request["target"]) if request["target"] is not None else None
+
+    base_id = len(steps)
+    if request["mechanic"] == "combat-attack":
+        if target_state is None:
+            raise ValueError("combat-attack requires a target")
+        boosted_state = actor_state
+        if declaration_bonus_delta and request["skill"] is not None:
+            boosted_state = dict(actor_state)
+            boosted_state["skills"] = dict(actor_state.get("skills", {}))
+            boosted_state["skills"][request["skill"]] = (
+                actor_state.get("skills", {}).get(request["skill"], rules.UNTRAINED_SKILL)
+                + declaration_bonus_delta
+            )
+        _stage_combat_attack(
+            steps,
+            actor=request["actor"],
+            actor_state=boosted_state,
+            target=request["target"],
+            target_state=target_state,
+            skill=request["skill"],
+            weapon_dice=request["weapon_dice"],
+            armour_dice=request["armour_dice"],
+            seed_cursor=seed_cursor,
+        )
+    else:
+        resolve_fn, mutate_fn = _MECHANICS[request["mechanic"]]
+        roll_data = resolve_fn(
+            actor=request["actor"],
+            actor_state=actor_state,
+            skill=request["skill"],
+            difficulty=request["difficulty"],
+            declaration_bonus=request["declaration_bonus"] + declaration_bonus_delta,
+            tier=request["tier"],
+            target_state=target_state,
+            seed=seed_cursor.next(),
+        )
+        mutations = mutate_fn(roll_data, actor_state=actor_state, target_state=target_state)
+        for mutation in mutations:
+            mutation["produced_by_step"] = base_id
+        steps.append(
+            {
+                "step_id": base_id,
+                "mechanic": request["mechanic"],
+                "roll": roll_data,
+                "mutations": mutations,
+                "depends_on": [],
+                "inputs": None,
+            }
+        )
+        state_by_entity = {request["actor"]: actor_state}
+        if request["target"] is not None:
+            state_by_entity[request["target"]] = target_state
+        for mutation in list(mutations):
+            _cascade_from_mutation(steps, mutation, state_by_entity, seed_cursor)
+
+    steps[base_id]["inputs"] = request
+
+
+def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
+    """Resolve several independent top-level requests into one proposal (docs/design/31-action-
+    resolution.md "A worked example": "Two unrelated Exposure sources in the same scene, proposed
+    together"). Each request takes the same keys as `propose`'s own kwargs (`actor`, `mechanic`,
+    `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `weapon_dice`, `armour_dice`).
+    An actor/target appearing in more than one request shares one in-memory scratch state across
+    them, so a later request in the batch sees any earlier request's own staged mutations when
+    checking for a threshold crossing. Writes nothing. Returns `{"proposal_id", "roll",
+    "mutations", "steps"}` -- `roll`/`mutations` cover the *first* request's own first step, for
+    #235 single-request backward compatibility; `steps` is the full, possibly multi-request,
+    cascade.
+    """
+    if not requests:
+        raise ValueError("propose_batch requires at least one request")
+
+    seed_cursor = _SeedCursor(seed)
+    steps: list[dict] = []
+    state_cache: dict[str, dict] = {}
+    for raw_request in requests:
+        request = _normalize_request(raw_request)
+        _stage_request(steps, request, state_cache, seed_cursor)
+
+    all_mutations = [mutation for step in steps for mutation in step["mutations"]]
+    proposal_id = f"p-{next(_proposal_ids)}"
+    _open_proposals[proposal_id] = {"steps": steps, "mutations": all_mutations, "open": True}
+    return {
+        "proposal_id": proposal_id,
+        "roll": steps[0]["roll"],
+        "mutations": all_mutations,
+        "steps": steps,
+    }
 
 
 def propose(
@@ -562,72 +722,150 @@ def propose(
     backward compatibility; `steps` is the full cascade. Raises `ValueError` for an unknown
     mechanic/difficulty/Exposure tier, or a missing `combat-attack` argument; propagates
     `character.load`'s own error for a missing actor or target entity.
-    """
-    if mechanic not in _PUBLIC_MECHANICS:
-        raise ValueError(f"no such mechanic: {mechanic}")
 
-    actor_path = pathlib.Path(actor)
-    actor_state, _ = character.load(actor_path)
-    target_path = pathlib.Path(target) if target is not None else None
-    target_state: dict | None = None
-    if target_path is not None:
-        target_state, _ = character.load(target_path)
+    A thin single-request wrapper over `propose_batch` -- see that function for proposing
+    several independent requests together in one proposal.
+    """
+    return propose_batch(
+        [
+            {
+                "actor": actor,
+                "mechanic": mechanic,
+                "skill": skill,
+                "target": target,
+                "difficulty": difficulty,
+                "declaration_bonus": declaration_bonus,
+                "tier": tier,
+                "weapon_dice": weapon_dice,
+                "armour_dice": armour_dice,
+            }
+        ],
+        seed=seed,
+    )
+
+
+def _downstream_set(steps: list[dict], step_id: int) -> set[int]:
+    """`step_id` itself, plus every step that transitively depends on it (docs/design/31-action-
+    resolution.md "Partial reroll": "every step that step_id names, or anything that in turn
+    depends on it, transitively")."""
+    result = {step_id}
+    changed = True
+    while changed:
+        changed = False
+        for step in steps:
+            if step["step_id"] in result:
+                continue
+            if any(dep in result for dep in step["depends_on"]):
+                result.add(step["step_id"])
+                changed = True
+    return result
+
+
+def _renumber_and_merge(
+    kept_steps: list[dict], new_steps: list[dict], original_step_id: int
+) -> list[dict]:
+    """`new_steps` were built fresh, 0-based. Remap so the rerolled step keeps its own original
+    id (the identifier the player/GM already referred to it by) and every further cascade step
+    gets a fresh id after the highest one already in use -- never colliding with any kept step,
+    including an independent step from elsewhere in the same batch."""
+    max_existing_id = max([step["step_id"] for step in kept_steps] + [original_step_id])
+    id_map = {0: original_step_id}
+    next_id = max_existing_id + 1
+    for old_id in range(1, len(new_steps)):
+        id_map[old_id] = next_id
+        next_id += 1
+    for step in new_steps:
+        step["step_id"] = id_map[step["step_id"]]
+        step["depends_on"] = [id_map[dep] for dep in step["depends_on"]]
+        for mutation in step["mutations"]:
+            mutation["produced_by_step"] = id_map[mutation["produced_by_step"]]
+    return kept_steps + new_steps
+
+
+def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = None) -> dict:
+    """Spend `resource` (`resolve`, `fortune`, or `bargain`) against staged `step`: compute its
+    downstream set (itself and everything depending on it, transitively) from `depends_on`,
+    discard exactly that set, and freshly resolve `step` under the resource's own modifier,
+    re-cascading under the same rule `propose`/`propose_batch` use. Every step outside the
+    downstream set is untouched -- an independent branch elsewhere in the same batch is never
+    affected (docs/design/31-action-resolution.md "Partial reroll").
+
+    The resource's own cost is staged as an extra mutation on the freshly-resolved `step`, not
+    applied separately (Resolve/Fortune spent, or Taint gained for the Bargain).
+
+    Does **not** invalidate `proposal_id` -- the proposal stays open, revised in place, until an
+    explicit `commit`/`discard`.
+
+    Raises `ProposalError` if `proposal_id` is not open; `ValueError` for an unknown `resource`,
+    an unknown `step`, or a `step` that was not itself a top-level request (an internal cascade
+    step such as `transformation`/`weapon-damage`/`armour`/`critical` has no `inputs` recorded
+    and is not directly rerollable -- only the top-level roll a reroll resource is actually spent
+    against ever is).
+    """
+    if resource not in RESOURCE_MODIFIERS:
+        raise ValueError(f"no such reroll resource: {resource}")
+    proposal = _open_proposals.get(proposal_id)
+    if proposal is None or not proposal["open"]:
+        raise ProposalError(f"no open proposal: {proposal_id}")
+
+    steps = proposal["steps"]
+    target_step = next((s for s in steps if s["step_id"] == step), None)
+    if target_step is None:
+        raise ValueError(f"no such step: {step}")
+    request = target_step.get("inputs")
+    if request is None:
+        raise ValueError(f"step {step} is not a top-level request and cannot be rerolled")
+
+    downstream = _downstream_set(steps, step)
+    kept_steps = [s for s in steps if s["step_id"] not in downstream]
+
+    # Rebuild scratch state: fresh from disk (propose/reroll never write), then replay every
+    # kept step's own mutations so the reroll's own cascade sees their cumulative effect.
+    state_cache: dict[str, dict] = {}
+
+    def load_state(path_text: str) -> dict:
+        if path_text not in state_cache:
+            frontmatter, _ = character.load(pathlib.Path(path_text))
+            state_cache[path_text] = frontmatter
+        return state_cache[path_text]
+
+    for kept_step in kept_steps:
+        for mutation in kept_step["mutations"]:
+            _apply_mutation(load_state(mutation["entity"]), mutation)
+    load_state(request["actor"])
+    if request["target"] is not None:
+        load_state(request["target"])
 
     seed_cursor = _SeedCursor(seed)
-    steps: list[dict] = []
+    new_steps: list[dict] = []
+    _stage_request(
+        new_steps,
+        request,
+        state_cache,
+        seed_cursor,
+        declaration_bonus_delta=RESOURCE_MODIFIERS[resource],
+    )
 
-    if mechanic == "combat-attack":
-        if target_state is None:
-            raise ValueError("combat-attack requires a target")
-        _stage_combat_attack(
-            steps,
-            actor=str(actor_path),
-            actor_state=actor_state,
-            target=str(target_path),
-            target_state=target_state,
-            skill=skill,
-            weapon_dice=weapon_dice,
-            armour_dice=armour_dice,
-            seed_cursor=seed_cursor,
-        )
-    else:
-        resolve_fn, mutate_fn = _MECHANICS[mechanic]
-        roll_data = resolve_fn(
-            actor=str(actor_path),
-            actor_state=actor_state,
-            skill=skill,
-            difficulty=difficulty,
-            declaration_bonus=declaration_bonus,
-            tier=tier,
-            target_state=target_state,
-            seed=seed_cursor.next(),
-        )
-        mutations = mutate_fn(roll_data, actor_state=actor_state, target_state=target_state)
-        for mutation in mutations:
-            mutation["produced_by_step"] = 0
-        steps.append(
-            {
-                "step_id": 0,
-                "mechanic": mechanic,
-                "roll": roll_data,
-                "mutations": mutations,
-                "depends_on": [],
-            }
-        )
-        state_by_entity = {str(actor_path): actor_state}
-        if target_path is not None:
-            state_by_entity[str(target_path)] = target_state
-        for mutation in list(mutations):
-            _cascade_from_mutation(steps, mutation, state_by_entity, seed_cursor)
+    roller_entity = new_steps[0]["roll"]["actor"]
+    cost_field, cost_op, cost_value = RESOURCE_COSTS[resource]
+    new_steps[0]["mutations"].append(
+        {
+            "entity": roller_entity,
+            "field": cost_field,
+            "op": cost_op,
+            "value": cost_value,
+            "produced_by_step": new_steps[0]["step_id"],
+        }
+    )
 
-    all_mutations = [mutation for step in steps for mutation in step["mutations"]]
-    proposal_id = f"p-{next(_proposal_ids)}"
-    _open_proposals[proposal_id] = {"steps": steps, "mutations": all_mutations, "open": True}
+    merged = _renumber_and_merge(kept_steps, new_steps, step)
+    proposal["steps"] = merged
+    proposal["mutations"] = [mutation for s in merged for mutation in s["mutations"]]
     return {
         "proposal_id": proposal_id,
-        "roll": steps[0]["roll"],
-        "mutations": all_mutations,
-        "steps": steps,
+        "roll": merged[0]["roll"],
+        "mutations": proposal["mutations"],
+        "steps": merged,
     }
 
 
@@ -643,12 +881,12 @@ def commit(proposal_id: str) -> dict:
     """Apply exactly `proposal_id`'s staged mutations to state, atomically per entity, and
     invalidate it.
 
-    A cascade can stage mutations against more than one entity (e.g. a combat chain's Stamina/
-    wound mutations land on the target, not the attacker) -- mutations are grouped by their own
-    `entity` path and each entity is loaded, mutated, and saved once, via the existing atomic
-    per-file write (`state.py`'s `save_entity`). Atomicity is per entity file, the same guarantee
-    `state.py` has always provided; this module makes no claim of a single atomic write spanning
-    more than one entity file.
+    A cascade (or a batch, or a reroll) can stage mutations against more than one entity (e.g. a
+    combat chain's Stamina/wound mutations land on the target, not the attacker) -- mutations
+    are grouped by their own `entity` path and each entity is loaded, mutated, and saved once,
+    via the existing atomic per-file write (`state.py`'s `save_entity`). Atomicity is per entity
+    file, the same guarantee `state.py` has always provided; this module makes no claim of a
+    single atomic write spanning more than one entity file.
 
     Raises `ProposalError` if `proposal_id` does not resolve to a currently-open proposal
     (already committed, already discarded, or never issued) -- never a silent no-op
