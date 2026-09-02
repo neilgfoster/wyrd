@@ -30,6 +30,11 @@ A combat scene is chronicle-scoped, not per-entity (specs/086-turn-order-round-s
 Assumptions) -- it lives under a `combat` key in the same chronicle state `state.py` already
 reads/writes atomically.
 
+"The recurring wound" (docs/design/06-aftermath.md, specs/093-recurring-wound-combat-start):
+every active recurring wound a combatant carries costs its named skill one Challenging step,
+computed once at `start_combat` and fixed for that fight -- never reapplied mid-fight, never
+carried between fights.
+
 Python 3.11+, standard library only.
 """
 
@@ -59,6 +64,24 @@ def determine_first_actor(started_by: str | None, armed: dict[str, bool], player
     return player_side
 
 
+def _recurring_wound_penalties(wounds: list[dict]) -> dict[str, int]:
+    """docs/design/06-aftermath.md "The recurring wound": every active (`closed` is `None`)
+    wound with `recurring: True` costs its `bears_on` skill one `CHALLENGING_MODIFIER` step;
+    a character carrying more than one has each fire, stacking (summing) where two bear on the
+    same skill (specs/093-recurring-wound-combat-start). Reuses the existing Challenging-
+    difficulty constant rather than a new literal -- issue #254's own Definition of Done.
+    """
+    penalties: dict[str, int] = {}
+    for wound in wounds:
+        if not wound.get("recurring") or wound.get("closed") is not None:
+            continue
+        skill = wound.get("bears_on")
+        if not skill:
+            continue
+        penalties[skill] = penalties.get(skill, 0) + CHALLENGING_MODIFIER
+    return penalties
+
+
 def start_combat(
     sides: dict[str, dict],
     started_by: str | None,
@@ -70,7 +93,9 @@ def start_combat(
     first actor, and persist the scene under chronicle state's `combat` key.
 
     `sides`: `{"<name>": {"armed": bool, "surprised": bool (default False),
-    "ambush": bool (default False)}}`.
+    "ambush": bool (default False), "wounds": list[dict] (default [])}}`. `wounds` are the
+    combatant's raw wound records (the same shape `character.active_wound_effects` reads);
+    only active recurring wounds among them contribute -- see `_recurring_wound_penalties`.
 
     Raises `ValueError` if `started_by` or `player_side` names a side not in `sides`.
     """
@@ -90,12 +115,18 @@ def start_combat(
         }
         for name, flags in sides.items()
     }
+    wound_penalties = {
+        name: penalties
+        for name, flags in sides.items()
+        if (penalties := _recurring_wound_penalties(flags.get("wounds") or []))
+    }
     scene = {
         "sides": normalized_sides,
         "round": 1,
         "first_actor": first_actor,
         "engaged": [],
         "acted": [],
+        "wound_penalties": wound_penalties,
     }
 
     current = state.load(state_path)
