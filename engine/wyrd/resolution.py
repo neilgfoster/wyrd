@@ -26,8 +26,15 @@ it under the spent resource's own modifier (Resolve `+20`, Fortune/Bargain plain
 under the same rule `propose`/`propose_batch` already use. Everything outside the downstream set
 is untouched. `reroll` never invalidates the proposal id; only `commit`/`discard` do.
 
-Omen carryover is a separate, later feature (#238) that also consumes `depends_on` edges but is
-not implemented here.
+**Omen carryover** (specs/085-omen-carryover): an Ill/Fair Omen read off one roll's own Wyrd die
+applies to that same actor's own *next* roll, whatever mechanic it is. An actor's own persisted
+`pending_omen` field (`None`/`+10`/`-10`) is read -- never consumed just by reading -- at the
+start of a batch and applied to that actor's first request in it; within a batch, each of an
+actor's own further requests checks whether an earlier one produced a still-pending Omen, applies
+and spends it (a fresh Omen replaces rather than stacks with a still-pending one), and
+`depends_on` the step that produced it -- the same edge cascading resolution and partial reroll
+already use, which is what makes `reroll` correct here for free: rerolling an Omen-producing step
+pulls its Omen-consuming step (even from a different top-level request) into the downstream set.
 
 An actor/target is identified by its entity file path, the same identifier
 `character.load`/`character.save` already use -- there is no separate actor-id registry in this
@@ -587,6 +594,16 @@ def _normalize_request(raw_request: dict) -> dict:
     }
 
 
+def _read_wyrd_omen(wyrd_die: str | None) -> int | None:
+    """docs/design/03-rules.md section 1 / 31-action-resolution.md "Omen carryover": the units
+    digit read as `fair_omen` (+10) or `ill_omen` (-10); any other reading produces no Omen."""
+    if wyrd_die == "fair_omen":
+        return 10
+    if wyrd_die == "ill_omen":
+        return -10
+    return None
+
+
 def _stage_request(
     steps: list[dict],
     request: dict,
@@ -594,11 +611,14 @@ def _stage_request(
     seed_cursor: _SeedCursor,
     *,
     declaration_bonus_delta: int = 0,
+    extra_depends_on: list[int] | None = None,
 ) -> None:
-    """Stage one top-level request (a `propose`/`propose_batch` entry, or a `reroll`'s fresh
+    """Stage one top-level request (a `propose_batch` entry, or a `reroll`'s fresh
     re-resolution) into `steps`, tagging its own first step with `inputs=request` so it can later
-    be rerolled. `declaration_bonus_delta` is `reroll`'s resource modifier (0 for a fresh
-    propose)."""
+    be rerolled. `declaration_bonus_delta` is the combined reroll-resource and/or pending-Omen
+    modifier already added together by the caller (0 for neither). `extra_depends_on` records the
+    step this one's own roll consumed a pending Omen from, if any (docs/design/31-action-
+    resolution.md "Omen carryover": "a step that consumes another step's Omen depends on it")."""
     if request["mechanic"] not in _PUBLIC_MECHANICS:
         raise ValueError(f"no such mechanic: {request['mechanic']}")
 
@@ -666,6 +686,97 @@ def _stage_request(
             _cascade_from_mutation(steps, mutation, state_by_entity, seed_cursor)
 
     steps[base_id]["inputs"] = request
+    steps[base_id]["depends_on"] = list(extra_depends_on or [])
+
+
+def _stage_requests(
+    steps: list[dict],
+    ordered_requests: list[dict],
+    state_cache: dict[str, dict],
+    seed_cursor: _SeedCursor,
+    *,
+    resource_deltas: dict[int, int] | None = None,
+) -> None:
+    """Stage `ordered_requests` (already in the chronological order they must resolve in) into
+    `steps`, threading each actor's own pending-Omen token across their requests -- the shared
+    core `propose_batch` and `reroll` (for a downstream set spanning more than one top-level
+    request) both use, so the two can never diverge (docs/design/31-action-resolution.md "Omen
+    carryover").
+
+    For each actor, `token` starts at that actor's own currently-persisted `pending_omen`
+    (docs/design/31-action-resolution.md: "propose reads this field at the start of ... a batch"),
+    read but not yet consumed. Each of that actor's own requests, processed in order: applies the
+    current token (if any) as this request's `declaration_bonus_delta`, recording a `depends_on`
+    edge to whichever step produced it (only if that step exists within *this* call -- a token
+    that came from persisted state has no in-call producer to depend on); then reads its own
+    fresh roll's Wyrd die -- a fresh Omen always *replaces* the token, whether or not the old one
+    was just consumed by this same request ("a further Omen ... replaces ... rather than
+    stacking"); with no fresh Omen, a token that was just consumed clears to `None`.
+
+    `resource_deltas` (only used by `reroll`) adds an extra modifier to specific requests by
+    their index in `ordered_requests`, on top of whatever Omen modifier that request already
+    carries -- both compose into the same `declaration_bonus_delta` channel.
+
+    At the end, for every actor whose final token differs from what was persisted going in, one
+    `pending_omen` `set` mutation is appended to the last step that changed it -- committed
+    atomically with everything else; a discarded proposal leaves the persisted field untouched,
+    since nothing here ever writes to disk (module docstring)."""
+    resource_deltas = resource_deltas or {}
+    omen_by_actor: dict[str, dict] = {}
+
+    def get_omen(actor_path: str) -> dict:
+        if actor_path not in omen_by_actor:
+            if actor_path not in state_cache:
+                frontmatter, _ = character.load(pathlib.Path(actor_path))
+                state_cache[actor_path] = frontmatter
+            original = state_cache[actor_path].get("pending_omen")
+            omen_by_actor[actor_path] = {
+                "token": original,
+                "producing_step": None,
+                "original": original,
+                "last_change_step": None,
+            }
+        return omen_by_actor[actor_path]
+
+    for index, request in enumerate(ordered_requests):
+        omen = get_omen(request["actor"])
+        omen_modifier = omen["token"] or 0
+        extra_depends_on = (
+            [omen["producing_step"]] if omen_modifier and omen["producing_step"] is not None else []
+        )
+        base_id = len(steps)
+        _stage_request(
+            steps,
+            request,
+            state_cache,
+            seed_cursor,
+            declaration_bonus_delta=omen_modifier + resource_deltas.get(index, 0),
+            extra_depends_on=extra_depends_on,
+        )
+        top_step = steps[base_id]
+        consumed = bool(omen_modifier)
+        fresh_omen = _read_wyrd_omen(top_step["roll"].get("wyrd_die"))
+        if fresh_omen is not None:
+            omen["token"] = fresh_omen
+            omen["producing_step"] = base_id
+            omen["last_change_step"] = base_id
+        elif consumed:
+            omen["token"] = None
+            omen["producing_step"] = None
+            omen["last_change_step"] = base_id
+
+    for actor_path, omen in omen_by_actor.items():
+        if omen["token"] != omen["original"]:
+            change_step = next(s for s in steps if s["step_id"] == omen["last_change_step"])
+            change_step["mutations"].append(
+                {
+                    "entity": actor_path,
+                    "field": "pending_omen",
+                    "op": "set",
+                    "value": omen["token"],
+                    "produced_by_step": omen["last_change_step"],
+                }
+            )
 
 
 def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
@@ -686,9 +797,8 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     seed_cursor = _SeedCursor(seed)
     steps: list[dict] = []
     state_cache: dict[str, dict] = {}
-    for raw_request in requests:
-        request = _normalize_request(raw_request)
-        _stage_request(steps, request, state_cache, seed_cursor)
+    ordered_requests = [_normalize_request(raw_request) for raw_request in requests]
+    _stage_requests(steps, ordered_requests, state_cache, seed_cursor)
 
     all_mutations = [mutation for step in steps for mutation in step["mutations"]]
     proposal_id = f"p-{next(_proposal_ids)}"
@@ -819,8 +929,24 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
     downstream = _downstream_set(steps, step)
     kept_steps = [s for s in steps if s["step_id"] not in downstream]
 
+    # A step whose downstream membership came only from an Omen-consumption edge belongs to a
+    # *different* top-level request than the rerolled one (docs/design/31-action-resolution.md
+    # "Omen carryover" worked example: rerolling the Omen-producing step pulls the Omen-consuming
+    # step's own request into the downstream set too). Every such request is re-run, in their
+    # original chronological order -- `step`'s own request is always first, since nothing in the
+    # downstream set can have a smaller step_id than `step` itself (a dependent always resolves
+    # after what it depends on).
+    downstream_steps_in_order = sorted(
+        (s for s in steps if s["step_id"] in downstream), key=lambda s: s["step_id"]
+    )
+    requests_to_redo = [
+        s["inputs"] for s in downstream_steps_in_order if s.get("inputs") is not None
+    ]
+
     # Rebuild scratch state: fresh from disk (propose/reroll never write), then replay every
-    # kept step's own mutations so the reroll's own cascade sees their cumulative effect.
+    # kept step's own mutations so the reroll's own cascade -- including its own Omen tracking,
+    # which reads each actor's pending_omen from this same scratch state -- sees their cumulative
+    # effect.
     state_cache: dict[str, dict] = {}
 
     def load_state(path_text: str) -> dict:
@@ -832,18 +958,19 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
     for kept_step in kept_steps:
         for mutation in kept_step["mutations"]:
             _apply_mutation(load_state(mutation["entity"]), mutation)
-    load_state(request["actor"])
-    if request["target"] is not None:
-        load_state(request["target"])
+    for redo_request in requests_to_redo:
+        load_state(redo_request["actor"])
+        if redo_request["target"] is not None:
+            load_state(redo_request["target"])
 
     seed_cursor = _SeedCursor(seed)
     new_steps: list[dict] = []
-    _stage_request(
+    _stage_requests(
         new_steps,
-        request,
+        requests_to_redo,
         state_cache,
         seed_cursor,
-        declaration_bonus_delta=RESOURCE_MODIFIERS[resource],
+        resource_deltas={0: RESOURCE_MODIFIERS[resource]},
     )
 
     roller_entity = new_steps[0]["roll"]["actor"]
