@@ -30,17 +30,22 @@ def _tens(value: int) -> int:
     return value // 10
 
 
-def _wyrd_die(natural_roll: int) -> str:
+def _wyrd_die(natural_roll: int, omen_width: int = 0) -> str:
     """Read the Wyrd die from the units digit of the natural (unmodified) roll.
 
     Computed as a single shared step, before any success/failure branch, so the reading is
     structurally independent of the outcome axis (docs/design/03-rules.md: "the units digit
     is uniform within both the success and failure sets") rather than merely tested to be.
+
+    `omen_width` widens the band read as an Omen at each end (docs/design/12-the-adversary.md
+    section 5's `wyrd` trait, specs/096-adversary-trait-effects): units `0..omen_width` read
+    Ill Omen, units `(9-omen_width)..9` read Fair Omen. Defaults to 0, reproducing exactly the
+    single-value bands every existing caller already relies on.
     """
     units = natural_roll % 10
-    if units == 0:
+    if units <= omen_width:
         return "ill_omen"
-    if units == 9:
+    if units >= 9 - omen_width:
         return "fair_omen"
     return "none"
 
@@ -87,6 +92,7 @@ def opposed_test(
     declaration: str | None = None,
     helper_skill: int | None = None,
     helper_can_attempt: bool = True,
+    omen_width: int = 0,
 ) -> dict:
     """Resolve a single player-facing opposed test (docs/design/03-rules.md "Opposed tests").
 
@@ -98,6 +104,10 @@ def opposed_test(
     added to `skill` before `effective_pct` is computed. Calling with neither is identical to
     calling this function before those modifiers existed -- no default behavior change.
     `declaration == "removes_risk"` skips the roll entirely and reports automatic success.
+
+    `omen_width` passes straight through to `_wyrd_die` (docs/design/12-the-adversary.md
+    section 5's `wyrd` trait, specs/096-adversary-trait-effects) -- defaults to 0, no change to
+    existing behavior.
     """
     bonus_from_declaration = declaration_bonus(declaration) if declaration is not None else 0
     if bonus_from_declaration is None:  # "removes_risk"
@@ -122,7 +132,7 @@ def opposed_test(
     effective_skill = skill + bonus_from_declaration + bonus_from_assistance
     effective_pct = max(5, min(95, 50 + (effective_skill - opponent)))
     roll = roll_d100(sides=100, seed=seed)
-    wyrd = _wyrd_die(roll)
+    wyrd = _wyrd_die(roll, omen_width=omen_width)
     success = roll <= effective_pct
     degrees = _tens(effective_pct) - _tens(roll) if success else None
     return {

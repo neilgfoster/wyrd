@@ -359,5 +359,26 @@ class SkillScaleTest(unittest.TestCase):
         self.assertEqual(rules.SKILL_ADVANCE_STEP, 5)
 
 
+class WyrdDieOmenWidthTest(unittest.TestCase):
+    """docs/design/12-the-adversary.md section 5's `wyrd` trait /
+    specs/096-adversary-trait-effects."""
+
+    def test_omen_width_zero_matches_existing_behavior(self):
+        self.assertEqual(rules._wyrd_die(45), "none")
+        self.assertEqual(rules._wyrd_die(45, omen_width=0), "none")
+        self.assertEqual(rules._wyrd_die(40), "ill_omen")
+        self.assertEqual(rules._wyrd_die(49), "fair_omen")
+
+    def test_omen_width_widens_both_bands(self):
+        self.assertEqual(rules._wyrd_die(41, omen_width=1), "ill_omen")
+        self.assertEqual(rules._wyrd_die(48, omen_width=1), "fair_omen")
+        self.assertEqual(rules._wyrd_die(42, omen_width=1), "none")
+
+    def test_opposed_test_passes_omen_width_through(self):
+        seed = _seed_for_roll(41)
+        result = rules.opposed_test(skill=50, opponent=50, seed=seed, omen_width=1)
+        self.assertEqual(result["wyrd"], "ill_omen")
+
+
 if __name__ == "__main__":
     unittest.main()

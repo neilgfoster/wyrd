@@ -257,5 +257,123 @@ class AdversaryBaselineResolutionTest(unittest.TestCase):
         )
 
 
+class AdversaryTraitEffectsTest(unittest.TestCase):
+    """docs/design/12-the-adversary.md section 5 ("Traits") /
+    specs/096-adversary-trait-effects."""
+
+    def setUp(self):
+        self.block = {
+            "id": "the-hunter",
+            "name": "A named antagonist",
+            "baseline": 35,
+            "stamina_max": 7,
+            "armour": "modest",
+            "skills": {"blade": 55},
+            "damage": "1d6",
+            "damage_type": "slashing",
+            "ranged": False,
+        }
+
+    # -- effective_block: stamina_max / armour_rank (User Story 1) -------------------
+
+    def test_effective_block_stamina_max_trait(self):
+        block = dict(self.block, traits=[{"name": "Tough", "effect": {"stamina_max": 2}}])
+        self.assertEqual(adversary.effective_block(block)["stamina_max"], 9)
+
+    def test_effective_block_stacks_two_stamina_max_traits(self):
+        block = dict(
+            self.block,
+            traits=[
+                {"name": "Tough", "effect": {"stamina_max": 1}},
+                {"name": "Tougher", "effect": {"stamina_max": 2}},
+            ],
+        )
+        self.assertEqual(adversary.effective_block(block)["stamina_max"], 10)
+
+    def test_effective_block_armour_rank_trait_and_floor_clamp(self):
+        block = dict(
+            self.block, traits=[{"name": "Lightly armoured", "effect": {"armour_rank": -1}}]
+        )
+        self.assertEqual(adversary.effective_block(block)["armour"], "light")
+
+        block_at_floor = dict(
+            self.block,
+            armour="none",
+            traits=[{"name": "Unarmoured", "effect": {"armour_rank": -1}}],
+        )
+        self.assertEqual(adversary.effective_block(block_at_floor)["armour"], "none")
+
+    # -- effective_block: damage / damage_type (User Story 2) -----------------------
+
+    def test_effective_block_damage_dice_trait_add_and_remove(self):
+        add = dict(self.block, traits=[{"name": "Heavy blows", "effect": {"damage": 1}}])
+        self.assertEqual(adversary.effective_block(add)["damage"], "2d6")
+
+        remove = dict(self.block, damage="2d6", traits=[{"name": "Weak", "effect": {"damage": -1}}])
+        self.assertEqual(adversary.effective_block(remove)["damage"], "1d6")
+
+    def test_effective_block_damage_dice_floor_at_one(self):
+        block = dict(self.block, traits=[{"name": "Weak", "effect": {"damage": -5}}])
+        self.assertEqual(adversary.effective_block(block)["damage"], "1d6")
+
+    def test_effective_block_damage_type_trait_overrides(self):
+        block = dict(
+            self.block, traits=[{"name": "Fire-touched", "effect": {"damage_type": "searing"}}]
+        )
+        self.assertEqual(adversary.effective_block(block)["damage_type"], "searing")
+
+    def test_effective_block_damage_trait_on_attackless_adversary_is_inert(self):
+        block = {
+            "id": "obstacle",
+            "name": "Dangerous by being present",
+            "baseline": 10,
+            "stamina_max": 3,
+            "armour": "none",
+            "skills": {"presence": 30},
+            "ranged": False,
+            "traits": [{"name": "Heavy blows", "effect": {"damage": 1}}],
+        }
+        result = adversary.effective_block(block)
+        self.assertNotIn("damage", result)
+
+    def test_effective_block_no_traits_returns_unmodified_fields(self):
+        result = adversary.effective_block(self.block)
+        self.assertEqual(result["stamina_max"], self.block["stamina_max"])
+        self.assertEqual(result["armour"], self.block["armour"])
+        self.assertEqual(result["damage"], self.block["damage"])
+        self.assertEqual(result["damage_type"], self.block["damage_type"])
+
+    def test_effective_block_does_not_mutate_input(self):
+        block = dict(self.block, traits=[{"name": "Tough", "effect": {"stamina_max": 2}}])
+        original_stamina = block["stamina_max"]
+        adversary.effective_block(block)
+        self.assertEqual(block["stamina_max"], original_stamina)
+
+    # -- shift_difficulty (User Story 3) ---------------------------------------------
+
+    def test_shift_difficulty_moves_along_ladder(self):
+        self.assertEqual(adversary.shift_difficulty("average", -1), "challenging")
+        self.assertEqual(adversary.shift_difficulty("challenging", 1), "average")
+
+    def test_shift_difficulty_clamps_at_both_ends(self):
+        self.assertEqual(adversary.shift_difficulty("very_hard", -1), "very_hard")
+        self.assertEqual(adversary.shift_difficulty("easy", 1), "easy")
+
+    # -- wyrd_band_width (User Story 4) -----------------------------------------------
+
+    def test_wyrd_band_width_sums_traits(self):
+        block = dict(
+            self.block,
+            traits=[
+                {"name": "Uncanny", "effect": {"wyrd": 1}},
+                {"name": "Doubly uncanny", "effect": {"wyrd": 1}},
+            ],
+        )
+        self.assertEqual(adversary.wyrd_band_width(block), 2)
+
+    def test_wyrd_band_width_no_traits_is_zero(self):
+        self.assertEqual(adversary.wyrd_band_width(self.block), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
