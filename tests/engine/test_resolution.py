@@ -1211,5 +1211,142 @@ class DamageTypeCriticalTest(unittest.TestCase):
                 self.assertEqual(critical_step["roll"]["table"], f"critical-{damage_type}")
 
 
+class AftermathTest(unittest.TestCase):
+    """specs/091-aftermath-wound-records: the post-fight aftermath roll and its 8 rows.
+
+    `_stage_aftermath` is not yet wired into any caller (spec.md's T008: a future feature wires
+    it into companion status/mortal-critical/Fate machinery), so it is exercised directly here,
+    the same way `resolution._critical_band` is already exercised directly in
+    `DamageTypeCriticalTest`.
+    """
+
+    def test_boundaries_resolve_to_the_correct_row(self):
+        # docs/design/06-aftermath.md's own boundaries, both sides of each.
+        for total, expected_key in (
+            (6, "out-of-action"),
+            (30, "out-of-action"),
+            (31, "lasting-wound"),
+            (52, "lasting-wound"),
+            (53, "left-for-dead"),
+            (66, "left-for-dead"),
+            (67, "new-enemy"),
+            (78, "new-enemy"),
+            (79, "taken"),
+            (88, "taken"),
+            (89, "disfigured"),
+            (98, "disfigured"),
+            (99, "recurring-wound"),
+            (110, "recurring-wound"),
+            (111, "death"),
+            (250, "death"),  # well above 111: the open row still resolves, never errors
+        ):
+            with self.subTest(total=total):
+                key, _ = resolution._aftermath_band(total)
+                self.assertEqual(key, expected_key)
+
+    def test_rejects_non_positive_points_below_zero(self):
+        for pbz in (0, -1):
+            with self.subTest(points_below_zero=pbz):
+                with self.assertRaises(ValueError):
+                    resolution._stage_aftermath(
+                        [],
+                        entity="pc",
+                        points_below_zero=pbz,
+                        depends_on_step=0,
+                        seed_cursor=resolution._SeedCursor(seed=1),
+                        bears_on_skill="swordplay",
+                    )
+
+    def test_roll_and_modifier(self):
+        steps: list[dict] = []
+        # seed=1 -> rules.roll_d100(seed=1) is deterministic; the exact face isn't the point,
+        # the modifier arithmetic is.
+        resolution._stage_aftermath(
+            steps,
+            entity="pc",
+            points_below_zero=3,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=1),
+            bears_on_skill="swordplay",
+        )
+        step = steps[0]
+        self.assertEqual(step["mechanic"], "aftermath")
+        self.assertEqual(step["roll"]["table"], "aftermath")
+        self.assertEqual(step["roll"]["modifier"], 15)
+        self.assertEqual(step["roll"]["total"], step["roll"]["roll"] + 15)
+        self.assertEqual(step["depends_on"], [0])
+
+    def _stage_at_total(self, total: int, *, bears_on_skill: str = "swordplay") -> dict:
+        """Force a specific total by choosing points_below_zero so seed=1's natural roll plus
+        the modifier lands exactly on `total`."""
+        natural = resolution.rules.roll_d100(seed=1)
+        pbz, remainder = divmod(total - natural, 5)
+        self.assertEqual(
+            remainder, 0, f"total {total} is not reachable from a natural roll of {natural}"
+        )
+        steps: list[dict] = []
+        resolution._stage_aftermath(
+            steps,
+            entity="pc",
+            points_below_zero=pbz,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=1),
+            bears_on_skill=bears_on_skill,
+        )
+        return steps[0]
+
+    def test_out_of_action_produces_no_wound(self):
+        step = self._stage_at_total(23)
+        self.assertEqual(step["roll"]["key"], "out-of-action")
+        self.assertEqual(step["mutations"], [])
+
+    def test_taken_produces_no_wound(self):
+        step = self._stage_at_total(83)
+        self.assertEqual(step["roll"]["key"], "taken")
+        self.assertEqual(step["mutations"], [])
+
+    def test_death_produces_no_wound(self):
+        step = self._stage_at_total(113)
+        self.assertEqual(step["roll"]["key"], "death")
+        self.assertEqual(step["mutations"], [])
+
+    def test_lasting_wound_produces_a_bare_wound_record(self):
+        step = self._stage_at_total(33)
+        self.assertEqual(step["roll"]["key"], "lasting-wound")
+        self.assertEqual(len(step["mutations"]), 1)
+        wound = step["mutations"][0]["value"]
+        self.assertEqual(wound["from"], {"table": "aftermath", "beat": 0})
+        self.assertNotIn("effect", wound)
+        self.assertNotIn("recurring", wound)
+        character.validate_wound(wound)
+
+    def test_disfigured_produces_dread_wound(self):
+        step = self._stage_at_total(93)
+        self.assertEqual(step["roll"]["key"], "disfigured")
+        wound = step["mutations"][0]["value"]
+        self.assertEqual(wound["effect"], {"dread": 1})
+        self.assertNotIn("bears_on", wound)
+        character.validate_wound(wound)
+
+    def test_recurring_wound_produces_recurring_skill_wound(self):
+        step = self._stage_at_total(103)
+        self.assertEqual(step["roll"]["key"], "recurring-wound")
+        wound = step["mutations"][0]["value"]
+        self.assertEqual(wound["effect"], {"skill": -10})
+        self.assertEqual(wound["recurring"], True)
+        self.assertEqual(wound["bears_on"], "swordplay")
+        self.assertIsNone(wound["closed"])
+        character.validate_wound(wound)
+
+    def test_new_enemy_and_left_for_dead_produce_bare_wound_records(self):
+        for total, key in ((58, "left-for-dead"), (68, "new-enemy")):
+            with self.subTest(key=key):
+                step = self._stage_at_total(total)
+                self.assertEqual(step["roll"]["key"], key)
+                wound = step["mutations"][0]["value"]
+                self.assertNotIn("effect", wound)
+                character.validate_wound(wound)
+
+
 if __name__ == "__main__":
     unittest.main()
