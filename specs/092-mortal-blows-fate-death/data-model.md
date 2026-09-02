@@ -47,12 +47,25 @@ _stage_aftermath(steps, entity, points_below_zero, depends_on_step, seed_cursor,
     # non-death row, setting roll.closed_by = "mortality".
     # Both closures are staged inline -- no second call, no player input required.
 
-close_death_row(steps, step_id, entity, *, spender_state: dict,
-                 companion_state: dict | None = None) -> list[dict]
+close_death_row(steps, step_id, entity, entity_state, *, spender_state: dict,
+                 spender_entity: str, spender_present: bool = True) -> list[dict]
     # step_id must reference an existing `aftermath` step whose roll.key == "death" and
     # roll.closed_by is None -- otherwise raises ValueError (spec.md FR-002/FR-004).
-    # Rewrites that step's roll.key to the worst non-death row, sets
-    # roll.closed_by = "fate" and roll.fate_spent = True, decrements spender_state's
-    # fate.current by 1, and (when companion_state is not None) sets its status per the
-    # table above. Returns the list of mutations applied, for the caller to persist.
+    # entity/entity_state are the combatant whose Aftermath step this is; spender_state/
+    # spender_entity are the player's own character (spender_entity == entity for a
+    # self-spend). Spending for a companion (spender_entity != entity) additionally
+    # requires spender_present and the spender able to act (stamina.current >= 0).
+    # Rewrites the step's roll.key to the worst non-death row, sets roll.closed_by =
+    # "fate" and roll.fate_spent = True, decrements spender_state's fate.current by 1,
+    # and applies any wound mutation the closed-onto row specifies to entity_state.
+    # Returns the list of mutations applied. Never touches a companion's `status` field
+    # itself -- closing a death row means it no longer stands, so there is nothing for
+    # apply_companion_status (below) to do here.
+
+apply_companion_status(entity_state: dict, key: str) -> dict | None
+    # Called by the caller (not close_death_row) once a row is known final: immediately
+    # for "taken", or for "death" once it is known to stand (no Fate spent, not closed
+    # by mortality: low). Sets entity_state["status"] to "dead"/"away" per the table
+    # above, or does nothing for any other key. Never call this for the player's own
+    # character (FR-011) -- callers check entity_state.get("role") == "companion" first.
 ```
