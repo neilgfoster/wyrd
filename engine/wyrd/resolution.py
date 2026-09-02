@@ -73,9 +73,9 @@ TAINT_THRESHOLD_SPACING = 3
 #: docs/design/07-transformations.md "The table": row (1-6, the d6 result) -> severity.
 TRANSFORMATION_SEVERITIES = [1, 1, 2, 2, 3, 4]
 
-#: docs/design/05-criticals.md "critical-slashing": (low, high, key, effect-or-None). The 21+
-#: ("slashing-mortal") row is handled separately -- it stages no wound-record mutation
-#: (ADR 0023: a critical never kills during the fight).
+#: docs/design/05-criticals.md: one table per closed damage type, each (low, high, key,
+#: effect-or-None). The open-ended top row (a table's mortal row) is handled separately -- it
+#: stages no wound-record mutation (ADR 0023: a critical never kills during the fight).
 CRITICAL_SLASHING_TABLE = [
     (2, 5, "slashing-glancing", None),
     (6, 9, "slashing-scored", {"dread": 1}),
@@ -83,6 +83,40 @@ CRITICAL_SLASHING_TABLE = [
     (14, 17, "slashing-hamstrung", {"skill": -10}),
     (18, 20, "slashing-maimed", {"stamina_max": -1, "dread": 1}),
 ]
+
+CRITICAL_PIERCING_TABLE = [
+    (2, 4, "piercing-grazed", None),
+    (5, 8, "piercing-punctured", {"skill": -5}),
+    (9, 12, "piercing-transfixed", {"stamina_max": -1}),
+    (13, 15, "piercing-organ", {"stamina_max": -1, "skill": -5}),
+    (16, 18, "piercing-collapsed", {"stamina_max": -2}),
+]
+
+CRITICAL_BLUNT_TABLE = [
+    (2, 6, "blunt-winded", None),
+    (7, 11, "blunt-cracked", {"skill": -5}),
+    (12, 15, "blunt-broken", {"skill": -10}),
+    (16, 19, "blunt-shattered", {"stamina_max": -1, "skill": -5}),
+    (20, 23, "blunt-concussed", {"stamina_max": -2}),
+]
+
+CRITICAL_SEARING_TABLE = [
+    (2, 5, "searing-scorched", None),
+    (6, 9, "searing-blistered", {"dread": 1}),
+    (10, 13, "searing-seared", {"skill": -5}),
+    (14, 17, "searing-scarred", {"dread": 2}),
+    (18, 21, "searing-charred", {"stamina_max": -1, "dread": 1}),
+]
+
+#: The closed set of damage types (docs/design/05-criticals.md: "the set is closed, and a weapon
+#: declaring a type the engine does not publish is a load error"). Maps each to its table's rows
+#: and the key/table-name its own mortal (open-ended top) row reads.
+CRITICAL_TABLES: dict[str, tuple[list[tuple[int, int, str, dict | None]], str]] = {
+    "slashing": (CRITICAL_SLASHING_TABLE, "slashing-mortal"),
+    "piercing": (CRITICAL_PIERCING_TABLE, "piercing-mortal"),
+    "blunt": (CRITICAL_BLUNT_TABLE, "blunt-mortal"),
+    "searing": (CRITICAL_SEARING_TABLE, "searing-mortal"),
+}
 
 #: docs/design/03-rules.md sections 3-4: a reroll resource's own modifier to the rerolled roll's
 #: effective%. Fortune and the Bargain are a plain reroll at the same odds; Resolve adds +20.
@@ -319,11 +353,16 @@ def _roll_dice(spec: str, seed_cursor: _SeedCursor) -> tuple[list[int], int]:
     return rolls, sum(rolls)
 
 
-def _critical_slashing_band(total: int) -> tuple[str, dict | None]:
-    for low, high, key, effect in CRITICAL_SLASHING_TABLE:
+def _critical_band(damage_type: str, total: int) -> tuple[str, dict | None]:
+    """docs/design/05-criticals.md: look up `total` against `damage_type`'s own table. An
+    unrecognized damage type is a load error, not a table quietly skipped (FR-006)."""
+    if damage_type not in CRITICAL_TABLES:
+        raise ValueError(f"no such damage type: {damage_type!r}")
+    table, mortal_key = CRITICAL_TABLES[damage_type]
+    for low, high, key, effect in table:
         if low <= total <= high:
             return key, effect
-    return "slashing-mortal", None
+    return mortal_key, None
 
 
 def _stage_critical(
@@ -333,14 +372,17 @@ def _stage_critical(
     depends_on_step: int,
     seed_cursor: _SeedCursor,
     bears_on_skill: str,
+    damage_type: str = "slashing",
 ) -> None:
-    """docs/design/05-criticals.md: `1d6 + points below zero` against `critical-slashing`,
-    staging a wound-record mutation (or nothing further for a mortal result -- ADR 0023, and
-    FR-009: Aftermath is deliberately deferred, never cascaded here)."""
+    """docs/design/05-criticals.md: `1d6 + points below zero` against the table for
+    `damage_type` (one of the closed set of four -- FR-001), staging a wound-record mutation (or
+    nothing further for a mortal result -- ADR 0023, and FR-009: Aftermath is deliberately
+    deferred, never cascaded here). `damage_type` defaults to `slashing` so every caller that
+    predates this parameter keeps its existing behaviour unchanged (FR-001b)."""
     d6 = rules.roll_d100(sides=6, seed=seed_cursor.next())
     total = d6 + points_below_zero
-    key, effect = _critical_slashing_band(total)
-    mortal = key == "slashing-mortal"
+    key, effect = _critical_band(damage_type, total)
+    mortal = key.endswith("-mortal")
     step_id = len(steps)
     mutations: list[dict] = []
     if not mortal and effect is not None:
@@ -364,7 +406,7 @@ def _stage_critical(
                 "roll": d6,
                 "modifier": points_below_zero,
                 "total": total,
-                "table": "critical-slashing",
+                "table": f"critical-{damage_type}",
                 "key": key,
                 "mortal": mortal,
             },
@@ -480,11 +522,13 @@ def _stage_combat_attack(
     weapon_dice: str | None,
     armour_dice: str | None,
     seed_cursor: _SeedCursor,
+    damage_type: str = "slashing",
 ) -> None:
     """The combat resolution chain (docs/design/31-action-resolution.md "The combat resolution
     chain"): an opposed test on the acting side only; a landed blow stages weapon-damage and
     armour, doubling damage first if telling (`degrees >= 6`); the two combine into the target's
-    Stamina mutation, itself threshold-checked for a crossing below 0, staging `critical`."""
+    Stamina mutation, itself threshold-checked for a crossing below 0, staging `critical` against
+    `damage_type`'s own table (defaults to `slashing`, docs/design/05-criticals.md FR-001b)."""
     if skill is None:
         raise ValueError("combat-attack requires a skill")
     if weapon_dice is None or armour_dice is None:
@@ -572,7 +616,13 @@ def _stage_combat_attack(
     stamina_after = _get_nested(target_state, "stamina.current")
     if stamina_before >= 0 and stamina_after < 0:
         _stage_critical(
-            steps, target, -stamina_after, armour_step_id, seed_cursor, bears_on_skill=skill
+            steps,
+            target,
+            -stamina_after,
+            armour_step_id,
+            seed_cursor,
+            bears_on_skill=skill,
+            damage_type=damage_type,
         )
 
 
@@ -591,6 +641,7 @@ def _normalize_request(raw_request: dict) -> dict:
         "tier": raw_request.get("tier"),
         "weapon_dice": raw_request.get("weapon_dice"),
         "armour_dice": raw_request.get("armour_dice"),
+        "damage_type": raw_request.get("damage_type"),
     }
 
 
@@ -654,6 +705,7 @@ def _stage_request(
             weapon_dice=request["weapon_dice"],
             armour_dice=request["armour_dice"],
             seed_cursor=seed_cursor,
+            damage_type=request["damage_type"] or "slashing",
         )
     else:
         resolve_fn, mutate_fn = _MECHANICS[request["mechanic"]]
@@ -813,7 +865,8 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     """Resolve several independent top-level requests into one proposal (docs/design/31-action-
     resolution.md "A worked example": "Two unrelated Exposure sources in the same scene, proposed
     together"). Each request takes the same keys as `propose`'s own kwargs (`actor`, `mechanic`,
-    `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `weapon_dice`, `armour_dice`).
+    `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `weapon_dice`, `armour_dice`,
+    `damage_type`).
     An actor/target appearing in more than one request shares one in-memory scratch state across
     them, so a later request in the batch sees any earlier request's own staged mutations when
     checking for a threshold crossing. Writes nothing. Returns `{"proposal_id", "roll",
@@ -852,6 +905,7 @@ def propose(
     tier: str | None = None,
     weapon_dice: str | None = None,
     armour_dice: str | None = None,
+    damage_type: str | None = None,
     seed: int | None = None,
 ) -> dict:
     """Resolve `mechanic` against `actor`'s own state, cascading into further steps whenever the
@@ -860,8 +914,11 @@ def propose(
     "mutations", "steps"}` -- `roll`/`mutations` keep #235's exact shape (`roll` is `steps[0]`'s
     own roll data; `mutations` is every step's mutations, concatenated in step order) for
     backward compatibility; `steps` is the full cascade. Raises `ValueError` for an unknown
-    mechanic/difficulty/Exposure tier, or a missing `combat-attack` argument; propagates
-    `character.load`'s own error for a missing actor or target entity.
+    mechanic/difficulty/Exposure tier/damage type, or a missing `combat-attack` argument;
+    propagates `character.load`'s own error for a missing actor or target entity. `damage_type`
+    (docs/design/05-criticals.md) selects which critical table a `combat-attack` cascade reads if
+    it stages one; unset defaults to `slashing`, so every caller predating this parameter keeps
+    its existing behaviour unchanged (specs/090-damage-type-criticals FR-001b).
 
     A thin single-request wrapper over `propose_batch` -- see that function for proposing
     several independent requests together in one proposal.
@@ -878,6 +935,7 @@ def propose(
                 "tier": tier,
                 "weapon_dice": weapon_dice,
                 "armour_dice": armour_dice,
+                "damage_type": damage_type,
             }
         ],
         seed=seed,

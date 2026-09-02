@@ -683,6 +683,79 @@ class CrowdRuleTest(unittest.TestCase):
         self.assertEqual(attack_steps[0]["roll"]["actor"], str(self.crowd))
         self.assertEqual(attack_steps[0]["roll"]["target"], str(self.actor))
 
+    def test_crowd_attack_forwards_damage_type_into_the_resulting_critical(self):
+        # specs/090-damage-type-criticals FR-001a: damage_type is forwarded unchanged through
+        # crowd_attack's own request into whichever critical table the landed blow stages.
+        combat.register_crowd(self.crowd, 1, state_path=self.path)
+        result = combat.crowd_attack(
+            self.crowd,
+            self.actor,
+            "swordplay",
+            "1d8",
+            "1d3",
+            damage_type="piercing",
+            seed=1,
+            state_path=self.path,
+        )
+        critical_steps = [s for s in result["steps"] if s["mechanic"] == "critical"]
+        self.assertEqual(len(critical_steps), 1)
+        self.assertEqual(critical_steps[0]["roll"]["table"], "critical-piercing")
+
+    def test_crowd_attack_omitted_damage_type_still_defaults_to_slashing(self):
+        combat.register_crowd(self.crowd, 1, state_path=self.path)
+        result = combat.crowd_attack(
+            self.crowd, self.actor, "swordplay", "1d8", "1d3", seed=1, state_path=self.path
+        )
+        critical_steps = [s for s in result["steps"] if s["mechanic"] == "critical"]
+        self.assertEqual(len(critical_steps), 1)
+        self.assertEqual(critical_steps[0]["roll"]["table"], "critical-slashing")
+
+
+class RangedAttackDamageTypeTest(unittest.TestCase):
+    """specs/090-damage-type-criticals FR-001a: resolve_ranged_attack forwards damage_type
+    unchanged into the resulting critical, on both the direct and the ally-redirect path."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        self.shooter = pathlib.Path(self._tmp.name) / "shooter.md"
+        self.target = pathlib.Path(self._tmp.name) / "target.md"
+        character.save({"id": "shooter", "skills": {"archery": 90}}, "", self.shooter)
+        character.save(
+            {"id": "target", "skills": {"archery": 0}, "stamina": {"current": 1, "max": 1}},
+            "",
+            self.target,
+        )
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_direct_shot_forwards_damage_type(self):
+        found = None
+        for seed in range(1, 200):
+            result = combat.resolve_ranged_attack(
+                self.shooter,
+                self.target,
+                "archery",
+                "1d8",
+                "1d1",
+                damage_type="searing",
+                seed=seed,
+                state_path=self.path,
+            )
+            critical_steps = [s for s in result["steps"] if s["mechanic"] == "critical"]
+            if critical_steps:
+                found = critical_steps[0]
+                break
+        self.assertIsNotNone(found, "no scenario staged a critical in the scanned seed range")
+        self.assertEqual(found["roll"]["table"], "critical-searing")
+
 
 if __name__ == "__main__":
     unittest.main()

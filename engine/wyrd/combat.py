@@ -443,6 +443,7 @@ def _crowd_attack_request(
     weapon_dice: str,
     armour_dice: str,
     body_count: int,
+    damage_type: str | None = None,
 ) -> dict:
     return {
         "actor": crowd_norm,
@@ -451,6 +452,7 @@ def _crowd_attack_request(
         "skill": skill,
         "weapon_dice": weapon_dice,
         "armour_dice": armour_dice,
+        "damage_type": damage_type,
         "declaration_bonus": crowd_ease(body_count),
     }
 
@@ -462,16 +464,25 @@ def crowd_attack(
     weapon_dice: str,
     armour_dice: str,
     *,
+    damage_type: str | None = None,
     seed: int | None = None,
     state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
 ) -> dict:
     """docs/design/03-rules.md section 2: "A crowd engaged with a character makes one attack on
     them each round," eased by `crowd_ease` of its own currently-registered body count against
     `target`. Exactly one `combat-attack` request via `resolution.propose_batch` -- never one
-    per body, regardless of how many bodies the crowd has left."""
+    per body, regardless of how many bodies the crowd has left. `damage_type`
+    (docs/design/05-criticals.md) is forwarded unchanged to that request; unset defaults to
+    `slashing` (specs/090-damage-type-criticals FR-001b)."""
     body_count = crowd_body_count(crowd, state_path=state_path)
     request = _crowd_attack_request(
-        _normalize(crowd), _normalize(target), skill, weapon_dice, armour_dice, body_count
+        _normalize(crowd),
+        _normalize(target),
+        skill,
+        weapon_dice,
+        armour_dice,
+        body_count,
+        damage_type,
     )
     return resolution.propose_batch([request], seed=seed)
 
@@ -483,6 +494,7 @@ def crowd_parting_blow(
     weapon_dice: str,
     armour_dice: str,
     *,
+    damage_type: str | None = None,
     seed: int | None = None,
     state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
 ) -> dict:
@@ -493,7 +505,14 @@ def crowd_parting_blow(
     per engaged opponent with no ease channel, which would both roll once per crowd body and
     skip the ease this rule requires."""
     return crowd_attack(
-        crowd, actor, skill, weapon_dice, armour_dice, seed=seed, state_path=state_path
+        crowd,
+        actor,
+        skill,
+        weapon_dice,
+        armour_dice,
+        damage_type=damage_type,
+        seed=seed,
+        state_path=state_path,
     )
 
 
@@ -528,6 +547,7 @@ def resolve_ranged_attack(
     weapon_dice: str,
     armour_dice: str,
     *,
+    damage_type: str | None = None,
     seed: int | None = None,
     state_path: pathlib.Path = state.DEFAULT_STATE_PATH,
 ) -> dict:
@@ -537,6 +557,8 @@ def resolve_ranged_attack(
     own Wyrd die reads Ill Omen, the shot is redirected: the original proposal is discarded and
     a fresh one, identical except for its target, is raised against the ally instead
     (docs/design/03-rules.md: "an Ill Omen on the shot means the ally is hit instead").
+    `damage_type` (docs/design/05-criticals.md) is forwarded unchanged; unset defaults to
+    `slashing` (specs/090-damage-type-criticals FR-001b).
     """
     difficulty = ranged_attack_difficulty(shooter, target, state_path=state_path)
     modifier = {"difficult": DIFFICULT_MODIFIER, "challenging": CHALLENGING_MODIFIER}.get(
@@ -551,6 +573,7 @@ def resolve_ranged_attack(
         target=target,
         weapon_dice=weapon_dice,
         armour_dice=armour_dice,
+        damage_type=damage_type,
         declaration_bonus=modifier,
         seed=seed,
     )
@@ -564,6 +587,7 @@ def resolve_ranged_attack(
             target=allies[0],
             weapon_dice=weapon_dice,
             armour_dice=armour_dice,
+            damage_type=damage_type,
             declaration_bonus=modifier,
             seed=redirect_seed,
         )

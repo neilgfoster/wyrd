@@ -1062,5 +1062,154 @@ class OmenAttributionSameValueTest(ResolutionTestBase):
         self.assertEqual(result["steps"][2]["depends_on"], [1])  # not [0]
 
 
+class DamageTypeCriticalTest(unittest.TestCase):
+    """specs/090-damage-type-criticals: each of the four closed damage types reads its own
+    table, an unrecognized type is a load error, and omitting damage_type keeps
+    critical-slashing's existing behaviour unchanged."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.attacker = pathlib.Path(self._tmp.name) / "attacker.md"
+        self.target = pathlib.Path(self._tmp.name) / "target.md"
+        attacker = dict(SENNA)
+        attacker["id"] = "attacker"
+        attacker["skills"] = {"swordplay": 60}
+        character.save(attacker, "", self.attacker)
+        target = dict(SENNA)
+        target["id"] = "target"
+        target["skills"] = {"swordplay": 0}
+        target["stamina"] = {"current": 5, "max": 5}
+        character.save(target, "", self.target)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def propose_attack(self, damage_type=None):
+        kwargs = {}
+        if damage_type is not None:
+            kwargs["damage_type"] = damage_type
+        return resolution.propose(
+            actor=self.attacker,
+            mechanic="combat-attack",
+            skill="swordplay",
+            target=self.target,
+            weapon_dice="1d8",
+            armour_dice="1d3",
+            seed=2,
+            **kwargs,
+        )
+
+    def test_no_damage_type_defaults_to_slashing(self):
+        # research.md's own seed-2 scenario, reproduced with no damage_type supplied at all --
+        # every caller/test that predates this parameter must keep resolving against
+        # critical-slashing exactly as before (FR-001b).
+        result = self.propose_attack()
+        critical_step = [s for s in result["steps"] if s["mechanic"] == "critical"][0]
+        self.assertEqual(critical_step["roll"]["table"], "critical-slashing")
+        self.assertEqual(critical_step["roll"]["key"], "slashing-scored")
+
+    def test_each_damage_type_reads_its_own_table(self):
+        # Same seed (same dice throughout -- damage_type never affects a roll, only which table
+        # answers it), so the critical total is always 7 (d6 5 + 2 points below zero): each
+        # table's own row containing 7, computed from resolution.CRITICAL_TABLES directly rather
+        # than hardcoded (CLAUDE.md "check the maths"), so this test can't silently drift from
+        # the table data itself.
+        for damage_type in ("slashing", "piercing", "blunt", "searing"):
+            with self.subTest(damage_type=damage_type):
+                result = self.propose_attack(damage_type=damage_type)
+                critical_step = [s for s in result["steps"] if s["mechanic"] == "critical"][0]
+                self.assertEqual(critical_step["roll"]["total"], 7)
+                self.assertEqual(critical_step["roll"]["table"], f"critical-{damage_type}")
+                expected_key, expected_effect = resolution._critical_band(damage_type, 7)
+                self.assertEqual(critical_step["roll"]["key"], expected_key)
+                if expected_effect is None:
+                    self.assertEqual(critical_step["mutations"], [])
+                else:
+                    self.assertEqual(len(critical_step["mutations"]), 1)
+                    self.assertEqual(
+                        critical_step["mutations"][0]["value"]["effect"], expected_effect
+                    )
+
+    def test_a_nothing_lasting_row_stages_no_wound_for_a_non_slashing_table(self):
+        # critical-blunt's 2-6 band carries no effect, unlike slashing's narrower 2-5 band --
+        # confirms a table whose row *shape* differs from slashing's at the same total stages the
+        # correct (here: nothing) mutation. Target Stamina 1 with a light weapon keeps the total
+        # low without a telling blow.
+        target = pathlib.Path(self._tmp.name) / "fragile.md"
+        fragile = dict(SENNA)
+        fragile["id"] = "fragile"
+        fragile["skills"] = {"swordplay": 0}
+        fragile["stamina"] = {"current": 1, "max": 1}
+        character.save(fragile, "", target)
+        found = None
+        for seed in range(1, 200):
+            result = resolution.propose(
+                actor=self.attacker,
+                mechanic="combat-attack",
+                skill="swordplay",
+                target=target,
+                weapon_dice="1d3",
+                armour_dice="1d1",
+                damage_type="blunt",
+                seed=seed,
+            )
+            critical_steps = [step for step in result["steps"] if step["mechanic"] == "critical"]
+            if critical_steps and critical_steps[0]["roll"]["total"] <= 6:
+                found = result
+                break
+        self.assertIsNotNone(found, "no low-total blunt scenario found in the scanned range")
+        critical_step = [s for s in found["steps"] if s["mechanic"] == "critical"][0]
+        self.assertEqual(critical_step["roll"]["key"], "blunt-winded")
+        self.assertEqual(critical_step["mutations"], [])
+
+    def test_unrecognized_damage_type_is_a_load_error(self):
+        with self.assertRaises(ValueError) as ctx:
+            self.propose_attack(damage_type="acid")
+        self.assertIn("acid", str(ctx.exception))
+
+    def test_mortal_row_reads_from_the_correct_table_for_each_type(self):
+        # Same seed-search shape as MortalCriticalTest, generalized across all four damage
+        # types -- computed, not assumed (CLAUDE.md "check the maths").
+        attacker = pathlib.Path(self._tmp.name) / "hard-attacker.md"
+        target = pathlib.Path(self._tmp.name) / "fragile-target.md"
+        hard_attacker = dict(SENNA)
+        hard_attacker["id"] = "hard-attacker"
+        hard_attacker["skills"] = {"swordplay": 90}
+        character.save(hard_attacker, "", attacker)
+        fragile_target = dict(SENNA)
+        fragile_target["id"] = "fragile-target"
+        fragile_target["skills"] = {"swordplay": 0}
+        fragile_target["stamina"] = {"current": 1, "max": 1}
+        character.save(fragile_target, "", target)
+
+        for damage_type in ("slashing", "piercing", "blunt", "searing"):
+            with self.subTest(damage_type=damage_type):
+                found = None
+                for seed in range(1, 200):
+                    result = resolution.propose(
+                        actor=attacker,
+                        mechanic="combat-attack",
+                        skill="swordplay",
+                        target=target,
+                        weapon_dice="6d8",
+                        armour_dice="1d2",
+                        damage_type=damage_type,
+                        seed=seed,
+                    )
+                    critical_steps = [
+                        step for step in result["steps"] if step["mechanic"] == "critical"
+                    ]
+                    if critical_steps and critical_steps[0]["roll"]["mortal"]:
+                        found = result
+                        break
+                self.assertIsNotNone(
+                    found, f"no mortal scenario found for {damage_type} in the scanned range"
+                )
+                critical_step = [s for s in found["steps"] if s["mechanic"] == "critical"][0]
+                self.assertEqual(critical_step["mutations"], [])
+                self.assertTrue(critical_step["roll"]["key"].endswith("-mortal"))
+                self.assertEqual(critical_step["roll"]["table"], f"critical-{damage_type}")
+
+
 if __name__ == "__main__":
     unittest.main()
