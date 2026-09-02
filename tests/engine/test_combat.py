@@ -12,7 +12,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
-from wyrd import character, combat, resolution  # noqa: E402
+from wyrd import character, combat, resolution, state  # noqa: E402
 
 
 class DetermineFirstActorTest(unittest.TestCase):
@@ -470,6 +470,87 @@ class RangedAttackAllyRedirectTest(unittest.TestCase):
             state_path=self.path,
         )
         self.assertEqual(result["roll"]["target"], str(self.target))
+
+
+class EscapeSceneTest(unittest.TestCase):
+    """docs/design/03-rules.md section 2's pursuit ladder. party_skills {a: 50, b: 30, c: 70};
+    least_capable selects b's 30. One pursuer -> Challenging -> opponent 60 -> effective_pct 20.
+    Seed 1 rolls 18 (success); seed 3 rolls 31 (failure)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+        self.party_skills = {"a": 50, "b": 30, "c": 70}
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_difficulty_ladder(self):
+        self.assertIsNone(combat.escape_difficulty(0))
+        self.assertEqual(combat.escape_difficulty(1), "challenging")
+        self.assertEqual(combat.escape_difficulty(2), "difficult")
+        self.assertEqual(combat.escape_difficulty(3), "hard")
+        self.assertEqual(combat.escape_difficulty(4), "very_hard")
+        self.assertEqual(combat.escape_difficulty(5), "very_hard")
+        self.assertEqual(combat.escape_difficulty(100), "very_hard")
+
+    def test_difficulty_ladder_rejects_negative(self):
+        with self.assertRaises(ValueError):
+            combat.escape_difficulty(-1)
+
+    def test_successful_escape_clears_the_scene(self):
+        result = combat.escape_scene(
+            self.party_skills, pursuer_count=1, seed=1, state_path=self.path
+        )
+        self.assertTrue(result["escaped"])
+        self.assertFalse(result["no_test"])
+        self.assertEqual(result["difficulty"], "challenging")
+        self.assertEqual(result["slowest_member"], "b")
+        self.assertNotIn("combat", state.load(self.path))
+
+    def test_failed_escape_leaves_scene_untouched(self):
+        before = state.load(self.path)
+        result = combat.escape_scene(
+            self.party_skills, pursuer_count=1, seed=3, state_path=self.path
+        )
+        self.assertFalse(result["escaped"])
+        self.assertEqual(result["difficulty"], "challenging")
+        self.assertEqual(result["slowest_member"], "b")
+        after = state.load(self.path)
+        self.assertEqual(before, after)
+
+    def test_no_pursuer_skips_the_roll_and_clears_the_scene(self):
+        result = combat.escape_scene(
+            self.party_skills, pursuer_count=0, seed=1, state_path=self.path
+        )
+        self.assertTrue(result["escaped"])
+        self.assertTrue(result["no_test"])
+        self.assertIsNone(result["difficulty"])
+        self.assertIsNone(result["roll"])
+        self.assertNotIn("combat", state.load(self.path))
+
+    def test_difficulty_used_matches_pursuer_count(self):
+        for count, difficulty in [(2, "difficult"), (3, "hard"), (4, "very_hard")]:
+            with self.subTest(count=count):
+                fresh = tempfile.TemporaryDirectory()
+                self.addCleanup(fresh.cleanup)
+                path = pathlib.Path(fresh.name) / "chronicle_state.yaml"
+                combat.start_combat(
+                    sides={"party": {"armed": True}},
+                    started_by="party",
+                    player_side="party",
+                    state_path=path,
+                )
+                result = combat.escape_scene(
+                    self.party_skills, pursuer_count=count, seed=1, state_path=path
+                )
+                self.assertEqual(result["difficulty"], difficulty)
 
 
 if __name__ == "__main__":
