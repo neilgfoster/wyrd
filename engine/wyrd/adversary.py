@@ -20,7 +20,7 @@ from __future__ import annotations
 import pathlib
 import re
 
-from wyrd import state
+from wyrd import resolution, state
 
 #: docs/design/12-the-adversary.md section 2: the first six fields are required; an opponent
 #: missing one is an opponent the GM has to improvise.
@@ -50,7 +50,12 @@ TRAIT_EFFECTS = {
 
 #: docs/design/25-entities.md: kebab-case.
 ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
+DAMAGE_RE = re.compile(r"^(\d*)d(\d+)([+-]\d+)?$")
+
+#: docs/design/03-rules.md section 1's difficulty ladder, in order -- reused rather than
+#: re-declared, so this module's ladder can never drift from resolution.py's own
+#: (specs/096-adversary-trait-effects research.md).
+DIFFICULTY_LADDER = tuple(resolution.DIFFICULTY_BONUSES)
 
 
 def validate_adversary(entry: dict) -> None:
@@ -182,3 +187,74 @@ def resolve_skill(block: dict, skill: str) -> int:
     if skill in block["skills"]:
         return block["skills"][skill]
     return block["baseline"]
+
+
+def _trait_effect_values(traits: list[dict] | None, key: str) -> list:
+    """Every value a `traits` list carries for one effect `key`, in order -- shared by every
+    trait computation below (specs/096-adversary-trait-effects)."""
+    return [trait["effect"][key] for trait in (traits or []) if key in trait.get("effect", {})]
+
+
+def shift_difficulty(base: str, rungs: int) -> str:
+    """docs/design/12-the-adversary.md section 5: a `difficulty` trait "shifts the difficulty
+    of a named class of test, in ladder rungs." Steps `base` along `DIFFICULTY_LADDER` by
+    `rungs` positions -- mirroring `DIFFICULTY_BONUSES`'s own sign (a harder step carries a more
+    negative bonus), a negative `rungs` moves toward the ladder's harder end, a positive one
+    toward its easier end -- clamped at either end rather than raising: overshooting the ladder
+    simply floors/ceilings (specs/096-adversary-trait-effects).
+    """
+    index = DIFFICULTY_LADDER.index(base) - rungs
+    index = max(0, min(len(DIFFICULTY_LADDER) - 1, index))
+    return DIFFICULTY_LADDER[index]
+
+
+def wyrd_band_width(block: dict) -> int:
+    """docs/design/12-the-adversary.md section 5: a `wyrd` trait "widens the Ill Omen or Fair
+    Omen band on tests against this opponent." The total width to pass as
+    `rules.opposed_test`'s `omen_width` (specs/096-adversary-trait-effects) -- never negative."""
+    return max(0, sum(_trait_effect_values(block.get("traits"), "wyrd")))
+
+
+def _adjust_damage_dice(expression: str, delta: int) -> str:
+    """Adjust `expression`'s dice count by `delta`, floored at one die; die size and any flat
+    modifier are unchanged (specs/096-adversary-trait-effects, docs/design/12-the-adversary.md
+    section 5's `damage` trait)."""
+    match = DAMAGE_RE.match(expression)
+    count_text, size, modifier = match.group(1), match.group(2), match.group(3) or ""
+    count = int(count_text) if count_text else 1
+    count = max(1, count + delta)
+    return f"{count}d{size}{modifier}"
+
+
+def effective_block(block: dict) -> dict:
+    """docs/design/12-the-adversary.md section 5: fold `block`'s active traits' `stamina_max`/
+    `armour_rank`/`damage`/`damage_type` effects into a new block -- never mutating `block`
+    itself. Multiple traits naming the same effect stack (sum); a `damage`/`damage_type` trait
+    with nothing to adjust (no `damage` on the block at all) is simply inert
+    (specs/096-adversary-trait-effects).
+
+    `difficulty` and `wyrd` traits are not folded in here -- see `shift_difficulty` and
+    `wyrd_band_width`, applied by the caller at the point each is actually needed.
+    """
+    traits = block.get("traits")
+    result = dict(block)
+
+    stamina_delta = sum(_trait_effect_values(traits, "stamina_max"))
+    if stamina_delta:
+        result["stamina_max"] = max(STAMINA_MIN, block["stamina_max"] + stamina_delta)
+
+    armour_delta = sum(_trait_effect_values(traits, "armour_rank"))
+    if armour_delta:
+        index = ARMOUR_RANKS.index(block["armour"]) + armour_delta
+        result["armour"] = ARMOUR_RANKS[max(0, min(len(ARMOUR_RANKS) - 1, index))]
+
+    if "damage" in block:
+        damage_delta = sum(_trait_effect_values(traits, "damage"))
+        if damage_delta:
+            result["damage"] = _adjust_damage_dice(block["damage"], damage_delta)
+
+    damage_type_overrides = _trait_effect_values(traits, "damage_type")
+    if damage_type_overrides:
+        result["damage_type"] = damage_type_overrides[-1]
+
+    return result
