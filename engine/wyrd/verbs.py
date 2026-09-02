@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import career, character, creation, rules, state
+from wyrd import career, character, creation, resolution, rules, state
 
 
 def roll(
@@ -186,3 +186,39 @@ def create_character(
         misfortune=misfortune,
     )
     return {"verb": "create-character", **result}
+
+
+def propose(
+    actor: pathlib.Path,
+    mechanic: str,
+    skill: str | None = None,
+    target: pathlib.Path | None = None,
+    difficulty: str = "average",
+    declaration_bonus: int = 0,
+    tier: str | None = None,
+    seed: int | None = None,
+) -> dict:
+    """Resolve the `propose` verb."""
+    result = resolution.propose(
+        actor=actor,
+        mechanic=mechanic,
+        skill=skill,
+        target=target,
+        difficulty=difficulty,
+        declaration_bonus=declaration_bonus,
+        tier=tier,
+        seed=seed,
+    )
+    return {"verb": "propose", **result}
+
+
+def commit(proposal_id: str) -> dict:
+    """Resolve the `commit` verb."""
+    result = resolution.commit(proposal_id)
+    return {"verb": "commit", **result}
+
+
+def discard(proposal_id: str) -> dict:
+    """Resolve the `discard` verb."""
+    result = resolution.discard(proposal_id)
+    return {"verb": "discard", **result}

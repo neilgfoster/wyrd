@@ -16,6 +16,7 @@ import sys
 
 from wyrd import render, state, verbs
 from wyrd.catalog import TOOLS
+from wyrd.resolution import ProposalError
 from wyrd.state import StateError
 
 
@@ -117,6 +118,29 @@ def _build_parser() -> argparse.ArgumentParser:
         creation_parser.add_argument("--drives-json", default="[]")
         creation_parser.add_argument("--misfortune", default=None)
         creation_parser.add_argument("--fault-line", required=True)
+
+    if "propose" in TOOLS:
+        propose_parser = subparsers.add_parser("propose", help=TOOLS["propose"]["description"])
+        propose_parser.add_argument("--actor", required=True)
+        propose_parser.add_argument(
+            "--mechanic", required=True, choices=("ordinary-test", "exposure")
+        )
+        propose_parser.add_argument("--skill", default=None)
+        propose_parser.add_argument("--target", default=None)
+        propose_parser.add_argument("--difficulty", default="average")
+        propose_parser.add_argument("--declaration-bonus", type=int, default=0)
+        propose_parser.add_argument(
+            "--tier", default=None, choices=(None, "minor", "moderate", "major")
+        )
+        propose_parser.add_argument("--seed", type=int, default=None)
+
+    if "commit" in TOOLS:
+        commit_parser = subparsers.add_parser("commit", help=TOOLS["commit"]["description"])
+        commit_parser.add_argument("proposal_id")
+
+    if "discard" in TOOLS:
+        discard_parser = subparsers.add_parser("discard", help=TOOLS["discard"]["description"])
+        discard_parser.add_argument("proposal_id")
 
     return parser
 
@@ -248,6 +272,36 @@ def _run_create_character(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_propose(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.propose(
+            actor=args.actor,
+            mechanic=args.mechanic,
+            skill=args.skill,
+            target=args.target,
+            difficulty=args.difficulty,
+            declaration_bonus=args.declaration_bonus,
+            tier=args.tier,
+            seed=args.seed,
+        )
+    except (ValueError, StateError) as exc:
+        return {"error": {"verb": "propose", "reason": str(exc)}}
+
+
+def _run_commit(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.commit(args.proposal_id)
+    except ProposalError as exc:
+        return {"error": {"verb": "commit", "reason": str(exc)}}
+
+
+def _run_discard(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.discard(args.proposal_id)
+    except ProposalError as exc:
+        return {"error": {"verb": "discard", "reason": str(exc)}}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -276,6 +330,12 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_validate_allocation(args)
     elif args.verb == "create-character":
         result = _run_create_character(args)
+    elif args.verb == "propose":
+        result = _run_propose(args)
+    elif args.verb == "commit":
+        result = _run_commit(args)
+    elif args.verb == "discard":
+        result = _run_discard(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

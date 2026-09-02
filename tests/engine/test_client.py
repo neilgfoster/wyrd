@@ -463,5 +463,106 @@ class CreateCharacterCliTest(unittest.TestCase):
         self.assertFalse(pathlib.Path(self.path).exists())
 
 
+class ProposeCommitDiscardCliTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = str(pathlib.Path(self._tmp.name) / "senna.md")
+        exit_code, _ = _run(
+            [
+                "character-save",
+                "--path",
+                self.path,
+                "--frontmatter-json",
+                '{"id": "senna", "skills": {"bargaining": 40}, "taint": 0}',
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_describe_by_name(self):
+        for name in ("propose", "commit", "discard"):
+            exit_code, output = _run(["describe", "--name", name])
+            self.assertEqual(exit_code, 0)
+            payload = json.loads(output)
+            self.assertEqual(payload["name"], name)
+
+    def test_propose_commit_round_trip(self):
+        exit_code, output = _run(
+            [
+                "propose",
+                "--actor",
+                self.path,
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "moderate",
+                "--seed",
+                "20260852",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        proposed = json.loads(output)
+        self.assertEqual(proposed["roll"]["roll"], 77)
+        self.assertEqual(
+            proposed["mutations"], [{"entity": self.path, "field": "taint", "op": "+", "value": 2}]
+        )
+
+        exit_code, output = _run(["character-load", "--path", self.path])
+        self.assertEqual(json.loads(output)["frontmatter"]["taint"], 0)
+
+        exit_code, output = _run(["commit", proposed["proposal_id"]])
+        self.assertEqual(exit_code, 0)
+        committed = json.loads(output)
+        self.assertEqual(committed["mutations"], proposed["mutations"])
+
+        exit_code, output = _run(["character-load", "--path", self.path])
+        self.assertEqual(json.loads(output)["frontmatter"]["taint"], 2)
+
+    def test_discard_writes_nothing(self):
+        exit_code, output = _run(
+            [
+                "propose",
+                "--actor",
+                self.path,
+                "--mechanic",
+                "ordinary-test",
+                "--skill",
+                "bargaining",
+                "--seed",
+                "1",
+            ]
+        )
+        proposed = json.loads(output)
+        exit_code, output = _run(["discard", proposed["proposal_id"]])
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["proposal_id"], proposed["proposal_id"])
+
+    def test_commit_unknown_id_is_structured_error(self):
+        exit_code, output = _run(["commit", "p-does-not-exist"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertIn("error", payload)
+        self.assertEqual(payload["error"]["verb"], "commit")
+
+    def test_propose_unknown_mechanic_is_argparse_rejected(self):
+        buffer = io.StringIO()
+        argv = [
+            "propose",
+            "--actor",
+            self.path,
+            "--mechanic",
+            "no-such-mechanic",
+            "--skill",
+            "bargaining",
+        ]
+        with contextlib.redirect_stderr(buffer), self.assertRaises(SystemExit) as ctx:
+            client.main(argv)
+        self.assertNotEqual(ctx.exception.code, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
