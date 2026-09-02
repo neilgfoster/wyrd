@@ -696,6 +696,7 @@ def _stage_requests(
     seed_cursor: _SeedCursor,
     *,
     resource_deltas: dict[int, int] | None = None,
+    initial_producing_step: dict[str, int] | None = None,
 ) -> None:
     """Stage `ordered_requests` (already in the chronological order they must resolve in) into
     `steps`, threading each actor's own pending-Omen token across their requests -- the shared
@@ -717,11 +718,27 @@ def _stage_requests(
     their index in `ordered_requests`, on top of whatever Omen modifier that request already
     carries -- both compose into the same `declaration_bonus_delta` channel.
 
-    At the end, for every actor whose final token differs from what was persisted going in, one
-    `pending_omen` `set` mutation is appended to the last step that changed it -- committed
-    atomically with everything else; a discarded proposal leaves the persisted field untouched,
-    since nothing here ever writes to disk (module docstring)."""
+    Every time a request actually changes an actor's token (consumes-and-clears it, or replaces
+    it with a fresh Omen), a `pending_omen` `set` mutation is staged on that same step immediately
+    -- not deferred to one net mutation at the end. A `reroll` later rebuilding its own scratch
+    state replays every kept step's own mutations in order (module docstring); if only the
+    *net* change across a whole call were ever staged, a kept step whose own token change happened
+    to be cancelled out by a later step in the same original call would leave no trace to replay,
+    and a reroll of a step downstream of it would silently lose a still-genuinely-pending Omen a
+    fresh `propose_batch` over the same requests would not have lost. Staging every transition
+    (not only the net one) costs nothing at commit time -- `set` mutations replayed in order still
+    land on exactly the same final value -- and is what keeps `reroll`'s reconstruction correct.
+    A discarded proposal still leaves the persisted field untouched, since nothing here ever
+    writes to disk (module docstring).
+
+    `initial_producing_step` (only used by `reroll`, when its downstream set spans more than one
+    top-level request): maps an actor to the *outer*, still-present step id that most recently
+    set their `pending_omen` among the steps `reroll` kept -- so a token inherited from a kept
+    step still correctly `depends_on` it, rather than being treated as if it had no in-call
+    producer at all (which would silently drop the edge a later reroll of that kept step would
+    need in order to also invalidate whatever freshly consumed its Omen here)."""
     resource_deltas = resource_deltas or {}
+    initial_producing_step = initial_producing_step or {}
     omen_by_actor: dict[str, dict] = {}
 
     def get_omen(actor_path: str) -> dict:
@@ -729,12 +746,17 @@ def _stage_requests(
             if actor_path not in state_cache:
                 frontmatter, _ = character.load(pathlib.Path(actor_path))
                 state_cache[actor_path] = frontmatter
-            original = state_cache[actor_path].get("pending_omen")
+            token = state_cache[actor_path].get("pending_omen")
+            outer_producer = initial_producing_step.get(actor_path) if token is not None else None
             omen_by_actor[actor_path] = {
-                "token": original,
-                "producing_step": None,
-                "original": original,
-                "last_change_step": None,
+                "token": token,
+                # `outer_producer` is a real step_id from *outside* this call (a kept step
+                # `reroll` didn't touch) -- encoded as a negative sentinel (-(id + 1)) wherever it
+                # flows into a fresh step's own `depends_on`, so `_renumber_and_merge` (which
+                # remaps this call's own local 0-based ids) can tell the two id spaces apart and
+                # leave an outer reference untouched instead of colliding with a local one that
+                # happens to share the same number.
+                "producing_step": (-(outer_producer + 1) if outer_producer is not None else None),
             }
         return omen_by_actor[actor_path]
 
@@ -756,25 +778,21 @@ def _stage_requests(
         top_step = steps[base_id]
         consumed = bool(omen_modifier)
         fresh_omen = _read_wyrd_omen(top_step["roll"].get("wyrd_die"))
+        new_token = omen["token"]
         if fresh_omen is not None:
-            omen["token"] = fresh_omen
-            omen["producing_step"] = base_id
-            omen["last_change_step"] = base_id
+            new_token = fresh_omen
         elif consumed:
-            omen["token"] = None
-            omen["producing_step"] = None
-            omen["last_change_step"] = base_id
-
-    for actor_path, omen in omen_by_actor.items():
-        if omen["token"] != omen["original"]:
-            change_step = next(s for s in steps if s["step_id"] == omen["last_change_step"])
-            change_step["mutations"].append(
+            new_token = None
+        if new_token != omen["token"]:
+            omen["token"] = new_token
+            omen["producing_step"] = base_id if new_token is not None else None
+            top_step["mutations"].append(
                 {
-                    "entity": actor_path,
+                    "entity": request["actor"],
                     "field": "pending_omen",
                     "op": "set",
-                    "value": omen["token"],
-                    "produced_by_step": omen["last_change_step"],
+                    "value": new_token,
+                    "produced_by_step": base_id,
                 }
             )
 
@@ -877,7 +895,10 @@ def _renumber_and_merge(
     """`new_steps` were built fresh, 0-based. Remap so the rerolled step keeps its own original
     id (the identifier the player/GM already referred to it by) and every further cascade step
     gets a fresh id after the highest one already in use -- never colliding with any kept step,
-    including an independent step from elsewhere in the same batch."""
+    including an independent step from elsewhere in the same batch. A `depends_on` entry encoded
+    as a negative sentinel (`_stage_requests`' `initial_producing_step`: `-(id + 1)`) already
+    names a real, still-present kept step rather than one of `new_steps`' own local ids -- it is
+    decoded back to that real id, never looked up in `id_map`."""
     max_existing_id = max([step["step_id"] for step in kept_steps] + [original_step_id])
     id_map = {0: original_step_id}
     next_id = max_existing_id + 1
@@ -886,7 +907,7 @@ def _renumber_and_merge(
         next_id += 1
     for step in new_steps:
         step["step_id"] = id_map[step["step_id"]]
-        step["depends_on"] = [id_map[dep] for dep in step["depends_on"]]
+        step["depends_on"] = [(-dep - 1) if dep < 0 else id_map[dep] for dep in step["depends_on"]]
         for mutation in step["mutations"]:
             mutation["produced_by_step"] = id_map[mutation["produced_by_step"]]
     return kept_steps + new_steps
@@ -955,9 +976,18 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
             state_cache[path_text] = frontmatter
         return state_cache[path_text]
 
+    # Track which kept step most recently set each actor's pending_omen, so a token a redone
+    # request inherits from a kept step still correctly depends_on that (still-present, unchanged)
+    # step -- see _stage_requests' own `initial_producing_step` docstring.
+    last_omen_producer: dict[str, int] = {}
     for kept_step in kept_steps:
         for mutation in kept_step["mutations"]:
             _apply_mutation(load_state(mutation["entity"]), mutation)
+            if mutation["field"] == "pending_omen":
+                if mutation["value"] is None:
+                    last_omen_producer.pop(mutation["entity"], None)
+                else:
+                    last_omen_producer[mutation["entity"]] = kept_step["step_id"]
     for redo_request in requests_to_redo:
         load_state(redo_request["actor"])
         if redo_request["target"] is not None:
@@ -971,6 +1001,7 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
         state_cache,
         seed_cursor,
         resource_deltas={0: RESOURCE_MODIFIERS[resource]},
+        initial_producing_step=last_omen_producer,
     )
 
     roller_entity = new_steps[0]["roll"]["actor"]

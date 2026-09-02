@@ -136,15 +136,24 @@ actually produced.
   stacking with — whatever was pending before.
 - **FR-004**: A pending token consumed by a request MUST clear to `None` if that same request's
   own roll does not read a fresh Omen (FR-003's replacement did not occur).
-- **FR-005**: At the end of resolving a `propose`/`propose_batch` call, for every actor whose
-  final token differs from what was persisted going in, exactly one `pending_omen` `set` mutation
-  MUST be staged, on the last step that changed it for that actor.
-- **FR-006**: A `pending_omen` mutation MUST NOT be staged for an actor whose final token equals
-  what was already persisted (no needless no-op mutation).
+- **FR-005**: Whenever a request actually changes an actor's token (consumes-and-clears it, or
+  replaces it with a fresh Omen — FR-003/FR-004), a `pending_omen` `set` mutation MUST be staged
+  on that same step, immediately — not deferred to one net mutation computed only at the end of
+  the call. Staging every real transition, not only the call's own net effect, is what lets
+  `reroll` correctly reconstruct an actor's token by replaying kept steps' own mutations (FR-007)
+  even when an earlier call's net effect happened to cancel out to the actor's original value —
+  see research.md's own worked example of this.
+- **FR-006**: A `pending_omen` mutation MUST NOT be staged for a request that does not itself
+  change the token (the value carried over from the previous request, unconsumed and unreplaced,
+  needs no mutation of its own — no needless no-op).
 - **FR-007**: `reroll`ing a step MUST correctly discard and freshly re-resolve every step in its
   downstream set, including a step belonging to a *different* top-level request that is only in
   the downstream set via an Omen-consumption `depends_on` edge — reusing the existing downstream-
-  set/re-cascade machinery (#237) without any Omen-specific logic inside `reroll` itself.
+  set/re-cascade machinery (#237) without any Omen-specific logic inside `reroll` itself. This
+  extends to a token a redone request inherits from a *kept* step outside the downstream set
+  (recovered by replaying that kept step's own `pending_omen` mutation, per FR-005) — the redone
+  request's `depends_on` MUST correctly name that real, still-present kept step, not omit the
+  edge as if the token had no in-call producer.
 - **FR-008**: Reading `pending_omen` (at the start of a batch, or by `reroll` rebuilding its own
   scratch state) MUST NOT itself write anything — only a `commit` that includes a staged
   `pending_omen` mutation changes what's on disk; a `discard`ed proposal leaves it untouched.
@@ -169,8 +178,11 @@ actually produced.
   with no `depends_on` edge (User Story 2), and survives a `discard` untouched.
 - **SC-003**: A second in-batch Omen replaces rather than stacks with a still-pending one (User
   Story 3).
-- **SC-004**: No `pending_omen` mutation is staged when an actor's final token equals what was
-  already persisted (FR-006).
+- **SC-004**: A reroll of a step downstream of an untouched *kept* step (not the Omen-producing
+  step directly rerolled, a step chronologically after it) correctly recovers that kept step's
+  own still-pending Omen from its own already-staged mutation, applies it, and `depends_on` it —
+  even in a scenario whose original net token change happened to cancel out to nothing (FR-005's
+  own rationale; research.md's worked example).
 - **SC-005**: `ruff check . && ruff format --check . && python3 -m pytest -q` is clean.
 
 ## Assumptions

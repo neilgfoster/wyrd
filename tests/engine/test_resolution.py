@@ -767,7 +767,10 @@ class OmenCarryoverTest(ResolutionTestBase):
         self.assertEqual(result["steps"][1]["roll"]["effective_pct"], 55)  # 45 + 10
         self.assertEqual(result["steps"][1]["depends_on"], [0])
 
-    def test_batch_stages_the_final_pending_omen_mutation(self):
+    def test_batch_stages_the_pending_omen_mutation(self):
+        # step 0 produces the token (Fair Omen, value 10); step 1 consumes it and its own roll
+        # also reads Fair Omen -- the *same* value, so no second mutation is needed (staging one
+        # only on an actual value change, per FR-006).
         result = self.propose_batch()
         self.assertIn(
             {
@@ -775,7 +778,7 @@ class OmenCarryoverTest(ResolutionTestBase):
                 "field": "pending_omen",
                 "op": "set",
                 "value": 10,
-                "produced_by_step": 1,
+                "produced_by_step": 0,
             },
             result["mutations"],
         )
@@ -860,7 +863,13 @@ class OmenReplaceNotStackTest(ResolutionTestBase):
         self.assertEqual(result["steps"][2]["roll"]["effective_pct"], 40)  # 50 - 10
         self.assertEqual(result["steps"][2]["depends_on"], [1])  # not [0]
 
-    def test_no_mutation_when_the_final_token_equals_the_original(self):
+    def test_every_real_transition_is_staged_even_though_the_net_effect_cancels_out(self):
+        # Each of the three requests genuinely changes the token in turn (None -> 10 -> -10 ->
+        # None); every one of those transitions is staged on its own step (not only the net
+        # no-op), which is what lets a *later* reroll of just the third request correctly
+        # recover the second's still-pending -10 by replaying kept steps' own mutations
+        # (see RerollAcrossOmenProducersTest) -- committing them in sequence still lands on
+        # exactly the same final value (None) a single net mutation would have.
         result = resolution.propose_batch(
             [
                 {"actor": self.path, "mechanic": "ordinary-test", "skill": "a"},
@@ -869,7 +878,46 @@ class OmenReplaceNotStackTest(ResolutionTestBase):
             ],
             seed=59,
         )
-        self.assertEqual(result["mutations"], [])
+        self.assertEqual(
+            result["mutations"],
+            [
+                {
+                    "entity": str(self.path),
+                    "field": "pending_omen",
+                    "op": "set",
+                    "value": 10,
+                    "produced_by_step": 0,
+                },
+                {
+                    "entity": str(self.path),
+                    "field": "pending_omen",
+                    "op": "set",
+                    "value": -10,
+                    "produced_by_step": 1,
+                },
+                {
+                    "entity": str(self.path),
+                    "field": "pending_omen",
+                    "op": "set",
+                    "value": None,
+                    "produced_by_step": 2,
+                },
+            ],
+        )
+
+    def test_commit_still_lands_on_the_original_value(self):
+        before = self.load()
+        result = resolution.propose_batch(
+            [
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "a"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "b"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "c"},
+            ],
+            seed=59,
+        )
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(after["pending_omen"], before["pending_omen"])  # both None
 
 
 class OmenPerActorIsolationTest(unittest.TestCase):
@@ -898,6 +946,56 @@ class OmenPerActorIsolationTest(unittest.TestCase):
         # Step 1 belongs to a different actor -- it must never see step 0's Omen.
         self.assertEqual(result["steps"][1]["depends_on"], [])
         self.assertEqual(result["steps"][1]["roll"]["effective_pct"], 10)  # unmodified
+
+
+class RerollAcrossOmenProducersTest(ResolutionTestBase):
+    """Rerolling a step downstream of an untouched *kept* step must still see that kept step's
+    own genuinely-pending Omen -- even when the original call's own net token change happened
+    to cancel out to nothing (so no single mutation alone would carry that intermediate value)."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"] = {"a": 50, "b": 50, "c": 50}
+        frontmatter["pending_omen"] = None
+        frontmatter["fortune"] = {"current": 2}
+        character.save(frontmatter, "", self.path)
+
+    def propose_batch(self):
+        return resolution.propose_batch(
+            [
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "a"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "b"},
+                {"actor": self.path, "mechanic": "ordinary-test", "skill": "c"},
+            ],
+            seed=59,
+        )
+
+    def test_reroll_of_the_third_request_still_consumes_the_kept_second_requests_omen(self):
+        result = self.propose_batch()
+        # Sanity: step 1 (kept, untouched by this reroll) genuinely produced an Ill Omen.
+        self.assertEqual(result["steps"][1]["roll"]["wyrd_die"], "ill_omen")
+
+        revised = resolution.reroll(result["proposal_id"], step=2, resource="fortune", seed=100)
+        step_1 = next(s for s in revised["steps"] if s["step_id"] == 1)
+        step_2 = next(s for s in revised["steps"] if s["step_id"] == 2)
+        # Step 1 is untouched -- same content as the original call produced.
+        self.assertEqual(step_1["roll"], result["steps"][1]["roll"])
+        # Step 2's fresh roll must still be modified by step 1's still-pending Ill Omen, and
+        # depends_on the real, still-present step 1 -- not treated as if nothing was pending.
+        self.assertEqual(step_2["roll"]["effective_pct"], 40)  # 50 - 10
+        self.assertEqual(step_2["depends_on"], [1])
+
+    def test_commit_after_that_reroll_lands_on_the_correct_final_pending_omen(self):
+        result = self.propose_batch()
+        pid = result["proposal_id"]
+        resolution.reroll(pid, step=2, resource="fortune", seed=100)
+        resolution.commit(pid)
+        after = self.load()
+        # Step 0 (kept) set it to 10; step 1 (kept) replaced it with -10; the fresh step 2 (seed
+        # 100, fortune reroll) consumes it and its own roll reads a fresh Fair Omen, replacing
+        # it back to 10 -- computed, not asserted (CLAUDE.md "check the maths").
+        self.assertEqual(after["pending_omen"], 10)
 
 
 if __name__ == "__main__":

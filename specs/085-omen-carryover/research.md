@@ -76,21 +76,55 @@ roll 18 against eff. 30 (10 + 10) -- succeeds. depends_on: [] (no step in this c
 
 `discard`ing this proposal leaves `pending_omen` on disk exactly `10`, untouched.
 
-## Worked example: replace, not stack, across three requests (SC-003, SC-004)
+## Worked example: replace, not stack, across three requests (SC-003)
 
 Three unrelated ordinary tests for the same actor, all skill `50`, `pending_omen: None`, base
 seed `59`:
 
 ```
 step 0 (eff. 50): roll 29 -- succeeds, degrees 2. Units 9 -- Fair Omen (token: +10, from step 0).
+    Staged: pending_omen set 10 (produced_by_step 0) -- the token actually changed (None -> 10).
 step 1 (eff. 50 + 10 = 60): consumes step 0's Fair Omen, depends_on [0].
     Roll 40 -- succeeds, degrees 2. Units 0 -- Ill Omen (token REPLACED: -10, now from step 1,
     not step 0 -- never +10 and -10 both in effect).
+    Staged: pending_omen set -10 (produced_by_step 1) -- changed again (10 -> -10).
 step 2 (eff. 50 - 10 = 40): consumes step 1's Ill Omen, depends_on [1] (not [0]).
     Roll 64 -- fails. Units 4 -- no Omen. Token, having just been consumed with nothing fresh
     produced, clears to None.
+    Staged: pending_omen set None (produced_by_step 2) -- changed again (-10 -> None).
 ```
 
-The batch's final token (`None`) equals the actor's original (`None`) -- no `pending_omen`
-mutation is staged at all (`result["mutations"] == []`), confirming FR-006/SC-004 alongside
-SC-003's own replace-not-stack behaviour.
+Three `pending_omen` mutations are staged, one per real transition (FR-005) -- not only the
+batch's own net effect (`None -> None`, which by itself would look like nothing happened).
+Committed in sequence they still land on exactly the actor's original value, `None` (FR-005's own
+"costs nothing at commit time"); the difference only shows up if something later needs to
+*replay* an intermediate value, which is exactly what the next worked example needs.
+
+## Worked example: a reroll recovers a kept step's own genuinely-pending Omen (SC-004)
+
+**This is the case an earlier draft of this feature got wrong, and adversarial review caught
+before merge** — worth keeping as its own worked example rather than folding away, since it is
+precisely the scenario that would silently regress if `_stage_requests`' mutation-staging were
+ever "simplified" back to one net mutation per call.
+
+Same setup as above (seed `59`; steps 0/1/2 exactly as computed there). Reroll **step 2 only**
+(`resource="fortune"`, reroll seed `100`) — steps 0 and 1 are both *kept*, untouched:
+
+```
+step 0 (kept): unchanged -- Fair Omen, pending_omen set 10.
+step 1 (kept): unchanged -- Ill Omen, depends_on [0], pending_omen set -10.
+step 2 (rerolled, fresh seed 100): eff. 40 (50 - 10) -- the fresh step 2 still consumes step 1's
+    genuinely-pending -10, and depends_on [1] -- the real, still-present kept step, not treated
+    as if nothing were pending (which an implementation recovering the token only from the
+    original call's own *net* mutation would have done, since that net mutation never existed:
+    the original call's own final token equalled its own original value, `None`).
+```
+
+Without FR-005's per-transition staging, `reroll`'s scratch-state rebuild (replaying only kept
+steps' own mutations) would see `pending_omen` still at `None` going into the redone step 2 --
+silently dropping the Omen a fresh `propose_batch` over the same three requests would have kept.
+With it, replaying step 0's and step 1's own `pending_omen` mutations in order correctly leaves
+`pending_omen` at `-10` before step 2 is redone, and step 2's `depends_on` correctly points at
+step 1 via `_stage_requests`' `initial_producing_step` parameter (a negative-sentinel encoding —
+`-(id + 1)` — distinguishes "a real step_id from outside this call" from this call's own local
+0-based numbering, so `_renumber_and_merge` never confuses the two id spaces).

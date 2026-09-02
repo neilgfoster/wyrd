@@ -11,9 +11,7 @@ against it.
 | Field | Type | Notes |
 |---|---|---|
 | `token` | `int \| None` | The actor's currently-pending modifier for this call. |
-| `producing_step` | `int \| None` | The step id (within this call) that produced `token`, or `None` if it came from persisted state (no in-call producer to `depends_on`). |
-| `original` | `int \| None` | The actor's `pending_omen` as read at the very start of this call — compared against the final `token` to decide whether a mutation is staged. |
-| `last_change_step` | `int \| None` | Which step's own mutations the eventual `pending_omen` `set` mutation (if any) is attached to. |
+| `producing_step` | `int \| None` | The id of whatever step produced `token`. Local (a plain, non-negative id built within *this* call) when the most recent change happened here; encoded as a negative sentinel `-(id + 1)` when it was inherited from a still-present *kept* step outside this call (`reroll`'s `initial_producing_step`) — the two id spaces must never be confused (see Relationships). `None` if no step anywhere has ever produced the current token. |
 
 ## Step (unchanged shape, `depends_on` now also carries Omen-consumption edges)
 
@@ -26,31 +24,47 @@ uses for any other kind of dependency."
 ## Relationships
 
 ```text
-_stage_requests(steps, ordered_requests, state_cache, seed_cursor, resource_deltas={})
-  -> per-actor omen tracking, lazily initialized from state_cache[actor]["pending_omen"]
+_stage_requests(steps, ordered_requests, state_cache, seed_cursor,
+                 resource_deltas={}, initial_producing_step={})
+  -> per-actor omen tracking, lazily initialized:
+       token = state_cache[actor]["pending_omen"]
+       producing_step = -(initial_producing_step[actor] + 1) if token is not None
+                         and actor in initial_producing_step else None
   -> for each request, in order:
        modifier = current token (or 0)
        extra_depends_on = [producing_step] if modifier and producing_step is not None else []
        _stage_request(..., declaration_bonus_delta=modifier + resource_deltas.get(index, 0),
                        extra_depends_on=extra_depends_on)
        fresh_omen = read the built step's own roll's wyrd_die
-       token, producing_step, last_change_step updated per FR-003/FR-004
-  -> for each actor whose final token != original: stage one pending_omen `set` mutation,
-     appended to that actor's own last_change_step
+       new_token = fresh_omen if fresh_omen is not None
+                   else (None if modifier else current token)
+       if new_token != current token:
+         token = new_token; producing_step = base_id (a real *local* id) if new_token is not None
+                             else None
+         stage a pending_omen `set` mutation on THIS step, immediately -- every real
+         transition is staged, not only the call's own net effect (research.md's own
+         worked example of why: a reroll later replaying kept steps' mutations needs every
+         intermediate value, not just whichever one happened to be true at the end)
 
 propose_batch(requests, seed=...)
   -> ordered_requests = requests, in the order given
-  -> _stage_requests(...)
+  -> _stage_requests(steps, ordered_requests, state_cache, seed_cursor)   # no initial_producing_step
 
 reroll(proposal_id, step, resource, seed=...)
-  -> downstream = _downstream_set(steps, step)   # now may span >1 top-level request
+  -> downstream = _downstream_set(steps, step)   # may span >1 top-level request
   -> requests_to_redo = every downstream step's own `inputs`, in step_id order
      (step's own request is always requests_to_redo[0] -- nothing in the downstream set can
      have a smaller step_id than step itself)
-  -> scratch state rebuilt from kept steps' replayed mutations (already includes any
-     pending_omen changes a kept step made, for correct token seeding)
+  -> replay kept steps' own mutations onto scratch state; while doing so, track
+     last_omen_producer[actor] = the kept step's own (real, outer) step_id whenever one of its
+     mutations sets pending_omen to a non-None value (cleared from the map on a None set)
   -> _stage_requests(new_steps, requests_to_redo, state_cache, seed_cursor,
-                     resource_deltas={0: RESOURCE_MODIFIERS[resource]})
+                     resource_deltas={0: RESOURCE_MODIFIERS[resource]},
+                     initial_producing_step=last_omen_producer)
   -> resource's own cost mutation appended to new_steps[0]
-  -> _renumber_and_merge(kept_steps, new_steps, step)   # unchanged from #237
+  -> _renumber_and_merge(kept_steps, new_steps, step):
+       new_steps' own local ids (0-based) get remapped via id_map (0 -> step's own original id,
+       the rest -> fresh ids after the highest already in use); a depends_on entry encoded as a
+       negative sentinel is decoded back to the real kept-step id it always was, never looked up
+       in id_map -- this is what keeps a redone request's edge to an untouched kept step correct.
 ```
