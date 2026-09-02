@@ -101,6 +101,153 @@ class StartCombatTest(unittest.TestCase):
         )
 
 
+class RecurringWoundCombatStartTest(unittest.TestCase):
+    """docs/design/06-aftermath.md "The recurring wound" /
+    specs/093-recurring-wound-combat-start."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_start_combat_applies_recurring_wound_penalty(self):
+        scene = combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(
+            scene["wound_penalties"]["party"]["close-combat"], combat.CHALLENGING_MODIFIER
+        )
+
+    def test_start_combat_no_wounds_no_penalty(self):
+        scene = combat.start_combat(
+            sides={"party": {"armed": True}, "opp": {"armed": False, "wounds": []}},
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(scene["wound_penalties"], {})
+
+    def test_start_combat_two_recurring_wounds_different_skills(self):
+        scene = combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                        {"recurring": True, "bears_on": "stealth", "closed": None},
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(
+            scene["wound_penalties"]["party"],
+            {
+                "close-combat": combat.CHALLENGING_MODIFIER,
+                "stealth": combat.CHALLENGING_MODIFIER,
+            },
+        )
+
+    def test_start_combat_two_recurring_wounds_same_skill_stack(self):
+        scene = combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(
+            scene["wound_penalties"]["party"]["close-combat"], 2 * combat.CHALLENGING_MODIFIER
+        )
+
+    def test_wound_penalties_unchanged_by_advance_round(self):
+        scene = combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        before = scene["wound_penalties"]
+        after = combat.advance_round(state_path=self.path)
+        self.assertEqual(after["wound_penalties"], before)
+
+    def test_wound_penalties_not_carried_to_new_combat_scene(self):
+        combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {"recurring": True, "bears_on": "close-combat", "closed": None},
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        fresh = combat.start_combat(
+            sides={"party": {"armed": True}, "opp": {"armed": False}},
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(fresh["wound_penalties"], {})
+
+    def test_closed_wound_does_not_apply_penalty(self):
+        scene = combat.start_combat(
+            sides={
+                "party": {
+                    "armed": True,
+                    "wounds": [
+                        {
+                            "recurring": True,
+                            "bears_on": "close-combat",
+                            "closed": "mended",
+                        },
+                    ],
+                },
+                "opp": {"armed": False},
+            },
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+        self.assertEqual(scene["wound_penalties"], {})
+
+
 class SurpriseTest(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
