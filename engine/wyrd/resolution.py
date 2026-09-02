@@ -635,13 +635,14 @@ def _stage_request(
     if request["mechanic"] == "combat-attack":
         if target_state is None:
             raise ValueError("combat-attack requires a target")
+        total_modifier = request["declaration_bonus"] + declaration_bonus_delta
         boosted_state = actor_state
-        if declaration_bonus_delta and request["skill"] is not None:
+        if total_modifier and request["skill"] is not None:
             boosted_state = dict(actor_state)
             boosted_state["skills"] = dict(actor_state.get("skills", {}))
             boosted_state["skills"][request["skill"]] = (
                 actor_state.get("skills", {}).get(request["skill"], rules.UNTRAINED_SKILL)
-                + declaration_bonus_delta
+                + total_modifier
             )
         _stage_combat_attack(
             steps,

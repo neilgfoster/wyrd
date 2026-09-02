@@ -205,5 +205,272 @@ class SurpriseDoesNotAffectResolutionTest(unittest.TestCase):
         self.assertEqual(with_scene["roll"], without_scene["roll"])
 
 
+class EngagementTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        self.a = pathlib.Path(self._tmp.name) / "a.md"
+        self.b = pathlib.Path(self._tmp.name) / "b.md"
+        self.c = pathlib.Path(self._tmp.name) / "c.md"
+        character.save({"id": "a", "skills": {"swordplay": 50}}, "", self.a)
+        character.save(
+            {
+                "id": "b",
+                "skills": {"swordplay": 50},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.b,
+        )
+        character.save(
+            {
+                "id": "c",
+                "skills": {"swordplay": 50},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.c,
+        )
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_close_creates_engagement_and_marks_acted(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        self.assertEqual(combat.engaged_with(self.a, state_path=self.path), [str(self.b)])
+        self.assertEqual(combat.engaged_with(self.b, state_path=self.path), [str(self.a)])
+        self.assertTrue(combat.has_acted(self.a, state_path=self.path))
+
+    def test_close_again_the_same_round_raises(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        with self.assertRaises(ValueError):
+            combat.close(self.a, self.c, state_path=self.path)
+
+    def test_close_after_advance_round_succeeds(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        combat.advance_round(state_path=self.path)
+        combat.close(self.a, self.c, state_path=self.path)  # does not raise
+        self.assertCountEqual(
+            combat.engaged_with(self.a, state_path=self.path), [str(self.b), str(self.c)]
+        )
+
+    def test_break_off_one_opponent_stages_one_parting_blow(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        result = combat.break_off(
+            self.a,
+            {str(self.b): {"skill": "swordplay", "weapon_dice": "1d8", "armour_dice": "1d3"}},
+            seed=2,
+            state_path=self.path,
+        )
+        attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+        self.assertEqual(len(attack_steps), 1)
+        self.assertEqual(attack_steps[0]["roll"]["actor"], str(self.b))
+        self.assertEqual(attack_steps[0]["roll"]["target"], str(self.a))
+        self.assertEqual(combat.engaged_with(self.a, state_path=self.path), [])
+
+    def test_break_off_two_opponents_stages_two_parting_blows(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        combat.advance_round(state_path=self.path)
+        combat.close(self.a, self.c, state_path=self.path)
+        result = combat.break_off(
+            self.a,
+            {
+                str(self.b): {"skill": "swordplay", "weapon_dice": "1d8", "armour_dice": "1d3"},
+                str(self.c): {"skill": "swordplay", "weapon_dice": "1d8", "armour_dice": "1d3"},
+            },
+            seed=2,
+            state_path=self.path,
+        )
+        attack_steps = [s for s in result["steps"] if s["mechanic"] == "combat-attack"]
+        self.assertEqual(len(attack_steps), 2)
+        self.assertCountEqual(
+            [s["roll"]["actor"] for s in attack_steps], [str(self.b), str(self.c)]
+        )
+        self.assertTrue(all(s["roll"]["target"] == str(self.a) for s in attack_steps))
+        self.assertEqual(combat.engaged_with(self.a, state_path=self.path), [])
+
+    def test_break_off_with_no_engagements_stages_nothing(self):
+        result = combat.break_off(self.a, {}, state_path=self.path)
+        self.assertEqual(result["steps"], [])
+        self.assertEqual(result["mutations"], [])
+
+    def test_break_off_mismatched_opponents_raises(self):
+        combat.close(self.a, self.b, state_path=self.path)
+        with self.assertRaises(ValueError):
+            combat.break_off(
+                self.a,
+                {str(self.c): {"skill": "swordplay", "weapon_dice": "1d8", "armour_dice": "1d3"}},
+                state_path=self.path,
+            )
+
+
+class RangedAttackDifficultyTest(unittest.TestCase):
+    """research.md: shooter archery 50, target archery 10, weapon 1d8, armour 1d3, seed 2 --
+    engaged shooter is Difficult (-20)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        self.shooter = pathlib.Path(self._tmp.name) / "shooter.md"
+        self.target = pathlib.Path(self._tmp.name) / "target.md"
+        self.ally = pathlib.Path(self._tmp.name) / "ally.md"
+        character.save({"id": "shooter", "skills": {"archery": 50}}, "", self.shooter)
+        character.save(
+            {
+                "id": "target",
+                "skills": {"archery": 10},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.target,
+        )
+        character.save(
+            {
+                "id": "ally",
+                "skills": {"archery": 10},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.ally,
+        )
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_unengaged_shot_is_average(self):
+        self.assertEqual(
+            combat.ranged_attack_difficulty(self.shooter, self.target, state_path=self.path),
+            "average",
+        )
+
+    def test_engaged_shooter_is_difficult(self):
+        combat.close(self.shooter, self.ally, state_path=self.path)
+        self.assertEqual(
+            combat.ranged_attack_difficulty(self.shooter, self.target, state_path=self.path),
+            "difficult",
+        )
+
+    def test_target_engaged_with_someone_else_is_challenging(self):
+        combat.close(self.target, self.ally, state_path=self.path)
+        self.assertEqual(
+            combat.ranged_attack_difficulty(self.shooter, self.target, state_path=self.path),
+            "challenging",
+        )
+
+    def test_shooter_own_engagement_takes_precedence(self):
+        combat.close(self.shooter, self.ally, state_path=self.path)
+        combat.advance_round(state_path=self.path)
+        combat.close(self.target, self.ally, state_path=self.path)
+        self.assertEqual(
+            combat.ranged_attack_difficulty(self.shooter, self.target, state_path=self.path),
+            "difficult",
+        )
+
+    def test_engaged_shooter_applies_the_difficult_modifier(self):
+        baseline = resolution.propose(
+            actor=self.shooter,
+            mechanic="combat-attack",
+            skill="archery",
+            target=self.target,
+            weapon_dice="1d8",
+            armour_dice="1d3",
+            seed=2,
+        )
+        combat.close(self.shooter, self.ally, state_path=self.path)
+        engaged = combat.resolve_ranged_attack(
+            self.shooter,
+            self.target,
+            "archery",
+            "1d8",
+            "1d3",
+            seed=2,
+            state_path=self.path,
+        )
+        self.assertEqual(engaged["roll"]["effective_pct"], baseline["roll"]["effective_pct"] - 20)
+
+
+class RangedAttackAllyRedirectTest(unittest.TestCase):
+    """research.md: target engaged with a separate ally -- seed 5 redirects on Ill Omen, seed 1
+    does not."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+        self.shooter = pathlib.Path(self._tmp.name) / "shooter.md"
+        self.target = pathlib.Path(self._tmp.name) / "target.md"
+        self.ally = pathlib.Path(self._tmp.name) / "ally.md"
+        character.save({"id": "shooter", "skills": {"archery": 50}}, "", self.shooter)
+        character.save(
+            {
+                "id": "target",
+                "skills": {"archery": 10},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.target,
+        )
+        character.save(
+            {
+                "id": "ally",
+                "skills": {"archery": 10},
+                "stamina": {"current": 5, "max": 5},
+                "wounds": [],
+            },
+            "",
+            self.ally,
+        )
+        combat.start_combat(
+            sides={"party": {"armed": True}},
+            started_by="party",
+            player_side="party",
+            state_path=self.path,
+        )
+        combat.close(self.target, self.ally, state_path=self.path)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_ill_omen_redirects_to_the_ally(self):
+        result = combat.resolve_ranged_attack(
+            self.shooter,
+            self.target,
+            "archery",
+            "1d8",
+            "1d3",
+            seed=5,
+            state_path=self.path,
+        )
+        self.assertEqual(result["roll"]["target"], str(self.ally))
+
+    def test_no_omen_keeps_the_original_target(self):
+        result = combat.resolve_ranged_attack(
+            self.shooter,
+            self.target,
+            "archery",
+            "1d8",
+            "1d3",
+            seed=1,
+            state_path=self.path,
+        )
+        self.assertEqual(result["roll"]["target"], str(self.target))
+
+
 if __name__ == "__main__":
     unittest.main()
