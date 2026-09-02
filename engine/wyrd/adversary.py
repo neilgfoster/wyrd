@@ -168,3 +168,17 @@ def load(adversary_id: str, path: pathlib.Path) -> dict:
             return block
 
     raise state.StateError(f"{path}: no adversary {adversary_id!r} in bestiary")
+
+
+def resolve_skill(block: dict, skill: str) -> int:
+    """docs/design/12-the-adversary.md section 3 ("The baseline"): an adversary tests any skill
+    its block does not list at its `baseline`. A listed skill is never raised to the baseline
+    -- the baseline answers a question about an absent skill only (specs/095-adversary-baseline-
+    resolution).
+
+    Deliberately independent of `rules.UNTRAINED_SKILL`/`select_group_skill` -- the baseline is
+    not the untrained rate, and this function shares no constant or code path with that one.
+    """
+    if skill in block["skills"]:
+        return block["skills"][skill]
+    return block["baseline"]
