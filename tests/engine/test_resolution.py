@@ -448,6 +448,40 @@ class CombatChainTest(unittest.TestCase):
                 seed=2,
             )
 
+    def test_declaration_bonus_reaches_the_attacker_skill(self):
+        # specs/087-action-economy-engagement/spec.md's own Assumptions: combat-attack
+        # previously silently dropped a caller-stated declaration_bonus, only ever applying a
+        # reroll-resource/Omen delta. Uses a fresh, unclipped skill pairing (60-vs-60 -> eff. 50)
+        # since CombatChainTest's own 60-vs-0 pairing already sits at the 95 ceiling, where a
+        # further +/-20 wouldn't move effective_pct linearly.
+        frontmatter, _ = character.load(self.target)
+        frontmatter["skills"]["swordplay"] = 60
+        character.save(frontmatter, "", self.target)
+
+        unmodified = resolution.propose(
+            actor=self.attacker,
+            mechanic="combat-attack",
+            skill="swordplay",
+            target=self.target,
+            weapon_dice="1d8",
+            armour_dice="1d3",
+            seed=2,
+        )
+        modified = resolution.propose(
+            actor=self.attacker,
+            mechanic="combat-attack",
+            skill="swordplay",
+            target=self.target,
+            weapon_dice="1d8",
+            armour_dice="1d3",
+            declaration_bonus=-20,
+            seed=2,
+        )
+        self.assertEqual(
+            modified["steps"][0]["roll"]["effective_pct"],
+            unmodified["steps"][0]["roll"]["effective_pct"] - 20,
+        )
+
 
 class MortalCriticalTest(unittest.TestCase):
     """A critical rolling into the 21+ band stages no further step (FR-009, User Story 3)."""
