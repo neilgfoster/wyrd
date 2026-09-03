@@ -29,7 +29,7 @@ FACES = 100
 # cap is not yet set (#12, Stage 9), so the upper end is where a practised character sits.
 REALISTIC = [25, 30, 35, 40, 55]
 
-TELLING_BLOW_MARGIN = 3   # docs/design/03-rules.md section 2
+TELLING_BLOW_MARGIN = 3  # docs/design/03-rules.md section 2
 
 
 def degrees(skill: int, roll: int) -> int:
@@ -45,11 +45,15 @@ def outcomes(attacker: int, defender: int, failed_defence: str):
       'zero'     -- a failed roll has no degrees
     """
     unit = Fraction(1, FACES * FACES)
-    result = {"fails": Fraction(0), "wins": Fraction(0),
-              "defended": Fraction(0), "telling": Fraction(0)}
+    result = {
+        "fails": Fraction(0),
+        "wins": Fraction(0),
+        "defended": Fraction(0),
+        "telling": Fraction(0),
+    }
     for a_roll in range(1, FACES + 1):
         if a_roll > attacker:
-            result["fails"] += unit * FACES      # the action fails; no defence needed
+            result["fails"] += unit * FACES  # the action fails; no defence needed
             continue
         a_deg = degrees(attacker, a_roll)
         for d_roll in range(1, FACES + 1):
@@ -63,7 +67,7 @@ def outcomes(attacker: int, defender: int, failed_defence: str):
                 if a_deg - d_deg >= TELLING_BLOW_MARGIN:
                     result["telling"] += unit
             else:
-                result["defended"] += unit       # ties to the defender
+                result["defended"] += unit  # ties to the defender
     return result
 
 
@@ -83,8 +87,10 @@ def main() -> int:
             for d in (30, 40):
                 r = outcomes(a, d, rule)
                 share = r["telling"] / r["wins"] if r["wins"] else Fraction(0)
-                print(f"   {a:>3}  {d:>3}      {pct(r['fails'])}         {pct(r['wins'])}"
-                      f"          {pct(share)}")
+                print(
+                    f"   {a:>3}  {d:>3}      {pct(r['fails'])}         {pct(r['wins'])}"
+                    f"          {pct(share)}"
+                )
 
     print()
     print("A telling blow doubles damage. Under 'negative' it is the common case, not the")
@@ -93,11 +99,13 @@ def main() -> int:
     # The rule is chosen by this number, not by preference.
     worst_negative = max(
         outcomes(a, d, "negative")["telling"] / outcomes(a, d, "negative")["wins"]
-        for a in REALISTIC for d in REALISTIC
+        for a in REALISTIC
+        for d in REALISTIC
     )
     worst_zero = max(
         outcomes(a, d, "zero")["telling"] / outcomes(a, d, "zero")["wins"]
-        for a in REALISTIC for d in REALISTIC
+        for a in REALISTIC
+        for d in REALISTIC
     )
     print()
     print(f"  worst case, 'negative': {pct(worst_negative)} of wins are telling blows")
@@ -128,15 +136,19 @@ def main() -> int:
     total = r["fails"] + r["wins"] + r["defended"]
     if total != 1:
         failures.append(f"outcomes do not sum to 1 ({float(total)})")
-    print(f"  outcomes are exhaustive and disjoint                       "
-          f"[{'ok' if total == 1 else 'FAIL'}]")
+    print(
+        f"  outcomes are exhaustive and disjoint                       "
+        f"[{'ok' if total == 1 else 'FAIL'}]"
+    )
 
     # An unskilled actor against a strong defender should rarely win.
     weak = outcomes(25, 55, "zero")["wins"]
     if weak > Fraction(1, 5):
         failures.append(f"a 25% actor beats a 55% defender {pct(weak)} of the time")
-    print(f"  a 25% actor beats a 55% defender only {pct(weak)}              "
-          f"[{'ok' if weak <= Fraction(1, 5) else 'FAIL'}]")
+    print(
+        f"  a 25% actor beats a 55% defender only {pct(weak)}              "
+        f"[{'ok' if weak <= Fraction(1, 5) else 'FAIL'}]"
+    )
 
     # Choosing 'zero' must actually be an improvement, or the argument is empty.
     if worst_zero >= worst_negative:
@@ -144,8 +156,10 @@ def main() -> int:
             f"the chosen rule ({pct(worst_zero)}) is no better than the rejected one "
             f"({pct(worst_negative)})"
         )
-    print(f"  the chosen rule roughly halves telling blows vs the rejected one  "
-          f"[{'ok' if worst_zero < worst_negative else 'FAIL'}]")
+    print(
+        f"  the chosen rule roughly halves telling blows vs the rejected one  "
+        f"[{'ok' if worst_zero < worst_negative else 'FAIL'}]"
+    )
 
     print()
     print("FINDING FOR STAGE 5 — not asserted here, because the threshold is not this")

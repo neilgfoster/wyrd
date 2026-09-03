@@ -19,11 +19,10 @@ Two independent guarantees are checked:
 
 Run: python3 tools/check_transformation.py
 """
-from itertools import product
 
 SEVERITIES = [1, 1, 2, 2, 3, 4]  # one per table row, d6
-THRESHOLD_SPACING = 3            # thresholds at 3, 6, 9, 12, ...
-MAX_SINGLE_GAIN = 3              # largest single Exposure/Bargain gain (docs/design/03-rules.md s4)
+THRESHOLD_SPACING = 3  # thresholds at 3, 6, 9, 12, ...
+MAX_SINGLE_GAIN = 3  # largest single Exposure/Bargain gain (docs/design/03-rules.md s4)
 
 
 def thresholds_up_to(n):
@@ -51,6 +50,7 @@ def rerolls_to_clear(taint_after_gain, threshold):
 
 def expected_rerolls_to_clear(taint_after_gain, threshold, trials=200000):
     import random
+
     total = 0
     for _ in range(trials):
         remaining = SEVERITIES[:]
@@ -67,8 +67,10 @@ def expected_rerolls_to_clear(taint_after_gain, threshold, trials=200000):
 def main():
     print("Thresholds (every 3, starting at 3): first few =", thresholds_up_to(24))
     print()
-    print(f"{'Taint before gain':>18} {'gain':>5} {'threshold crossed':>18} "
-          f"{'worst-case re-rolls':>20} {'expected re-rolls':>18}")
+    print(
+        f"{'Taint before gain':>18} {'gain':>5} {'threshold crossed':>18} "
+        f"{'worst-case re-rolls':>20} {'expected re-rolls':>18}"
+    )
 
     worst_overall = 0
     # Realistic range: Taint 0 through 20 before the gain, every legal single-event
@@ -87,15 +89,21 @@ def main():
                 print(f"{taint_before:>18} {gain:>5} {threshold:>18} {worst:>20} {expected:>18.2f}")
 
     print()
-    print(f"Worst case across the whole scanned range (Taint 0-20, every legal single-event "
-          f"gain): {worst_overall} re-rolls.")
-    print(f"The table has {len(SEVERITIES)} rows and is unique-per-character, so no re-roll "
-          f"burst can ever exceed {len(SEVERITIES)} rolls regardless of severities drawn -- "
-          f"the exhaustion clause (character lost, joins the opposition) fires first if it did.")
+    print(
+        f"Worst case across the whole scanned range (Taint 0-20, every legal single-event "
+        f"gain): {worst_overall} re-rolls."
+    )
+    print(
+        f"The table has {len(SEVERITIES)} rows and is unique-per-character, so no re-roll "
+        f"burst can ever exceed {len(SEVERITIES)} rolls regardless of severities drawn -- "
+        f"the exhaustion clause (character lost, joins the opposition) fires first if it did."
+    )
     assert worst_overall <= len(SEVERITIES), "worst case must never exceed the table's row count"
     print()
-    print("PASS: the re-roll loop terminates within the table's own size, and typically far "
-          "sooner (see expected column above).")
+    print(
+        "PASS: the re-roll loop terminates within the table's own size, and typically far "
+        "sooner (see expected column above)."
+    )
 
 
 if __name__ == "__main__":

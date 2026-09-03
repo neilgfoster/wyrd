@@ -138,8 +138,7 @@ class TestAdrReferences(TreeCase):
     def test_reference_to_a_missing_record_is_caught(self):
         """What renumbering breaks, and what nothing noticed before this check."""
         self.scaffold()
-        self.write("docs/README.md",
-                   "[0005](adr/0005-determinism.md) [rules](design/03-rules.md)")
+        self.write("docs/README.md", "[0005](adr/0005-determinism.md) [rules](design/03-rules.md)")
         self.write("docs/design/03-rules.md", "As set out in ADR 0099.")
         found = self.problems()
         self.assertTrue(any("ADR 0099, which does not exist" in p for p in found), found)
@@ -147,9 +146,11 @@ class TestAdrReferences(TreeCase):
     def test_a_superseded_record_still_satisfies_a_reference(self):
         """The archive keeps its numbers so old references keep resolving (ADR 0012)."""
         self.scaffold()
-        self.write("docs/README.md",
-                   "[0005](adr/0005-determinism.md) [rules](design/03-rules.md) "
-                   "[archive](adr/superseded/README.md)")
+        self.write(
+            "docs/README.md",
+            "[0005](adr/0005-determinism.md) [rules](design/03-rules.md) "
+            "[archive](adr/superseded/README.md)",
+        )
         self.write("docs/adr/superseded/README.md", "[0003](0003-old.md)")
         self.write("docs/adr/superseded/0003-old.md", "# 3, superseded")
         self.write("docs/design/03-rules.md", "The earlier position was ADR 0003.")
@@ -162,8 +163,9 @@ class TestAdrReferences(TreeCase):
 
     def test_archive_index_must_list_its_records(self):
         self.scaffold()
-        self.write("docs/README.md",
-                   "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
+        self.write(
+            "docs/README.md", "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)"
+        )
         self.write("docs/adr/superseded/README.md", "nothing listed here")
         self.write("docs/adr/superseded/0003-old.md", "# 3")
         found = self.problems()
@@ -171,8 +173,9 @@ class TestAdrReferences(TreeCase):
 
     def test_archive_readme_is_not_itself_treated_as_a_record(self):
         self.scaffold()
-        self.write("docs/README.md",
-                   "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)")
+        self.write(
+            "docs/README.md", "[0005](adr/0005-determinism.md) [archive](adr/superseded/README.md)"
+        )
         self.write("docs/adr/superseded/README.md", "*(none yet)*")
         self.assertEqual(self.problems(), [])
 
@@ -185,7 +188,9 @@ class TestLinkPolicy(TreeCase):
 
     def test_wikilink_in_a_fenced_block_is_allowed(self):
         """docs/design/14-entities.md's YAML examples are full of these, legitimately."""
-        self.write("README.md", "Entities link like this:\n\n```yaml\nparent: [[the-river-city]]\n```\n")
+        self.write(
+            "README.md", "Entities link like this:\n\n```yaml\nparent: [[the-river-city]]\n```\n"
+        )
         self.assertEqual(self.problems(), [])
 
     def test_wikilink_in_an_inline_span_is_allowed(self):

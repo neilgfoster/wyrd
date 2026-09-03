@@ -80,8 +80,7 @@ def check_structure() -> list[str]:
             if next_low != high + 1:
                 gap = "gap" if next_low > high + 1 else "overlap"
                 problems.append(
-                    f"{gap} between {key} (ends {high}) and {ROWS[i + 1][2]} "
-                    f"(starts {next_low})"
+                    f"{gap} between {key} (ends {high}) and {ROWS[i + 1][2]} (starts {next_low})"
                 )
 
     if ROWS[-1][1] is not None:
@@ -164,9 +163,7 @@ def main() -> int:
     print(header)
     for pbz in REALISTIC_POINTS_BELOW_ZERO:
         dist = distribution(pbz)
-        line = f"  {pbz:>4}  " + "".join(
-            f"{pct(dist.get(k, Fraction(0))):>10}" for k in keys
-        )
+        line = f"  {pbz:>4}  " + "".join(f"{pct(dist.get(k, Fraction(0))):>10}" for k in keys)
         print(line)
 
     print()
@@ -179,9 +176,7 @@ def main() -> int:
             (dist.get(k, Fraction(0)) for _, _, k, _, lasting in ROWS if lasting),
             Fraction(0),
         )
-        death = sum(
-            (dist.get(k, Fraction(0)) for _, _, k, d, _ in ROWS if d), Fraction(0)
-        )
+        death = sum((dist.get(k, Fraction(0)) for _, _, k, d, _ in ROWS if d), Fraction(0))
         nothing = Fraction(1) - mark - death
         print(f"  {pbz:>4}  {pct(mark)}  {pct(death)}  {pct(nothing)}")
 
@@ -196,14 +191,11 @@ def main() -> int:
                 Fraction(0),
             )
         )
-        deaths.append(
-            sum((dist.get(k, Fraction(0)) for _, _, k, d, _ in ROWS if d), Fraction(0))
-        )
+        deaths.append(sum((dist.get(k, Fraction(0)) for _, _, k, d, _ in ROWS if d), Fraction(0)))
 
     mean_mark = sum(marks, Fraction(0)) / len(marks)
     mean_death = sum(deaths, Fraction(0)) / len(deaths)
-    print(f"  Across drops of 1-12, unweighted: mark {pct(mean_mark)}, "
-          f"death {pct(mean_death)}")
+    print(f"  Across drops of 1-12, unweighted: mark {pct(mean_mark)}, death {pct(mean_death)}")
 
     if mean_mark <= mean_death:
         failures.append(

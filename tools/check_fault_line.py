@@ -15,6 +15,7 @@ docs/design/07-transformations.md is untouched by this feature.
 
 Run: python3 tools/check_fault_line.py
 """
+
 import hashlib
 import subprocess
 from pathlib import Path
@@ -65,7 +66,10 @@ def check_transformations_doc_untouched():
     try:
         main_content = subprocess.run(
             ["git", "show", f"main:docs/design/{TRANSFORMATIONS_DOC.name}"],
-            cwd=REPO_ROOT, capture_output=True, text=True, check=True,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
         print(f"  (skipped: could not read main's copy via git — {exc})")

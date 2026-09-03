@@ -45,12 +45,7 @@ def opposed_adr0016(actor: int, resister: int) -> Fraction:
 
 def margin_contest(actor: int, resister: int) -> Fraction:
     """Model A: both roll, higher (skill - roll) wins, ties to the resister. No success gate."""
-    wins = sum(
-        1
-        for a in range(1, DIE + 1)
-        for d in range(1, DIE + 1)
-        if actor - a > resister - d
-    )
+    wins = sum(1 for a in range(1, DIE + 1) for d in range(1, DIE + 1) if actor - a > resister - d)
     return Fraction(wins, DIE * DIE)
 
 
@@ -86,8 +81,17 @@ def half(actor: int, resister: int) -> int:
 
 
 PAIRINGS = [
-    (25, 25), (40, 40), (35, 30), (55, 40), (50, 30),
-    (60, 30), (70, 35), (60, 20), (80, 40), (100, 50), (30, 60),
+    (25, 25),
+    (40, 40),
+    (35, 30),
+    (55, 40),
+    (50, 30),
+    (60, 30),
+    (70, 35),
+    (60, 20),
+    (80, 40),
+    (100, 50),
+    (30, 60),
 ]
 
 
@@ -97,21 +101,25 @@ def pct(f: Fraction) -> str:
 
 def main() -> None:
     print("Calibrating the player-facing mapping (a finding for #44)\n")
-    print(f"{'S':>4} {'O':>4} | {'margin':>7} {'degrees':>8} | {'50+(S-O)':>9} {'50+(S-O)/2':>11}"
-          f" | {'opposed today':>13}")
+    print(
+        f"{'S':>4} {'O':>4} | {'margin':>7} {'degrees':>8} | {'50+(S-O)':>9} {'50+(S-O)/2':>11}"
+        f" | {'opposed today':>13}"
+    )
     print("-" * 72)
     worst_linear = worst_half = Fraction(0)
     for actor, resister in PAIRINGS:
         a = margin_contest(actor, resister)
         b = degrees_contest(actor, resister)
         lin, hlf = linear(actor, resister), half(actor, resister)
-        print(f"{actor:>4} {resister:>4} | {pct(a):>7} {pct(b):>8} |"
-              f" {lin:>8}% {hlf:>10}% | {pct(opposed_adr0016(actor, resister)):>13}")
+        print(
+            f"{actor:>4} {resister:>4} | {pct(a):>7} {pct(b):>8} |"
+            f" {lin:>8}% {hlf:>10}% | {pct(opposed_adr0016(actor, resister)):>13}"
+        )
         for model in (a, b):
             worst_linear = max(worst_linear, abs(Fraction(lin, 100) - model))
             worst_half = max(worst_half, abs(Fraction(hlf, 100) - model))
 
-    print(f"\nWorst deviation from either contest model:")
+    print("\nWorst deviation from either contest model:")
     print(f"  50 + (S - O)      {float(worst_linear) * 100:.1f} points")
     print(f"  50 + (S - O) / 2  {float(worst_half) * 100:.1f} points")
 

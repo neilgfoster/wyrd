@@ -96,7 +96,8 @@ def load_catalogue(path: pathlib.Path = CATALOGUE_PATH) -> list[dict]:
 def live_setting_repos() -> list[str]:
     raw = gh(["repo", "list", OWNER, "--json", "name", "--limit", "200"])
     return [
-        r["name"] for r in json.loads(raw)
+        r["name"]
+        for r in json.loads(raw)
         if r["name"].startswith("wyrd-setting-") and r["name"] not in NOT_A_SETTING
     ]
 
@@ -118,7 +119,9 @@ def compute_drift(catalogue_entries: list[dict], live_repos: list[str]) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", choices=["text", "json"], default="text")
     args = parser.parse_args(argv)
 

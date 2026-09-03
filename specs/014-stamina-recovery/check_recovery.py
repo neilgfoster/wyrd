@@ -17,7 +17,8 @@ Everything here is derived from numbers already merged, not invented:
    at +5 per point below zero (docs/design/06-aftermath.md).
 5. **The Aftermath table's own weights**: a lasting mark 71%, death 23%, unweighted across drops
    of one to twelve (docs/design/06-aftermath.md).
-6. **Strain recovers 1 at a Rally** (docs/design/03-rules.md section 5) -- the rate this rule borrows.
+6. **Strain recovers 1 at a Rally** (docs/design/03-rules.md section 5) -- the rate this rule
+   borrows.
 7. **The recorded player-facing mapping** is effective% = 50 + (player - opponent), clipped to
    5-95 (specs/012-combat-sequencing). Every claim is computed under BOTH today's opposed test
    and that mapping, because the rule must survive the conversion (#69).
@@ -45,11 +46,11 @@ ORDINARY_ARMOUR = "modest"
 
 UNTRAINED = 10
 STARTING_STAMINA = 6
-CAREER_STAMINA = 7          # after one completed career
+CAREER_STAMINA = 7  # after one completed career
 REAL_SKILLS = [25, 35, 45, 55]
 
-# Beats -- and therefore Rallies -- a real session produces. docs/design/16-session.md: a single beat
-# is the default shape, an extended session is several. Not a midpoint.
+# Beats -- and therefore Rallies -- a real session produces. docs/design/16-session.md: a
+# single beat is the default shape, an extended session is several. Not a midpoint.
 RALLIES_PER_SESSION = [1, 2, 3]
 
 # Aftermath rows that leave a wound record, and the effect each carries. Rows whose effect the
@@ -61,20 +62,20 @@ CLOSED_EFFECTS = ["stamina_max", "skill", "dread"]
 # The rule this script is testing, stated as constants so it can be falsified.
 # ---------------------------------------------------------------------------
 
-RALLY_RECOVERY = 1          # Stamina restored at each Rally -- Strain's rate, at Strain's trigger
-DOWNTIME_RESTORES_FULL = True   # a downtime phase returns Stamina to maximum, automatically
-DROPPED_WAKES_AT = 0        # a combatant who went below 0 restarts the track here
-MEND_STEPS_PER_DOWNTIME = 1     # one named wound, one grade
+RALLY_RECOVERY = 1  # Stamina restored at each Rally -- Strain's rate, at Strain's trigger
+DOWNTIME_RESTORES_FULL = True  # a downtime phase returns Stamina to maximum, automatically
+DROPPED_WAKES_AT = 0  # a combatant who went below 0 restarts the track here
+MEND_STEPS_PER_DOWNTIME = 1  # one named wound, one grade
 
-# The ladder, per effect. Every rung is a value the closed effect set already permits: -10 and -5
-# are the difficulty table's own rungs (docs/design/03-rules.md section 1), and "closed" is the record
-# kept and marked, never deleted (docs/design/29-evolution.md).
+# The ladder, per effect. Every rung is a value the closed effect set already permits: -10 and
+# -5 are the difficulty table's own rungs (docs/design/03-rules.md section 1), and "closed" is
+# the record kept and marked, never deleted (docs/design/29-evolution.md).
 MEND_LADDER = {
     "skill": [-10, -5, None],
     "stamina_max": [-1, None],
     "dread": [+1, None],
 }
-RECURRING_CLOSES = False    # a recurring wound is what a spent Fate point bought (ADR 0009)
+RECURRING_CLOSES = False  # a recurring wound is what a spent Fate point bought (ADR 0009)
 
 
 def dice_distribution(faces):
@@ -136,7 +137,7 @@ def rallies_to_full(current, maximum):
     """Rallies to return to maximum at the borrowed rate. A dropped combatant starts at
     DROPPED_WAKES_AT, so the dropped case is rallies_to_full(0, maximum)."""
     missing = maximum - current
-    return -(-missing // RALLY_RECOVERY)   # ceiling division; the rate is an integer
+    return -(-missing // RALLY_RECOVERY)  # ceiling division; the rate is an integer
 
 
 def sessions_for(rallies, rallies_per_session):
@@ -148,8 +149,14 @@ def sessions_for(rallies, rallies_per_session):
 # ---------------------------------------------------------------------------
 
 
-def fight_outcome(player_stamina, player_skill, opponent_skill, model,
-                  opponent_stamina=STARTING_STAMINA, max_rounds=60):
+def fight_outcome(
+    player_stamina,
+    player_skill,
+    opponent_skill,
+    model,
+    opponent_stamina=STARTING_STAMINA,
+    max_rounds=60,
+):
     """Exact round-by-round resolution of one fight, both sides at the ordinary pairing.
 
     Returns (p_player_dropped, expected_Rallies_owed_by_player).
@@ -190,13 +197,17 @@ def fight_outcome(player_stamina, player_skill, opponent_skill, model,
                     continue
                 sub = {(ps, os_): p * pb}
                 if player_lands:
-                    sub = {(a, b - d): q * dp
-                           for (a, b), q in sub.items()
-                           for d, dp in ORDINARY_HIT.items()}
+                    sub = {
+                        (a, b - d): q * dp
+                        for (a, b), q in sub.items()
+                        for d, dp in ORDINARY_HIT.items()
+                    }
                 if opponent_lands:
-                    sub = {(a - d, b): q * dp
-                           for (a, b), q in sub.items()
-                           for d, dp in ORDINARY_HIT.items()}
+                    sub = {
+                        (a - d, b): q * dp
+                        for (a, b), q in sub.items()
+                        for d, dp in ORDINARY_HIT.items()
+                    }
                 for (a, b), q in sub.items():
                     if a < 0:
                         dropped += q
@@ -209,7 +220,7 @@ def fight_outcome(player_stamina, player_skill, opponent_skill, model,
         state = nxt
         if not state:
             break
-    for (a, _b), q in state.items():          # fights still running at the cap
+    for (a, _b), q in state.items():  # fights still running at the cap
         lost += q * (player_stamina - a)
     return dropped, lost
 
@@ -219,8 +230,9 @@ LIKELY_LOSS = Fraction(3, 4)
 
 def entry_curve(player_skill, opponent_skill, model, maximum=STARTING_STAMINA):
     """P(dropped) as a function of the Stamina the character walks in with."""
-    return [(s, fight_outcome(s, player_skill, opponent_skill, model)[0])
-            for s in range(0, maximum + 1)]
+    return [
+        (s, fight_outcome(s, player_skill, opponent_skill, model)[0]) for s in range(0, maximum + 1)
+    ]
 
 
 def entry_threshold(player_skill, opponent_skill, model, maximum=STARTING_STAMINA):
@@ -265,8 +277,14 @@ def aftermath_distribution(points_below):
     return dist
 
 
-MARK_ROWS = {"lasting-wound", "left-for-dead", "new-enemy", "taken", "disfigured",
-             "recurring-wound"}
+MARK_ROWS = {
+    "lasting-wound",
+    "left-for-dead",
+    "new-enemy",
+    "taken",
+    "disfigured",
+    "recurring-wound",
+}
 
 
 def aftermath_weights(drops=range(1, 13)):
@@ -362,8 +380,11 @@ def main():
     dropped_road = rallies_to_full(DROPPED_WAKES_AT, STARTING_STAMINA)
     print(f"\n  A dropped starting character is {dropped_road} Rallies from full.")
     check("dropped road", dropped_road == 6, str(dropped_road))
-    check("career road", rallies_to_full(0, CAREER_STAMINA) == 7,
-          str(rallies_to_full(0, CAREER_STAMINA)))
+    check(
+        "career road",
+        rallies_to_full(0, CAREER_STAMINA) == 7,
+        str(rallies_to_full(0, CAREER_STAMINA)),
+    )
 
     print()
     print("=" * 78)
@@ -379,15 +400,18 @@ def main():
                 p, lost = fight_outcome(STARTING_STAMINA, skill, opponent, model)
                 owed = lost / RALLY_RECOVERY
                 worst_cost = max(worst_cost, owed)
-                (even_costs if gap == 0 else
-                 advantage_costs if gap == 20 else []).append(owed)
-                print(f"  {name:8s}  {skill:5d}  {opponent:3d}    {pct(p)}      "
-                      f"{num(lost)}         {num(owed)}")
+                (even_costs if gap == 0 else advantage_costs if gap == 20 else []).append(owed)
+                print(
+                    f"  {name:8s}  {skill:5d}  {opponent:3d}    {pct(p)}      "
+                    f"{num(lost)}         {num(owed)}"
+                )
     print(f"\n  Worst ordinary fight owes {num(worst_cost)} Rallies of rest.")
     even_lo, even_hi = min(even_costs), max(even_costs)
     adv_lo, adv_hi = min(advantage_costs), max(advantage_costs)
-    print(f"  An even fight costs {num(even_lo, 1)} to {num(even_hi, 1)} Rallies; "
-          f"a 20-point advantage costs {num(adv_lo, 1)} to {num(adv_hi, 1)}.")
+    print(
+        f"  An even fight costs {num(even_lo, 1)} to {num(even_hi, 1)} Rallies; "
+        f"a 20-point advantage costs {num(adv_lo, 1)} to {num(adv_hi, 1)}."
+    )
 
     print()
     print("=" * 78)
@@ -404,17 +428,27 @@ def main():
                 curve = dict(entry_curve(skill, opponent, model))
                 t = entry_threshold(skill, opponent, model)
                 line = "none" if t is None else f"at {t} or below"
-                print(f"  {name:8s}  {skill:5d}  {opponent:3d}     "
-                      f"{pct(curve[6])} / {pct(curve[4])} / {pct(curve[2])} / {pct(curve[0])}"
-                      f"    {line}")
+                print(
+                    f"  {name:8s}  {skill:5d}  {opponent:3d}     "
+                    f"{pct(curve[6])} / {pct(curve[4])} / {pct(curve[2])} / {pct(curve[0])}"
+                    f"    {line}"
+                )
     full = dict(entry_curve(45, 25, p_mapped))
     full_even = dict(entry_curve(45, 45, p_mapped))
-    print(f"\n  At a 20-point advantage, dropping runs {pct(full[6])} at full Stamina and "
-          f"{pct(full[2])} at 2.")
-    check("entering short is materially worse", full[2] > 2 * full[6],
-          f"{pct(full[6])} -> {pct(full[2])}")
-    check("full Stamina is not itself a likely loss at an advantage", full[6] < LIKELY_LOSS,
-          pct(full[6]))
+    print(
+        f"\n  At a 20-point advantage, dropping runs {pct(full[6])} at full Stamina and "
+        f"{pct(full[2])} at 2."
+    )
+    check(
+        "entering short is materially worse",
+        full[2] > 2 * full[6],
+        f"{pct(full[6])} -> {pct(full[2])}",
+    )
+    check(
+        "full Stamina is not itself a likely loss at an advantage",
+        full[6] < LIKELY_LOSS,
+        pct(full[6]),
+    )
 
     print("=" * 78)
     print("T005  The two clocks on one axis")
@@ -422,10 +456,11 @@ def main():
     full_span = rallies_to_full(DROPPED_WAKES_AT, CAREER_STAMINA)
     print(f"  A downtime restores {'to maximum' if DOWNTIME_RESTORES_FULL else 'nothing'},")
     print(f"  which is worth up to {full_span} Rallies -- the longest road the Rally offers.")
-    print(f"  In sessions of ordinary play that is {num(sessions_for(full_span, 1), 1)} to "
-          f"{num(sessions_for(full_span, 3), 1)}.")
-    check("downtime dominates the Rally", DOWNTIME_RESTORES_FULL and full_span >= 6,
-          str(full_span))
+    print(
+        f"  In sessions of ordinary play that is {num(sessions_for(full_span, 1), 1)} to "
+        f"{num(sessions_for(full_span, 3), 1)}."
+    )
+    check("downtime dominates the Rally", DOWNTIME_RESTORES_FULL and full_span >= 6, str(full_span))
 
     print()
     print("=" * 78)
@@ -439,11 +474,12 @@ def main():
     print(f"  downtimes available per drop         {MEND_STEPS_PER_DOWNTIME}")
     verdict = "clears" if cost <= MEND_STEPS_PER_DOWNTIME else "accumulates"
     print(f"  => a character who drops once per downtime {verdict}")
-    check("mend keeps pace with the closable wounds", cost <= MEND_STEPS_PER_DOWNTIME,
-          num(cost))
-    check("a recurring wound never closes",
-          RECURRING_CLOSES is False and MEND_LADDER["skill"][0] == -10 and recurring > 0,
-          num(recurring))
+    check("mend keeps pace with the closable wounds", cost <= MEND_STEPS_PER_DOWNTIME, num(cost))
+    check(
+        "a recurring wound never closes",
+        RECURRING_CLOSES is False and MEND_LADDER["skill"][0] == -10 and recurring > 0,
+        num(recurring),
+    )
 
     print()
     print("=" * 78)
@@ -452,12 +488,17 @@ def main():
     for effect, rungs in MEND_LADDER.items():
         shown = " -> ".join("closed" if r is None else f"{r:+d}" for r in rungs)
         print(f"  {effect:12s} {shown}    ({mend_steps(effect)} downtime(s))")
-        check(f"{effect} rungs are legal",
-              all(r is None or isinstance(r, int) for r in rungs) and rungs[-1] is None,
-              str(rungs))
+        check(
+            f"{effect} rungs are legal",
+            all(r is None or isinstance(r, int) for r in rungs) and rungs[-1] is None,
+            str(rungs),
+        )
         check(f"{effect} is in the closed set", effect in CLOSED_EFFECTS, effect)
-    check("the skill ladder uses the difficulty table's own rungs",
-          MEND_LADDER["skill"][:2] == [-10, -5], str(MEND_LADDER["skill"]))
+    check(
+        "the skill ladder uses the difficulty table's own rungs",
+        MEND_LADDER["skill"][:2] == [-10, -5],
+        str(MEND_LADDER["skill"]),
+    )
 
     print()
     print("=" * 78)
@@ -472,14 +513,16 @@ def main():
         "Mend steps one grade per downtime": MEND_STEPS_PER_DOWNTIME == 1,
         "skill -10 takes two downtimes to close": mend_steps("skill") == 2,
         "stamina_max and dread take one": mend_steps("stamina_max") == 1
-                                          and mend_steps("dread") == 1,
+        and mend_steps("dread") == 1,
         "a recurring wound never closes": RECURRING_CLOSES is False,
-        "an even fight costs 4.6 to 4.9 Rallies":
-            (num(even_lo, 1), num(even_hi, 1)) == ("4.6", "4.9"),
-        "a 20-point advantage costs 2.2 to 3.3":
-            (num(adv_lo, 1), num(adv_hi, 1)) == ("2.2", "3.3"),
-        "dropping at a 20-point advantage runs 14.8% at full and 48.6% at 2":
-            (pct(full[6]).strip(), pct(full[2]).strip()) == ("14.8%", "48.6%"),
+        "an even fight costs 4.6 to 4.9 Rallies": (num(even_lo, 1), num(even_hi, 1))
+        == ("4.6", "4.9"),
+        "a 20-point advantage costs 2.2 to 3.3": (num(adv_lo, 1), num(adv_hi, 1)) == ("2.2", "3.3"),
+        "dropping at a 20-point advantage runs 14.8% at full and 48.6% at 2": (
+            pct(full[6]).strip(),
+            pct(full[2]).strip(),
+        )
+        == ("14.8%", "48.6%"),
         "an even fight is a coin flip at full Stamina": num(full_even[6] * 100, 0) == "50",
         "0.61 wound records per drop": num(per_drop) == "0.61",
         "0.62 downtimes of Mend per drop": num(cost) == "0.62",

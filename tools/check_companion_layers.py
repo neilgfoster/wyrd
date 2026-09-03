@@ -29,17 +29,13 @@ RULES_DOC = REPO_ROOT / "docs" / "design" / "03-rules.md"
 
 EXPECTED_MECHANICAL = {"career", "bond", "taint", "strain", "wounds"}
 EXPECTED_NARRATIVE = {"objective", "flaw", "secret", "arc"}
-MAX_COMPANIONS = (
-    5  # docs/design/03-rules.md's effective-size table: up to 5 companions + the PC
-)
+MAX_COMPANIONS = 5  # docs/design/03-rules.md's effective-size table: up to 5 companions + the PC
 
 
 def extract_companion_block(text: str) -> str:
     m = re.search(r"```yaml\nrole: companion\n.*?\n```", text, re.DOTALL)
     if not m:
-        raise SystemExit(
-            "could not find the companion YAML example in docs/design/16-session.md"
-        )
+        raise SystemExit("could not find the companion YAML example in docs/design/16-session.md")
     return m.group(0)
 
 
@@ -101,20 +97,14 @@ def main() -> int:
         r"### Companions and succession\n(.*?)\n---", rules_text, re.DOTALL
     )
     if not succession_section_match:
-        errors.append(
-            "could not find the 'Companions and succession' section in 03-rules.md"
-        )
+        errors.append("could not find the 'Companions and succession' section in 03-rules.md")
     else:
         succession_text = succession_section_match.group(1)
         # Field names are mentioned as `bare` or `code` tokens; check any token that matches a
         # known field family (career/bond/taint/strain/wounds/objective/flaw/secret/arc) is one
         # of the mechanical five, since only mechanical fields belong in an advancement passage.
         all_known = EXPECTED_MECHANICAL | EXPECTED_NARRATIVE
-        mentioned = {
-            tok
-            for tok in re.findall(r"`([a-z_]+)`", succession_text)
-            if tok in all_known
-        }
+        mentioned = {tok for tok in re.findall(r"`([a-z_]+)`", succession_text) if tok in all_known}
         stray = mentioned - EXPECTED_MECHANICAL
         if stray:
             errors.append(
@@ -129,9 +119,7 @@ def main() -> int:
         return 1
 
     print(f"OK: mechanical layer = {sorted(EXPECTED_MECHANICAL)} (5 fields, closed)")
-    print(
-        f"OK: narrative layer = {sorted(EXPECTED_NARRATIVE)}, disjoint from mechanical"
-    )
+    print(f"OK: narrative layer = {sorted(EXPECTED_NARRATIVE)}, disjoint from mechanical")
     print("OK: 03-rules.md's succession passage names only mechanical fields")
     print(
         f"OK: party-size bound = {MAX_COMPANIONS} companions x {len(EXPECTED_MECHANICAL)} "

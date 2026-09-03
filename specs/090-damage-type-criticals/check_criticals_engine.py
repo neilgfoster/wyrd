@@ -19,9 +19,8 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "015-damage-type-criticals"))
 
-from wyrd import resolution  # noqa: E402
-
 from check_criticals import TABLES as VALIDATED_TABLES  # noqa: E402
+from wyrd import resolution  # noqa: E402
 
 # engine/wyrd/resolution.py's own constants, keyed the same way as VALIDATED_TABLES.
 ENGINE_TABLES = {

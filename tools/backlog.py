@@ -82,22 +82,27 @@ class GhError(RuntimeError):
 
 
 def gh(args: list[str]) -> str:
-    proc = subprocess.run(
-        ["gh", *args], capture_output=True, text=True, check=False
-    )
+    proc = subprocess.run(["gh", *args], capture_output=True, text=True, check=False)
     if proc.returncode != 0:
-        raise GhError(
-            f"gh {' '.join(args)} failed ({proc.returncode}): {proc.stderr.strip()}"
-        )
+        raise GhError(f"gh {' '.join(args)} failed ({proc.returncode}): {proc.stderr.strip()}")
     return proc.stdout
 
 
 def fetch_board() -> dict[int, dict]:
     """Project items keyed by issue number, carrying their Rank (None if unset)."""
-    raw = gh([
-        "project", "item-list", str(PROJECT_NUMBER),
-        "--owner", OWNER, "--limit", "500", "--format", "json",
-    ])
+    raw = gh(
+        [
+            "project",
+            "item-list",
+            str(PROJECT_NUMBER),
+            "--owner",
+            OWNER,
+            "--limit",
+            "500",
+            "--format",
+            "json",
+        ]
+    )
     items = json.loads(raw).get("items", [])
     board: dict[int, dict] = {}
     for item in items:
@@ -118,9 +123,14 @@ def fetch_issues() -> dict[int, dict]:
     cursor = None
     while True:
         args = [
-            "api", "graphql",
-            "-f", f"query={ISSUE_GRAPHQL}",
-            "-F", f"owner={OWNER}", "-F", f"repo={REPO}",
+            "api",
+            "graphql",
+            "-f",
+            f"query={ISSUE_GRAPHQL}",
+            "-F",
+            f"owner={OWNER}",
+            "-F",
+            f"repo={REPO}",
         ]
         if cursor:
             args += ["-F", f"cursor={cursor}"]
@@ -159,7 +169,7 @@ def parse_depends_on(body: str) -> list[int]:
         match = DEPENDS_PREFIX.match(line)
         if not match:
             continue
-        for ref in ISSUE_REF.findall(line[match.end():]):
+        for ref in ISSUE_REF.findall(line[match.end() :]):
             number = int(ref)
             if number not in found:
                 found.append(number)
@@ -177,10 +187,7 @@ def sort_key(number: int, board: dict[int, dict]) -> tuple[int, int]:
 
 
 def roots(issues: dict[int, dict]) -> list[int]:
-    return [
-        n for n, i in issues.items()
-        if i["parent"] is None and i["labels"] & TRACKED_LABELS
-    ]
+    return [n for n, i in issues.items() if i["parent"] is None and i["labels"] & TRACKED_LABELS]
 
 
 def open_blockers(issue: dict, issues: dict[int, dict]) -> list[int]:
@@ -222,10 +229,7 @@ def dangling_refs(issue: dict, issues: dict[int, dict]) -> list[int]:
     is precisely how a typo'd number becomes "ready". Only `check` needs this, because it
     costs one `gh` lookup per distinct unknown number.
     """
-    return [
-        d for d in issue["depends_on"]
-        if d not in issues and not issue_exists(d)
-    ]
+    return [d for d in issue["depends_on"] if d not in issues and not issue_exists(d)]
 
 
 _exists_cache: dict[int, bool] = {}
@@ -350,9 +354,9 @@ def lifecycle_action_outranking(chosen: dict | None, blocked: list[dict]) -> dic
     between" applies to a spent epic's un-actioned position too, not only to real leaves.
     """
     candidates = [
-        e for e in blocked
-        if e["action"] in ("close", "decompose")
-        and (e["action"] == "close" or not e["blocked_by"])
+        e
+        for e in blocked
+        if e["action"] in ("close", "decompose") and (e["action"] == "close" or not e["blocked_by"])
     ]
     if not candidates:
         return None
@@ -372,7 +376,9 @@ def format_passed_over(entry: dict) -> str:
     if entry["action"] == "decompose":
         if entry["blocked_by"]:
             deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
-            return f"  #{entry['number']} {entry['title']}  <- no children yet, and blocked by {deps}"
+            return (
+                f"  #{entry['number']} {entry['title']}  <- no children yet, and blocked by {deps}"
+            )
         return f"  #{entry['number']} {entry['title']}  <- no children yet; decompose it"
     deps = ", ".join(f"#{d}" for d in entry["blocked_by"])
     return f"  #{entry['number']} {entry['title']}  <- blocked by {deps}"
@@ -387,15 +393,17 @@ def cmd_next(args) -> int:
     rest = [e for e in blocked if e is not preferred]
 
     if args.format == "json":
-        print(json.dumps(
-            {
-                "next": preferred or chosen,
-                "superseded_leaf": chosen if (preferred and chosen) else None,
-                "blocked": rest,
-                "spent_epics": spent,
-            },
-            indent=2,
-        ))
+        print(
+            json.dumps(
+                {
+                    "next": preferred or chosen,
+                    "superseded_leaf": chosen if (preferred and chosen) else None,
+                    "blocked": rest,
+                    "spent_epics": spent,
+                },
+                indent=2,
+            )
+        )
         return 0 if (preferred or chosen) else 1
 
     if preferred:

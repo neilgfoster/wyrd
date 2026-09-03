@@ -33,7 +33,6 @@ import argparse
 import json
 import pathlib
 import re
-import sys
 
 HUB = "README.md"
 ADR_DIR = "docs/adr"
@@ -152,10 +151,12 @@ def check_reachable(root: pathlib.Path) -> list[Problem]:
         if not rel.startswith(REACHABLE_REQUIRED):
             continue
         if path.resolve() not in seen:
-            problems.append(Problem(
-                f"{rel} is not reachable from {HUB}; nothing links to it, directly or through "
-                "an index"
-            ))
+            problems.append(
+                Problem(
+                    f"{rel} is not reachable from {HUB}; nothing links to it, directly or through "
+                    "an index"
+                )
+            )
     return problems
 
 
@@ -184,10 +185,12 @@ def check_adr_index(root: pathlib.Path) -> list[Problem]:
             if record.name == "README.md":
                 continue
             if record.name not in listed:
-                problems.append(Problem(
-                    f"{record.relative_to(root).as_posix()} is not listed in {index_path}; the "
-                    "index has drifted behind the records on disk"
-                ))
+                problems.append(
+                    Problem(
+                        f"{record.relative_to(root).as_posix()} is not listed in {index_path}; the "
+                        "index has drifted behind the records on disk"
+                    )
+                )
     return problems
 
 
@@ -225,10 +228,12 @@ def check_adr_references(root: pathlib.Path) -> list[Problem]:
         text = path.read_text(encoding="utf-8", errors="replace")
         for number in sorted(set(ADR_PROSE_REF.findall(text))):
             if number not in known:
-                problems.append(Problem(
-                    f"{rel} refers to ADR {number}, which does not exist in {ADR_DIR}/ or "
-                    f"{ADR_ARCHIVE}/"
-                ))
+                problems.append(
+                    Problem(
+                        f"{rel} refers to ADR {number}, which does not exist in {ADR_DIR}/ or "
+                        f"{ADR_ARCHIVE}/"
+                    )
+                )
     return problems
 
 
@@ -239,10 +244,12 @@ def check_link_policy(root: pathlib.Path) -> list[Problem]:
         rel = path.relative_to(root).as_posix()
         text = strip_code(path.read_text(encoding="utf-8", errors="replace"))
         for match in WIKILINK.findall(text):
-            problems.append(Problem(
-                f"{rel} uses {match} in prose; prose links with markdown so it renders on "
-                "GitHub (docs/adr/0011). Wikilinks belong in entity data."
-            ))
+            problems.append(
+                Problem(
+                    f"{rel} uses {match} in prose; prose links with markdown so it renders on "
+                    "GitHub (docs/adr/0011). Wikilinks belong in entity data."
+                )
+            )
     return problems
 
 

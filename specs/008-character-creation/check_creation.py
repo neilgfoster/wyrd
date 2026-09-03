@@ -121,8 +121,7 @@ def main() -> int:
     print("  weapon " + "".join(f"{label:>10}" for label, _ in ARMOUR))
     for wlabel, weapon in WEAPON_BAND:
         row = "".join(
-            num(mean(damage_through(weapon, armour, False))).rjust(10)
-            for _, armour in ARMOUR
+            num(mean(damage_through(weapon, armour, False))).rjust(10) for _, armour in ARMOUR
         )
         print(f"  {wlabel:>6} {row}")
 
@@ -185,8 +184,7 @@ def main() -> int:
             note.append("+1 thinning")
         if length > 5:
             note.append("fight too long for a 20-minute session")
-        print(f"  {stamina:>7}   {pct(share):>13}   {num(length):>10} hits   "
-              f"{'; '.join(note)}")
+        print(f"  {stamina:>7}   {pct(share):>13}   {num(length):>10} hits   {'; '.join(note)}")
     print()
     print("  Success criterion 5 (docs/design/01-principles.md) requires a session to be playable")
     print("  in twenty minutes on a phone, and a fight running 7+ exchanges does not fit.")
@@ -219,7 +217,7 @@ def main() -> int:
     print("  25% -- which docs/design/13-diegesis.md calls 'never really done this'. A character")
     print("  guessing at their own profession. Creation uses the same doors play uses.")
     print()
-    OPEN_COST, RAISE, OPENS_AT_PCT = 1, 5, 25
+    RAISE, OPENS_AT_PCT = 5, 25
     print("  pool   opened   resulting values                 lowest band")
     for pool in (6, 8, 10, 12):
         for k in (2, 3, 4):
@@ -230,8 +228,15 @@ def main() -> int:
                 vals[i % k] += RAISE
             vals.sort(reverse=True)
             worst = min(vals)
-            b = ("guessing" if worst <= 25 else "trained" if worst <= 40
-                 else "practised" if worst <= 55 else "expert")
+            b = (
+                "guessing"
+                if worst <= 25
+                else "trained"
+                if worst <= 40
+                else "practised"
+                if worst <= 55
+                else "expert"
+            )
             mark = "  <-- chosen" if pool == 8 and k == 3 else ""
             print(f"  {pool:>4}   {k:>6}   {', '.join(f'{v}%' for v in vals):<32} {b}{mark}")
         print()
@@ -269,8 +274,10 @@ def main() -> int:
         ok = no_expert and trains_broadly
         if ok:
             best_n = pool
-        print(f"  {pool:>4}   {one:>13}%   {three:>11}%   {six:>11}%   "
-              f"{'ok' if ok else ('expert too early' if not no_expert else 'too thin')}")
+        print(
+            f"  {pool:>4}   {one:>13}%   {three:>11}%   {six:>11}%   "
+            f"{'ok' if ok else ('expert too early' if not no_expert else 'too thin')}"
+        )
     print()
     print(f"  The band is satisfied by pools up to {best_n}. The largest passing value is taken:")
     print("  a smaller pool makes the choice trivial and the background faint, and the whole")
@@ -283,8 +290,14 @@ def main() -> int:
     print("  flat base. It has to sit below the 25% a skill opens at, stay inside the")
     print("  guessing band, and still let a well-judged easy attempt be worth making.")
     print()
-    DIFFICULTY = [("easy", 20), ("average", 0), ("challenging", -10),
-                  ("difficult", -20), ("hard", -30), ("very hard", -40)]
+    DIFFICULTY = [
+        ("easy", 20),
+        ("average", 0),
+        ("challenging", -10),
+        ("difficult", -20),
+        ("hard", -30),
+        ("very hard", -40),
+    ]
     DECLARATION = [("brief", 0), ("specific", 10), ("leveraging", 20)]
     print("  base   " + "".join(f"{d:>12}" for d, _ in DIFFICULTY))
     for base in (5, 10, 15, 20):
@@ -332,8 +345,10 @@ def main() -> int:
             f"at starting Stamina {chosen}, a completed career's +1 is {pct(share)} — "
             "docs/design/03-rules.md calls it the only durable toughening, which would be false"
         )
-    print(f"  +1 from a completed career is {pct(share)} of a new character   "
-          f"[{'ok' if share >= Fraction(1, 10) else 'FAIL'}]")
+    print(
+        f"  +1 from a completed career is {pct(share)} of a new character   "
+        f"[{'ok' if share >= Fraction(1, 10) else 'FAIL'}]"
+    )
 
     # The ORDINARY case -- a mid-band weapon against modest armour -- must land in the 1-3
     # that check_aftermath.py calls ordinary. That is what makes deferred death routinely
@@ -344,8 +359,10 @@ def main() -> int:
             f"at starting Stamina {chosen}, an ordinary telling blow overshoots by "
             f"{num(ordinary_overshoot)}, outside the 1-3 check_aftermath.py treats as ordinary"
         )
-    print(f"  ordinary telling blow overshoots by {num(ordinary_overshoot)} points        "
-          f"[{'ok' if 0 < ordinary_overshoot <= 3 else 'FAIL'}]")
+    print(
+        f"  ordinary telling blow overshoots by {num(ordinary_overshoot)} points        "
+        f"[{'ok' if 0 < ordinary_overshoot <= 3 else 'FAIL'}]"
+    )
 
     # The WORST case -- a martial weapon, telling blow, no armour -- must stay inside the
     # range check_aftermath.py actually models. It is allowed to be grim: a martial weapon is
@@ -357,8 +374,10 @@ def main() -> int:
             f"at starting Stamina {chosen}, the worst case overshoots by {num(worst)}, past "
             "the 1-12 range check_aftermath.py models -- the Aftermath table has no rows for it"
         )
-    print(f"  worst case (martial, unarmoured) overshoots by {num(worst)}     "
-          f"[{'ok' if worst <= 12 else 'FAIL'}]")
+    print(
+        f"  worst case (martial, unarmoured) overshoots by {num(worst)}     "
+        f"[{'ok' if worst <= 12 else 'FAIL'}]"
+    )
 
     # An ordinary exchange must not be decided by one hit, or there is no fight.
     ordinary = hits_to_drop(chosen, damage_through([6], [6], False))
@@ -367,15 +386,19 @@ def main() -> int:
             f"at starting Stamina {chosen}, a modest-armoured character drops in "
             f"{num(ordinary)} ordinary hits — a fight would not last a round"
         )
-    print(f"  a modest-armoured character takes {num(ordinary)} ordinary hits to drop  "
-          f"[{'ok' if ordinary >= 2 else 'FAIL'}]")
+    print(
+        f"  a modest-armoured character takes {num(ordinary)} ordinary hits to drop  "
+        f"[{'ok' if ordinary >= 2 else 'FAIL'}]"
+    )
 
     # ...and an unarmoured one must be in real danger, or armour means nothing.
     bare = hits_to_drop(chosen, damage_through([6], [], False))
     if bare > ordinary:
         failures.append("armour is not reducing the number of hits needed")
-    print(f"  unarmoured drops in {num(bare)}, so armour roughly doubles endurance  "
-          f"[{'ok' if bare < ordinary else 'FAIL'}]")
+    print(
+        f"  unarmoured drops in {num(bare)}, so armour roughly doubles endurance  "
+        f"[{'ok' if bare < ordinary else 'FAIL'}]"
+    )
 
     # Free advances: the pool must not make a starting character expert at anything, and
     # must let them read as trained across a few skills.
@@ -391,8 +414,10 @@ def main() -> int:
             f"a pool of {pool} advances peaks at {peak}%, which docs/design/13-diegesis.md "
             "calls expert — a chronicle should be what gets you there"
         )
-    print(f"  {pool} advances, {MIN_OPENED} skills minimum, peak {peak}% — practised   "
-          f"[{'ok' if peak < 60 else 'FAIL'}]")
+    print(
+        f"  {pool} advances, {MIN_OPENED} skills minimum, peak {peak}% — practised   "
+        f"[{'ok' if peak < 60 else 'FAIL'}]"
+    )
 
     # Opening 3 skills costs 3; the remaining 5 raise them. The weakest must clear "guessing".
     three = [25, 25, 25]
@@ -403,8 +428,10 @@ def main() -> int:
             f"a pool of {pool} leaves a skill at {min(three)}% when three are opened — "
             "docs/design/13-diegesis.md calls that guessing, in the character's own career"
         )
-    print(f"  opening 3, the weakest sits at {min(three)}% — trained, not guessing  "
-          f"[{'ok' if min(three) > 25 else 'FAIL'}]")
+    print(
+        f"  opening 3, the weakest sits at {min(three)}% — trained, not guessing  "
+        f"[{'ok' if min(three) > 25 else 'FAIL'}]"
+    )
 
     # CORRECTED. This was labelled "exchanges" and is HITS -- it ignores the miss rate
     # entirely, so it understated fight length by a factor of three or more. Turning hits
@@ -417,12 +444,18 @@ def main() -> int:
     print("   to six times longer than this. See specs/010-opposed-tests/check_opposed.py")
     print("   and the fight-length finding raised against Stage 5.)")
 
-    print(f"  untrained {UNTRAINED}% sits below the {OPENS_AT}% a skill opens at        "
-          f"[{'ok' if UNTRAINED < OPENS_AT else 'FAIL'}]")
-    print(f"  untrained is impossible at hard difficulty ({UNTRAINED - 30}%)         "
-          f"[{'ok' if UNTRAINED - 30 <= 0 else 'FAIL'}]")
-    print(f"  a well-judged easy untrained attempt reaches {UNTRAINED + 40}%         "
-          f"[{'ok' if UNTRAINED + 40 >= 40 else 'FAIL'}]")
+    print(
+        f"  untrained {UNTRAINED}% sits below the {OPENS_AT}% a skill opens at        "
+        f"[{'ok' if UNTRAINED < OPENS_AT else 'FAIL'}]"
+    )
+    print(
+        f"  untrained is impossible at hard difficulty ({UNTRAINED - 30}%)         "
+        f"[{'ok' if UNTRAINED - 30 <= 0 else 'FAIL'}]"
+    )
+    print(
+        f"  a well-judged easy untrained attempt reaches {UNTRAINED + 40}%         "
+        f"[{'ok' if UNTRAINED + 40 >= 40 else 'FAIL'}]"
+    )
 
     print()
     if failures:

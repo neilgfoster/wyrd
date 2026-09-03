@@ -34,7 +34,7 @@ Run: python3 specs/018-player-facing-combat/check_conversion.py
 """
 
 from fractions import Fraction
-from functools import lru_cache
+from functools import cache
 from itertools import product
 
 # ---------------------------------------------------------------------------
@@ -43,7 +43,7 @@ from itertools import product
 
 ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
 MIN_THROUGH = 1
-ORDINARY_WEAPON = [6]           # 1d6, an ordinary blade
+ORDINARY_WEAPON = [6]  # 1d6, an ordinary blade
 ORDINARY_ARMOUR = "modest"
 STARTING_STAMINA = 6
 CLIP_LOW, CLIP_HIGH = 5, 95
@@ -51,8 +51,17 @@ TODAYS_TELLING_THRESHOLD = 3
 
 # Representative skill pairings, the same span specs/012 and specs/017 already use.
 PAIRINGS = [
-    (25, 25), (40, 40), (35, 30), (55, 40), (50, 30),
-    (60, 30), (70, 35), (60, 20), (80, 40), (100, 50), (30, 60),
+    (25, 25),
+    (40, 40),
+    (35, 30),
+    (55, 40),
+    (50, 30),
+    (60, 30),
+    (70, 35),
+    (60, 20),
+    (80, 40),
+    (100, 50),
+    (30, 60),
 ]
 
 
@@ -78,14 +87,20 @@ def effective_pct(actor: int, resister: int) -> int:
 
 
 PRIOR_MAPPING_TABLE = {
-    (40, 40): 50, (55, 40): 65, (60, 30): 80, (100, 50): 95,
+    (40, 40): 50,
+    (55, 40): 65,
+    (60, 30): 80,
+    (100, 50): 95,
 }
 
 
 def assert_prior_mapping() -> None:
     for (s, o), expected in PRIOR_MAPPING_TABLE.items():
-        check(f"effective%({s}, {o}) == {expected} (specs/012 check_mapping.py)",
-              effective_pct(s, o) == expected, f"got {effective_pct(s, o)}")
+        check(
+            f"effective%({s}, {o}) == {expected} (specs/012 check_mapping.py)",
+            effective_pct(s, o) == expected,
+            f"got {effective_pct(s, o)}",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -189,8 +204,9 @@ def p_opposed_win(actor: int, resister: int) -> Fraction:
     return Fraction(wins, 100 * 100)
 
 
-def expected_damage_per_round_today(attack_skill: int, defence_skill: int,
-                                     telling_threshold: int = TODAYS_TELLING_THRESHOLD) -> Fraction:
+def expected_damage_per_round_today(
+    attack_skill: int, defence_skill: int, telling_threshold: int = TODAYS_TELLING_THRESHOLD
+) -> Fraction:
     """A round today: one opposed test per side, each an attack that must clear the other's
     defence outright -- the double gate ADR 0016 describes. A hit's telling-blow share is read
     off the *conditional* degree distribution of the winning roll."""
@@ -217,8 +233,9 @@ def telling_given_opposed_win(actor: int, resister: int, threshold: int) -> Frac
     return Fraction(telling, wins) if wins else Fraction(0)
 
 
-def expected_damage_per_round_converted(attack_skill: int, defence_skill: int,
-                                         threshold: int) -> Fraction:
+def expected_damage_per_round_converted(
+    attack_skill: int, defence_skill: int, threshold: int
+) -> Fraction:
     """A round under the conversion: the player's own single roll decides whether *this* attack
     lands -- there is no second gate on the far side. The effective% already carries the skill
     comparison, so a hit is simply a roll <= effective%, and its degrees come from that same
@@ -246,11 +263,17 @@ def damage_multiplier(attack_skill: int, defence_skill: int, threshold: int) -> 
 # ---------------------------------------------------------------------------
 
 
-@lru_cache(maxsize=None)
-def fight_outcome(player_stamina: int, opponent_stamina: int,
-                   player_attack: int, player_defence: int,
-                   opponent_attack: int, opponent_defence: int,
-                   threshold: int, max_rounds: int = 80):
+@cache
+def fight_outcome(
+    player_stamina: int,
+    opponent_stamina: int,
+    player_attack: int,
+    player_defence: int,
+    opponent_attack: int,
+    opponent_defence: int,
+    threshold: int,
+    max_rounds: int = 80,
+):
     """One round: the player's attack roll (opponent never rolls) and the player's defence roll
     against the opponent's attack (opponent never rolls) are independent -- both, either or
     neither may land, since they are separate turns within the round, not one contest deciding
@@ -258,8 +281,11 @@ def fight_outcome(player_stamina: int, opponent_stamina: int,
     p_player_hits = Fraction(effective_pct(player_attack, opponent_defence), 100)
     p_player_hit_by = Fraction(100 - effective_pct(player_defence, opponent_attack), 100)
     p_player_telling = telling_rate(effective_pct(player_attack, opponent_defence), threshold)
-    p_opponent_telling = telling_rate(100 - effective_pct(player_defence, opponent_attack),
-                                       threshold) if p_player_hit_by > 0 else Fraction(0)
+    p_opponent_telling = (
+        telling_rate(100 - effective_pct(player_defence, opponent_attack), threshold)
+        if p_player_hit_by > 0
+        else Fraction(0)
+    )
 
     to_opponent = {k: v for k, v in ORDINARY_HIT.items()}
     to_opponent_telling = {k: v for k, v in ORDINARY_TELLING_HIT.items()}
@@ -288,9 +314,13 @@ def fight_outcome(player_stamina: int, opponent_stamina: int,
         nxt: dict[tuple[int, int], Fraction] = {}
         for (ps, os_), p in state.items():
             for player_lands, pa in ((True, p_player_hits), (False, 1 - p_player_hits)):
-                to_opp = branch_damage(player_lands, p_player_telling, to_opponent, to_opponent_telling)
+                to_opp = branch_damage(
+                    player_lands, p_player_telling, to_opponent, to_opponent_telling
+                )
                 for opponent_lands, pb in ((True, p_player_hit_by), (False, 1 - p_player_hit_by)):
-                    to_pl = branch_damage(opponent_lands, p_opponent_telling, to_player, to_player_telling)
+                    to_pl = branch_damage(
+                        opponent_lands, p_opponent_telling, to_player, to_player_telling
+                    )
                     weight = p * pa * pb
                     if weight == 0:
                         continue
@@ -324,20 +354,32 @@ def fight_outcome(player_stamina: int, opponent_stamina: int,
             break
     for _, q in state.items():
         rounds += q * max_rounds
-    stamina_lost_given_win = (player_stamina_lost_on_win / opponent_dropped
-                               if opponent_dropped else Fraction(0))
+    stamina_lost_given_win = (
+        player_stamina_lost_on_win / opponent_dropped if opponent_dropped else Fraction(0)
+    )
     return player_dropped, opponent_dropped, rounds, below_zero, stamina_lost_given_win
 
 
-def rounds_summary(player_stamina: int, opponent_stamina: int, player_skill: int,
-                    opponent_skill: int, threshold: int):
+def rounds_summary(
+    player_stamina: int,
+    opponent_stamina: int,
+    player_skill: int,
+    opponent_skill: int,
+    threshold: int,
+):
     """The figures docs/design/03-rules.md section 2's road-back table already publishes at starting
     Stamina: expected Stamina lost by the time the player wins (Rallies to full), and the round
     count. One skill per side, for both attack and defence, matching the convention specs/012 and
     specs/017 already use."""
     player_dropped, opponent_dropped, rounds, _, stamina_lost = fight_outcome(
-        player_stamina, opponent_stamina, player_skill, player_skill,
-        opponent_skill, opponent_skill, threshold)
+        player_stamina,
+        opponent_stamina,
+        player_skill,
+        player_skill,
+        opponent_skill,
+        opponent_skill,
+        threshold,
+    )
     return player_dropped, opponent_dropped, rounds, stamina_lost
 
 
@@ -393,8 +435,10 @@ def main() -> int:
         eff = effective_pct(s, o)
         rate = telling_rate(eff, threshold)
         print(f"  {s:>3} v {o:>3} -> eff {eff:>2}%  telling@{threshold} {pct(rate):>6}")
-    check(f"telling blows stay a minority of hits at threshold {threshold}",
-          all(telling_rate(effective_pct(s, o), threshold) < Fraction(1, 2) for s, o in PAIRINGS))
+    check(
+        f"telling blows stay a minority of hits at threshold {threshold}",
+        all(telling_rate(effective_pct(s, o), threshold) < Fraction(1, 2) for s, o in PAIRINGS),
+    )
 
     print("\nT004 -- the damage-multiplier consequence of a player-rolled defence")
     multipliers = []
@@ -408,17 +452,24 @@ def main() -> int:
     print(f"  range: {float(lo):.2f}x - {float(hi):.2f}x  (issue #69 stated 1.4x-3.1x)")
 
     print("\nT005 -- Stamina lost when the player wins (Rallies to full), starting Stamina 6")
-    print("  (docs/design/03-rules.md section 2 today publishes: even 4.6-4.9, +20 advantage 2.2-3.3)")
+    print(
+        "  (docs/design/03-rules.md section 2 today publishes: even 4.6-4.9, +20 advantage 2.2-3.3)"
+    )
     for label, (s, o) in [("even", (40, 40)), ("+20 advantage", (60, 40))]:
         p_drop, o_drop, rounds, stamina_lost = rounds_summary(
-            STARTING_STAMINA, STARTING_STAMINA, s, o, threshold)
-        print(f"  {label}: p(player drops)={pct(p_drop)}  p(opponent drops)={pct(o_drop)}  "
-              f"Stamina lost on a win={float(stamina_lost):.2f}  "
-              f"expected rounds to a drop either side={float(rounds):.2f}")
+            STARTING_STAMINA, STARTING_STAMINA, s, o, threshold
+        )
+        print(
+            f"  {label}: p(player drops)={pct(p_drop)}  p(opponent drops)={pct(o_drop)}  "
+            f"Stamina lost on a win={float(stamina_lost):.2f}  "
+            f"expected rounds to a drop either side={float(rounds):.2f}"
+        )
 
     print("\nT006 -- Wyrd die uniformity at the clip boundary")
     for eff in (CLIP_LOW, CLIP_HIGH, 50):
-        check(f"units digit uniform within success/failure sets at eff={eff}", wyrd_die_uniform(eff))
+        check(
+            f"units digit uniform within success/failure sets at eff={eff}", wyrd_die_uniform(eff)
+        )
 
     print("\nT007 -- a complete exchange, one attack roll, one defence roll, at 55 v 40")
     eff_attack = effective_pct(55, 40)
