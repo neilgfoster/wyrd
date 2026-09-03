@@ -12,6 +12,7 @@ exemption holds independently -- not just the Taint-only case ADR 0043 originall
 
 Run: python3 specs/052-resolve-recovery-mechanic/check_resolve.py
 """
+
 from __future__ import annotations
 
 MARGIN = 3  # one Transformation threshold-interval, per ADR 0043, carried forward by ADR 0049
@@ -46,8 +47,10 @@ def check(claim: str, ok: bool, detail: str = "") -> None:
 
 
 def main() -> int:
-    print("Checking Resolve's dual-threshold cap across Taint 0-20 x Trauma 0-20 "
-          "(representative combinations, not the full grid, for readable output)...\n")
+    print(
+        "Checking Resolve's dual-threshold cap across Taint 0-20 x Trauma 0-20 "
+        "(representative combinations, not the full grid, for readable output)...\n"
+    )
 
     combos = []
     for t in range(0, 21, 4):
@@ -61,47 +64,72 @@ def main() -> int:
         rested = cap(taint, trauma)
         binding = max(taint, trauma)
 
-        check(f"Taint {taint}, Trauma {trauma}: fully-rested Resolve ({rested}) is not itself "
-              f"Spent", not is_spent(rested, taint, trauma),
-              f"cap={rested}, binding={binding}")
+        check(
+            f"Taint {taint}, Trauma {trauma}: fully-rested Resolve ({rested}) is not itself Spent",
+            not is_spent(rested, taint, trauma),
+            f"cap={rested}, binding={binding}",
+        )
 
         if binding > 0:
-            check(f"Taint {taint}, Trauma {trauma}: at least one point of Resolve is spendable "
-                  f"before Spent", rested - binding > 0, f"headroom={rested - binding}")
+            check(
+                f"Taint {taint}, Trauma {trauma}: at least one point of Resolve is spendable "
+                f"before Spent",
+                rested - binding > 0,
+                f"headroom={rested - binding}",
+            )
 
             spent_down = rested - (rested - binding)
-            check(f"Taint {taint}, Trauma {trauma}: spending Resolve down to {spent_down} "
-                  f"triggers Spent", is_spent(spent_down, taint, trauma))
+            check(
+                f"Taint {taint}, Trauma {trauma}: spending Resolve down to {spent_down} "
+                f"triggers Spent",
+                is_spent(spent_down, taint, trauma),
+            )
         else:
-            check(f"Taint 0, Trauma 0: spending Resolve all the way down never triggers Spent",
-                  not is_spent(0, taint, trauma))
+            check(
+                "Taint 0, Trauma 0: spending Resolve all the way down never triggers Spent",
+                not is_spent(0, taint, trauma),
+            )
 
-    print("\nConfirming the binding axis is genuinely whichever is HIGHER, not always Taint "
-          "(the case ADR 0043's own verification never exercised):")
-    check("Taint 3, Trauma 12: Spent is reached via Trauma (the higher axis) at Resolve == 12, "
-          "well before Resolve would ever need to fall as low as Taint's own value (3)",
-          is_spent(12, 3, 12) and not is_spent(13, 3, 12))
-    check("Taint 3, Trauma 12: Spent, once reached via Trauma at 12, still reads Spent if "
-          "Resolve keeps falling all the way to 3 -- a persisting state, not a one-instant "
-          "boundary crossing that exact equality would have missed",
-          is_spent(3, 3, 12))
-    check("Taint 12, Trauma 3: Spent is reached via Taint (the higher axis) at Resolve == 12",
-          is_spent(12, 12, 3) and not is_spent(13, 12, 3))
+    print(
+        "\nConfirming the binding axis is genuinely whichever is HIGHER, not always Taint "
+        "(the case ADR 0043's own verification never exercised):"
+    )
+    check(
+        "Taint 3, Trauma 12: Spent is reached via Trauma (the higher axis) at Resolve == 12, "
+        "well before Resolve would ever need to fall as low as Taint's own value (3)",
+        is_spent(12, 3, 12) and not is_spent(13, 3, 12),
+    )
+    check(
+        "Taint 3, Trauma 12: Spent, once reached via Trauma at 12, still reads Spent if "
+        "Resolve keeps falling all the way to 3 -- a persisting state, not a one-instant "
+        "boundary crossing that exact equality would have missed",
+        is_spent(3, 3, 12),
+    )
+    check(
+        "Taint 12, Trauma 3: Spent is reached via Taint (the higher axis) at Resolve == 12",
+        is_spent(12, 12, 3) and not is_spent(13, 12, 3),
+    )
 
     print("\nConfirming each axis's exemption is independent:")
-    check("Taint 0, Trauma 8: Spent is still reachable via Trauma alone",
-          is_spent(8, 0, 8))
-    check("Taint 8, Trauma 0: Spent is still reachable via Taint alone",
-          is_spent(8, 8, 0))
-    check("Taint 0, Trauma 0: Spent is never reachable at any Resolve value down to 0",
-          not any(is_spent(r, 0, 0) for r in range(0, 4)))
+    check("Taint 0, Trauma 8: Spent is still reachable via Trauma alone", is_spent(8, 0, 8))
+    check("Taint 8, Trauma 0: Spent is still reachable via Taint alone", is_spent(8, 8, 0))
+    check(
+        "Taint 0, Trauma 0: Spent is never reachable at any Resolve value down to 0",
+        not any(is_spent(r, 0, 0) for r in range(0, 4)),
+    )
 
-    print("\nChecking the superseded (ADR 0043) Taint-only formula actually differs here, to "
-          "confirm this isn't a vacuous widening:")
+    print(
+        "\nChecking the superseded (ADR 0043) Taint-only formula actually differs here, to "
+        "confirm this isn't a vacuous widening:"
+    )
     old_cap = lambda t, tr: t + MARGIN  # noqa: E731 -- ADR 0043's own formula, for contrast
     differs = old_cap(3, 12) != cap(3, 12)
-    check("At Taint 3, Trauma 12: the superseded formula (6) and the widened one (15) genuinely "
-          "differ", differs, f"old={old_cap(3, 12)}, new={cap(3, 12)}")
+    check(
+        "At Taint 3, Trauma 12: the superseded formula (6) and the widened one (15) genuinely "
+        "differ",
+        differs,
+        f"old={old_cap(3, 12)}, new={cap(3, 12)}",
+    )
 
     print()
     if FAILURES:
@@ -109,9 +137,11 @@ def main() -> int:
         for f in FAILURES:
             print(f"  - {f}")
         return 1
-    print(f"All checks pass. Resolve's cap (max(Taint, Trauma) + {MARGIN}) leaves real, "
-          "spendable headroom whenever either axis is above 0, Spent is reachable "
-          "independently via either axis, and both exemptions (Taint 0, Trauma 0) hold.")
+    print(
+        f"All checks pass. Resolve's cap (max(Taint, Trauma) + {MARGIN}) leaves real, "
+        "spendable headroom whenever either axis is above 0, Spent is reachable "
+        "independently via either axis, and both exemptions (Taint 0, Trauma 0) hold."
+    )
     return 0
 
 

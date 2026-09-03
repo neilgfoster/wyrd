@@ -6,6 +6,7 @@ from). Fresh seeded rolls, seeded 20260841 for the Resolve recurrence and 202608
 spam re-run (distinct seeds so this pass's own draws are separable from sec10's original
 20260831 sequence, which this does not reuse -- the scenario itself has changed, not just the
 reading of an already-drawn roll, unlike sec7)."""
+
 import random
 
 MAX_STAMINA = 6
@@ -72,9 +73,13 @@ for i in range(1, 27):
 
 for i, roll, success, strain_v, ill_omen, taint_v, trauma_v, gained, aff in log:
     flag = f"  <<< +{gained} Trauma" + (f", {aff} Affliction(s)" if aff else "") if gained else ""
-    print(f"  #{i:>2} roll {roll:>3} {'PASS' if success else 'fail':<4} Strain {strain_v:>2} "
-          f"IllOmen {'Y' if ill_omen else 'n'} Taint {taint_v:>2} Trauma {trauma_v:>2}{flag}")
+    print(
+        f"  #{i:>2} roll {roll:>3} {'PASS' if success else 'fail':<4} Strain {strain_v:>2} "
+        f"IllOmen {'Y' if ill_omen else 'n'} Taint {taint_v:>2} Trauma {trauma_v:>2}{flag}"
+    )
 
 final = log[-1]
-print(f"\nFinal: Strain {final[3]}, Taint {final[5]}, Trauma {final[6]} "
-      f"({26 - sum(1 for r in log if r[2])}/26 fail).")
+print(
+    f"\nFinal: Strain {final[3]}, Taint {final[5]}, Trauma {final[6]} "
+    f"({26 - sum(1 for r in log if r[2])}/26 fail)."
+)

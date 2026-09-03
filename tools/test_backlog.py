@@ -30,9 +30,7 @@ def load_fixture() -> tuple[dict[int, dict], dict[int, dict]]:
     dependency on a CLOSED issue (#17 -> #15) would shell out to `gh` mid-test.
     """
     raw = json.loads(FIXTURE.read_text())
-    issues = {
-        int(n): {**i, "labels": set(i["labels"])} for n, i in raw["issues"].items()
-    }
+    issues = {int(n): {**i, "labels": set(i["labels"])} for n, i in raw["issues"].items()}
     board = {int(n): b for n, b in raw["board"].items()}
     backlog._exists_cache.update(
         {int(n): exists for n, exists in raw.get("known_issue_numbers", {}).items()}
@@ -40,8 +38,16 @@ def load_fixture() -> tuple[dict[int, dict], dict[int, dict]]:
     return issues, board
 
 
-def make_issue(number, *, title="t", parent=None, children=(), open_children=(),
-               depends_on=(), labels=("kord-feature",)):
+def make_issue(
+    number,
+    *,
+    title="t",
+    parent=None,
+    children=(),
+    open_children=(),
+    depends_on=(),
+    labels=("kord-feature",),
+):
     return {
         "number": number,
         "title": title,
@@ -127,8 +133,7 @@ class TestWalk(unittest.TestCase):
     def test_descends_to_a_leaf_not_the_epic(self):
         """An epic is never the answer; the answer is something you can start."""
         issues = {
-            1: make_issue(1, title="epic", children=[2], open_children=[2],
-                          labels=("kord-epic",)),
+            1: make_issue(1, title="epic", children=[2], open_children=[2], labels=("kord-epic",)),
             2: make_issue(2, title="leaf", parent=1),
         }
         board = {1: {"rank": 10}}
@@ -150,8 +155,14 @@ class TestWalk(unittest.TestCase):
             # not itself visited as a root (this test is about #31 inheriting #90's
             # dependency, not about #1's own spent-epic status).
             1: make_issue(1, title="design programme", labels=()),
-            90: make_issue(90, title="implement the engine", children=[31],
-                            open_children=[31], depends_on=[1], labels=("kord-epic",)),
+            90: make_issue(
+                90,
+                title="implement the engine",
+                children=[31],
+                open_children=[31],
+                depends_on=[1],
+                labels=("kord-epic",),
+            ),
             31: make_issue(31, title="fleet rollout", parent=90),
         }
         board = {90: {"rank": 20}}
@@ -163,8 +174,9 @@ class TestWalk(unittest.TestCase):
     def test_dependency_beats_priority(self):
         """FR-3. The top-ranked root's only leaf is blocked, so a lower-ranked root wins."""
         issues = {
-            1: make_issue(1, title="urgent", children=[2], open_children=[2],
-                          labels=("kord-epic",)),
+            1: make_issue(
+                1, title="urgent", children=[2], open_children=[2], labels=("kord-epic",)
+            ),
             2: make_issue(2, title="blocked leaf", parent=1, depends_on=[9]),
             9: make_issue(9, title="the blocker"),
             # A feature, not an epic: an epic is never handed out as work, so using one
@@ -243,7 +255,9 @@ class TestRenderNotes(unittest.TestCase):
 
     def test_unblocked_childless_epic_reports_only_that(self):
         epic = make_issue(90, labels=("kord-epic",))
-        self.assertEqual(backlog.render_notes(epic, blockers=[]), ["no open children; close or decompose"])
+        self.assertEqual(
+            backlog.render_notes(epic, blockers=[]), ["no open children; close or decompose"]
+        )
 
     def test_blocked_non_epic_reports_only_blocked(self):
         leaf = make_issue(2)
@@ -267,8 +281,7 @@ class TestEpicsAreNeverWork(unittest.TestCase):
 
     def test_a_spent_epic_is_not_chosen(self):
         issues = {
-            1: make_issue(1, title="stage", labels=("kord-epic",),
-                          children=[2], open_children=[]),
+            1: make_issue(1, title="stage", labels=("kord-epic",), children=[2], open_children=[]),
         }
         chosen, _ = backlog.walk(issues, {1: {"rank": 10}})
         spent = backlog.spent_epics(issues, {1: {"rank": 10}})
@@ -278,8 +291,9 @@ class TestEpicsAreNeverWork(unittest.TestCase):
     def test_the_walk_moves_on_to_the_next_root(self):
         """A spent epic must not stop the search, only decline to be the answer."""
         issues = {
-            1: make_issue(1, title="finished stage", labels=("kord-epic",),
-                          children=[9], open_children=[]),
+            1: make_issue(
+                1, title="finished stage", labels=("kord-epic",), children=[9], open_children=[]
+            ),
             2: make_issue(2, title="real work"),
         }
         board = {1: {"rank": 10}, 2: {"rank": 20}}
@@ -313,8 +327,7 @@ class TestEpicsAreNeverWork(unittest.TestCase):
         is that #1 is reported alongside it, not that nothing is chosen.
         """
         issues = {
-            1: make_issue(1, labels=("kord-epic",), children=[9], open_children=[],
-                          depends_on=[2]),
+            1: make_issue(1, labels=("kord-epic",), children=[9], open_children=[], depends_on=[2]),
             2: make_issue(2, title="blocker"),
         }
         board = {1: {"rank": 10}, 2: {"rank": 20}}
@@ -333,20 +346,23 @@ class TestEpicsAreNeverWork(unittest.TestCase):
             # #1 is a stand-in for "the design programme, still open" -- unlabeled so it is
             # not itself visited as a root; this test is only about #90's own dependency.
             1: make_issue(1, title="design programme", labels=()),
-            90: make_issue(90, title="implement the engine", labels=("kord-epic",),
-                            depends_on=[1]),
+            90: make_issue(90, title="implement the engine", labels=("kord-epic",), depends_on=[1]),
         }
         board = {90: {"rank": 20}}
         chosen, blocked = backlog.walk(issues, board)
         self.assertIsNone(chosen)
-        self.assertEqual([(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [1])])
+        self.assertEqual(
+            [(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [1])]
+        )
 
     def test_a_never_decomposed_epic_is_offered_once_unblocked(self):
         issues = {90: make_issue(90, title="implement the engine", labels=("kord-epic",))}
         board = {90: {"rank": 20}}
         chosen, blocked = backlog.walk(issues, board)
         self.assertIsNone(chosen)
-        self.assertEqual([(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [])])
+        self.assertEqual(
+            [(e["number"], e["action"], e["blocked_by"]) for e in blocked], [(90, "decompose", [])]
+        )
 
 
 class TestAgainstCapturedBoard(unittest.TestCase):
@@ -401,8 +417,13 @@ class TestAgainstCapturedBoard(unittest.TestCase):
 
 def blocked_entry(number, *, action="blocked", blocked_by=(), rank=None, title="t"):
     return {
-        "number": number, "title": title, "url": f"https://example.invalid/{number}",
-        "path": [number], "rank": rank, "blocked_by": list(blocked_by), "action": action,
+        "number": number,
+        "title": title,
+        "url": f"https://example.invalid/{number}",
+        "path": [number],
+        "rank": rank,
+        "blocked_by": list(blocked_by),
+        "action": action,
     }
 
 
@@ -455,20 +476,36 @@ class TestLifecycleActionOutranking(unittest.TestCase):
         asserting it only holds for the one depth #49 happens to sit at.
         """
         issues = {
-            1: make_issue(1, title="root epic", children=[40], open_children=[40],
-                          labels=("kord-epic",)),
-            40: make_issue(40, title="mid-level epic", parent=1, children=[49],
-                            open_children=[49], labels=("kord-epic",)),
-            49: make_issue(49, title="finished, two levels deep", parent=40,
-                            children=[26, 56], open_children=[], labels=("kord-epic",)),
-            91: make_issue(91, title="other root", children=[97], open_children=[97],
-                            labels=("kord-epic",)),
+            1: make_issue(
+                1, title="root epic", children=[40], open_children=[40], labels=("kord-epic",)
+            ),
+            40: make_issue(
+                40,
+                title="mid-level epic",
+                parent=1,
+                children=[49],
+                open_children=[49],
+                labels=("kord-epic",),
+            ),
+            49: make_issue(
+                49,
+                title="finished, two levels deep",
+                parent=40,
+                children=[26, 56],
+                open_children=[],
+                labels=("kord-epic",),
+            ),
+            91: make_issue(
+                91, title="other root", children=[97], open_children=[97], labels=("kord-epic",)
+            ),
             97: make_issue(97, title="ready leaf", parent=91),
         }
         board = {1: {"rank": 10}, 91: {"rank": 30}}
         chosen, blocked = backlog.walk(issues, board)
         self.assertEqual(chosen["number"], 97)
-        self.assertEqual([(e["number"], e["action"], e["rank"]) for e in blocked], [(49, "close", 10)])
+        self.assertEqual(
+            [(e["number"], e["action"], e["rank"]) for e in blocked], [(49, "close", 10)]
+        )
         preferred = backlog.lifecycle_action_outranking(chosen, blocked)
         self.assertEqual(preferred["number"], 49)
 
@@ -522,7 +559,7 @@ class TestDriftDetection(unittest.TestCase):
     def test_closed_dependency_is_not_reported_as_dangling(self):
         """#17 depends on #15, which is closed and merged. That is healthy, not drift."""
         issues, board = load_fixture()
-        self.assertNotIn(15, issues)          # closed, so absent from the open set
+        self.assertNotIn(15, issues)  # closed, so absent from the open set
         self.assertTrue(backlog._exists_cache[15])  # but it does exist
         self.assertEqual(self.problems(issues, board), [])
 
@@ -536,9 +573,7 @@ class TestDriftDetection(unittest.TestCase):
         child = next(n for n, i in issues.items() if i["parent"] is not None)
         board[child] = {"rank": 999}
         found = self.problems(issues, board)
-        self.assertTrue(
-            any(f"#{child}" in p and "not root-level" in p for p in found), found
-        )
+        self.assertTrue(any(f"#{child}" in p and "not root-level" in p for p in found), found)
 
     def test_unranked_non_root_is_fine(self):
         issues, board = load_fixture()
@@ -550,8 +585,14 @@ class TestDriftDetection(unittest.TestCase):
         """Only epics and features are backlog items; tasks live inside a feature."""
         issues, board = load_fixture()
         issues[500] = {
-            "number": 500, "title": "a task", "url": "", "labels": {"kord-task"},
-            "parent": 7, "children": [], "open_children": [], "depends_on": [],
+            "number": 500,
+            "title": "a task",
+            "url": "",
+            "labels": {"kord-task"},
+            "parent": 7,
+            "children": [],
+            "open_children": [],
+            "depends_on": [],
             "is_epic": False,
         }
         self.assertEqual(self.problems(issues, board), [])

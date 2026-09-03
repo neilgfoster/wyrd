@@ -40,12 +40,12 @@ further maximum Stamina.
 Run: python3 tools/check_advancement.py
 """
 
-STARTING_STAMINA = 6          # docs/design/11-character-creation.md
-CAREER_CAP = 0.70             # docs/design/13-diegesis.md's *expert* band top
-SKILL_OPEN_VALUE = 0.25       # docs/design/03-rules.md s6, and s03c
-ADVANCE_STEP = 0.05           # docs/design/03-rules.md s6
+STARTING_STAMINA = 6  # docs/design/11-character-creation.md
+CAREER_CAP = 0.70  # docs/design/13-diegesis.md's *expert* band top
+SKILL_OPEN_VALUE = 0.25  # docs/design/03-rules.md s6, and s03c
+ADVANCE_STEP = 0.05  # docs/design/03-rules.md s6
 MEANINGFUL_GAIN_FLOOR = 0.10  # the boundary 03c already names ("much above 10")
-CHRONICLE_INSTANCES = 12      # >= 10 required by spec.md SC-004
+CHRONICLE_INSTANCES = 12  # >= 10 required by spec.md SC-004
 
 
 def stamina_ceiling(floor: float = MEANINGFUL_GAIN_FLOOR) -> int:
@@ -56,8 +56,9 @@ def stamina_ceiling(floor: float = MEANINGFUL_GAIN_FLOOR) -> int:
     return stamina
 
 
-def advances_to_cap(start: float = SKILL_OPEN_VALUE, cap: float = CAREER_CAP,
-                     step: float = ADVANCE_STEP) -> int:
+def advances_to_cap(
+    start: float = SKILL_OPEN_VALUE, cap: float = CAREER_CAP, step: float = ADVANCE_STEP
+) -> int:
     """How many +5% advances carry one skill from opening to the career cap."""
     count = 0
     value = start
@@ -86,12 +87,14 @@ def run_chronicle(instances: int, ceiling: int) -> list[dict]:
         if gained_stamina:
             stamina += 1
         marks += 1
-        history.append({
-            "instance": instance,
-            "stamina": stamina,
-            "marks": marks,
-            "gained_stamina": gained_stamina,
-        })
+        history.append(
+            {
+                "instance": instance,
+                "stamina": stamina,
+                "marks": marks,
+                "gained_stamina": gained_stamina,
+            }
+        )
     return history
 
 
@@ -104,17 +107,20 @@ def main() -> None:
     )
 
     per_skill_advances = advances_to_cap()
-    print(f"\nAdvances to carry one skill from {SKILL_OPEN_VALUE:.0%} to the "
-          f"{CAREER_CAP:.0%} cap: {per_skill_advances}")
+    print(
+        f"\nAdvances to carry one skill from {SKILL_OPEN_VALUE:.0%} to the "
+        f"{CAREER_CAP:.0%} cap: {per_skill_advances}"
+    )
     assert CAREER_CAP <= 1.0, "the career cap must not exceed 100%"
 
-    print(f"\nSimulating {CHRONICLE_INSTANCES} career-instances completed "
-          "back-to-back:\n")
+    print(f"\nSimulating {CHRONICLE_INSTANCES} career-instances completed back-to-back:\n")
     history = run_chronicle(CHRONICLE_INSTANCES, ceiling)
     print(f"{'instance':>8} {'stamina':>8} {'marks':>6} {'stamina gained?':>16}")
     for row in history:
-        print(f"{row['instance']:>8} {row['stamina']:>8} {row['marks']:>6} "
-              f"{str(row['gained_stamina']):>16}")
+        print(
+            f"{row['instance']:>8} {row['stamina']:>8} {row['marks']:>6} "
+            f"{str(row['gained_stamina']):>16}"
+        )
 
     final = history[-1]
     assert final["stamina"] == ceiling, (
@@ -123,13 +129,17 @@ def main() -> None:
     )
     assert final["marks"] == CHRONICLE_INSTANCES, "a completion failed to grant its Mark"
     stopped_at = next(row["instance"] for row in history if not row["gained_stamina"])
-    print(f"\nStamina stops climbing after instance {stopped_at - 1} (ceiling "
-          f"{ceiling} reached); every instance after that still grants a Mark.")
+    print(
+        f"\nStamina stops climbing after instance {stopped_at - 1} (ceiling "
+        f"{ceiling} reached); every instance after that still grants a Mark."
+    )
 
-    print("\nAcross every completed instance, no skill exceeded the career cap "
-          f"({CAREER_CAP:.0%}) and maximum Stamina converged to a stated ceiling "
-          f"({ceiling}) rather than growing without bound -- both explicit "
-          "findings docs/design/03-rules.md now states rather than assumes.")
+    print(
+        "\nAcross every completed instance, no skill exceeded the career cap "
+        f"({CAREER_CAP:.0%}) and maximum Stamina converged to a stated ceiling "
+        f"({ceiling}) rather than growing without bound -- both explicit "
+        "findings docs/design/03-rules.md now states rather than assumes."
+    )
 
 
 if __name__ == "__main__":

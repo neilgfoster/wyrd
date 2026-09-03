@@ -31,9 +31,7 @@ TABLE_KEYS = [
 ]
 
 HEADING_RE = re.compile(r"^### `(?P<key>oracle-prompt-[a-z-]+)`\s*$", re.MULTILINE)
-ROW_RE = re.compile(
-    r"^\|\s*(?P<start>\d+)\s*[–-]\s*(?P<end>\d+)\s*\|\s*`(?P<effect>[a-z_]+)`\s*\|"
-)
+ROW_RE = re.compile(r"^\|\s*(?P<start>\d+)\s*[–-]\s*(?P<end>\d+)\s*\|\s*`(?P<effect>[a-z_]+)`\s*\|")
 
 
 def parse_tables(text: str) -> dict[str, list[tuple[range, str]]]:
@@ -78,9 +76,7 @@ def main() -> int:
         # same way docs/design/14-oracle-answers.md's rows are).
         covered = sorted(v for r in ranges for v in r)
         if covered != list(range(1, 101)):
-            failures.append(
-                f"{key}: rows do not exactly cover 1-100 (got {len(covered)} totals)"
-            )
+            failures.append(f"{key}: rows do not exactly cover 1-100 (got {len(covered)} totals)")
 
         if ranges[0].start != 1:
             failures.append(f"{key}: first row does not start at 1")
@@ -108,9 +104,7 @@ def main() -> int:
         end = ordered_positions[ordered_positions.index(start) + 1]
         section = text[start:end]
         if "Genre-neutrality check, worked" not in section:
-            failures.append(
-                f"{key}: no recorded genre-neutrality check found in its section"
-            )
+            failures.append(f"{key}: no recorded genre-neutrality check found in its section")
 
     if failures:
         print("\nFAILURES:")

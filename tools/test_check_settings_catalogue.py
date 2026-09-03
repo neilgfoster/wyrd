@@ -44,7 +44,9 @@ class ParseCatalogueTests(unittest.TestCase):
         self.assertNotIn("group", alpha)
 
     def test_comments_and_blank_lines_ignored(self):
-        text = "# header comment\nsettings:\n  # a comment inside the list\n  - id: x\n    repo: r\n"
+        text = (
+            "# header comment\nsettings:\n  # a comment inside the list\n  - id: x\n    repo: r\n"
+        )
         entries = check.parse_catalogue(text)
         self.assertEqual(entries, [{"id": "x", "repo": "r"}])
 

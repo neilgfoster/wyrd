@@ -16,11 +16,11 @@ already established for a different kind of pattern in this repo.
 
 Run: python3 tools/check_no_setting_vocabulary.py
 """
+
 from __future__ import annotations
 
 import pathlib
 import re
-import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SETTINGS_YAML = ROOT / "settings.yaml"
@@ -31,7 +31,16 @@ README = ROOT / "README.md"
 # would false-positive against ordinary engine prose. Excluded from the denylist entirely,
 # the same posture as check_dangling_mechanics.py's own tolerated gaps.
 TOO_GENERIC = {
-    "tor", "titan", "1st", "2nd", "3rd", "4th", "edition", "the", "and", "domesday",
+    "tor",
+    "titan",
+    "1st",
+    "2nd",
+    "3rd",
+    "4th",
+    "edition",
+    "the",
+    "and",
+    "domesday",
 }
 
 
@@ -43,7 +52,7 @@ def load_settings_terms() -> list[str]:
     `title:` scalars, so a couple of regexes suffice.
     """
     text = SETTINGS_YAML.read_text()
-    ids = re.findall(r'^\s*-\s*id:\s*(\S+)\s*$', text, re.MULTILINE)
+    ids = re.findall(r"^\s*-\s*id:\s*(\S+)\s*$", text, re.MULTILINE)
     titles = re.findall(r'^\s*title:\s*"([^"]+)"\s*$', text, re.MULTILINE)
 
     terms: set[str] = set()
@@ -65,14 +74,16 @@ def load_settings_terms() -> list[str]:
 
 def scan(terms: list[str], targets: list[pathlib.Path]) -> list[str]:
     problems = []
-    patterns = [(t, re.compile(r'\b' + re.escape(t) + r'\b', re.IGNORECASE)) for t in terms]
+    patterns = [(t, re.compile(r"\b" + re.escape(t) + r"\b", re.IGNORECASE)) for t in terms]
     for path in targets:
         text = path.read_text()
         for line_no, line in enumerate(text.splitlines(), start=1):
             for term, pattern in patterns:
                 if pattern.search(line):
                     rel = path.relative_to(ROOT)
-                    problems.append(f"{rel}:{line_no}: setting/system term '{term}' found: {line.strip()[:100]}")
+                    problems.append(
+                        f"{rel}:{line_no}: setting/system term '{term}' found: {line.strip()[:100]}"
+                    )
     return problems
 
 
@@ -81,8 +92,10 @@ def main() -> int:
     targets = sorted(DESIGN_DIR.glob("*.md")) + [README]
     problems = scan(terms, targets)
 
-    print(f"Checked {len(targets)} files against {len(terms)} setting/system terms "
-          f"(from {SETTINGS_YAML.relative_to(ROOT)}).")
+    print(
+        f"Checked {len(targets)} files against {len(terms)} setting/system terms "
+        f"(from {SETTINGS_YAML.relative_to(ROOT)})."
+    )
     if problems:
         print("FAILED:")
         for p in problems:

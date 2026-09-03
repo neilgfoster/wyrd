@@ -217,18 +217,14 @@ def find_definitions(root: pathlib.Path) -> list[MechanicDefinition]:
             if m:
                 name = _clean(m.group(1))
                 if len(name) >= MIN_NAME_LENGTH:
-                    definitions.append(
-                        MechanicDefinition(name, path, "table_row", i + 1)
-                    )
+                    definitions.append(MechanicDefinition(name, path, "table_row", i + 1))
                 continue
 
             m = GLOSSARY_ENTRY.match(line)
             if m:
                 name = _clean(m.group(1))
                 if len(name) >= MIN_NAME_LENGTH:
-                    definitions.append(
-                        MechanicDefinition(name, path, "glossary", i + 1)
-                    )
+                    definitions.append(MechanicDefinition(name, path, "glossary", i + 1))
     return definitions
 
 
@@ -256,9 +252,7 @@ def _reference_candidates(line: str) -> list[tuple[int, int, str]]:
     # candidates inside it), earliest start breaks ties.
     resolved: list[tuple[int, int, str]] = []
     for start, end, name in sorted(spans, key=lambda s: (-(s[1] - s[0]), s[0])):
-        if any(
-            not (end <= r_start or start >= r_end) for r_start, r_end, _ in resolved
-        ):
+        if any(not (end <= r_start or start >= r_end) for r_start, r_end, _ in resolved):
             continue
         resolved.append((start, end, name))
     return sorted(resolved)
@@ -293,9 +287,7 @@ def find_references(root: pathlib.Path) -> list[MechanicReference]:
             for _, _, name in _reference_candidates(line):
                 if len(name) < MIN_NAME_LENGTH:
                     continue
-                references.append(
-                    MechanicReference(name, path, i + 1, raw_line.strip())
-                )
+                references.append(MechanicReference(name, path, i + 1, raw_line.strip()))
     return references
 
 
@@ -362,9 +354,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for problem in problems:
         print(problem)
-    print(
-        f"tools/check_dangling_mechanics.py: {len(problems)} dangling references found"
-    )
+    print(f"tools/check_dangling_mechanics.py: {len(problems)} dangling references found")
     return 1
 
 

@@ -3,11 +3,13 @@
 
 CLAUDE.md: where a claim can be checked by a script, check it. Two scaling claims in this repo
 were wrong, and both were caught only by computing them -- one of them the figure this feature
-replaces, "roughly danger 2", which docs/design/26-corpus-index.md has quoted since it was written and
-which was never computed from anything, because until now there was nothing to compute it from.
+replaces, "roughly danger 2", which docs/design/26-corpus-index.md has quoted since it was
+written and which was never computed from anything, because until now there was nothing to
+compute it from.
 
-Every figure docs/design/03-rules.md section 7 and docs/design/26-corpus-index.md publish is asserted here,
-so an edit to either that drifts from the rule fails loudly rather than reading as authoritative.
+Every figure docs/design/03-rules.md section 7 and docs/design/26-corpus-index.md publish is
+asserted here, so an edit to either that drifts from the rule fails loudly rather than reading
+as authoritative.
 
 From merged design documents:
 
@@ -199,9 +201,7 @@ def check_real_parties() -> dict:
     published = {}
     for wf in REAL_WRITTEN_FOR:
         print(f"\nScaled danger, content written for {wf}")
-        header = "  companions  bodies  ratio  " + "  ".join(
-            f"d{d}" for d in REAL_DANGER
-        )
+        header = "  companions  bodies  ratio  " + "  ".join(f"d{d}" for d in REAL_DANGER)
         print(header)
         for n in REAL_COMPANION_COUNTS:
             bodies = 1 + n
@@ -233,7 +233,9 @@ def check_retinue() -> None:
     print("\nWhat a retinue buys, against content written for 4")
     for bodies in (1, 3, 5, 10, 20):
         r = ratio(bodies, 4)
-        print(f"  {bodies:>2} bodies  ratio {float(r):>5.3f}  danger 3 runs at {float(3 * r):>5.3f}")
+        print(
+            f"  {bodies:>2} bodies  ratio {float(r):>5.3f}  danger 3 runs at {float(3 * r):>5.3f}"
+        )
     check(
         ratio(10, 4) < Fraction(3, 2),
         f"ten bodies buy {float(ratio(10, 4)):.3f} against content written for four, more than "
@@ -287,14 +289,18 @@ def check_rounding() -> None:
         f"{len(zeroed)} written quantities of at least 1 rounded to 0 or below, the first being "
         f"{zeroed[0] if zeroed else ''}. A trap written Nd4 must always throw at least one die.",
     )
-    print("  No written quantity of 1 or more rounds to 0, across parties 1-20 and written_for "
-          "1-8 at every written danger 1-6.")
+    print(
+        "  No written quantity of 1 or more rounds to 0, across parties 1-20 and written_for "
+        "1-8 at every written danger 1-6."
+    )
 
     # The lone player character against content written for four, at the worst
     # case: still a playable trap.
     lone = danger_effective(1, 1, 4)
-    print(f"  A lone character, content written for 4 at danger 1: scaled {float(lone):.3f}, "
-          f"a trap written 1d4 throws {at_use(1, lone, 1)}d4.")
+    print(
+        f"  A lone character, content written for 4 at danger 1: scaled {float(lone):.3f}, "
+        f"a trap written 1d4 throws {at_use(1, lone, 1)}d4."
+    )
     check(at_use(1, lone, 1) == 1, "a lone character's danger-1 trap must still throw one die.")
 
 
@@ -314,8 +320,10 @@ def check_degenerate() -> None:
                     f"written_for {missing!r} at danger {d} with {bodies} bodies gives {got}, "
                     f"not the {d} that running as written requires.",
                 )
-    print("  written_for absent and written_for 0 both run content as written, at every party "
-          "size 1-7 and every written danger 1-6.")
+    print(
+        "  written_for absent and written_for 0 both run content as written, at every party "
+        "size 1-7 and every written danger 1-6."
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -414,8 +422,7 @@ def check_published_figures(published: dict) -> None:
     print(f"  three bodies against content written for 4: ratio {float(ratio(3, 4)):.2f}")
     check(
         f"{float(ratio(3, 4)):.2f}" == "0.88",
-        f"the worked case's ratio is {float(ratio(3, 4)):.2f}; the design document publishes "
-        "0.88.",
+        f"the worked case's ratio is {float(ratio(3, 4)):.2f}; the design document publishes 0.88.",
     )
 
     # docs/design/03-rules.md section 7, the retinue table.
@@ -424,8 +431,7 @@ def check_published_figures(published: dict) -> None:
         print(f"  {bodies:>2} bodies against content written for 4: ratio {got}")
         check(
             got == expected,
-            f"{bodies} bodies buy {got}; the design document's retinue table publishes "
-            f"{expected}.",
+            f"{bodies} bodies buy {got}; the design document's retinue table publishes {expected}.",
         )
 
     # docs/design/03-rules.md section 7, what a companion buys, first against fifth.
@@ -478,8 +484,10 @@ def check_worked_example() -> None:
             f"publishes {de_pub}.",
         )
         got = tuple(at_use(q, de, 3) for _, q in WORKED_QUANTITIES)
-        print(f"  {bodies} bodies: ratio {float(r):.3f}, danger_effective {float(de):.3f}, "
-              f"quantities {got}")
+        print(
+            f"  {bodies} bodies: ratio {float(r):.3f}, danger_effective {float(de):.3f}, "
+            f"quantities {got}"
+        )
         check(
             got == rounded_pub,
             f"{bodies} bodies round to {got}; worked-scaling.md publishes {rounded_pub}.",

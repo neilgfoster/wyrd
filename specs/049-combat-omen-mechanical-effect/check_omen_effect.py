@@ -26,10 +26,11 @@ arithmetic scripts are slow; memoize... up front").
 
 Run: python3 specs/049-combat-omen-mechanical-effect/check_omen_effect.py
 """
+
 from __future__ import annotations
 
 from fractions import Fraction
-from functools import lru_cache
+from functools import cache
 
 CLIP_LOW, CLIP_HIGH = 5, 95
 ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
@@ -39,8 +40,16 @@ TELLING_THRESHOLD = 6  # ADR 0028's accepted threshold
 STARTING_STAMINA = 6
 
 PAIRINGS = [
-    (25, 25), (40, 40), (35, 30), (55, 40), (50, 30),
-    (60, 30), (70, 35), (60, 20), (80, 40), (100, 50),
+    (25, 25),
+    (40, 40),
+    (35, 30),
+    (55, 40),
+    (50, 30),
+    (60, 30),
+    (70, 35),
+    (60, 20),
+    (80, 40),
+    (100, 50),
 ]
 
 
@@ -63,8 +72,9 @@ def dist_of(dice: list[int]) -> dict[int, Fraction]:
     return out
 
 
-def subtract_and_floor(dmg_dist: dict[int, Fraction], armour_dist: dict[int, Fraction],
-                        floor: int) -> dict[int, Fraction]:
+def subtract_and_floor(
+    dmg_dist: dict[int, Fraction], armour_dist: dict[int, Fraction], floor: int
+) -> dict[int, Fraction]:
     out: dict[int, Fraction] = {}
     for d, pd in dmg_dist.items():
         for a, pa in armour_dist.items():
@@ -101,7 +111,7 @@ def omen_of(roll: int) -> int:
     return 0
 
 
-@lru_cache(maxsize=None)
+@cache
 def attack_buckets(eff: int) -> tuple:
     """For an attack roll against effective% `eff`: group the 100 natural rolls by
     (hits, telling, omen) so identical combinations merge into one Fraction(n, 100)."""
@@ -112,10 +122,13 @@ def attack_buckets(eff: int) -> tuple:
         omen = omen_of(roll)
         key = (hits, telling, omen)
         grouped[key] = grouped.get(key, 0) + 1
-    return tuple((Fraction(count, 100), hits, telling, omen) for (hits, telling, omen), count in grouped.items())
+    return tuple(
+        (Fraction(count, 100), hits, telling, omen)
+        for (hits, telling, omen), count in grouped.items()
+    )
 
 
-@lru_cache(maxsize=None)
+@cache
 def defence_buckets(eff_def: int) -> tuple:
     """For a defence roll against effective% `eff_def`: "failure means the blow lands" (roll >
     eff_def). The Omen is read from the roll as it actually fell (natural-roll rule,
@@ -131,9 +144,14 @@ def defence_buckets(eff_def: int) -> tuple:
     return tuple((Fraction(count, 100), lands, omen) for (lands, omen), count in grouped.items())
 
 
-@lru_cache(maxsize=None)
-def outcome_no_omen(player_attack: int, player_defence: int, opponent_attack: int,
-                     opponent_defence: int, max_rounds: int = 30):
+@cache
+def outcome_no_omen(
+    player_attack: int,
+    player_defence: int,
+    opponent_attack: int,
+    opponent_defence: int,
+    max_rounds: int = 30,
+):
     eff_atk = effective_pct(player_attack, opponent_defence)
     eff_def = effective_pct(player_defence, opponent_attack)
     p_hit = Fraction(eff_atk, 100)
@@ -185,10 +203,17 @@ def outcome_no_omen(player_attack: int, player_defence: int, opponent_attack: in
     return {"rounds": rounds, "dealt": dealt, "taken": taken}
 
 
-@lru_cache(maxsize=None)
-def outcome_with_omen(player_attack: int, player_defence: int, opponent_attack: int,
-                       opponent_defence: int, max_rounds: int = 30):
-    state: dict[tuple[int, int, int], Fraction] = {(STARTING_STAMINA, STARTING_STAMINA, 0): Fraction(1)}
+@cache
+def outcome_with_omen(
+    player_attack: int,
+    player_defence: int,
+    opponent_attack: int,
+    opponent_defence: int,
+    max_rounds: int = 30,
+):
+    state: dict[tuple[int, int, int], Fraction] = {
+        (STARTING_STAMINA, STARTING_STAMINA, 0): Fraction(1)
+    }
     dealt = taken = rounds = Fraction(0)
 
     for _ in range(max_rounds):
@@ -221,7 +246,9 @@ def outcome_with_omen(player_attack: int, player_defence: int, opponent_attack: 
                             if nps <= 0:
                                 continue
                             new_pending = omen_def
-                            nxt[(nps, nos, new_pending)] = nxt.get((nps, nos, new_pending), Fraction(0)) + p4
+                            nxt[(nps, nos, new_pending)] = (
+                                nxt.get((nps, nos, new_pending), Fraction(0)) + p4
+                            )
         state = nxt
         if not state:
             break
@@ -229,8 +256,10 @@ def outcome_with_omen(player_attack: int, player_defence: int, opponent_attack: 
 
 
 def main() -> int:
-    print(f"{'pairing':>10}  {'dealt/rd base':>14}  {'dealt/rd omen':>14}  {'delta':>9}  "
-          f"{'taken/rd base':>14}  {'taken/rd omen':>14}  {'delta':>9}")
+    print(
+        f"{'pairing':>10}  {'dealt/rd base':>14}  {'dealt/rd omen':>14}  {'delta':>9}  "
+        f"{'taken/rd base':>14}  {'taken/rd omen':>14}  {'delta':>9}"
+    )
     max_abs_delta = Fraction(0)
     for atk, dfc in PAIRINGS:
         # PAIRINGS entries are (player_skill, opponent_skill) -- one flat skill per side, used
@@ -250,19 +279,29 @@ def main() -> int:
         d_dealt = omen_dealt_rd - base_dealt_rd
         d_taken = omen_taken_rd - base_taken_rd
         max_abs_delta = max(max_abs_delta, abs(d_dealt), abs(d_taken))
-        print(f"{f'{atk}v{dfc}':>10}  {float(base_dealt_rd):>14.3f}  {float(omen_dealt_rd):>14.3f}  "
-              f"{float(d_dealt):>+9.3f}  {float(base_taken_rd):>14.3f}  {float(omen_taken_rd):>14.3f}  "
-              f"{float(d_taken):>+9.3f}")
+        print(
+            f"{f'{atk}v{dfc}':>10}  {float(base_dealt_rd):>14.3f}  {float(omen_dealt_rd):>14.3f}  "
+            f"{float(d_dealt):>+9.3f}  {float(base_taken_rd):>14.3f}  "
+            f"{float(omen_taken_rd):>14.3f}  "
+            f"{float(d_taken):>+9.3f}"
+        )
 
     print()
-    print(f"Largest |delta| in expected damage per round across every pairing: {float(max_abs_delta):.3f}")
+    print(
+        "Largest |delta| in expected damage per round across every pairing: "
+        f"{float(max_abs_delta):.3f}"
+    )
     threshold = Fraction(1, 10)
     if max_abs_delta < threshold:
-        print(f"Below the {float(threshold)} damage/round materiality threshold: ADR 0028's "
-              "published figures do not need re-deriving.")
+        print(
+            f"Below the {float(threshold)} damage/round materiality threshold: ADR 0028's "
+            "published figures do not need re-deriving."
+        )
         return 0
-    print(f"At or above the {float(threshold)} damage/round materiality threshold: ADR 0028's "
-          "figures should be re-checked against this mechanic.")
+    print(
+        f"At or above the {float(threshold)} damage/round materiality threshold: ADR 0028's "
+        "figures should be re-checked against this mechanic."
+    )
     return 1
 
 
