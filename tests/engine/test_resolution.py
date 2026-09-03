@@ -1682,5 +1682,118 @@ class AftermathExemptionTest(unittest.TestCase):
         self.assertEqual(params & {"entity_state", "kind", "block", "adversary"}, set())
 
 
+class TraumaTestCascadeTest(ResolutionTestBase):
+    """specs/099-affliction-table: a failed `terror` test gains 1 Trauma, which -- crossing past
+    the floor (6) -- stages a `trauma-test`; SENNA's `bargaining` is 40, so seed 0's roll (50)
+    fails an average-difficulty test against it every time it is used."""
+
+    def setUp(self):
+        super().setUp()
+        frontmatter = self.load()
+        frontmatter["skills"]["bargaining"] = 40
+        frontmatter["trauma"] = 5
+        character.save(frontmatter, "", self.path)
+
+    def test_trauma_reaching_floor_exactly_stages_no_test(self):
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=0)
+        resolution.commit(result["proposal_id"])
+        self.assertEqual(self.load()["trauma"], 6)
+        self.assertEqual([step["mechanic"] for step in result["steps"]], ["terror"])
+
+    def test_trauma_crossing_past_floor_stages_one_test(self):
+        frontmatter = self.load()
+        frontmatter["trauma"] = 6
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=0)
+        self.assertEqual([step["mechanic"] for step in result["steps"]], ["terror", "trauma-test"])
+        trauma_test = result["steps"][1]
+        self.assertEqual(trauma_test["depends_on"], [0])
+        self.assertEqual(trauma_test["roll"]["skill"], "bargaining")
+
+    def test_trauma_never_reaching_floor_stages_no_test(self):
+        frontmatter = self.load()
+        frontmatter["trauma"] = 0
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=0)
+        self.assertEqual([step["mechanic"] for step in result["steps"]], ["terror"])
+
+    def test_failed_trauma_test_stages_affliction_roll_and_loses_six_trauma(self):
+        # seed 5: terror roll 80 fails (trauma 6 -> 7); trauma-test roll (seed 6) 74 fails;
+        # affliction roll (seed 7) is d12 row 6, "resolve-or-strain-to-continue".
+        frontmatter = self.load()
+        frontmatter["trauma"] = 6
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=5)
+        self.assertEqual(
+            [step["mechanic"] for step in result["steps"]],
+            ["terror", "trauma-test", "affliction"],
+        )
+        affliction = result["steps"][2]
+        self.assertEqual(affliction["roll"]["key"], "resolve-or-strain-to-continue")
+        self.assertEqual(affliction["depends_on"], [1])
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        # +1 (terror) -6 (affliction) from a Trauma of 6 lands at 1.
+        self.assertEqual(after["trauma"], 1)
+        self.assertIn("resolve-or-strain-to-continue", after["afflictions"])
+
+    def test_passed_trauma_test_stages_nothing_further(self):
+        # seed 0: terror roll 50 fails (trauma 6 -> 7); trauma-test roll (seed 1) 18 passes.
+        frontmatter = self.load()
+        frontmatter["trauma"] = 6
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=0)
+        self.assertEqual([step["mechanic"] for step in result["steps"]], ["terror", "trauma-test"])
+
+    def test_duplicate_affliction_row_is_applied_not_rerolled(self):
+        """Contrast with the transformation table's re-roll-on-duplicate rule
+        (docs/design/08-afflictions.md: the affliction family is repeatable)."""
+        frontmatter = self.load()
+        frontmatter["trauma"] = 6
+        frontmatter["afflictions"] = ["resolve-or-strain-to-continue"]
+        character.save(frontmatter, "", self.path)
+        result = resolution.propose(actor=self.path, mechanic="terror", skill="bargaining", seed=5)
+        affliction = result["steps"][2]
+        self.assertEqual(affliction["roll"]["key"], "resolve-or-strain-to-continue")
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(
+            after["afflictions"],
+            ["resolve-or-strain-to-continue", "resolve-or-strain-to-continue"],
+        )
+
+    def test_multi_point_gain_stages_one_test_per_point(self):
+        """A single event crossing more than one point past the floor stages one `trauma-test`
+        per point, in gained order (docs/design/08-afflictions.md) -- exercised directly against
+        `_cascade_from_mutation` since no single top-level mechanic in this feature gains more
+        than 1 Trauma at once (spec.md Assumptions)."""
+        state = dict(self.load())
+        state["trauma"] = 5
+        mutation = {
+            "entity": str(self.path),
+            "field": "trauma",
+            "op": "+",
+            "value": 3,
+            "produced_by_step": 0,
+            "trauma_test_skill": "bargaining",
+        }
+        steps: list[dict] = []
+        # seed 1: trauma-test rolls 18 then 8, both <= 40 (pass) -- no affliction rolls to
+        # complicate the step count.
+        resolution._cascade_from_mutation(
+            steps, mutation, {str(self.path): state}, resolution._SeedCursor(seed=1)
+        )
+        self.assertEqual([step["mechanic"] for step in steps], ["trauma-test", "trauma-test"])
+        self.assertEqual(steps[1]["depends_on"], [steps[0]["step_id"]])
+        self.assertEqual(state["trauma"], 8)
+
+    def test_affliction_table_has_twelve_rows_no_severity_field(self):
+        self.assertEqual(len(resolution.AFFLICTION_TABLE), 12)
+        rows = [row for row, _key, _description in resolution.AFFLICTION_TABLE]
+        self.assertEqual(rows, list(range(1, 13)))
+        keys = [key for _row, key, _description in resolution.AFFLICTION_TABLE]
+        self.assertEqual(len(keys), len(set(keys)))
+
+
 if __name__ == "__main__":
     unittest.main()

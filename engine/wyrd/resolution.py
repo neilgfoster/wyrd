@@ -73,6 +73,94 @@ TAINT_THRESHOLD_SPACING = 3
 #: docs/design/07-transformations.md "The table": row (1-6, the d6 result) -> severity.
 TRANSFORMATION_SEVERITIES = [1, 1, 2, 2, 3, 4]
 
+#: docs/design/08-afflictions.md "6 is the floor, not itself a further point": a Trauma test
+#: fires on every point past this value, never on landing on it exactly.
+TRAUMA_FLOOR = 6
+
+#: docs/design/03-rules.md section 5: "take an Affliction and lose 6 Trauma" -- flat, unlike a
+#: Transformation's severity-scaled Taint cost (docs/design/08-afflictions.md "No severity
+#: field": "a row has nothing left to price").
+AFFLICTION_TRAUMA_COST = 6
+
+#: docs/design/08-afflictions.md "The table": row (1-12, the d12 result) -> (key, description).
+#: Every row is a declared test or standing behavioural condition rather than an immediate
+#: mechanical delta (contrast with the critical tables below) -- this module records the row as
+#: a durable `afflictions` entry for the caller to read back and enforce in play (spec.md
+#: Assumptions), rather than trying to apply "without reading the prose" itself.
+AFFLICTION_TABLE: list[tuple[int, str, str]] = [
+    (
+        1,
+        "compelling-impulse",
+        "Once per session, a test is required before acting on the "
+        "impulse this Affliction names, or the action does not happen this beat.",
+    ),
+    (
+        2,
+        "cannot-act-first",
+        "Cannot be the first to act in a scene involving this Affliction's "
+        "fixation, without a test.",
+    ),
+    (
+        3,
+        "trigger-raises-difficulty",
+        "A declared category of test is Challenging instead of "
+        "its ordinary difficulty whenever this Affliction's trigger is present.",
+    ),
+    (
+        4,
+        "avoids-named-circumstance",
+        "Avoids a named circumstance where they reasonably could "
+        "act; acting anyway requires a test, and failure ends the attempt before it starts.",
+    ),
+    (
+        5,
+        "bonuses-unavailable-once-triggered",
+        "Once triggered in a scene, declared bonuses are unavailable for the rest of that scene.",
+    ),
+    (
+        6,
+        "resolve-or-strain-to-continue",
+        "Must spend a Resolve point or take 1 Strain to "
+        "continue an ordinary task once interrupted by the trigger; refusing ends the task.",
+    ),
+    (
+        7,
+        "helper-must-test-first",
+        "A companion or ally attempting to help on a relevant test "
+        "must themselves test first, or the help is refused in the fiction.",
+    ),
+    (
+        8,
+        "isolating-action-default",
+        "Takes the isolating action by default when a scene offers "
+        "a choice between it and staying with the party; staying instead requires a test.",
+    ),
+    (
+        9,
+        "must-reach-protect-check",
+        "A specific object, place or person must be reached, "
+        "protected or checked on before anything else in a scene; delaying requires a test.",
+    ),
+    (
+        10,
+        "reads-event-as-return",
+        "Reads a named category of ordinary event as the trigger's "
+        "return; a test is required to act on what is actually in front of them instead.",
+    ),
+    (
+        11,
+        "reaction-one-step-worse",
+        "Strangers and casual acquaintances react one step worse on "
+        "the reaction ladder by default, until a scene is spent establishing otherwise.",
+    ),
+    (
+        12,
+        "fault-line-easier-to-invoke",
+        "The Fault Line is one step easier for the GM to invoke "
+        "-- an existing Drive-based penalty applies at half the usual bar for triggering it.",
+    ),
+]
+
 #: docs/design/05-criticals.md: one table per closed damage type, each (low, high, key,
 #: effect-or-None). The open-ended top row (a table's mortal row) is handled separately -- it
 #: stages no wound-record mutation (ADR 0023: a critical never kills during the fight).
@@ -415,6 +503,52 @@ def _mutate_exposure(roll_data: dict, **_ignored) -> list[dict]:
     ]
 
 
+def _resolve_terror(
+    *,
+    actor: str,
+    actor_state: dict,
+    skill: str,
+    difficulty: str,
+    declaration_bonus: int,
+    seed: int | None,
+    **_ignored,
+) -> dict:
+    """docs/design/03-rules.md section 5: "Terror routs, and costs a Trauma point on a
+    failure" -- an ordinary pass/fail test, the same shape as `_resolve_exposure` but against
+    Trauma rather than Taint."""
+    if skill is None:
+        raise ValueError("terror requires a skill")
+    skill_value = actor_state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
+    roll_data = _resolve_test(
+        actor=actor,
+        mechanic="terror",
+        skill_value=skill_value,
+        difficulty=difficulty,
+        declaration_bonus=declaration_bonus,
+        seed=seed,
+    )
+    roll_data["skill"] = skill
+    return roll_data
+
+
+def _mutate_terror(roll_data: dict, **_ignored) -> list[dict]:
+    # A failed Terror test costs exactly 1 Trauma (docs/design/03-rules.md section 5); success
+    # costs nothing. The mutation carries `trauma_test_skill` -- the same fiction-chosen skill
+    # (docs/design/08-afflictions.md "the engine names no skill") that any Trauma test this gain
+    # goes on to cross the floor and stage will use (`_cascade_from_mutation` reads it back).
+    if roll_data["outcome"] == "success":
+        return []
+    return [
+        {
+            "entity": roll_data["actor"],
+            "field": "trauma",
+            "op": "+",
+            "value": 1,
+            "trauma_test_skill": roll_data["skill"],
+        }
+    ]
+
+
 #: The single-step mechanic vocabulary (docs/design/31-action-resolution.md's `mechanic`
 #: parameter): mechanic name -> (resolve, mutate). `combat-attack` is handled separately below
 #: (its own outcome-triggered cascade, not a simple resolve/mutate pair); `transformation`,
@@ -423,6 +557,7 @@ def _mutate_exposure(roll_data: dict, **_ignored) -> list[dict]:
 _MECHANICS: dict[str, tuple[Callable[..., dict], Callable[..., list[dict]]]] = {
     "ordinary-test": (_resolve_ordinary_test, _mutate_ordinary_test),
     "exposure": (_resolve_exposure, _mutate_exposure),
+    "terror": (_resolve_terror, _mutate_terror),
 }
 
 _PUBLIC_MECHANICS = frozenset({*_MECHANICS.keys(), "combat-attack"})
@@ -745,6 +880,95 @@ def _stage_transformation_chain(
         depends_on_step = step_id
 
 
+def _stage_affliction_roll(
+    steps: list[dict],
+    entity: str,
+    state: dict,
+    depends_on_step: int,
+    seed_cursor: _SeedCursor,
+) -> None:
+    """docs/design/08-afflictions.md: roll `1d12` against the twelve-row table -- repeatable, so
+    a duplicate draw is applied as-is rather than re-rolled (contrast with
+    `_stage_transformation_chain`'s unique-per-character rule). Records the row as a durable
+    `afflictions` entry (spec.md Assumptions) and spends the flat Trauma cost
+    (`AFFLICTION_TRAUMA_COST`, docs/design/03-rules.md section 5)."""
+    row = rules.roll_d100(sides=12, seed=seed_cursor.next())
+    _, key, _description = AFFLICTION_TABLE[row - 1]
+    step_id = len(steps)
+    mutations = [
+        {
+            "entity": entity,
+            "field": "afflictions",
+            "op": "append",
+            "value": key,
+            "produced_by_step": step_id,
+        },
+        {
+            "entity": entity,
+            "field": "trauma",
+            "op": "-",
+            "value": AFFLICTION_TRAUMA_COST,
+            "produced_by_step": step_id,
+        },
+    ]
+    steps.append(
+        {
+            "step_id": step_id,
+            "mechanic": "affliction",
+            "roll": {"roll": row, "row": row, "key": key},
+            "mutations": mutations,
+            "depends_on": [depends_on_step],
+            "inputs": None,
+        }
+    )
+    for mutation in mutations:
+        _apply_mutation(state, mutation)
+
+
+def _stage_trauma_test_chain(
+    steps: list[dict],
+    entity: str,
+    state: dict,
+    points: list[int],
+    skill: str,
+    depends_on_step: int,
+    seed_cursor: _SeedCursor,
+) -> None:
+    """docs/design/08-afflictions.md: one pass/fail `trauma-test` per point in `points` (already
+    computed by the caller as the integer Trauma values strictly past the floor a mutation
+    caused Trauma to pass through or land on, in gained order). Each test's own skill is the
+    already-decided caller input carried on the triggering mutation (`trauma_test_skill`, FR-007)
+    -- this function does not choose it. A failed test stages an affliction roll
+    (`_stage_affliction_roll`); only pass/fail matters, no Wyrd-die degree is read
+    (docs/design/08-afflictions.md "The test")."""
+    for _point in points:
+        skill_value = state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
+        roll_data = _resolve_test(
+            actor=entity,
+            mechanic="trauma-test",
+            skill_value=skill_value,
+            difficulty="average",
+            declaration_bonus=0,
+            seed=seed_cursor.next(),
+        )
+        roll_data["skill"] = skill
+        step_id = len(steps)
+        steps.append(
+            {
+                "step_id": step_id,
+                "mechanic": "trauma-test",
+                "roll": roll_data,
+                "mutations": [],
+                "depends_on": [depends_on_step],
+                "inputs": None,
+            }
+        )
+        depends_on_step = step_id
+        if roll_data["outcome"] != "success":
+            _stage_affliction_roll(steps, entity, state, step_id, seed_cursor)
+            depends_on_step = steps[-1]["step_id"]
+
+
 def _cascade_from_mutation(
     steps: list[dict],
     mutation: dict,
@@ -752,21 +976,34 @@ def _cascade_from_mutation(
     seed_cursor: _SeedCursor,
 ) -> None:
     """The threshold-crossing trigger (FR-002): after a mutation is staged, check its field
-    against the one rule this feature registers -- `taint` crossing a multiple of 3. Applies the
+    against the two rules this feature registers -- `taint` crossing a multiple of 3, and
+    `trauma` crossing past the floor (`TRAUMA_FLOOR`, docs/design/08-afflictions.md). Applies the
     mutation to the in-memory scratch state first, so `before`/`after` (and any further cascade)
     reflect it, without writing to disk."""
     field = mutation["field"]
     entity = mutation["entity"]
     state = state_by_entity.get(entity)
-    if state is None or field != "taint":
+    if state is None or field not in ("taint", "trauma"):
         return
     before = _get_nested(state, field)
     _apply_mutation(state, mutation)
     after = _get_nested(state, field)
-    threshold = _crossed_threshold(before, after, TAINT_THRESHOLD_SPACING)
-    if threshold is not None:
-        _stage_transformation_chain(
-            steps, entity, state, threshold, mutation["produced_by_step"], seed_cursor
+    if field == "taint":
+        threshold = _crossed_threshold(before, after, TAINT_THRESHOLD_SPACING)
+        if threshold is not None:
+            _stage_transformation_chain(
+                steps, entity, state, threshold, mutation["produced_by_step"], seed_cursor
+            )
+        return
+    # field == "trauma": one test per integer point strictly past the floor that this mutation
+    # caused Trauma to pass through or land on, tested in gained order (docs/design/08-
+    # afflictions.md "If a single event adds more than one point at once ... each point crossed
+    # past the floor is its own further point").
+    points = [point for point in range(before + 1, after + 1) if point > TRAUMA_FLOOR]
+    if points:
+        skill = mutation.get("trauma_test_skill")
+        _stage_trauma_test_chain(
+            steps, entity, state, points, skill, mutation["produced_by_step"], seed_cursor
         )
 
 
