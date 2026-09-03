@@ -823,7 +823,12 @@ def _stage_transformation_chain(
     character within this cascade; consume Taint equal to severity, gain the same in Dread; on
     the character's first-ever Transformation, also set the hidden threshold once. If Taint is
     still at or over `threshold` afterward, re-roll (a different row) and repeat -- bounded by
-    the table's own 6 rows (FR-008, tools/check_transformation.py's termination proof)."""
+    the table's own 6 rows (FR-008, tools/check_transformation.py's termination proof).
+
+    Each Transformation is also recorded on `transformations`, and once that count reaches the
+    character's `hidden_threshold`, the character is lost (docs/design/07-transformations.md "The
+    hidden threshold", docs/design/22-state.md's invariants) -- `status` is set to `"lost"` on the
+    same step and the re-roll loop stops, even if Taint still calls for another roll."""
     taken_rows: set[int] = set()
     while True:
         while True:
@@ -851,6 +856,13 @@ def _stage_transformation_chain(
                 "value": severity,
                 "produced_by_step": step_id,
             },
+            {
+                "entity": entity,
+                "field": "transformations",
+                "op": "append",
+                "value": row,
+                "produced_by_step": step_id,
+            },
         ]
         if is_first_ever:
             hidden_threshold = rules.roll_d100(sides=6, seed=seed_cursor.next()) + 2
@@ -860,6 +872,20 @@ def _stage_transformation_chain(
                     "field": "hidden_threshold",
                     "op": "set",
                     "value": hidden_threshold,
+                    "produced_by_step": step_id,
+                }
+            )
+        hidden_threshold_now = hidden_threshold if is_first_ever else state.get("hidden_threshold")
+        is_lost = hidden_threshold_now is not None and (
+            len(state.get("transformations", [])) + 1 >= hidden_threshold_now
+        )
+        if is_lost:
+            mutations.append(
+                {
+                    "entity": entity,
+                    "field": "status",
+                    "op": "set",
+                    "value": "lost",
                     "produced_by_step": step_id,
                 }
             )
@@ -875,6 +901,8 @@ def _stage_transformation_chain(
         )
         for mutation in mutations:
             _apply_mutation(state, mutation)
+        if is_lost:
+            return
         if _get_nested(state, "taint") < threshold:
             return
         depends_on_step = step_id

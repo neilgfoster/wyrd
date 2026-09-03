@@ -287,6 +287,13 @@ class TransformationCascadeTest(ResolutionTestBase):
                 },
                 {
                     "entity": str(self.path),
+                    "field": "transformations",
+                    "op": "append",
+                    "value": 5,
+                    "produced_by_step": 1,
+                },
+                {
+                    "entity": str(self.path),
                     "field": "hidden_threshold",
                     "op": "set",
                     "value": 5,
@@ -355,6 +362,119 @@ class MultiRerollTransformationTest(ResolutionTestBase):
         resolution.commit(result["proposal_id"])
         after = self.load()
         self.assertLess(after["taint"], resolution.TAINT_THRESHOLD_SPACING)
+
+
+class TransformationHiddenThresholdLossTest(unittest.TestCase):
+    """docs/design/07-transformations.md "The hidden threshold", docs/design/22-state.md's
+    invariants: a character's `transformations` count reaching `hidden_threshold` sets
+    `status: lost` on the same step, and stops the re-roll loop even if Taint would otherwise
+    call for another Transformation."""
+
+    def test_player_character_reaching_threshold_is_staged_lost(self):
+        steps: list[dict] = []
+        state = {"taint": 0, "dread": 0, "transformations": [1, 2, 3, 4], "hidden_threshold": 5}
+        resolution._stage_transformation_chain(
+            steps,
+            entity="pc",
+            state=state,
+            threshold=resolution.TAINT_THRESHOLD_SPACING,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=5),
+        )
+        self.assertEqual(len(steps), 1)
+        mutations = steps[0]["mutations"]
+        fields = {mutation["field"]: mutation for mutation in mutations}
+        self.assertIn("transformations", fields)
+        self.assertEqual(fields["transformations"]["op"], "append")
+        self.assertIn("status", fields)
+        self.assertEqual(
+            fields["status"],
+            {
+                "entity": "pc",
+                "field": "status",
+                "op": "set",
+                "value": "lost",
+                "produced_by_step": 0,
+            },
+        )
+        self.assertNotIn("fate", fields)
+        self.assertEqual(state["status"], "lost")
+        self.assertEqual(len(state["transformations"]), 5)
+
+    def test_companion_reaching_threshold_is_staged_lost_without_extra_machinery(self):
+        steps: list[dict] = []
+        state = {
+            "taint": 0,
+            "dread": 0,
+            "transformations": [1, 2],
+            "hidden_threshold": 3,
+            "role": "companion",
+            "status": "with-party",
+        }
+        resolution._stage_transformation_chain(
+            steps,
+            entity="companion-1",
+            state=state,
+            threshold=resolution.TAINT_THRESHOLD_SPACING,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=5),
+        )
+        self.assertEqual(len(steps), 1)
+        fields = [mutation["field"] for mutation in steps[0]["mutations"]]
+        # exactly taint, dread, transformations, status -- nothing player-character-only
+        self.assertEqual(set(fields), {"taint", "dread", "transformations", "status"})
+        self.assertEqual(state["status"], "lost")
+
+    def test_below_threshold_stages_no_loss(self):
+        steps: list[dict] = []
+        state = {"taint": 0, "dread": 0, "transformations": [1], "hidden_threshold": 5}
+        resolution._stage_transformation_chain(
+            steps,
+            entity="pc",
+            state=state,
+            threshold=resolution.TAINT_THRESHOLD_SPACING,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=5),
+        )
+        fields = [mutation["field"] for mutation in steps[0]["mutations"]]
+        self.assertNotIn("status", fields)
+        self.assertNotIn("status", state)
+
+    def test_reaching_threshold_stops_the_reroll_loop(self):
+        # Taint 5 stays >= threshold 3 after each -1 severity Transformation, which would
+        # otherwise keep the re-roll loop spinning -- reaching hidden_threshold must still stop
+        # it after exactly one more Transformation.
+        steps: list[dict] = []
+        state = {"taint": 5, "dread": 0, "transformations": [1], "hidden_threshold": 2}
+        resolution._stage_transformation_chain(
+            steps,
+            entity="pc",
+            state=state,
+            threshold=3,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=5),
+        )
+        self.assertEqual(len(steps), 1)
+        self.assertEqual(state["status"], "lost")
+
+    def test_hidden_threshold_field_never_written_again_on_a_loss_step(self):
+        steps: list[dict] = []
+        state = {"taint": 0, "dread": 0, "transformations": [1, 2, 3, 4], "hidden_threshold": 5}
+        resolution._stage_transformation_chain(
+            steps,
+            entity="pc",
+            state=state,
+            threshold=resolution.TAINT_THRESHOLD_SPACING,
+            depends_on_step=0,
+            seed_cursor=resolution._SeedCursor(seed=5),
+        )
+        for step in steps:
+            for mutation in step["mutations"]:
+                self.assertNotEqual(
+                    mutation["field"],
+                    "hidden_threshold",
+                    "hidden_threshold must not be written again once already set",
+                )
 
 
 class CombatChainTest(unittest.TestCase):
