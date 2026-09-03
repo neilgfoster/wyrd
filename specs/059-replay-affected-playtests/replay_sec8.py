@@ -1,6 +1,7 @@
 """Re-play sec8's blocked Resolve exercise, now that ADR 0043 defines gain/cap. Continuing
 Senna's arc where sec8 left her: Taint 1 (after the Bargain + ordinary Exposure). Fresh real
 rolls, seeded 20260840, disclosed in full."""
+
 import random
 
 rng = random.Random(20260840)

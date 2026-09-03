@@ -46,9 +46,9 @@ runaway above it, rather than asserting the boundary is exactly 5/6.
 Run: python3 tools/check_affliction.py
 """
 
-FLOOR = 6   # first Trauma value at which a further point is tested (03-rules.md s5)
-DROP = 6    # Trauma lost on a failed test (03-rules.md s5)
-CAP = 400   # truncation for the numeric check; large enough that clipping is negligible below 5/6
+FLOOR = 6  # first Trauma value at which a further point is tested (03-rules.md s5)
+DROP = 6  # Trauma lost on a failed test (03-rules.md s5)
+CAP = 400  # truncation for the numeric check; large enough that clipping is negligible below 5/6
 ITERATIONS = 20000  # lazy power iteration steps -- see stationary_affliction_rate
 
 CLOSED_FORM_RATE = 1.0 / DROP
@@ -93,8 +93,10 @@ def stationary_affliction_rate(skill: float, cap: int = CAP) -> float:
 
 
 def main() -> None:
-    print("Below the 5/6 divergence point, the numeric chain must match the "
-          f"closed form (1/{DROP} = {CLOSED_FORM_RATE:.4f}):\n")
+    print(
+        "Below the 5/6 divergence point, the numeric chain must match the "
+        f"closed form (1/{DROP} = {CLOSED_FORM_RATE:.4f}):\n"
+    )
     for skill in SKILLS_BELOW_THRESHOLD:
         numeric = stationary_affliction_rate(skill)
         print(f"  skill {skill:>4.0%}: numeric rate {numeric:.4f}")
@@ -103,37 +105,45 @@ def main() -> None:
             f"closed_form={CLOSED_FORM_RATE}"
         )
 
-    print(f"\nAbove {DIVERGENCE_SKILL:.0%} the process has no stationary "
-          "distribution -- Trauma drifts upward instead of sawtoothing. A capped "
-          "simulation should show mass still piling up at the cap rather than "
-          "settling:")
+    print(
+        f"\nAbove {DIVERGENCE_SKILL:.0%} the process has no stationary "
+        "distribution -- Trauma drifts upward instead of sawtoothing. A capped "
+        "simulation should show mass still piling up at the cap rather than "
+        "settling:"
+    )
     small_cap = 120
     tail_mass = stationary_pi_tail_mass(SKILL_ABOVE_THRESHOLD, small_cap)
-    print(f"  skill {SKILL_ABOVE_THRESHOLD:.0%}, cap {small_cap}: "
-          f"{tail_mass:.1%} of probability mass sits in the top 10% of the cap")
+    print(
+        f"  skill {SKILL_ABOVE_THRESHOLD:.0%}, cap {small_cap}: "
+        f"{tail_mass:.1%} of probability mass sits in the top 10% of the cap"
+    )
     assert tail_mass > 0.2, (
         "expected substantial mass piled at the truncation cap above the "
         "divergence point, found none -- the runaway is not showing up"
     )
 
-    print(f"\nCadence at the closed-form rate (1/{DROP} per Trauma-adding event, "
-          "valid for skill < 83%), across a spread of event rates:\n")
-    print(f"{'events/session':>15} {'sessions/affliction':>20} "
-          f"{'per chronicle-year':>19}")
+    print(
+        f"\nCadence at the closed-form rate (1/{DROP} per Trauma-adding event, "
+        "valid for skill < 83%), across a spread of event rates:\n"
+    )
+    print(f"{'events/session':>15} {'sessions/affliction':>20} {'per chronicle-year':>19}")
     cadences = []
     for events in EVENTS_PER_SESSION:
         afflictions_per_session = CLOSED_FORM_RATE * events
         sessions_per_affliction = 1.0 / afflictions_per_session
         per_year = SESSIONS_PER_YEAR / sessions_per_affliction
         cadences.append(sessions_per_affliction)
-        print(f"{events:>15.2f} {sessions_per_affliction:>20.1f} "
-              f"{per_year:>19.2f}")
+        print(f"{events:>15.2f} {sessions_per_affliction:>20.1f} {per_year:>19.2f}")
 
     assert min(cadences) > 1.0, "some event rate breaks an Affliction more than once a session"
-    assert max(cadences) < SESSIONS_PER_YEAR * 10, "some event rate goes a decade+ between Afflictions"
-    print("\nAcross every scanned event rate, the cadence stays between "
-          "'more than once a session' and 'once a decade' -- both explicit "
-          "findings the design document states rather than assumes.")
+    assert max(cadences) < SESSIONS_PER_YEAR * 10, (
+        "some event rate goes a decade+ between Afflictions"
+    )
+    print(
+        "\nAcross every scanned event rate, the cadence stays between "
+        "'more than once a session' and 'once a decade' -- both explicit "
+        "findings the design document states rather than assumes."
+    )
 
 
 def stationary_pi_tail_mass(skill: float, cap: int) -> float:

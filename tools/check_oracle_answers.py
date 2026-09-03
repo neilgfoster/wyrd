@@ -80,9 +80,7 @@ def main() -> int:
             print(f" - {f}")
         return 1
 
-    print(
-        "\nAll bands check out: row widths cover 1-100 exactly, and match the claimed odds."
-    )
+    print("\nAll bands check out: row widths cover 1-100 exactly, and match the claimed odds.")
     return 0
 
 

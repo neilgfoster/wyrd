@@ -12,8 +12,8 @@ Everything below is derived from numbers already merged, not invented here:
    (docs/design/03-rules.md section 2).
 2. **A starting character has Stamina 6** (docs/design/11-character-creation.md), and a critical
    happens when damage takes a combatant below 0 (docs/design/05-criticals.md).
-3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (docs/design/03-rules.md section 1,
-   docs/design/10-the-character.md).
+3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5
+   (docs/design/03-rules.md section 1, docs/design/10-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
    (docs/design/03-rules.md section 1, ADR 0016).
 5. **The k-th body is worth 1/k**, so a party of p bodies has effective size H(p), and both sides
@@ -39,7 +39,7 @@ Run: python3 specs/017-adversary-model/check_adversary.py
 
 import math
 from fractions import Fraction
-from functools import lru_cache
+from functools import cache
 from itertools import product
 
 # ---------------------------------------------------------------------------
@@ -47,27 +47,27 @@ from itertools import product
 # ---------------------------------------------------------------------------
 
 ARMOUR = {"none": [], "light": [3], "modest": [6], "heavy": [6, 6]}
-ARMOUR_RANKS = ["none", "light", "modest", "heavy"]      # docs/design/03-rules.md section 2
+ARMOUR_RANKS = ["none", "light", "modest", "heavy"]  # docs/design/03-rules.md section 2
 MIN_THROUGH = 1
 WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 ORDINARY_WEAPON = [6]
 ORDINARY_ARMOUR = "modest"
 
-DAMAGE_TYPES = ["slashing", "piercing", "blunt", "searing"]   # ADR 0022, closed
+DAMAGE_TYPES = ["slashing", "piercing", "blunt", "searing"]  # ADR 0022, closed
 UNTRAINED = 10
 SKILL_OPENS_AT = 25
-SKILL_STEP = 5                     # docs/design/03-rules.md section 6: an advance is +5
+SKILL_STEP = 5  # docs/design/03-rules.md section 6: an advance is +5
 STARTING_STAMINA = 6
 
-LADDER = [20, 0, -10, -20, -30, -40]     # docs/design/03-rules.md section 1
-LADDER_TOP = max(LADDER)                 # +20, the ladder's whole positive extent
+LADDER = [20, 0, -10, -20, -30, -40]  # docs/design/03-rules.md section 1
+LADDER_TOP = max(LADDER)  # +20, the ladder's whole positive extent
 
 REAL_SKILLS = [25, 35, 45, 55]
 # Party sizes and written_for values a chronicle actually produces. A solo engine's party is the
 # player character plus companions; published content is written for four to six.
 REAL_PARTIES = [1, 2, 3, 4, 5]
 REAL_WRITTEN_FOR = [4, 6]
-MAX_BODIES = 6                     # the domain the published table covers
+MAX_BODIES = 6  # the domain the published table covers
 DANGERS = [1, 2, 3, 4, 5, 6]
 
 # The crowd rule's own three constants (ADR 0019), restated so this script can falsify them
@@ -147,7 +147,7 @@ def degrees(skill: int, roll: int) -> int:
     return skill // 10 - roll // 10
 
 
-@lru_cache(maxsize=None)
+@cache
 def p_opposed_win(actor: int, resister: int) -> Fraction:
     """ADR 0016's successful-actor gate, ties to the resisting side."""
     wins = 0
@@ -188,12 +188,17 @@ def parse_damage(expr: str) -> list[int]:
 # ---------------------------------------------------------------------------
 
 
-@lru_cache(maxsize=None)
-def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
-                  model_name: str, opponent_stamina: int = STARTING_STAMINA,
-                  opponent_armour: str = ORDINARY_ARMOUR,
-                  opponent_damage: str = "1d6",
-                  max_rounds: int = 60):
+@cache
+def fight_outcome(
+    player_stamina: int,
+    player_skill: int,
+    opponent_skill: int,
+    model_name: str,
+    opponent_stamina: int = STARTING_STAMINA,
+    opponent_armour: str = ORDINARY_ARMOUR,
+    opponent_damage: str = "1d6",
+    max_rounds: int = 60,
+):
     """Exact round-by-round resolution of one fight.
 
     Returns (p_player_dropped, p_opponent_dropped, expected_rounds, below_zero), where
@@ -237,13 +242,17 @@ def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
                     continue
                 sub = {(ps, os_): p * pb}
                 if player_lands:
-                    sub = {(a, b - d): q * dp
-                           for (a, b), q in sub.items()
-                           for d, dp in to_opponent.items()}
+                    sub = {
+                        (a, b - d): q * dp
+                        for (a, b), q in sub.items()
+                        for d, dp in to_opponent.items()
+                    }
                 if opponent_lands:
-                    sub = {(a - d, b): q * dp
-                           for (a, b), q in sub.items()
-                           for d, dp in to_player.items()}
+                    sub = {
+                        (a - d, b): q * dp
+                        for (a, b), q in sub.items()
+                        for d, dp in to_player.items()
+                    }
                 for (a, b), q in sub.items():
                     if a < 0:
                         player_dropped += q
@@ -268,7 +277,7 @@ def fight_outcome(player_stamina: int, player_skill: int, opponent_skill: int,
 # ---------------------------------------------------------------------------
 
 
-@lru_cache(maxsize=None)
+@cache
 def H(p: int) -> Fraction:
     """Effective size of a party of p bodies: the k-th body is worth 1/k (ADR 0024)."""
     return sum((Fraction(1, k) for k in range(1, p + 1)), Fraction(0))
@@ -283,9 +292,7 @@ def ratio(party: int, written_for: int) -> Fraction:
 
 def achievable_ratio_range(max_bodies: int = MAX_BODIES) -> tuple[Fraction, Fraction]:
     """The curve's input domain, computed before the curve is fitted to it."""
-    values = [ratio(p, w)
-              for p in range(1, max_bodies + 1)
-              for w in range(1, max_bodies + 1)]
+    values = [ratio(p, w) for p in range(1, max_bodies + 1) for w in range(1, max_bodies + 1)]
     return min(values), max(values)
 
 
@@ -365,15 +372,27 @@ def qualifies_as_crowd(block: dict, character_skill: int, skill: str) -> tuple[b
 
 
 MOB_BODY = {
-    "id": "mob-body", "name": "a body in the crowd",
-    "baseline": 10, "stamina_max": 1, "armour": "none",
-    "skills": {"brawl": 20}, "damage": "1d3", "damage_type": "blunt", "ranged": False,
+    "id": "mob-body",
+    "name": "a body in the crowd",
+    "baseline": 10,
+    "stamina_max": 1,
+    "armour": "none",
+    "skills": {"brawl": 20},
+    "damage": "1d3",
+    "damage_type": "blunt",
+    "ranged": False,
 }
 
 NEMESIS = {
-    "id": "the-hunter", "name": "a named antagonist",
-    "baseline": 35, "stamina_max": 7, "armour": "modest",
-    "skills": {"blade": 55}, "damage": "1d6", "damage_type": "slashing", "ranged": False,
+    "id": "the-hunter",
+    "name": "a named antagonist",
+    "baseline": 35,
+    "stamina_max": 7,
+    "armour": "modest",
+    "skills": {"blade": 55},
+    "damage": "1d6",
+    "damage_type": "slashing",
+    "ranged": False,
     "traits": [{"name": "Unhurried", "effect": {"difficulty": -10}}],
 }
 
@@ -399,9 +418,11 @@ def main() -> int:
     print(f"  bodies 1..{MAX_BODIES} against written_for 1..{MAX_BODIES}")
     print(f"  ratio runs {num(r_min, 4)} .. {num(r_max, 4)}")
     print(f"  log2 runs  {math.log2(float(r_min)):+.4f} .. {math.log2(float(r_max)):+.4f}")
-    check("the range is symmetric in log space", abs(math.log2(float(r_min))
-                                                     + math.log2(float(r_max))) < 1e-12,
-          f"{math.log2(float(r_min)):+.6f} vs {math.log2(float(r_max)):+.6f}")
+    check(
+        "the range is symmetric in log space",
+        abs(math.log2(float(r_min)) + math.log2(float(r_max))) < 1e-12,
+        f"{math.log2(float(r_min)):+.6f} vs {math.log2(float(r_max)):+.6f}",
+    )
     print("  The range is exactly antisymmetric, because swapping party and written_for inverts")
     print("  the ratio. That is what lets one coefficient serve both directions.")
     print()
@@ -410,33 +431,56 @@ def main() -> int:
     print("=" * 78)
     print("T006  The coefficient, fitted rather than chosen")
     print("=" * 78)
-    print(f"  Require the extreme of the computed range to land on the ladder's top rung:")
+    print("  Require the extreme of the computed range to land on the ladder's top rung:")
     print(f"    coefficient = {LADDER_TOP} / log2({num(r_max, 4)}) = {COEFFICIENT:.4f}")
-    print(f"  At the extreme: {COEFFICIENT * math.log2(float(r_max)):+.4f} -> "
-          f"{adjustment(MAX_BODIES, 1):+d}")
-    check("the fitted coefficient lands the extreme exactly on the ladder top",
-          adjustment(MAX_BODIES, 1) == LADDER_TOP, str(adjustment(MAX_BODIES, 1)))
-    check("and its mirror on the bottom of the same span",
-          adjustment(1, MAX_BODIES) == -LADDER_TOP, str(adjustment(1, MAX_BODIES)))
+    print(
+        f"  At the extreme: {COEFFICIENT * math.log2(float(r_max)):+.4f} -> "
+        f"{adjustment(MAX_BODIES, 1):+d}"
+    )
+    check(
+        "the fitted coefficient lands the extreme exactly on the ladder top",
+        adjustment(MAX_BODIES, 1) == LADDER_TOP,
+        str(adjustment(MAX_BODIES, 1)),
+    )
+    check(
+        "and its mirror on the bottom of the same span",
+        adjustment(1, MAX_BODIES) == -LADDER_TOP,
+        str(adjustment(1, MAX_BODIES)),
+    )
 
     print()
     print(f"  The design document prints {PUBLISHED_COEFFICIENT}, not {COEFFICIENT:.4f}. A GM")
     print("  applies the printed number, so the printed number must reproduce the printed table.")
     mismatches = [
-        (p_, w, adjustment(p_, w),
-         max(-LADDER_TOP, min(LADDER_TOP,
-             round_to(PUBLISHED_COEFFICIENT * math.log2(float(ratio(p_, w))), SKILL_STEP))))
-        for p_ in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1)
+        (
+            p_,
+            w,
+            adjustment(p_, w),
+            max(
+                -LADDER_TOP,
+                min(
+                    LADDER_TOP,
+                    round_to(PUBLISHED_COEFFICIENT * math.log2(float(ratio(p_, w))), SKILL_STEP),
+                ),
+            ),
+        )
+        for p_ in range(1, MAX_BODIES + 1)
+        for w in range(1, MAX_BODIES + 1)
     ]
     differing = [m for m in mismatches if m[2] != m[3]]
     print(f"  cells where they differ: {len(differing)}")
-    check("the published coefficient reproduces the published table exactly",
-          not differing, str(differing[:3]))
+    check(
+        "the published coefficient reproduces the published table exactly",
+        not differing,
+        str(differing[:3]),
+    )
     # And it must still land the extreme on the rung, or the fit was rounded away.
-    published_extreme = round_to(
-        PUBLISHED_COEFFICIENT * math.log2(float(r_max)), SKILL_STEP)
-    check("the published coefficient still lands the extreme on the ladder top",
-          min(LADDER_TOP, published_extreme) == LADDER_TOP, str(published_extreme))
+    published_extreme = round_to(PUBLISHED_COEFFICIENT * math.log2(float(r_max)), SKILL_STEP)
+    check(
+        "the published coefficient still lands the extreme on the ladder top",
+        min(LADDER_TOP, published_extreme) == LADDER_TOP,
+        str(published_extreme),
+    )
     print()
 
     # -- T008: granularity --------------------------------------------------
@@ -444,31 +488,55 @@ def main() -> int:
     print("T008  Rounding granularity: the advance step against the ladder step")
     print("=" * 78)
     for step in (SKILL_STEP, 10):
-        table = {(p, w): adjustment(p, w, step)
-                 for p in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1)}
+        table = {
+            (p, w): adjustment(p, w, step)
+            for p in range(1, MAX_BODIES + 1)
+            for w in range(1, MAX_BODIES + 1)
+        }
         identity_ok = all(table[(p, p)] == 0 for p in range(1, MAX_BODIES + 1))
-        monotone_ok = all(table[(p, w)] <= table[(p + 1, w)]
-                          for p in range(1, MAX_BODIES) for w in range(1, MAX_BODIES + 1))
-        antisym_ok = all(table[(p, w)] == -table[(w, p)]
-                         for p in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1))
+        monotone_ok = all(
+            table[(p, w)] <= table[(p + 1, w)]
+            for p in range(1, MAX_BODIES)
+            for w in range(1, MAX_BODIES + 1)
+        )
+        antisym_ok = all(
+            table[(p, w)] == -table[(w, p)]
+            for p in range(1, MAX_BODIES + 1)
+            for w in range(1, MAX_BODIES + 1)
+        )
         distinct = len(set(table.values()))
-        print(f"  step {step:>2}: identity {identity_ok}, monotone {monotone_ok}, "
-              f"antisymmetric {antisym_ok}, distinct values {distinct}")
+        print(
+            f"  step {step:>2}: identity {identity_ok}, monotone {monotone_ok}, "
+            f"antisymmetric {antisym_ok}, distinct values {distinct}"
+        )
     print()
     print("  Both preserve the identity case and monotonicity. The advance step wins on")
     print("  resolution -- 5 is the finest unit the engine moves a skill by at all, so an")
     print("  adjustment in 5s says nothing the engine cannot already express, and an")
     print("  adjustment in 10s throws away a rung the difficulty ladder itself uses.")
-    table = {(p, w): adjustment(p, w) for p in range(1, MAX_BODIES + 1)
-             for w in range(1, MAX_BODIES + 1)}
-    check("the published step preserves the identity case",
-          all(table[(p, p)] == 0 for p in range(1, MAX_BODIES + 1)))
-    check("the adjustment never rises as the party shrinks",
-          all(table[(p, w)] <= table[(p + 1, w)]
-              for p in range(1, MAX_BODIES) for w in range(1, MAX_BODIES + 1)))
-    check("the adjustment is antisymmetric under swapping party and written_for",
-          all(table[(p, w)] == -table[(w, p)]
-              for p in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1)))
+    table = {
+        (p, w): adjustment(p, w) for p in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1)
+    }
+    check(
+        "the published step preserves the identity case",
+        all(table[(p, p)] == 0 for p in range(1, MAX_BODIES + 1)),
+    )
+    check(
+        "the adjustment never rises as the party shrinks",
+        all(
+            table[(p, w)] <= table[(p + 1, w)]
+            for p in range(1, MAX_BODIES)
+            for w in range(1, MAX_BODIES + 1)
+        ),
+    )
+    check(
+        "the adjustment is antisymmetric under swapping party and written_for",
+        all(
+            table[(p, w)] == -table[(w, p)]
+            for p in range(1, MAX_BODIES + 1)
+            for w in range(1, MAX_BODIES + 1)
+        ),
+    )
 
     # -- T007 / the published table ----------------------------------------
     print("=" * 78)
@@ -479,10 +547,12 @@ def main() -> int:
         row = "".join(f"{adjustment(p, w):>+7d}" for w in range(1, MAX_BODIES + 1))
         print(f"   {p:>19}{row}")
     for p in range(1, MAX_BODIES + 1):
-        check(f"identity at {p} bodies is exactly +0", adjustment(p, p) == 0,
-              str(adjustment(p, p)))
-        check(f"identity at {p} bodies scales danger by exactly 1",
-              danger_effective(3, p, p) == 3, str(danger_effective(3, p, p)))
+        check(f"identity at {p} bodies is exactly +0", adjustment(p, p) == 0, str(adjustment(p, p)))
+        check(
+            f"identity at {p} bodies scales danger by exactly 1",
+            danger_effective(3, p, p) == 3,
+            str(danger_effective(3, p, p)),
+        )
     print()
     print("  The diagonal is +0 all the way down: content written for four, run by four bodies,")
     print("  meets opponents at their written percentages. That is the identity case ADR 0024")
@@ -495,10 +565,15 @@ def main() -> int:
     print("=" * 78)
     for party, wf in ((10, 1), (20, 1), (1, 10), (1, 20)):
         raw = raw_adjustment(party, wf)
-        print(f"  {party:>2} bodies vs written_for {wf:>2}: raw {raw:+6.2f} -> "
-              f"clipped {adjustment(party, wf):+d}")
-        check(f"the adjustment is clipped inside the ladder at {party} vs {wf}",
-              abs(adjustment(party, wf)) <= LADDER_TOP, str(adjustment(party, wf)))
+        print(
+            f"  {party:>2} bodies vs written_for {wf:>2}: raw {raw:+6.2f} -> "
+            f"clipped {adjustment(party, wf):+d}"
+        )
+        check(
+            f"the adjustment is clipped inside the ladder at {party} vs {wf}",
+            abs(adjustment(party, wf)) <= LADDER_TOP,
+            str(adjustment(party, wf)),
+        )
     print()
     print("  Outside the published table the raw value runs past the ladder, and it clips. The")
     print("  clip is symmetric at +/-20 rather than reaching the ladder's -40, because the")
@@ -511,7 +586,6 @@ def main() -> int:
     worst_high = None
     for p in range(1, MAX_BODIES + 1):
         for w in range(1, MAX_BODIES + 1):
-            adj = adjustment(p, w)
             for skill in REAL_SKILLS + [UNTRAINED, 10, 20, 70]:
                 got = adjusted_skill(skill, p, w)
                 if worst_low is None or got < worst_low:
@@ -521,9 +595,12 @@ def main() -> int:
     print(f"  adjusted skills across the domain run {worst_low} .. {worst_high}")
     check("no adjusted skill falls below 0", worst_low >= 0, str(worst_low))
     check("no adjusted skill exceeds 100", worst_high <= 100, str(worst_high))
-    unfloored = min(skill + adjustment(p, w)
-                    for p in range(1, MAX_BODIES + 1) for w in range(1, MAX_BODIES + 1)
-                    for skill in REAL_SKILLS + [UNTRAINED, 10, 20, 70])
+    unfloored = min(
+        skill + adjustment(p, w)
+        for p in range(1, MAX_BODIES + 1)
+        for w in range(1, MAX_BODIES + 1)
+        for skill in REAL_SKILLS + [UNTRAINED, 10, 20, 70]
+    )
     print(f"  before the floor they would run as low as {unfloored}")
     check("the floor is load-bearing rather than decorative", unfloored < 0, str(unfloored))
     print("  The floor is the live edge, and it is doing real work: an opponent already at the")
@@ -541,13 +618,23 @@ def main() -> int:
     print("  party  bodies   ratio  danger_eff   count   skill")
     for p in REAL_PARTIES:
         r = ratio(p, 4)
-        print(f"  {p:>5}  {p:>6}  {num(r):>6}  {num(danger_effective(3, p, 4)):>10}"
-              f"  {scaled_count(6, 3, p, 4):>6}  {adjusted_skill(45, p, 4):>5}")
-    check("the identity party runs the encounter exactly as written",
-          scaled_count(6, 3, 4, 4) == 6 and adjustment(4, 4) == 0)
-    check("a count of at least 1 never scales to 0",
-          all(scaled_count(1, d, p, w) >= 1
-              for d in DANGERS for p in REAL_PARTIES for w in REAL_WRITTEN_FOR))
+        print(
+            f"  {p:>5}  {p:>6}  {num(r):>6}  {num(danger_effective(3, p, 4)):>10}"
+            f"  {scaled_count(6, 3, p, 4):>6}  {adjusted_skill(45, p, 4):>5}"
+        )
+    check(
+        "the identity party runs the encounter exactly as written",
+        scaled_count(6, 3, 4, 4) == 6 and adjustment(4, 4) == 0,
+    )
+    check(
+        "a count of at least 1 never scales to 0",
+        all(
+            scaled_count(1, d, p, w) >= 1
+            for d in DANGERS
+            for p in REAL_PARTIES
+            for w in REAL_WRITTEN_FOR
+        ),
+    )
     print()
 
     # -- T012: the crowd lookup against the block ---------------------------
@@ -565,8 +652,11 @@ def main() -> int:
         got, why = qualifies_as_crowd(block, character_skill, skill)
         mark = "crowd" if got else "rolled"
         print(f"  {block['id']:>10} vs {character_skill:>3}% on {skill:<6} -> {mark:<6} ({why})")
-        check(f"{block['id']} vs {character_skill} on {skill} lands as expected",
-              got == expected, f"got {got}")
+        check(
+            f"{block['id']} vs {character_skill} on {skill} lands as expected",
+            got == expected,
+            f"got {got}",
+        )
     print()
     print("  The nemesis fails on stamina_max, the first test, before skill is even consulted --")
     print("  so the rule stays a lookup and never becomes a judgement about what an opponent is")
@@ -574,33 +664,45 @@ def main() -> int:
     print()
     print("  And the baseline is what makes the second row work. Asked for a skill the block")
     print("  does not list, the body tests at 10, not at some absent value the GM invents.")
-    check("an unlisted skill resolves to the baseline",
-          opponent_skill(MOB_BODY, "guile") == MOB_BODY["baseline"])
-    check("a listed skill is unaffected by the baseline",
-          opponent_skill(NEMESIS, "blade") == 55)
-    check("the baseline is not a floor under a listed skill",
-          opponent_skill(MOB_BODY, "brawl") == 20 and MOB_BODY["baseline"] == 10)
+    check(
+        "an unlisted skill resolves to the baseline",
+        opponent_skill(MOB_BODY, "guile") == MOB_BODY["baseline"],
+    )
+    check("a listed skill is unaffected by the baseline", opponent_skill(NEMESIS, "blade") == 55)
+    check(
+        "the baseline is not a floor under a listed skill",
+        opponent_skill(MOB_BODY, "brawl") == 20 and MOB_BODY["baseline"] == 10,
+    )
     print()
 
     # -- T011: a full exchange ----------------------------------------------
     print("=" * 78)
     print("T011  A complete exchange against a written opponent")
     print("=" * 78)
-    print(f"  {NEMESIS['name']}: baseline {NEMESIS['baseline']}%, blade "
-          f"{NEMESIS['skills']['blade']}%, Stamina {NEMESIS['stamina_max']}, "
-          f"{NEMESIS['armour']} armour, {NEMESIS['damage']} {NEMESIS['damage_type']}")
+    print(
+        f"  {NEMESIS['name']}: baseline {NEMESIS['baseline']}%, blade "
+        f"{NEMESIS['skills']['blade']}%, Stamina {NEMESIS['stamina_max']}, "
+        f"{NEMESIS['armour']} armour, {NEMESIS['damage']} {NEMESIS['damage_type']}"
+    )
     print()
     print("  model     character   p(character drops)  p(opponent drops)   rounds")
     for model_name, _ in HIT_MODELS:
         for skill in REAL_SKILLS:
-            pd, od, rounds, _ = fight_outcome(STARTING_STAMINA, skill,
-                                              NEMESIS["skills"]["blade"], model_name,
-                                              NEMESIS["stamina_max"], NEMESIS["armour"],
-                                              NEMESIS["damage"])
-            print(f"  {model_name:<9} {skill:>7}%  {pct(pd):>18}  {pct(od):>17}"
-                  f"  {num(rounds):>7}")
-            check(f"the exchange resolves under {model_name} at {skill}",
-                  pd + od > Fraction(99, 100), num(pd + od, 4))
+            pd, od, rounds, _ = fight_outcome(
+                STARTING_STAMINA,
+                skill,
+                NEMESIS["skills"]["blade"],
+                model_name,
+                NEMESIS["stamina_max"],
+                NEMESIS["armour"],
+                NEMESIS["damage"],
+            )
+            print(f"  {model_name:<9} {skill:>7}%  {pct(pd):>18}  {pct(od):>17}  {num(rounds):>7}")
+            check(
+                f"the exchange resolves under {model_name} at {skill}",
+                pd + od > Fraction(99, 100),
+                num(pd + od, 4),
+            )
     print()
     print("  Every field the exchange consumed came off the block: the skill it resisted with,")
     print("  the armour that subtracted, the Stamina it had to lose, and the dice its own blows")
@@ -608,22 +710,45 @@ def main() -> int:
     print()
 
     # The damage field has to change the answer, or the fight is not reading it.
-    base = fight_outcome(STARTING_STAMINA, 45, NEMESIS["skills"]["blade"], "mapped",
-                         NEMESIS["stamina_max"], NEMESIS["armour"], "1d6")
-    heavier = fight_outcome(STARTING_STAMINA, 45, NEMESIS["skills"]["blade"], "mapped",
-                            NEMESIS["stamina_max"], NEMESIS["armour"], "2d6")
+    base = fight_outcome(
+        STARTING_STAMINA,
+        45,
+        NEMESIS["skills"]["blade"],
+        "mapped",
+        NEMESIS["stamina_max"],
+        NEMESIS["armour"],
+        "1d6",
+    )
+    heavier = fight_outcome(
+        STARTING_STAMINA,
+        45,
+        NEMESIS["skills"]["blade"],
+        "mapped",
+        NEMESIS["stamina_max"],
+        NEMESIS["armour"],
+        "2d6",
+    )
     print(f"  the same opponent swinging 1d6: character drops {pct(base[0]).strip()}")
     print(f"                        and 2d6: character drops {pct(heavier[0]).strip()}")
-    check("the block's declared damage changes the outcome", heavier[0] > base[0],
-          f"{pct(base[0]).strip()} vs {pct(heavier[0]).strip()}")
+    check(
+        "the block's declared damage changes the outcome",
+        heavier[0] > base[0],
+        f"{pct(base[0]).strip()} vs {pct(heavier[0]).strip()}",
+    )
     print()
 
     # -- The critical the damage type selects -------------------------------
     print("  The critical, when the character wins: 1d6 + points below zero, on the table for")
     print(f"  the block's damage type ({NEMESIS['damage_type']}).")
-    _, od, _, below = fight_outcome(STARTING_STAMINA, 55, NEMESIS["skills"]["blade"],
-                                    "mapped", NEMESIS["stamina_max"], NEMESIS["armour"],
-                                    NEMESIS["damage"])
+    _, od, _, below = fight_outcome(
+        STARTING_STAMINA,
+        55,
+        NEMESIS["skills"]["blade"],
+        "mapped",
+        NEMESIS["stamina_max"],
+        NEMESIS["armour"],
+        NEMESIS["damage"],
+    )
     totals: dict[int, Fraction] = {}
     for points, p_points in below.items():
         for die in range(1, CRITICAL_DIE + 1):
@@ -632,12 +757,21 @@ def main() -> int:
     mass = sum(totals.values(), Fraction(0))
     expected = sum((k * v for k, v in totals.items()), Fraction(0)) / mass
     print(f"  totals run {min(totals)} to {max(totals)}, mean {num(expected)}")
-    check("every critical total reaches the table's first row",
-          min(totals) >= CRITICAL_FIRST_ROW, str(min(totals)))
-    check("the critical mass equals the chance the opponent dropped",
-          mass == od, f"{num(mass, 4)} vs {num(od, 4)}")
-    check("the damage type names a table that exists",
-          NEMESIS["damage_type"] in DAMAGE_TYPES, NEMESIS["damage_type"])
+    check(
+        "every critical total reaches the table's first row",
+        min(totals) >= CRITICAL_FIRST_ROW,
+        str(min(totals)),
+    )
+    check(
+        "the critical mass equals the chance the opponent dropped",
+        mass == od,
+        f"{num(mass, 4)} vs {num(od, 4)}",
+    )
+    check(
+        "the damage type names a table that exists",
+        NEMESIS["damage_type"] in DAMAGE_TYPES,
+        NEMESIS["damage_type"],
+    )
     print("  The lowest reachable total is the table's own first row, which is why that row")
     print("  starts at 2 rather than 1: a blow that drops someone is at least 1 point below")
     print("  zero, and the die adds at least 1 more.")
@@ -666,27 +800,35 @@ def main() -> int:
     adv_low = fight_outcome(2, 45, 25, "mapped")[0]
 
     published = {
-        "one blow drops a Stamina-1 unarmoured body 67% to 100% of the time":
-            (pct(min(band)).strip(), pct(max(band)).strip()) == ("66.7%", "100.0%"),
-        "the same body in the lightest armour drops as low as 11%":
-            pct(light_worst).strip() == " 11.1%".strip(),
-        "a body of Stamina 2 drops as low as 33%":
-            pct(s2_worst).strip() == " 33.3%".strip(),
-        "the free clear is worth 1.25x to 1.82x rolling it out":
-            (f"{min(discounts):.2f}", f"{max(discounts):.2f}") == ("1.25", "1.82"),
-        "a character drops 14.8% of the time at full Stamina against a 20-point advantage":
-            pct(adv_full).strip() == "14.8%",
-        "and 48.6% at Stamina 2":
-            pct(adv_low).strip() == "48.6%",
+        "one blow drops a Stamina-1 unarmoured body 67% to 100% of the time": (
+            pct(min(band)).strip(),
+            pct(max(band)).strip(),
+        )
+        == ("66.7%", "100.0%"),
+        "the same body in the lightest armour drops as low as 11%": pct(light_worst).strip()
+        == " 11.1%".strip(),
+        "a body of Stamina 2 drops as low as 33%": pct(s2_worst).strip() == " 33.3%".strip(),
+        "the free clear is worth 1.25x to 1.82x rolling it out": (
+            f"{min(discounts):.2f}",
+            f"{max(discounts):.2f}",
+        )
+        == ("1.25", "1.82"),
+        "a character drops 14.8% of the time at full Stamina against a 20-point advantage": pct(
+            adv_full
+        ).strip()
+        == "14.8%",
+        "and 48.6% at Stamina 2": pct(adv_low).strip() == "48.6%",
     }
     for claim, ok in published.items():
         print(f"  [{'ok' if ok else 'FAIL'}] {claim}")
         check(f"published: {claim}", ok)
     print()
-    print(f"  (band {pct(min(band)).strip()}..{pct(max(band)).strip()}, "
-          f"light {pct(light_worst).strip()}, stamina-2 {pct(s2_worst).strip()}, "
-          f"discount {min(discounts):.2f}x..{max(discounts):.2f}x, "
-          f"drops {pct(adv_full).strip()}/{pct(adv_low).strip()})")
+    print(
+        f"  (band {pct(min(band)).strip()}..{pct(max(band)).strip()}, "
+        f"light {pct(light_worst).strip()}, stamina-2 {pct(s2_worst).strip()}, "
+        f"discount {min(discounts):.2f}x..{max(discounts):.2f}x, "
+        f"drops {pct(adv_full).strip()}/{pct(adv_low).strip()})"
+    )
     print()
 
     # -- The block's own closure --------------------------------------------
@@ -699,18 +841,25 @@ def main() -> int:
         check(f"{block['id']} carries every required field", not missing, str(missing))
         check(f"{block['id']} carries no undefined field", not unknown, str(unknown))
         check(f"{block['id']} armour is a published rank", block["armour"] in ARMOUR_RANKS)
-        check(f"{block['id']} damage type is one of the closed four",
-              block.get("damage_type") in DAMAGE_TYPES)
+        check(
+            f"{block['id']} damage type is one of the closed four",
+            block.get("damage_type") in DAMAGE_TYPES,
+        )
         for trait in block.get("traits", []):
             for effect in trait["effect"]:
-                check(f"{block['id']} trait effect {effect!r} is in the vocabulary",
-                      effect in TRAIT_EFFECTS, effect)
+                check(
+                    f"{block['id']} trait effect {effect!r} is in the vocabulary",
+                    effect in TRAIT_EFFECTS,
+                    effect,
+                )
     print(f"  required fields: {', '.join(REQUIRED_FIELDS)}")
     print(f"  optional fields: {', '.join(OPTIONAL_FIELDS)}")
     print(f"  trait effects:   {', '.join(TRAIT_EFFECTS)}")
-    check("the trait vocabulary touches only mechanisms that already exist",
-          set(TRAIT_EFFECTS) == {"difficulty", "damage", "damage_type", "stamina_max",
-                                 "armour_rank", "wyrd"})
+    check(
+        "the trait vocabulary touches only mechanisms that already exist",
+        set(TRAIT_EFFECTS)
+        == {"difficulty", "damage", "damage_type", "stamina_max", "armour_rank", "wyrd"},
+    )
     print()
 
     if failures:

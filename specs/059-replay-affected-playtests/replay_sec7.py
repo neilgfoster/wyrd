@@ -2,8 +2,10 @@
 formula, using the exact rolls already published there. No new attack/defence rolls -- the
 divergence is purely in how degrees are read from an already-recorded failed defence roll."""
 
+
 def degrees(skill, roll):
     return skill // 10 - roll // 10
+
 
 EFF_DEF = 30  # Senna's defence effective%, fixed for the fight (sec7)
 THRESHOLD = 6  # ADR 0028's telling-blow threshold
@@ -21,8 +23,10 @@ for round_no, r in defence_rolls:
     virtual_roll = 101 - r
     d = degrees(virtual_eff, virtual_roll)
     telling = d >= THRESHOLD
-    print(f"  Round {round_no}: r={r:>3}  virtual_roll={virtual_roll:>3}  "
-          f"degrees={d:>2}  {'TELLING BLOW' if telling else 'not telling'}")
+    print(
+        f"  Round {round_no}: r={r:>3}  virtual_roll={virtual_roll:>3}  "
+        f"degrees={d:>2}  {'TELLING BLOW' if telling else 'not telling'}"
+    )
 
 print("\nRound 2 becomes a telling blow: weapon roll (4) doubles to 8 before armour, armour still")
 print("subtracts its already-rolled 1: 8 - 1 = 7 through, not the original 3.")
@@ -36,7 +40,9 @@ d6 = 3
 points_below = 3
 total = d6 + points_below
 print(f"  New: {d6} + {points_below} = {total} -> critical-slashing 6-9 band: slashing-scored")
-print(f"  (one wound record, effect dread:+1) -- not slashing-glancing (2-5) as originally recorded.")
+print(
+    "  (one wound record, effect dread:+1) -- not slashing-glancing (2-5) as originally recorded."
+)
 
 print("\nAftermath, reusing the same d100 draw (independent of the modifier): original 73+10=83.")
 d100 = 73

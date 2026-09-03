@@ -12,8 +12,8 @@ This is the validator for docs/design/12-the-adversary.md. It fails loudly on fo
 1. **A missing required field.** The block is what the ruleset reads; a block missing a field is
    an opponent the GM has to improvise, which is the fault the block exists to remove.
 2. **An unrecognised field.** Rejected rather than ignored. A setting may extend, retune, rename
-   or disable, and may never add a mechanism (docs/design/24-authoring-a-setting.md); an unrecognised
-   field is the quiet path by which one gets added anyway.
+   or disable, and may never add a mechanism (docs/design/24-authoring-a-setting.md); an
+   unrecognised field is the quiet path by which one gets added anyway.
 3. **A value outside the range the ruleset can absorb** -- an armour rank outside the published
    set, a damage type outside the closed four (docs/adr/0022), a percentage off the scale.
 4. **A trait effect outside the closed vocabulary**, for the same reason as 2.
@@ -42,7 +42,7 @@ REQUIRED_FIELDS = {"id", "name", "baseline", "stamina_max", "armour", "skills"}
 OPTIONAL_FIELDS = {"damage", "damage_type", "ranged", "traits", "notes"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-ARMOUR_RANKS = ("none", "light", "modest", "heavy")        # docs/design/03-rules.md section 2
+ARMOUR_RANKS = ("none", "light", "modest", "heavy")  # docs/design/03-rules.md section 2
 DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # docs/adr/0022, closed
 
 # docs/design/10-the-character.md section 2: a percentage is what the engine rolls against. 0 is
@@ -60,7 +60,7 @@ TRAIT_EFFECTS = {
     "wyrd": "widens the Ill Omen or Fair Omen band on tests against this opponent",
 }
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")            # docs/design/25-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # docs/design/25-entities.md: kebab-case
 DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
 
 
@@ -105,7 +105,7 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
             break
         if text.startswith("- "):
             rest = text[2:].strip()
-            if ":" in rest and not rest.startswith(("\"", "'")):
+            if ":" in rest and not rest.startswith(('"', "'")):
                 # a list item that opens a mapping: rewrite it as the first key of a block
                 key, _, val = rest.partition(":")
                 sub_lines = [(lineno, indent + 2, f"{key.strip()}:{val}")]
@@ -217,13 +217,13 @@ def check_entry(entry, where: str) -> list[str]:
                 elif not SKILL_MIN <= value <= SKILL_MAX:
                     bad2(f"skills.{name}", f"{value} is outside {SKILL_MIN}-{SKILL_MAX}")
 
-    if "damage" in entry and not (isinstance(entry["damage"], str)
-                                  and DAMAGE_RE.match(entry["damage"])):
+    if "damage" in entry and not (
+        isinstance(entry["damage"], str) and DAMAGE_RE.match(entry["damage"])
+    ):
         bad2("damage", f"{entry['damage']!r} is not a dice expression")
 
     if "damage_type" in entry and entry["damage_type"] not in DAMAGE_TYPES:
-        bad2("damage_type", f"{entry['damage_type']!r} is not one of "
-                            f"{', '.join(DAMAGE_TYPES)}")
+        bad2("damage_type", f"{entry['damage_type']!r} is not one of {', '.join(DAMAGE_TYPES)}")
 
     # An opponent that deals damage must say what kind, or the critical table cannot be
     # selected without a judgement call -- which is the whole point of the block.
@@ -250,9 +250,11 @@ def check_entry(entry, where: str) -> list[str]:
                     continue
                 for key in effect:
                     if key not in TRAIT_EFFECTS:
-                        bad2(f"traits[{n}].effect.{key}",
-                             "is not in the closed trait vocabulary "
-                             f"({', '.join(sorted(TRAIT_EFFECTS))})")
+                        bad2(
+                            f"traits[{n}].effect.{key}",
+                            "is not in the closed trait vocabulary "
+                            f"({', '.join(sorted(TRAIT_EFFECTS))})",
+                        )
     return problems
 
 

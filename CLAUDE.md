@@ -135,6 +135,25 @@ links to. Adding a design document means linking it from the hub; the check fail
 indexes had already gone stale silently before this existed, so treat it the same way as
 `backlog.py check` — run it, do not assume.
 
+### The code is linted and formatted
+
+`pyproject.toml` holds the whole lint configuration — ruff, line length 100, rule sets
+`E`/`F`/`I`/`UP`, target 3.11. There is no CI here, so nothing runs these for you.
+
+```bash
+python3 -m ruff check .          # lint; must exit clean
+python3 -m ruff format --check . # formatting; must report every file already formatted
+```
+
+**Both are green repo-wide, and are expected to stay that way — including under `specs/` and
+`tools/`.** The config landed before either check was actually clean, and 68 findings then
+accumulated behind it across 20 files, which is how a repo ends up with a lint config nobody
+believes. If a run reports findings you did not cause, they are not background noise to be
+scoped around: fix them, or say plainly that you did not.
+
+A `specs/*/check_*.py` script computes published figures, so **reformatting one is not free** —
+diff its output before and after rather than trusting that the change was cosmetic.
+
 ## Deterministic over inference
 
 The rule the engine follows ([`docs/design/27-tooling.md`](docs/design/27-tooling.md)) applies to the

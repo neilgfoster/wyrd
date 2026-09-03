@@ -12,8 +12,8 @@ Everything below is derived from numbers already merged, not invented here:
    (docs/design/03-rules.md section 2).
 2. **A starting character has Stamina 6** (docs/design/11-character-creation.md), and a critical
    happens when damage takes a combatant below 0.
-3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5 (docs/design/03-rules.md section 1,
-   docs/design/10-the-character.md).
+3. **Untrained is a flat 10%**, a skill opens at 25% and rises by 5
+   (docs/design/03-rules.md section 1, docs/design/10-the-character.md).
 4. **An attack is an opposed test** with the successful-actor gate and ties to the resisting side
    (docs/design/03-rules.md section 1, ADR 0016).
 5. **The recorded player-facing mapping** is effective% = 50 + (player_skill - opponent_skill),
@@ -46,9 +46,9 @@ WEAPON_BAND = [("1d3", [3]), ("1d6", [6]), ("1d8", [8]), ("2d6", [6, 6])]
 # a martial weapon in every hand, which is not what a crowd is.
 ORDINARY_WEAPON = [6]
 
-UNTRAINED = 10          # docs/design/03-rules.md section 1
-SKILL_OPENS_AT = 25     # docs/design/10-the-character.md section 2
-STARTING_STAMINA = 6    # docs/design/11-character-creation.md section 2
+UNTRAINED = 10  # docs/design/03-rules.md section 1
+SKILL_OPENS_AT = 25  # docs/design/10-the-character.md section 2
+STARTING_STAMINA = 6  # docs/design/11-character-creation.md section 2
 
 # The skills a character actually has in a real fight: newly opened, a few advances in,
 # competent, and practised. Not a midpoint -- CLAUDE.md is explicit about that.
@@ -64,12 +64,12 @@ REAL_PARTIES = [1, 2, 3, 4]
 # The rule this script is testing, stated as constants so it can be falsified.
 # ---------------------------------------------------------------------------
 
-CROWD_MAX_STAMINA = 1      # a crowd member's own maximum Stamina, at or below this
+CROWD_MAX_STAMINA = 1  # a crowd member's own maximum Stamina, at or below this
 CROWD_MAX_ARMOUR = "none"  # and no armour at all
-CROWD_SKILL_GAP = 20       # the character's skill must exceed theirs by at least this
-CLEARED_PER_ROUND = 1      # bodies removed per character per round, no roll, no action
-WEIGHT_OF_NUMBERS = 10     # eased per extra body engaged with the same target
-WEIGHT_CAP = 20            # ...to a ceiling of Easy on the ladder
+CROWD_SKILL_GAP = 20  # the character's skill must exceed theirs by at least this
+CLEARED_PER_ROUND = 1  # bodies removed per character per round, no roll, no action
+WEIGHT_OF_NUMBERS = 10  # eased per extra body engaged with the same target
+WEIGHT_CAP = 20  # ...to a ceiling of Easy on the ladder
 
 
 def dice_distribution(faces: list[int]) -> dict[int, Fraction]:
@@ -180,11 +180,13 @@ def expected_damage_to_character(armour_label: str) -> Fraction:
     return sum((k * v for k, v in dist.items()), Fraction(0))
 
 
-def rounds_to_drop_character(bodies_on_target: int, defender_skill: int, model,
-                             armour_label: str) -> Fraction:
+def rounds_to_drop_character(
+    bodies_on_target: int, defender_skill: int, model, armour_label: str
+) -> Fraction:
     """Expected rounds for a crowd to put a starting character below 0 Stamina."""
-    per_round = p_crowd_lands(bodies_on_target, defender_skill, model) * \
-        expected_damage_to_character(armour_label)
+    per_round = p_crowd_lands(
+        bodies_on_target, defender_skill, model
+    ) * expected_damage_to_character(armour_label)
     if per_round == 0:
         return Fraction(10**6)
     return Fraction(STARTING_STAMINA + 1, 1) / per_round
@@ -213,8 +215,7 @@ def main() -> int:
     for stamina in range(1, 5):
         for armour_label in ("none", "light", "modest"):
             row = "".join(
-                pct(p_dropped(stamina, w, ARMOUR[armour_label])).rjust(9)
-                for _, w in WEAPON_BAND
+                pct(p_dropped(stamina, w, ARMOUR[armour_label])).rjust(9) for _, w in WEAPON_BAND
             )
             worst, _ = worst_and_mean_drop(stamina, armour_label)
             print(f"  {stamina:>7}  {armour_label:>6}{row}{pct(worst).rjust(10)}")
@@ -256,8 +257,10 @@ def main() -> int:
     # -- 2. The free clear against what rolling would give -------------------
     print("Bodies cleared per round: the free rate against rolling it out")
     print("-" * 74)
-    print("  A qualifying body has maximum Stamina %d, wears %s armour, untrained at %d%%."
-          % (CROWD_MAX_STAMINA, CROWD_MAX_ARMOUR, UNTRAINED))
+    print(
+        f"  A qualifying body has maximum Stamina {CROWD_MAX_STAMINA}, "
+        f"wears {CROWD_MAX_ARMOUR} armour, untrained at {UNTRAINED}%."
+    )
     print()
     print("   skill   model     hit    drop   rolled    free   generosity")
     generosities: list[Fraction] = []
@@ -268,16 +271,20 @@ def main() -> int:
             rolled = rolled_clear_rate(skill, model, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA)
             factor = Fraction(CLEARED_PER_ROUND, 1) / rolled
             generosities.append(factor)
-            print(f"  {skill:>5}%  {label:>7}{pct(hit).rjust(8)}{pct(drop).rjust(8)}"
-                  f"{num(rolled).rjust(9)}{CLEARED_PER_ROUND:>8}{num(factor).rjust(13)}x")
+            print(
+                f"  {skill:>5}%  {label:>7}{pct(hit).rjust(8)}{pct(drop).rjust(8)}"
+                f"{num(rolled).rjust(9)}{CLEARED_PER_ROUND:>8}{num(factor).rjust(13)}x"
+            )
     print()
     mapped_only = [
         Fraction(CLEARED_PER_ROUND, 1)
         / rolled_clear_rate(skill, p_mapped, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA)
         for skill in REAL_SKILLS
     ]
-    print(f"  Under the mapping the free clear is {float(min(mapped_only)):.2f}x to "
-          f"{float(max(mapped_only)):.2f}x what rolling body by body would average.")
+    print(
+        f"  Under the mapping the free clear is {float(min(mapped_only)):.2f}x to "
+        f"{float(max(mapped_only)):.2f}x what rolling body by body would average."
+    )
     print(f"  Under today's opposed test it reads as high as {float(max(generosities)):.2f}x,")
     print("  because that test has a competent character missing an untrained one two times")
     print("  in three. That gap is #44's to close and is not this rule's to answer for.")
@@ -316,9 +323,11 @@ def main() -> int:
     # -- 3. What the crowd does back -----------------------------------------
     print("What the crowd does back: rounds to put a starting character below 0")
     print("-" * 74)
-    print("  Defender at %d%%, Stamina %d. Weight of numbers eases the crowd's attack by +%d"
-          % (REAL_SKILLS[2], STARTING_STAMINA, WEIGHT_OF_NUMBERS))
-    print("  per extra body on the same target, to a ceiling of +%d." % WEIGHT_CAP)
+    print(
+        f"  Defender at {REAL_SKILLS[2]}%, Stamina {STARTING_STAMINA}. Weight of numbers eases "
+        f"the crowd's attack by +{WEIGHT_OF_NUMBERS}"
+    )
+    print(f"  per extra body on the same target, to a ceiling of +{WEIGHT_CAP}.")
     print()
     print("  bodies   crowd%   armour   opposed    mapped")
     for bodies in (1, 2, 3, 4, 6):
@@ -326,8 +335,10 @@ def main() -> int:
         for armour_label in ("none", "modest"):
             for label, model in HIT_MODELS:
                 row.append(rounds_to_drop_character(bodies, REAL_SKILLS[2], model, armour_label))
-        print(f"  {bodies:>6}   {crowd_attack_skill(bodies):>5}%     none"
-              f"{num(row[0]).rjust(10)}{num(row[1]).rjust(10)}")
+        print(
+            f"  {bodies:>6}   {crowd_attack_skill(bodies):>5}%     none"
+            f"{num(row[0]).rjust(10)}{num(row[1]).rjust(10)}"
+        )
         print(f"  {'':>6}   {'':>6}   modest{num(row[2]).rjust(10)}{num(row[3]).rjust(10)}")
     print()
 
@@ -356,15 +367,18 @@ def main() -> int:
     print("Bodies on one target, at real crowd and party sizes")
     print("-" * 74)
     print("  A crowd rolls once per character it is engaged with, never once per body. Weight")
-    print("  of numbers reaches its ceiling at %d bodies on a target, so a crowd's numbers past"
-          % saturates_at)
+    print(
+        f"  of numbers reaches its ceiling at {saturates_at} bodies on a target, so a crowd's "
+        "numbers past"
+    )
     print("  that buy nothing against one defender -- what they buy is more defenders engaged.")
     print()
     print("  party " + "".join(f"{c:>8}" for c in REAL_CROWDS))
     for party in REAL_PARTIES:
-        print(f"  {party:>5} " + "".join(
-            f"{Fraction(c, party).__float__():>8.1f}" for c in REAL_CROWDS
-        ))
+        print(
+            f"  {party:>5} "
+            + "".join(f"{Fraction(c, party).__float__():>8.1f}" for c in REAL_CROWDS)
+        )
     print()
     print("  A party of four is at the ceiling from twelve bodies on. Below that, spreading")
     print("  out is worth something; above it, only the count of people who can be reached is.")
@@ -382,9 +396,9 @@ def main() -> int:
     print("-" * 74)
     print("  party " + "".join(f"{c:>8}" for c in REAL_CROWDS))
     for party in REAL_PARTIES:
-        print(f"  {party:>5} " + "".join(
-            num(rounds_to_clear(c, party)).rjust(8) for c in REAL_CROWDS
-        ))
+        print(
+            f"  {party:>5} " + "".join(num(rounds_to_clear(c, party)).rjust(8) for c in REAL_CROWDS)
+        )
     print()
     print("  Read against the rounds-to-drop table above: a lone character does not clear a")
     print("  crowd of twenty, and a party of four handles one in five rounds while still")
@@ -408,9 +422,11 @@ def main() -> int:
     lone_dropped_by_six = min(
         rounds_to_drop_character(6, REAL_SKILLS[2], model, "none") for _, model in HIT_MODELS
     )
-    print(f"  A lone competent character in no armour clears six bodies in "
-          f"{num(lone_clears_six).strip()} rounds and is dropped by them in "
-          f"{num(lone_dropped_by_six).strip()}.")
+    print(
+        f"  A lone competent character in no armour clears six bodies in "
+        f"{num(lone_clears_six).strip()} rounds and is dropped by them in "
+        f"{num(lone_dropped_by_six).strip()}."
+    )
     print("  The rule is not a way to win alone; it is a way to not roll sixty times.")
     print()
     if lone_dropped_by_six > lone_clears_six:
@@ -428,11 +444,15 @@ def main() -> int:
     # -- 5. The skill gap -----------------------------------------------------
     print("The skill gap: who the rule is available to")
     print("-" * 74)
-    print("  A crowd member is untrained at %d%%. The rule needs a gap of %d or more."
-          % (UNTRAINED, CROWD_SKILL_GAP))
+    print(
+        f"  A crowd member is untrained at {UNTRAINED}%. "
+        f"The rule needs a gap of {CROWD_SKILL_GAP} or more."
+    )
     print()
-    print("  A skill opens at %d%% and rises by 5, so the rule opens at %d%% -- one advance"
-          % (SKILL_OPENS_AT, UNTRAINED + CROWD_SKILL_GAP))
+    print(
+        f"  A skill opens at {SKILL_OPENS_AT}% and rises by 5, so the rule opens at "
+        f"{UNTRAINED + CROWD_SKILL_GAP}% -- one advance"
+    )
     print("  past opening. An untrained character has no gap at all and clears nobody.")
     print()
 
@@ -452,8 +472,7 @@ def main() -> int:
     print("-" * 74)
     modest = expected_damage_to_character("modest")
     hits = Fraction(STARTING_STAMINA + 1, 1) / modest
-    print(f"  Mean damage through modest armour: {num(modest)} per landed blow "
-          "(mid-band weapon).")
+    print(f"  Mean damage through modest armour: {num(modest)} per landed blow (mid-band weapon).")
     print(f"  Hits to drop a starting character: {num(hits)}.")
     print("  #44 corrected this repo to about 1.5 points through and 4.5 hits to drop, and")
     print("  specs/012 is calibrated to it. A mob rule computed on a different damage scale")
@@ -471,8 +490,11 @@ def main() -> int:
             "#44 computed. The damage scale underneath this rule is not the merged one."
         )
     # The player-facing mapping must be the one specs/012 recorded, not a re-derivation.
-    if (p_mapped(40, 40), p_mapped(100, 0), p_mapped(0, 100)) != \
-            (Fraction(1, 2), Fraction(95, 100), Fraction(5, 100)):
+    if (p_mapped(40, 40), p_mapped(100, 0), p_mapped(0, 100)) != (
+        Fraction(1, 2),
+        Fraction(95, 100),
+        Fraction(5, 100),
+    ):
         failures.append(
             "The mapping used here is not slope 1 clipped to 5-95, which is what "
             "specs/012-combat-sequencing/check_mapping.py computed and recorded for #44."
@@ -484,27 +506,47 @@ def main() -> int:
     # asserted here, so changing the model here fails rather than silently disagreeing with
     # the design document.
     published = [
-        ("one blow, Stamina 1, no armour, worst weapon", worst_and_mean_drop(1, "none")[0],
-         Fraction(2, 3)),
-        ("one blow, Stamina 1, light armour, worst weapon", worst_and_mean_drop(1, "light")[0],
-         Fraction(1, 9)),
-        ("one blow, Stamina 2, no armour, worst weapon", worst_and_mean_drop(2, "none")[0],
-         Fraction(1, 3)),
-        ("rolled clear rate at 25%, mapped",
-         rolled_clear_rate(25, p_mapped, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA), Fraction(55, 100)),
-        ("rolled clear rate at 55%, mapped",
-         rolled_clear_rate(55, p_mapped, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA), Fraction(80, 100)),
-        ("six bodies drop an unarmoured character in",
-         rounds_to_drop_character(6, REAL_SKILLS[2], p_mapped, "none"), Fraction(57, 10)),
-        ("six bodies drop a modest-armoured character in",
-         rounds_to_drop_character(6, REAL_SKILLS[2], p_mapped, "modest"), Fraction(129, 10)),
+        (
+            "one blow, Stamina 1, no armour, worst weapon",
+            worst_and_mean_drop(1, "none")[0],
+            Fraction(2, 3),
+        ),
+        (
+            "one blow, Stamina 1, light armour, worst weapon",
+            worst_and_mean_drop(1, "light")[0],
+            Fraction(1, 9),
+        ),
+        (
+            "one blow, Stamina 2, no armour, worst weapon",
+            worst_and_mean_drop(2, "none")[0],
+            Fraction(1, 3),
+        ),
+        (
+            "rolled clear rate at 25%, mapped",
+            rolled_clear_rate(25, p_mapped, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA),
+            Fraction(55, 100),
+        ),
+        (
+            "rolled clear rate at 55%, mapped",
+            rolled_clear_rate(55, p_mapped, CROWD_MAX_ARMOUR, CROWD_MAX_STAMINA),
+            Fraction(80, 100),
+        ),
+        (
+            "six bodies drop an unarmoured character in",
+            rounds_to_drop_character(6, REAL_SKILLS[2], p_mapped, "none"),
+            Fraction(57, 10),
+        ),
+        (
+            "six bodies drop a modest-armoured character in",
+            rounds_to_drop_character(6, REAL_SKILLS[2], p_mapped, "modest"),
+            Fraction(129, 10),
+        ),
     ]
     print("The figures docs/design/03-rules.md publishes")
     print("-" * 74)
     for label, computed, stated in published:
         agrees = abs(computed - stated) <= abs(stated) / 100
-        print(f"  {label:<48}{num(computed)}  vs {num(stated)}  "
-              f"{'ok' if agrees else 'DRIFT'}")
+        print(f"  {label:<48}{num(computed)}  vs {num(stated)}  {'ok' if agrees else 'DRIFT'}")
         if not agrees:
             failures.append(
                 f"docs/design/03-rules.md states {float(stated):.2f} for {label}; this script "

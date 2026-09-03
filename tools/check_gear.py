@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Validate a setting's gear against the weapon and armour schema.
 
-docs/design/24-authoring-a-setting.md named `setting/gear.yaml` as a setting file for as long as that
-document has existed, promising "weapons, armour, prices, what is legal to carry where," and
+docs/design/24-authoring-a-setting.md named `setting/gear.yaml` as a setting file for as long
+as that document has existed, promising "weapons, armour, prices, what is legal to carry where,"
+and
 never said what a gear entry declares -- even though docs/design/03-rules.md section 2 already reads
 weapon damage, armour rank and the casual/martial distinction off it. This is the validator for
 that schema (specs/023-standing-material-economy/data-model.md), in the same shape as
@@ -12,8 +13,9 @@ combat fields (damage, damage type, armour rank) the adversary block already val
 It fails loudly on the same four classes check_bestiary.py does:
 
 1. **A missing required field.**
-2. **An unrecognised field** -- rejected rather than ignored (docs/design/24-authoring-a-setting.md: a
-   setting may extend, retune, rename or disable, and may never add a mechanism).
+2. **An unrecognised field** -- rejected rather than ignored
+   (docs/design/24-authoring-a-setting.md: a setting may extend, retune, rename or disable, and
+   may never add a mechanism).
 3. **A value outside the range the ruleset can absorb** -- an armour rank outside the published
    set, a damage type outside the closed four (docs/adr/0022), a negative price.
 4. **A `class` outside the closed casual/martial vocabulary.**
@@ -42,16 +44,15 @@ from check_bestiary import YamlError, read_yaml  # noqa: E402
 
 # --- The schema, from specs/023-standing-material-economy/data-model.md -----
 
-WEAPON_REQUIRED = {"id", "name", "kind", "damage", "damage_type", "class", "price",
-                    "availability"}
+WEAPON_REQUIRED = {"id", "name", "kind", "damage", "damage_type", "class", "price", "availability"}
 ARMOUR_REQUIRED = {"id", "name", "kind", "rank", "price", "availability"}
 COMMON_OPTIONAL = {"notes"}
 
-ARMOUR_RANKS = ("none", "light", "modest", "heavy")          # docs/design/03-rules.md section 2
+ARMOUR_RANKS = ("none", "light", "modest", "heavy")  # docs/design/03-rules.md section 2
 DAMAGE_TYPES = ("slashing", "piercing", "blunt", "searing")  # docs/adr/0022, closed
-WEAPON_CLASSES = ("casual", "martial")                        # docs/design/03-rules.md section 2
+WEAPON_CLASSES = ("casual", "martial")  # docs/design/03-rules.md section 2
 
-ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")               # docs/design/25-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # docs/design/25-entities.md: kebab-case
 DAMAGE_RE = re.compile(r"^\d*d\d+([+-]\d+)?$")
 
 
@@ -94,12 +95,12 @@ def check_entry(entry, where: str) -> list[str]:
         bad("availability", f"{entry['availability']!r} is not a string")
 
     if kind == "weapon":
-        if "damage" in entry and not (isinstance(entry["damage"], str)
-                                      and DAMAGE_RE.match(entry["damage"])):
+        if "damage" in entry and not (
+            isinstance(entry["damage"], str) and DAMAGE_RE.match(entry["damage"])
+        ):
             bad("damage", f"{entry['damage']!r} is not a dice expression")
         if "damage_type" in entry and entry["damage_type"] not in DAMAGE_TYPES:
-            bad("damage_type", f"{entry['damage_type']!r} is not one of "
-                                f"{', '.join(DAMAGE_TYPES)}")
+            bad("damage_type", f"{entry['damage_type']!r} is not one of {', '.join(DAMAGE_TYPES)}")
         if "class" in entry and entry["class"] not in WEAPON_CLASSES:
             bad("class", f"{entry['class']!r} is not one of {', '.join(WEAPON_CLASSES)}")
     else:

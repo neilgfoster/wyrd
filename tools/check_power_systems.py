@@ -42,9 +42,7 @@ REQUIRED_FIELDS = {"id", "name", "skill", "strain_cost", "requires_training"}
 OPTIONAL_FIELDS = {"resolve_cost", "ill_omen_taint", "description", "intensity_tiers"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
-ID_RE = re.compile(
-    r"^[a-z0-9]+(-[a-z0-9]+)*$"
-)  # docs/design/25-entities.md: kebab-case
+ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")  # docs/design/25-entities.md: kebab-case
 
 DEFAULT_ILL_OMEN_TAINT = 1
 
@@ -174,9 +172,7 @@ def check_tier(tier, index: int, label: str, bad) -> None:
     for field in sorted(TIER_REQUIRED_FIELDS - set(tier)):
         bad(f"{tier_label}.{field}", "required field is missing")
     for field in sorted(set(tier) - TIER_REQUIRED_FIELDS):
-        bad(
-            f"{tier_label}.{field}", "field is not defined by the intensity-tier schema"
-        )
+        bad(f"{tier_label}.{field}", "field is not defined by the intensity-tier schema")
 
     if "label" in tier and (not isinstance(tier["label"], str) or not tier["label"]):
         bad(f"{tier_label}.label", f"{tier['label']!r} is not a non-empty label")
@@ -203,9 +199,7 @@ def check_tier(tier, index: int, label: str, bad) -> None:
     if "ill_omen_taint_bonus" in tier:
         bonus = tier["ill_omen_taint_bonus"]
         if not isinstance(bonus, int) or isinstance(bonus, bool):
-            bad(
-                f"{tier_label}.ill_omen_taint_bonus", f"{bonus!r} is not a whole number"
-            )
+            bad(f"{tier_label}.ill_omen_taint_bonus", f"{bonus!r} is not a whole number")
         elif bonus < 0:
             bad(f"{tier_label}.ill_omen_taint_bonus", f"{bonus} must not be negative")
 
@@ -245,9 +239,7 @@ def check_entry(entry, where: str, known_skills: set[str] | None = None) -> list
             elif value <= 0:
                 bad(field, f"{value} must be a positive number")
 
-    if "requires_training" in entry and not isinstance(
-        entry["requires_training"], bool
-    ):
+    if "requires_training" in entry and not isinstance(entry["requires_training"], bool):
         bad("requires_training", f"{entry['requires_training']!r} is not true or false")
 
     if "description" in entry and not isinstance(entry["description"], str):
@@ -281,9 +273,7 @@ def check_file(path: pathlib.Path, known_skills: set[str] | None = None) -> list
     problems: list[str] = []
     seen: dict[str, int] = {}
     for n, entry in enumerate(systems):
-        problems.extend(
-            check_entry(entry, f"{path}:systems_of_power[{n}]", known_skills)
-        )
+        problems.extend(check_entry(entry, f"{path}:systems_of_power[{n}]", known_skills))
         if isinstance(entry, dict) and isinstance(entry.get("id"), str):
             if entry["id"] in seen:
                 problems.append(
@@ -297,8 +287,9 @@ def check_file(path: pathlib.Path, known_skills: set[str] | None = None) -> list
 # --- Resolution trace ---------------------------------------------------------
 # Confirms, for a given entry, exactly what docs/design/09-systems-of-power.md claims: cost is
 # applied on resolution regardless of outcome, and the declared ill_omen_taint (or the default)
-# is what an Ill Omen applies. This does not touch docs/design/03-rules.md section 1's own resolution
-# maths (difficulty, degrees, the Wyrd die) -- nothing about a power test perturbs it, so this
+# is what an Ill Omen applies. This does not touch docs/design/03-rules.md section 1's own
+# resolution maths (difficulty, degrees, the Wyrd die) -- nothing about a power test perturbs
+# it, so this
 # script makes no claim about it and imports nothing from check_mapping.py.
 
 
@@ -317,9 +308,7 @@ def resolution_trace(entry: dict, tier_label: str | None = None) -> dict:
 
     if tier_label is not None:
         tiers = entry.get("intensity_tiers", [])
-        matches = [
-            t for t in tiers if isinstance(t, dict) and t.get("label") == tier_label
-        ]
+        matches = [t for t in tiers if isinstance(t, dict) and t.get("label") == tier_label]
         if not matches:
             raise KeyError(f"no intensity tier labelled {tier_label!r} on this entry")
         tier = matches[0]
@@ -482,16 +471,12 @@ def self_test() -> None:
         ember_path = tmpdir / "ember.yaml"
         ember_path.write_text(EMBER_CRAFT_YAML, encoding="utf-8")
         problems = check_file(ember_path)
-        assert not problems, (
-            f"ember-craft fixture should validate clean, got: {problems}"
-        )
+        assert not problems, f"ember-craft fixture should validate clean, got: {problems}"
 
         signal_path = tmpdir / "signal.yaml"
         signal_path.write_text(SIGNAL_ATTUNEMENT_YAML, encoding="utf-8")
         problems = check_file(signal_path)
-        assert not problems, (
-            f"signal-attunement fixture should validate clean, got: {problems}"
-        )
+        assert not problems, f"signal-attunement fixture should validate clean, got: {problems}"
 
         # Both worked examples validate against the identical schema (spec SC-003): neither
         # needed a field the other does not use.
@@ -513,9 +498,7 @@ def self_test() -> None:
         # Ill Omen trace: default applies when a fixture omits ill_omen_taint.
         no_taint_field = dict(ember_data)
         del no_taint_field["ill_omen_taint"]
-        assert (
-            resolution_trace(no_taint_field)["ill_omen_taint"] == DEFAULT_ILL_OMEN_TAINT
-        )
+        assert resolution_trace(no_taint_field)["ill_omen_taint"] == DEFAULT_ILL_OMEN_TAINT
 
         missing_path = tmpdir / "missing.yaml"
         missing_path.write_text(MISSING_FIELD_YAML, encoding="utf-8")
@@ -545,9 +528,7 @@ def self_test() -> None:
         tiered_path = tmpdir / "tiered.yaml"
         tiered_path.write_text(TIERED_EMBER_CRAFT_YAML, encoding="utf-8")
         problems = check_file(tiered_path)
-        assert not problems, (
-            f"tiered ember-craft fixture should validate clean, got: {problems}"
-        )
+        assert not problems, f"tiered ember-craft fixture should validate clean, got: {problems}"
 
         # A system of power with no intensity_tiers is unaffected -- same fixture, same trace,
         # as before this feature existed (spec User Story 2, FR-003/FR-006).
@@ -580,33 +561,28 @@ def self_test() -> None:
         bad_difficulty_path = tmpdir / "bad_tier_difficulty.yaml"
         bad_difficulty_path.write_text(BAD_TIER_DIFFICULTY_YAML, encoding="utf-8")
         problems = check_file(bad_difficulty_path)
-        assert any(
-            "intensity_tiers[0].difficulty" in p and "apocalyptic" in p
-            for p in problems
-        ), problems
+        assert any("intensity_tiers[0].difficulty" in p and "apocalyptic" in p for p in problems), (
+            problems
+        )
 
         bad_multiplier_path = tmpdir / "bad_tier_multiplier.yaml"
         bad_multiplier_path.write_text(BAD_TIER_MULTIPLIER_YAML, encoding="utf-8")
         problems = check_file(bad_multiplier_path)
         assert any(
-            "intensity_tiers[0].cost_multiplier" in p and "positive" in p
-            for p in problems
+            "intensity_tiers[0].cost_multiplier" in p and "positive" in p for p in problems
         ), problems
 
         bad_taint_bonus_path = tmpdir / "bad_tier_taint_bonus.yaml"
         bad_taint_bonus_path.write_text(BAD_TIER_TAINT_BONUS_YAML, encoding="utf-8")
         problems = check_file(bad_taint_bonus_path)
         assert any(
-            "intensity_tiers[0].ill_omen_taint_bonus" in p and "negative" in p
-            for p in problems
+            "intensity_tiers[0].ill_omen_taint_bonus" in p and "negative" in p for p in problems
         ), problems
 
         missing_label_path = tmpdir / "missing_tier_label.yaml"
         missing_label_path.write_text(MISSING_TIER_LABEL_YAML, encoding="utf-8")
         problems = check_file(missing_label_path)
-        assert any(
-            "intensity_tiers[0].label" in p and "missing" in p for p in problems
-        ), problems
+        assert any("intensity_tiers[0].label" in p and "missing" in p for p in problems), problems
 
     print(
         "Self-test passed: both worked examples validate clean, every rejection class fires, "

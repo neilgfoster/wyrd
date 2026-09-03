@@ -18,10 +18,10 @@ Run: python3 specs/012-combat-sequencing/check_sequencing.py
 """
 
 from fractions import Fraction
-from functools import lru_cache
+from functools import cache
 
 DIE = 100
-STAMINA = 6      # starting Stamina (03b-the-character.md)
+STAMINA = 6  # starting Stamina (03b-the-character.md)
 BASE_DAMAGE = 2  # see calibration below
 
 
@@ -38,7 +38,7 @@ def degrees(skill: int, roll: int) -> int:
     return skill // 10 - roll // 10
 
 
-@lru_cache(maxsize=None)
+@cache
 def attack_outcomes(attacker: int, defender: int) -> tuple[tuple[int, Fraction], ...]:
     """((damage, probability), ...) for one attack under today's opposed rule (ADR 0016).
 
@@ -90,7 +90,7 @@ def _solve(matrix: list[list[Fraction]]) -> list[Fraction]:
     return [matrix[r][n] for r in range(n)]
 
 
-@lru_cache(maxsize=None)
+@cache
 def chain(skill_a: int, skill_b: int) -> tuple[dict, dict]:
     """Solve the fight exactly. Returns (P(a wins) by state, expected actions by state)."""
     levels = _levels()
@@ -154,8 +154,10 @@ PAIRINGS = [(25, 25), (35, 35), (40, 40), (45, 45), (55, 55), (55, 40), (40, 55)
 
 
 def main() -> None:
-    print(f"Calibration: Stamina {STAMINA}, {BASE_DAMAGE} points through per hit,"
-          f" {HITS_TO_DROP} hits to drop (issue #44 computed 4.5).\n")
+    print(
+        f"Calibration: Stamina {STAMINA}, {BASE_DAMAGE} points through per hit,"
+        f" {HITS_TO_DROP} hits to drop (issue #44 computed 4.5).\n"
+    )
     print("1-2. Fight length, and what acting first is worth\n")
     print(f"{'A':>4} {'B':>4} | {'rounds':>7} | {'A first':>8} {'B first':>8} | {'edge':>6}")
     print("-" * 52)
@@ -164,10 +166,14 @@ def main() -> None:
         pa_first, rounds = fight(a, b, first="a")
         pa_second, _ = fight(a, b, first="b")
         edges.append(pa_first - pa_second)
-        print(f"{a:>4} {b:>4} | {float(rounds):6.1f} | {pct(pa_first):>8} {pct(pa_second):>8}"
-              f" | {float(edges[-1]) * 100:+5.1f}")
-    print(f"\n  Acting first is worth {float(min(edges)) * 100:+.1f} to"
-          f" {float(max(edges)) * 100:+.1f} points of win rate.")
+        print(
+            f"{a:>4} {b:>4} | {float(rounds):6.1f} | {pct(pa_first):>8} {pct(pa_second):>8}"
+            f" | {float(edges[-1]) * 100:+5.1f}"
+        )
+    print(
+        f"\n  Acting first is worth {float(min(edges)) * 100:+.1f} to"
+        f" {float(max(edges)) * 100:+.1f} points of win rate."
+    )
 
     print("\n\n3. The surprise gate -- what a FREE round is worth\n")
     print(f"{'A':>4} {'B':>4} | {'no surprise':>12} {'A surprises B':>14} | {'gain':>6}")
@@ -179,12 +185,16 @@ def main() -> None:
         gains.append(surp - base)
         worst = max(worst, surp)
         print(f"{a:>4} {b:>4} | {pct(base):>12} {pct(surp):>14} | {float(surp - base) * 100:+5.1f}")
-    print(f"\n  A free round is worth {float(min(gains)) * 100:+.1f} to"
-          f" {float(max(gains)) * 100:+.1f} points.")
+    print(
+        f"\n  A free round is worth {float(min(gains)) * 100:+.1f} to"
+        f" {float(max(gains)) * 100:+.1f} points."
+    )
     print(f"  Highest win rate it produces anywhere: {pct(worst)}")
     gate = worst <= Fraction(9, 10)
-    print(f"  GATE {'PASSED' if gate else 'FAILED'}: a free round must not make the fight a"
-          " formality (FR-8).")
+    print(
+        f"  GATE {'PASSED' if gate else 'FAILED'}: a free round must not make the fight a"
+        " formality (FR-8)."
+    )
 
     print("\n\n4. The ambush rung -- eases the free round's attacks only\n")
     header = "  ".join(f"{a}v{b}" for a, b in PAIRINGS[:5])

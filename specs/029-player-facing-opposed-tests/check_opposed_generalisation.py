@@ -26,7 +26,6 @@ What this script settles:
 Run: python3 specs/029-player-facing-opposed-tests/check_opposed_generalisation.py
 """
 
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -41,12 +40,24 @@ from check_conversion import degrees as combat_degrees_fn  # noqa: E402
 
 # Same representative skill-gap span specs/012-combat-sequencing/check_mapping.py uses.
 PAIRINGS = [
-    (25, 25), (40, 40), (35, 30), (55, 40), (50, 30),
-    (60, 30), (70, 35), (60, 20), (80, 40), (100, 50), (30, 60),
+    (25, 25),
+    (40, 40),
+    (35, 30),
+    (55, 40),
+    (50, 30),
+    (60, 30),
+    (70, 35),
+    (60, 20),
+    (80, 40),
+    (100, 50),
+    (30, 60),
 ]
 
 PRIOR_MAPPING_TABLE = {
-    (40, 40): 50, (55, 40): 65, (60, 30): 80, (100, 50): 95,
+    (40, 40): 50,
+    (55, 40): 65,
+    (60, 30): 80,
+    (100, 50): 95,
 }
 
 
@@ -60,6 +71,7 @@ def check(claim: str, ok: bool, shown: str = "") -> None:
 # ---------------------------------------------------------------------------
 # The mapping, reused not recomputed.
 # ---------------------------------------------------------------------------
+
 
 def effective_pct(actor: int, resister: int) -> int:
     """specs/012-combat-sequencing/check_mapping.py's calibrated mapping. Not re-derived here."""
@@ -79,8 +91,11 @@ def degrees(effective: int, roll: int) -> int:
 
 def assert_prior_mapping() -> None:
     for (s, o), expected in PRIOR_MAPPING_TABLE.items():
-        check(f"effective%({s}, {o}) == {expected} (specs/012 check_mapping.py)",
-              effective_pct(s, o) == expected, f"got {effective_pct(s, o)}")
+        check(
+            f"effective%({s}, {o}) == {expected} (specs/012 check_mapping.py)",
+            effective_pct(s, o) == expected,
+            f"got {effective_pct(s, o)}",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -115,32 +130,41 @@ LIVE_MECHANISM_FILE = "docs/design/03-rules.md"
 def grep_opposed_test_citations() -> dict[str, list[str]]:
     result = subprocess.run(
         ["grep", "-rln", "opposed test", "--include=*.md", "-i", "docs/"],
-        cwd=REPO_ROOT, capture_output=True, text=True, check=False,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     files = [line for line in result.stdout.splitlines() if line]
     return {
         "historical_adr": sorted(f for f in files if f in HISTORICAL_ADR_FILES),
         "historical_index": sorted(f for f in files if f in HISTORICAL_INDEX_FILES),
-        "live": sorted(f for f in files
-                        if f not in HISTORICAL_ADR_FILES and f not in HISTORICAL_INDEX_FILES),
+        "live": sorted(
+            f for f in files if f not in HISTORICAL_ADR_FILES and f not in HISTORICAL_INDEX_FILES
+        ),
     }
 
 
 def check_adr_0016_scope() -> None:
     citations = grep_opposed_test_citations()
-    check("every citing file is accounted for (historical ADR, historical index, or the one live "
-          "mechanism file)",
-          set(citations["live"]) == {LIVE_MECHANISM_FILE},
-          f"live files found: {citations['live']}")
-    check(f"{LIVE_MECHANISM_FILE} is the only live citation of the two-sided shape "
-          "-- confirms ADR 0016 has no remaining scope beyond combat (already carved out by "
-          "ADR 0027) and the two-player-controlled-entities carve-out",
-          citations["live"] == [LIVE_MECHANISM_FILE])
+    check(
+        "every citing file is accounted for (historical ADR, historical index, or the one live "
+        "mechanism file)",
+        set(citations["live"]) == {LIVE_MECHANISM_FILE},
+        f"live files found: {citations['live']}",
+    )
+    check(
+        f"{LIVE_MECHANISM_FILE} is the only live citation of the two-sided shape "
+        "-- confirms ADR 0016 has no remaining scope beyond combat (already carved out by "
+        "ADR 0027) and the two-player-controlled-entities carve-out",
+        citations["live"] == [LIVE_MECHANISM_FILE],
+    )
 
 
 # ---------------------------------------------------------------------------
 # T004 -- a worked non-combat opposed test, same formula, same numbers as combat.
 # ---------------------------------------------------------------------------
+
 
 def check_generalised_roll_matches_combat() -> None:
     """The generalised roll is the SAME computation combat already uses -- same effective%
@@ -153,10 +177,12 @@ def check_generalised_roll_matches_combat() -> None:
         for roll in (5, 25, 50, 75, 95):
             combat_result = combat_degrees_fn(eff, roll)  # specs/018's own function
             generalised_result = degrees(eff, roll)  # this feature's function
-            check(f"degrees(effective%({skill},{opponent_skill})={eff}, roll={roll}) agrees "
-                  "with specs/018-player-facing-combat/check_conversion.py's own degrees()",
-                  combat_result == generalised_result,
-                  f"combat={combat_result}, generalised={generalised_result}")
+            check(
+                f"degrees(effective%({skill},{opponent_skill})={eff}, roll={roll}) agrees "
+                "with specs/018-player-facing-combat/check_conversion.py's own degrees()",
+                combat_result == generalised_result,
+                f"combat={combat_result}, generalised={generalised_result}",
+            )
 
 
 def check_worked_example() -> None:
@@ -164,28 +190,33 @@ def check_worked_example() -> None:
     opponent baseline 40, matching one of the calibrated pairings above."""
     skill, opponent_baseline = 55, 40
     eff = effective_pct(skill, opponent_baseline)
-    check("worked example: effective% for skill 55 vs. opponent baseline 40 is 65",
-          eff == 65)
+    check("worked example: effective% for skill 55 vs. opponent baseline 40 is 65", eff == 65)
     roll = 42
     d = degrees(eff, roll)
-    check(f"worked example: roll {roll} against effective% {eff} succeeds "
-          f"(roll <= effective%) with {d} degree(s)",
-          roll <= eff and d == tens(eff) - tens(roll), f"got degrees={d}")
+    check(
+        f"worked example: roll {roll} against effective% {eff} succeeds "
+        f"(roll <= effective%) with {d} degree(s)",
+        roll <= eff and d == tens(eff) - tens(roll),
+        f"got degrees={d}",
+    )
     failing_roll = 80
-    check(f"worked example: roll {failing_roll} against effective% {eff} fails outright "
-          "-- no resisting-side roll, no degrees comparison",
-          failing_roll > eff)
+    check(
+        f"worked example: roll {failing_roll} against effective% {eff} fails outright "
+        "-- no resisting-side roll, no degrees comparison",
+        failing_roll > eff,
+    )
 
 
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     print("== T001/T005: prior mapping table ==")
     assert_prior_mapping()
 
-    print("\n== T002: design/ citations of \"opposed test\" as a mechanism ==")
+    print('\n== T002: design/ citations of "opposed test" as a mechanism ==')
     check_adr_0016_scope()
 
     print("\n== T003/T004: the generalised roll is combat's existing formula, not a new one ==")

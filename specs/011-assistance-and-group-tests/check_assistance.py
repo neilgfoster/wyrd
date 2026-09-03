@@ -29,8 +29,14 @@ FACES = 100
 REALISTIC = [25, 30, 35, 40, 45, 55, 65]
 
 # docs/design/03-rules.md section 1. The rungs, as modifiers to the skill.
-LADDER = [("Easy", 20), ("Average", 0), ("Challenging", -10),
-          ("Difficult", -20), ("Hard", -30), ("Very Hard", -40)]
+LADDER = [
+    ("Easy", 20),
+    ("Average", 0),
+    ("Challenging", -10),
+    ("Difficult", -20),
+    ("Hard", -30),
+    ("Very Hard", -40),
+]
 
 # The smallest gap between adjacent rungs. A helper may be worth at most this much, or one
 # companion silently rewrites the difficulty the GM set.
@@ -40,7 +46,7 @@ CANDIDATE_DIVISORS = [2, 3, 5, 10]
 CANDIDATE_CAPS = [10, 20]
 
 TARGETS = {"a night's work": 2, "a season's work": 4, "a great labour": 6}
-MAX_INTERVALS = 8   # more than this and a long task stops being a handful of beats
+MAX_INTERVALS = 8  # more than this and a long task stops being a handful of beats
 
 
 def degrees(skill: int, roll: int) -> int:
@@ -88,17 +94,20 @@ def main() -> int:
     for divisor in CANDIDATE_DIVISORS:
         for cap in CANDIDATE_CAPS:
             bonuses = [helper_bonus(s, divisor, cap) for s in (25, 40, 65, 100)]
-            binds_at = next((s for s in range(1, 101)
-                             if s // divisor >= cap), None)
+            binds_at = next((s for s in range(1, 101) if s // divisor >= cap), None)
             binds = f"{binds_at}%" if binds_at else "never"
-            print(f"    // {divisor:<3}  +{cap:<3}   "
-                  f"{bonuses[0]:>3} /{bonuses[1]:>3} /{bonuses[2]:>3} /{bonuses[3]:>4}"
-                  f"                {binds:>6}")
+            print(
+                f"    // {divisor:<3}  +{cap:<3}   "
+                f"{bonuses[0]:>3} /{bonuses[1]:>3} /{bonuses[2]:>3} /{bonuses[3]:>4}"
+                f"                {binds:>6}"
+            )
 
     print()
     print("Rejecting a candidate needs both tests:")
-    print(f"  (a) at no realistic helper skill (<= {max(REALISTIC)}%) may the bonus reach "
-          f"{SMALLEST_RUNG}")
+    print(
+        f"  (a) at no realistic helper skill (<= {max(REALISTIC)}%) may the bonus reach "
+        f"{SMALLEST_RUNG}"
+    )
     print("  (b) the cap must not bind at a realistic helper skill, or the bonus is flat in")
     print("      every case that matters and the helper's own skill has stopped setting it")
     print()
@@ -135,8 +144,7 @@ def main() -> int:
             alone = success_rate(actor + mod)
             weak = success_rate(actor + mod + helper_bonus(30, divisor, cap))
             strong = success_rate(actor + mod + helper_bonus(65, divisor, cap))
-            print(f"   {actor:>3}%  {rung:<12} {pct(alone)}       {pct(weak)}        "
-                  f"{pct(strong)}")
+            print(f"   {actor:>3}%  {rung:<12} {pct(alone)}       {pct(weak)}        {pct(strong)}")
 
     lift = success_rate(45 + helper_bonus(65, divisor, cap)) - success_rate(45)
     if lift <= 0:
@@ -159,8 +167,10 @@ def main() -> int:
     if naive <= chosen:
         failures.append("naive stacking is no worse than the chosen rule; FR-2 buys nothing")
     print()
-    print(f"  A party of five turns a Hard test at 45% from {pct(success_rate(15))} into "
-          f"{pct(naive)}.")
+    print(
+        f"  A party of five turns a Hard test at 45% from {pct(success_rate(15))} into "
+        f"{pct(naive)}."
+    )
     print("  That is the rung the GM chose, deleted by turning up with friends.")
 
     print()
@@ -186,9 +196,11 @@ def main() -> int:
             f"more than the {MAX_INTERVALS} that keeps a long task a handful of beats"
         )
     print()
-    print(f"  At a competent {competent}%, the largest target takes "
-          f"{float(intervals):.1f} intervals   "
-          f"[{'ok' if ok else 'FAIL'}]")
+    print(
+        f"  At a competent {competent}%, the largest target takes "
+        f"{float(intervals):.1f} intervals   "
+        f"[{'ok' if ok else 'FAIL'}]"
+    )
     print("  At 25% it takes far longer, and the rule says so rather than hiding it: an")
     print("  extended task at a skill you barely have is not a long task, it is a wall. Bring")
     print("  a helper, or the GM lowers the difficulty, or it is not attempted.")

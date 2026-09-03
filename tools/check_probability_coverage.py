@@ -24,13 +24,15 @@ a fight, a critical table's own weighting, how often a crowd-clear qualifies. Th
 figures that have been wrong twice in this repo's history (CLAUDE.md), and every one currently
 published in docs/design/ is listed in COVERAGE below, each pointing at the script that computed it.
 
-The one design document with a percentage that reads as derived but is not -- docs/design/20-journeys.md's
-"hazard_rating: 4 gives a 40% chance per leg" -- is a direct multiplication (rating x 10 on d100) the
-document itself states as its formula. It is exact by construction, not by simulation, so it needs
-no separate script the way an attrition figure combining several distributions does.
+The one design document with a percentage that reads as derived but is not --
+docs/design/20-journeys.md's "hazard_rating: 4 gives a 40% chance per leg" -- is a direct
+multiplication (rating x 10 on d100) the document itself states as its formula. It is exact by
+construction, not by simulation, so it needs no separate script the way an attrition figure
+combining several distributions does.
 
 Run: python3 tools/check_probability_coverage.py
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -41,36 +43,77 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # (docs/design file, what it publishes, the script that computes and asserts it)
 COVERAGE = [
-    ("06-aftermath.md", "Aftermath table ranges and death-row distribution",
-     "specs/002-aftermath-table/check_aftermath.py"),
-    ("11-character-creation.md", "starting Stamina/Luck and the 8-advance pool",
-     "specs/008-character-creation/check_creation.py"),
-    ("03-rules.md", "opposed-test behaviour at real skill values",
-     "specs/010-opposed-tests/check_opposed.py"),
-    ("03-rules.md", "assistance divisor and group/extended-task shapes",
-     "specs/011-assistance-and-group-tests/check_assistance.py"),
-    ("03-rules.md", "combat-sequencing mapping (turn order, surprise)",
-     "specs/012-combat-sequencing/check_mapping.py"),
-    ("03-rules.md", "fight length and first-strike value in rounds",
-     "specs/012-combat-sequencing/check_sequencing.py"),
-    ("03-rules.md", "the crowd rule's clearing threshold and one-blow attrition",
-     "specs/013-the-mob-rule/check_mobs.py"),
-    ("03-rules.md", "Stamina recovery -- Rallies owed, and the Mend ladder",
-     "specs/014-stamina-recovery/check_recovery.py"),
-    ("05-criticals.md", "every figure the four damage-type critical tables publish",
-     "specs/015-damage-type-criticals/check_criticals.py"),
-    ("12-the-adversary.md", "the adversary model's baseline and crowd interaction",
-     "specs/017-adversary-model/check_adversary.py"),
-    ("03-rules.md", "the player-facing combat conversion (telling-blow threshold)",
-     "specs/018-player-facing-combat/check_conversion.py"),
-    ("08-afflictions.md", "the affliction sawtooth's cadence",
-     "tools/check_affliction.py"),
-    ("14-oracle-answers.md", "oracle-answer band widths and outcome probabilities",
-     "tools/check_oracle_answers.py"),
-    ("11-character-creation.md", "the career cap and the maximum-Stamina ceiling",
-     "tools/check_advancement.py"),
-    ("07-transformations.md", "the transformation re-roll loop terminates",
-     "tools/check_transformation.py"),
+    (
+        "06-aftermath.md",
+        "Aftermath table ranges and death-row distribution",
+        "specs/002-aftermath-table/check_aftermath.py",
+    ),
+    (
+        "11-character-creation.md",
+        "starting Stamina/Luck and the 8-advance pool",
+        "specs/008-character-creation/check_creation.py",
+    ),
+    (
+        "03-rules.md",
+        "opposed-test behaviour at real skill values",
+        "specs/010-opposed-tests/check_opposed.py",
+    ),
+    (
+        "03-rules.md",
+        "assistance divisor and group/extended-task shapes",
+        "specs/011-assistance-and-group-tests/check_assistance.py",
+    ),
+    (
+        "03-rules.md",
+        "combat-sequencing mapping (turn order, surprise)",
+        "specs/012-combat-sequencing/check_mapping.py",
+    ),
+    (
+        "03-rules.md",
+        "fight length and first-strike value in rounds",
+        "specs/012-combat-sequencing/check_sequencing.py",
+    ),
+    (
+        "03-rules.md",
+        "the crowd rule's clearing threshold and one-blow attrition",
+        "specs/013-the-mob-rule/check_mobs.py",
+    ),
+    (
+        "03-rules.md",
+        "Stamina recovery -- Rallies owed, and the Mend ladder",
+        "specs/014-stamina-recovery/check_recovery.py",
+    ),
+    (
+        "05-criticals.md",
+        "every figure the four damage-type critical tables publish",
+        "specs/015-damage-type-criticals/check_criticals.py",
+    ),
+    (
+        "12-the-adversary.md",
+        "the adversary model's baseline and crowd interaction",
+        "specs/017-adversary-model/check_adversary.py",
+    ),
+    (
+        "03-rules.md",
+        "the player-facing combat conversion (telling-blow threshold)",
+        "specs/018-player-facing-combat/check_conversion.py",
+    ),
+    ("08-afflictions.md", "the affliction sawtooth's cadence", "tools/check_affliction.py"),
+    (
+        "14-oracle-answers.md",
+        "oracle-answer band widths and outcome probabilities",
+        "tools/check_oracle_answers.py",
+    ),
+    (
+        "11-character-creation.md",
+        "the career cap and the maximum-Stamina ceiling",
+        "tools/check_advancement.py",
+    ),
+    (
+        "07-transformations.md",
+        "the transformation re-roll loop terminates",
+        "tools/check_transformation.py",
+    ),
 ]
 
 
@@ -84,7 +127,9 @@ def main() -> int:
             continue
         result = subprocess.run(
             [sys.executable, str(script_path)],
-            cwd=ROOT, capture_output=True, text=True,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
         )
         status = "ok" if result.returncode == 0 else "FAIL"
         print(f"  {status:4}  docs/design/{doc:<28} {claim}")
@@ -98,8 +143,10 @@ def main() -> int:
         for f in failures:
             print(f"  - {f}")
         return 1
-    print(f"All {len(COVERAGE)} derived probability claims in docs/design/ are backed by a "
-          "passing computation.")
+    print(
+        f"All {len(COVERAGE)} derived probability claims in docs/design/ are backed by a "
+        "passing computation."
+    )
     return 0
 
 
