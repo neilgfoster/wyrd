@@ -127,8 +127,11 @@ silently drop the design document's explicit "repeat draw is not a defect" state
 - **FR-002**: The engine MUST NOT stage a Trauma test for a mutation that only reaches Trauma 6
   without crossing past it (the floor itself is free).
 - **FR-003**: A failed Trauma test MUST stage a further roll of `1d12` against the affliction
-  table (key `affliction`), whose resulting row's declared effect is applied via the engine's
-  existing points-modifier/difficulty-ladder mutation vocabulary.
+  table (key `affliction`), recording the resulting row as a durable `afflictions` entry the
+  caller/GM reads back and enforces in play using the engine's existing points-modifier/
+  difficulty-ladder vocabulary (docs/design/08-afflictions.md's rows are declared tests and
+  standing conditions applied at the table, not immediate mechanical deltas the engine computes
+  itself — see Assumptions).
 - **FR-004**: A passed Trauma test MUST stage no further roll.
 - **FR-005**: The affliction table MUST be repeatable — drawing a row a character has already
   taken before is applied as rolled, never re-rolled (contrast with the transformation table's

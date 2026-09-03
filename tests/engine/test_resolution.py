@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import inspect
 import pathlib
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -1793,6 +1794,18 @@ class TraumaTestCascadeTest(ResolutionTestBase):
         self.assertEqual(rows, list(range(1, 13)))
         keys = [key for _row, key, _description in resolution.AFFLICTION_TABLE]
         self.assertEqual(len(keys), len(set(keys)))
+
+    def test_check_affliction_cadence_unaffected(self):
+        """SC-005: this feature must not change docs/design/08-afflictions.md's published
+        sawtooth-cadence figure (1 Affliction per 6 Trauma-adding events, i.e. a numeric rate of
+        0.1667, for any skill below the ~83% runaway point) -- run the design programme's own
+        check script and confirm it still exits clean and reproduces that figure."""
+        script = pathlib.Path(__file__).resolve().parents[2] / "tools" / "check_affliction.py"
+        result = subprocess.run(
+            [sys.executable, str(script)], capture_output=True, text=True, check=False
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("0.1667", result.stdout)
 
 
 if __name__ == "__main__":
