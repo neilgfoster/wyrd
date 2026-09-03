@@ -5,6 +5,7 @@ stdlib unittest, no pytest (docs/design/27-tooling.md section 6).
 
 from __future__ import annotations
 
+import inspect
 import pathlib
 import sys
 import tempfile
@@ -1211,6 +1212,11 @@ class DamageTypeCriticalTest(unittest.TestCase):
                 self.assertEqual(critical_step["roll"]["table"], f"critical-{damage_type}")
 
 
+#: The minimum entity state Aftermath is rolled for: a `character` entity
+#: (docs/design/12-the-adversary.md section 4). `role` is not part of the test.
+CHARACTER_ENTITY_STATE = {"type": "character"}
+
+
 class AftermathTest(unittest.TestCase):
     """specs/091-aftermath-wound-records: the post-fight aftermath roll and its 8 rows.
 
@@ -1255,6 +1261,7 @@ class AftermathTest(unittest.TestCase):
                         depends_on_step=0,
                         seed_cursor=resolution._SeedCursor(seed=1),
                         bears_on_skill="swordplay",
+                        entity_state=CHARACTER_ENTITY_STATE,
                     )
 
     def test_roll_and_modifier(self):
@@ -1268,6 +1275,7 @@ class AftermathTest(unittest.TestCase):
             depends_on_step=0,
             seed_cursor=resolution._SeedCursor(seed=1),
             bears_on_skill="swordplay",
+            entity_state=CHARACTER_ENTITY_STATE,
         )
         step = steps[0]
         self.assertEqual(step["mechanic"], "aftermath")
@@ -1292,6 +1300,7 @@ class AftermathTest(unittest.TestCase):
             depends_on_step=0,
             seed_cursor=resolution._SeedCursor(seed=1),
             bears_on_skill=bears_on_skill,
+            entity_state=CHARACTER_ENTITY_STATE,
         )
         return steps[0]
 
@@ -1361,6 +1370,7 @@ class MortalBlowsFateDeathTest(unittest.TestCase):
             depends_on_step=0,
             seed_cursor=resolution._SeedCursor(seed=seed),
             bears_on_skill="swordplay",
+            entity_state=CHARACTER_ENTITY_STATE,
             mortal=mortal,
             mortality=mortality,
         )
@@ -1560,6 +1570,116 @@ class MortalBlowsFateDeathTest(unittest.TestCase):
                 mutation = resolution.apply_companion_status(companion_state, key)
                 self.assertIsNone(mutation)
                 self.assertEqual(companion_state["status"], "with-party")
+
+
+class AftermathExemptionTest(unittest.TestCase):
+    """specs/097-adversary-turn-aftermath-exemption: Aftermath is rolled once per character or
+    companion who dropped (docs/design/12-the-adversary.md section 4), and an adversary is
+    neither. The rule lives in one place -- `rolls_aftermath` -- and `_stage_aftermath` enforces
+    it itself, so no future caller can wire up a drop that bypasses it (spec.md SC-004).
+    """
+
+    def test_only_a_character_entity_rolls(self):
+        for entity_state, expected in (
+            ({"type": "character"}, True),
+            ({"type": "character", "role": "player"}, True),
+            ({"type": "character", "role": "companion"}, True),
+            ({"type": "character", "role": "antagonist"}, True),
+            # A bare adversary: no `type: character`, whatever else it carries.
+            ({}, False),
+            ({"name": "hedge-brigand", "baseline": 35, "stamina_max": 7}, False),
+            ({"type": "organisation"}, False),
+            ({"type": "place"}, False),
+            (None, False),
+        ):
+            with self.subTest(entity_state=entity_state):
+                self.assertIs(resolution.rolls_aftermath(entity_state), expected)
+
+    def test_staging_for_a_bare_adversary_is_refused_and_stages_nothing(self):
+        steps: list[dict] = []
+        for entity_state in ({}, {"name": "hedge-brigand"}, {"type": "organisation"}, None):
+            with self.subTest(entity_state=entity_state):
+                with self.assertRaises(ValueError) as raised:
+                    resolution._stage_aftermath(
+                        steps,
+                        entity="hedge-brigand",
+                        points_below_zero=3,
+                        depends_on_step=0,
+                        seed_cursor=resolution._SeedCursor(seed=1),
+                        bears_on_skill="swordplay",
+                        entity_state=entity_state,
+                    )
+                self.assertIn("hedge-brigand", str(raised.exception))
+        # No wound record, no death row, no partial step: the list is untouched.
+        self.assertEqual(steps, [])
+
+    def test_refusal_precedes_the_roll(self):
+        """The exemption is checked before `points_below_zero` -- a non-character entity is
+        refused for being one, not for the shape of its drop."""
+        with self.assertRaises(ValueError) as raised:
+            resolution._stage_aftermath(
+                [],
+                entity="hedge-brigand",
+                points_below_zero=0,
+                depends_on_step=0,
+                seed_cursor=resolution._SeedCursor(seed=1),
+                bears_on_skill="swordplay",
+                entity_state={},
+            )
+        self.assertIn("non-character", str(raised.exception))
+
+    def test_every_role_of_character_entity_stages_identically(self):
+        """A named antagonist rolls because it is a `character` entity -- the same test the rule
+        already applies to the player's own character and to a companion. `role` never changes
+        the result (spec.md FR-004)."""
+        results = []
+        for role in ("player", "companion", "antagonist"):
+            steps: list[dict] = []
+            resolution._stage_aftermath(
+                steps,
+                entity="who",
+                points_below_zero=4,
+                depends_on_step=0,
+                seed_cursor=resolution._SeedCursor(seed=7),
+                bears_on_skill="swordplay",
+                entity_state={"type": "character", "role": role},
+            )
+            self.assertEqual(len(steps), 1)
+            self.assertEqual(steps[0]["mechanic"], "aftermath")
+            results.append(steps[0])
+        self.assertEqual(results[0], results[1])
+        self.assertEqual(results[1], results[2])
+
+    def test_an_adversarys_critical_resolves_exactly_as_a_characters(self):
+        """docs/design/12-the-adversary.md section 4: a critical is rolled for an adversary
+        exactly as for anyone else. The critical path takes no entity state at all, so there is
+        nowhere for an adversary-specific branch to live -- this fails if one is ever added."""
+        for damage_type in resolution.CRITICAL_TABLES:
+            with self.subTest(damage_type=damage_type):
+                staged = []
+                for entity in ("pc", "hedge-brigand"):
+                    steps: list[dict] = []
+                    resolution._stage_critical(
+                        steps,
+                        entity,
+                        3,
+                        0,
+                        resolution._SeedCursor(seed=11),
+                        bears_on_skill="swordplay",
+                        damage_type=damage_type,
+                    )
+                    self.assertEqual(len(steps), 1)
+                    roll = dict(steps[0]["roll"])
+                    roll.pop("entity", None)
+                    staged.append(roll)
+                self.assertEqual(staged[0], staged[1])
+
+    def test_the_critical_path_takes_no_entity_kind_at_all(self):
+        """The stronger half of the claim above: `_stage_critical` accepts no entity state,
+        entity kind or adversary block, so no adversary-specific branch can be reached from it
+        without changing its signature and failing here (spec.md FR-007)."""
+        params = set(inspect.signature(resolution._stage_critical).parameters)
+        self.assertEqual(params & {"entity_state", "kind", "block", "adversary"}, set())
 
 
 if __name__ == "__main__":

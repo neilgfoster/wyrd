@@ -5,6 +5,7 @@ stdlib unittest, no pytest (docs/design/27-tooling.md section 6).
 
 from __future__ import annotations
 
+import inspect
 import pathlib
 import sys
 import tempfile
@@ -902,6 +903,53 @@ class RangedAttackDamageTypeTest(unittest.TestCase):
                 break
         self.assertIsNotNone(found, "no scenario staged a critical in the scanned seed range")
         self.assertEqual(found["roll"]["table"], "critical-searing")
+
+
+class AdversaryTurnParityTest(unittest.TestCase):
+    """specs/097-adversary-turn-aftermath-exemption US3: an adversary's turn is the same turn
+    everyone gets (docs/design/12-the-adversary.md section 4). The block carries no action list
+    of its own, and the turn machinery here is side-named and entity-agnostic by construction --
+    these fail if an adversary-specific branch is ever introduced.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle_state.yaml"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _scene(self, **flags):
+        return combat.start_combat(
+            {"party": {"armed": True}, "brigands": {"armed": True, **flags}},
+            started_by=None,
+            player_side="party",
+            state_path=self.path,
+        )
+
+    def test_an_adversary_side_spends_one_action_a_round_like_anyone_else(self):
+        self._scene()
+        self.assertFalse(combat.has_acted("brigands", state_path=self.path))
+        combat.close("brigands", "party", state_path=self.path)
+        self.assertTrue(combat.has_acted("brigands", state_path=self.path))
+        # The party's own action is untouched by the adversary having spent theirs.
+        self.assertFalse(combat.has_acted("party", state_path=self.path))
+        combat.advance_round(state_path=self.path)
+        self.assertFalse(combat.has_acted("brigands", state_path=self.path))
+
+    def test_surprise_and_ambush_apply_to_an_adversary_side_unchanged(self):
+        self._scene(surprised=True)
+        self.assertFalse(combat.can_act("brigands", state_path=self.path))
+        combat.advance_round(state_path=self.path)
+        self.assertTrue(combat.can_act("brigands", state_path=self.path))
+
+    def test_the_turn_machinery_takes_no_entity_kind(self):
+        """No function in the turn machinery accepts an entity state, kind or adversary block:
+        a side is a name, and there is nowhere an adversary-only case could be read from."""
+        for fn in (combat.can_act, combat.has_acted, combat.attack_modifier, combat.advance_round):
+            with self.subTest(fn=fn.__name__):
+                params = set(inspect.signature(fn).parameters)
+                self.assertEqual(params & {"entity_state", "kind", "block", "adversary"}, set())
 
 
 if __name__ == "__main__":

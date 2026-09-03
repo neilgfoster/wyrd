@@ -510,6 +510,29 @@ def _stage_critical(
     )
 
 
+#: docs/design/12-the-adversary.md section 4 ("A turn, and dropping"): Aftermath is rolled once
+#: per character or companion who dropped, and an adversary is neither. Both are `character`
+#: entities (docs/design/25-entities.md), as is a named antagonist -- which is why the test is
+#: entity type and never importance, faction or whether the entity is player-facing.
+ENTITY_TYPE_CHARACTER = "character"
+
+
+def rolls_aftermath(entity_state: dict | None) -> bool:
+    """Is this an entity Aftermath is rolled for? (specs/097 FR-001/003/005.)
+
+    True only for a `character` entity -- the player's own character, a companion, or a named
+    antagonist, all of which the chronicle carries forward. An entity with no `type` at all, or
+    any other type, is not one: an opponent carrying only an adversary block never rolls, and
+    what became of it is the fiction's to say. `role` is deliberately not consulted.
+
+    This is the single decision point the rule lives at; `_stage_aftermath` enforces it itself
+    rather than trusting each caller to ask first (spec.md SC-004).
+    """
+    if not isinstance(entity_state, dict):
+        return False
+    return entity_state.get("type") == ENTITY_TYPE_CHARACTER
+
+
 def _stage_aftermath(
     steps: list[dict],
     entity: str,
@@ -518,6 +541,7 @@ def _stage_aftermath(
     seed_cursor: _SeedCursor,
     bears_on_skill: str,
     *,
+    entity_state: dict | None,
     mortal: bool = False,
     mortality: str = "standard",
 ) -> None:
@@ -535,7 +559,15 @@ def _stage_aftermath(
     that `death` -- forced or rolled -- onto the worst non-death row unconditionally, with no
     Fate spent; `mortality` must be one of `MORTALITY_LEVELS`. Both closures are deterministic
     and need no player input, so both are decided here at staging time; a Fate spend is a later
-    player choice and is `close_death_row`'s job instead (FR-002/003)."""
+    player choice and is `close_death_row`'s job instead (FR-002/003).
+
+    `entity_state` is required, not optional: Aftermath is only rolled for a `character` entity
+    (`rolls_aftermath`, docs/design/12-the-adversary.md section 4), and staging it for anything
+    else raises rather than producing a partial step. A default would be a bypass -- the point
+    of enforcing it here is that no caller can wire up a drop that skips the check
+    (specs/097-adversary-turn-aftermath-exemption FR-002, SC-004)."""
+    if not rolls_aftermath(entity_state):
+        raise ValueError(f"Aftermath is not rolled for a non-character entity: {entity!r}")
     if points_below_zero <= 0:
         raise ValueError(f"points_below_zero must be positive, got {points_below_zero!r}")
     if mortality not in MORTALITY_LEVELS:
