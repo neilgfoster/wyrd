@@ -327,6 +327,16 @@ TOOLS: dict[str, dict] = {
                     "type": "string",
                     "enum": ["slashing", "piercing", "blunt", "searing"],
                 },
+                "dread_witnessed": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": (
+                        "On an ordinary-test only: the caller's own already-decided fictional "
+                        "judgment that target was seen by someone who has not made their peace "
+                        "with its transformation, so target's total Dread penalises the roll "
+                        "(docs/design/07-transformations.md 'Dread')."
+                    ),
+                },
                 "seed": {"type": "integer"},
             },
             "required": ["actor", "mechanic"],

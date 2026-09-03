@@ -1928,5 +1928,103 @@ class TraumaTestCascadeTest(ResolutionTestBase):
         self.assertIn("0.1667", result.stdout)
 
 
+class DreadReactionPenaltyTest(unittest.TestCase):
+    """specs/101-dread-reaction-penalty: docs/design/07-transformations.md "Dread" -- a
+    reaction/social test toward a transformed character, seen by someone who has not made their
+    peace with it, is penalised by the target's total Dread, stacked the same way every other
+    points modifier already is."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.witness = pathlib.Path(self._tmp.name) / "witness.md"
+        self.target = pathlib.Path(self._tmp.name) / "target.md"
+        witness = dict(SENNA)
+        witness["id"] = "witness"
+        witness["skills"] = {"composure": 50}
+        character.save(witness, "", self.witness)
+        target = dict(SENNA)
+        target["id"] = "target"
+        target["dread"] = 3
+        character.save(target, "", self.target)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def effective_pct(self, **kwargs):
+        result = resolution.propose(
+            actor=self.witness,
+            mechanic="ordinary-test",
+            skill="composure",
+            target=self.target,
+            seed=1,
+            **kwargs,
+        )
+        return result["steps"][0]["roll"]["effective_pct"]
+
+    def test_dread_witnessed_subtracts_target_dread(self):
+        # eff% = 50 (skill) + 0 (average) - 3 (Dread) = 47.
+        self.assertEqual(self.effective_pct(dread_witnessed=True), 47)
+
+    def test_dread_witnessed_stacks_with_declaration_bonus(self):
+        # eff% = 50 (skill) + 0 (average) + 10 (declaration) - 3 (Dread) = 57.
+        self.assertEqual(
+            self.effective_pct(dread_witnessed=True, declaration_bonus=10),
+            57,
+        )
+
+    def test_large_dread_still_clips_to_a_valid_percentage(self):
+        frontmatter, _ = character.load(self.target)
+        frontmatter["dread"] = 1000
+        character.save(frontmatter, "", self.target)
+        pct = self.effective_pct(dread_witnessed=True)
+        self.assertGreaterEqual(pct, 0)
+        self.assertLessEqual(pct, 100)
+
+    def test_dread_witnessed_false_is_unaffected(self):
+        # Default (omitted) behaves identically to explicitly False.
+        self.assertEqual(self.effective_pct(), self.effective_pct(dread_witnessed=False))
+        self.assertEqual(self.effective_pct(), 50)
+
+    def test_zero_dread_target_is_unaffected(self):
+        frontmatter, _ = character.load(self.target)
+        frontmatter["dread"] = 0
+        character.save(frontmatter, "", self.target)
+        self.assertEqual(self.effective_pct(dread_witnessed=True), 50)
+
+    def test_dread_witnessed_with_no_target_does_not_raise(self):
+        result = resolution.propose(
+            actor=self.witness,
+            mechanic="ordinary-test",
+            skill="composure",
+            dread_witnessed=True,
+            seed=1,
+        )
+        self.assertEqual(result["steps"][0]["roll"]["effective_pct"], 50)
+
+    def test_dread_witnessed_has_no_effect_on_exposure(self):
+        # FR-006: the penalty must never leak into a mechanic other than ordinary-test.
+        with_penalty = resolution.propose(
+            actor=self.witness,
+            mechanic="exposure",
+            skill="composure",
+            target=self.target,
+            tier="minor",
+            dread_witnessed=True,
+            seed=1,
+        )
+        without_penalty = resolution.propose(
+            actor=self.witness,
+            mechanic="exposure",
+            skill="composure",
+            target=self.target,
+            tier="minor",
+            seed=1,
+        )
+        self.assertEqual(
+            with_penalty["steps"][0]["roll"]["effective_pct"],
+            without_penalty["steps"][0]["roll"]["effective_pct"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
