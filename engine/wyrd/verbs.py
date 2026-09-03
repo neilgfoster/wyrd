@@ -199,6 +199,7 @@ def propose(
     weapon_dice: str | None = None,
     armour_dice: str | None = None,
     damage_type: str | None = None,
+    dread_witnessed: bool = False,
     seed: int | None = None,
 ) -> dict:
     """Resolve the `propose` verb."""
@@ -213,6 +214,7 @@ def propose(
         weapon_dice=weapon_dice,
         armour_dice=armour_dice,
         damage_type=damage_type,
+        dread_witnessed=dread_witnessed,
         seed=seed,
     )
     return {"verb": "propose", **result}

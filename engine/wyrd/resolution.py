@@ -435,17 +435,24 @@ def _resolve_ordinary_test(
     difficulty: str,
     declaration_bonus: int,
     seed: int | None,
+    target_state: dict | None = None,
+    dread_witnessed: bool = False,
     **_ignored,
 ) -> dict:
     if skill is None:
         raise ValueError("ordinary-test requires a skill")
     skill_value = actor_state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
+    # docs/design/07-transformations.md "Dread": a reaction/social test toward a transformed
+    # character, seen by someone who has not made their peace with it (the caller's own
+    # already-decided fictional judgment -- never inferred here), is penalised by the target's
+    # total Dread, stacked the same way every other points modifier already is.
+    dread_penalty = target_state.get("dread", 0) if dread_witnessed and target_state else 0
     roll_data = _resolve_test(
         actor=actor,
         mechanic="ordinary-test",
         skill_value=skill_value,
         difficulty=difficulty,
-        declaration_bonus=declaration_bonus,
+        declaration_bonus=declaration_bonus - dread_penalty,
         seed=seed,
     )
     roll_data["skill"] = skill
@@ -1166,6 +1173,7 @@ def _normalize_request(raw_request: dict) -> dict:
         "weapon_dice": raw_request.get("weapon_dice"),
         "armour_dice": raw_request.get("armour_dice"),
         "damage_type": raw_request.get("damage_type"),
+        "dread_witnessed": raw_request.get("dread_witnessed", False),
     }
 
 
@@ -1241,6 +1249,7 @@ def _stage_request(
             declaration_bonus=request["declaration_bonus"] + declaration_bonus_delta,
             tier=request["tier"],
             target_state=target_state,
+            dread_witnessed=request["dread_witnessed"],
             seed=seed_cursor.next(),
         )
         mutations = mutate_fn(roll_data, actor_state=actor_state, target_state=target_state)
@@ -1390,7 +1399,7 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     resolution.md "A worked example": "Two unrelated Exposure sources in the same scene, proposed
     together"). Each request takes the same keys as `propose`'s own kwargs (`actor`, `mechanic`,
     `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `weapon_dice`, `armour_dice`,
-    `damage_type`).
+    `damage_type`, `dread_witnessed`).
     An actor/target appearing in more than one request shares one in-memory scratch state across
     them, so a later request in the batch sees any earlier request's own staged mutations when
     checking for a threshold crossing. Writes nothing. Returns `{"proposal_id", "roll",
@@ -1430,6 +1439,7 @@ def propose(
     weapon_dice: str | None = None,
     armour_dice: str | None = None,
     damage_type: str | None = None,
+    dread_witnessed: bool = False,
     seed: int | None = None,
 ) -> dict:
     """Resolve `mechanic` against `actor`'s own state, cascading into further steps whenever the
@@ -1442,7 +1452,13 @@ def propose(
     propagates `character.load`'s own error for a missing actor or target entity. `damage_type`
     (docs/design/05-criticals.md) selects which critical table a `combat-attack` cascade reads if
     it stages one; unset defaults to `slashing`, so every caller predating this parameter keeps
-    its existing behaviour unchanged (specs/090-damage-type-criticals FR-001b).
+    its existing behaviour unchanged (specs/090-damage-type-criticals FR-001b). `dread_witnessed`
+    (docs/design/07-transformations.md "Dread") states the caller's own already-decided fictional
+    judgment that `target` was seen by someone who has not made their peace with its
+    transformation; on an `ordinary-test` with a nonzero-Dread `target`, this subtracts that
+    Dread from the effective chance the same way any other points modifier stacks. It has no
+    effect on any other mechanic, and defaults to `False` so every caller predating this
+    parameter keeps its existing behaviour unchanged (specs/101-dread-reaction-penalty FR-004).
 
     A thin single-request wrapper over `propose_batch` -- see that function for proposing
     several independent requests together in one proposal.
@@ -1460,6 +1476,7 @@ def propose(
                 "weapon_dice": weapon_dice,
                 "armour_dice": armour_dice,
                 "damage_type": damage_type,
+                "dread_witnessed": dread_witnessed,
             }
         ],
         seed=seed,
