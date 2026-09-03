@@ -17,8 +17,10 @@ Python 3.11+, standard library only.
 
 from __future__ import annotations
 
+import math
 import pathlib
 import re
+from fractions import Fraction
 
 from wyrd import resolution, state
 
@@ -258,3 +260,66 @@ def effective_block(block: dict) -> dict:
         result["damage_type"] = damage_type_overrides[-1]
 
     return result
+
+
+#: docs/design/03-rules.md section 7: "The adjustment is 15.5 x log2(ratio)" -- the published
+#: coefficient a GM reads off the design document, not re-derived here (specs/098-encounter-
+#: danger-scaling: `specs/017-adversary-model/check_adversary.py` already established that the
+#: fitted and published coefficients agree to the precision the ladder rounds to).
+SKILL_ADJUSTMENT_COEFFICIENT = 15.5
+
+#: docs/design/03-rules.md section 1: the ladder's whole positive extent, and the symmetric clip
+#: docs/design/03-rules.md section 7 puts on the skill adjustment.
+SKILL_ADJUSTMENT_CLIP = 20
+
+#: docs/design/03-rules.md section 6: the finest unit a skill moves by at all.
+SKILL_ADJUSTMENT_STEP = 5
+
+
+def effective_party_size(bodies: int) -> Fraction:
+    """docs/design/03-rules.md section 7: "The k-th body is worth 1/k." The effective size of a
+    party of `bodies` bodies is `1 + 1/2 + ... + 1/bodies`, exact -- never a rounded float
+    (ADR 0024). `bodies <= 0` is a party of none, worth nothing (specs/098-encounter-danger-
+    scaling)."""
+    return sum((Fraction(1, k) for k in range(1, bodies + 1)), Fraction(0))
+
+
+def danger_ratio(party: int, written_for: int | None) -> Fraction:
+    """docs/design/03-rules.md section 7: "Both sides of the ratio are read through that same
+    function." Where `written_for` is missing or zero, the content runs as written, so the
+    ratio is exactly 1 rather than a division by zero (specs/098-encounter-danger-scaling)."""
+    if not written_for:
+        return Fraction(1)
+    return effective_party_size(party) / effective_party_size(written_for)
+
+
+def danger_effective(danger: int, party: int, written_for: int | None) -> Fraction:
+    """docs/design/03-rules.md section 7: `danger_effective = danger x (party_effective /
+    written_for_effective)`, carried exact and never rounded mid-calculation (ADR 0024)."""
+    return danger * danger_ratio(party, written_for)
+
+
+def scaled_count(written_count: int, danger: int, party: int, written_for: int | None) -> int:
+    """docs/design/03-rules.md section 7: a written opponent count scaled to `danger_effective`,
+    "round half up, and never below 1 where the written quantity was at least 1" -- a written
+    count of 0 is an unused quantity and stays 0 (specs/098-encounter-danger-scaling)."""
+    exact = Fraction(written_count) * danger_effective(danger, party, written_for) / danger
+    rounded = math.floor(float(exact) + 0.5)
+    return max(1, rounded) if written_count >= 1 else rounded
+
+
+def skill_adjustment(party: int, written_for: int | None) -> int:
+    """docs/design/03-rules.md section 7: "The adjustment is 15.5 x log2(ratio), rounded to the
+    nearest 5 and clipped to +-20" -- the points added to an opponent's percentage when content
+    is prepared for a party other than the one it was written for."""
+    raw = SKILL_ADJUSTMENT_COEFFICIENT * math.log2(float(danger_ratio(party, written_for)))
+    rounded = math.floor(raw / SKILL_ADJUSTMENT_STEP + 0.5) * SKILL_ADJUSTMENT_STEP
+    return max(-SKILL_ADJUSTMENT_CLIP, min(SKILL_ADJUSTMENT_CLIP, rounded))
+
+
+def adjusted_skill(block: dict, skill: str, party: int, written_for: int | None) -> int:
+    """docs/design/03-rules.md section 7: the opponent's percentage as it is actually tested --
+    its baseline-resolved value (#260's `resolve_skill`) plus `skill_adjustment`, floored at 0
+    (a percentage is not a negative number; docs/design/03-rules.md section 1). Never mutates
+    `block` (docs/design/12-the-adversary.md section 6: "the block is absolute")."""
+    return max(0, resolve_skill(block, skill) + skill_adjustment(party, written_for))
