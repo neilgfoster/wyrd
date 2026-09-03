@@ -294,7 +294,7 @@ roll the crossing calls for, inside the same proposal, before anything commits:
 
 - `taint` crossing a multiple of 3 spawns a Transformation roll
 - `trauma ≥ 6` spawns a test on every further gain, and a failed test spawns an Affliction roll
-- `transformations` count exceeding `hidden_threshold` sets `status: lost`
+- `transformations` count reaching `hidden_threshold` sets `status: lost`
 
 **Active triggers, outside the proposal surface** — a generic tracker reaching `max` fires and
 resets, but this currently happens through `wyrd track`'s own immediate write
