@@ -311,8 +311,14 @@ def scaled_count(written_count: int, danger: int, party: int, written_for: int |
 def skill_adjustment(party: int, written_for: int | None) -> int:
     """docs/design/03-rules.md section 7: "The adjustment is 15.5 x log2(ratio), rounded to the
     nearest 5 and clipped to +-20" -- the points added to an opponent's percentage when content
-    is prepared for a party other than the one it was written for."""
-    raw = SKILL_ADJUSTMENT_COEFFICIENT * math.log2(float(danger_ratio(party, written_for)))
+    is prepared for a party other than the one it was written for. A party of none (`party <= 0`)
+    has a ratio of exactly 0, whose log is undefined -- that is the ladder's own bottom rung, so
+    it clips to the same -20 an arbitrarily small positive ratio would (specs/098-encounter-
+    danger-scaling)."""
+    ratio = danger_ratio(party, written_for)
+    if ratio <= 0:
+        return -SKILL_ADJUSTMENT_CLIP
+    raw = SKILL_ADJUSTMENT_COEFFICIENT * math.log2(float(ratio))
     rounded = math.floor(raw / SKILL_ADJUSTMENT_STEP + 0.5) * SKILL_ADJUSTMENT_STEP
     return max(-SKILL_ADJUSTMENT_CLIP, min(SKILL_ADJUSTMENT_CLIP, rounded))
 

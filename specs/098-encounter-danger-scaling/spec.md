@@ -113,6 +113,8 @@ calls, and the two results can differ.
   the written quantity was at least 1."
 - A party or `written_for` of 1: `H(1)` is exactly 1, so the ratio and adjustment behave as the
   smallest case of the same formula, not a special-cased shortcut.
+- A party of none (`party <= 0`): the ratio is exactly 0, so the skill adjustment clips to its
+  bottom rung (-20) rather than evaluating a logarithm of zero.
 
 ## Requirements *(mandatory)*
 

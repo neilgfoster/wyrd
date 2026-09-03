@@ -454,6 +454,9 @@ class EncounterDangerScalingTest(unittest.TestCase):
         self.assertEqual(adversary.danger_ratio(3, None), 1)
         self.assertEqual(adversary.danger_ratio(3, 0), 1)
 
+    def test_skill_adjustment_party_of_none_clips_to_bottom_rung(self):
+        self.assertEqual(adversary.skill_adjustment(0, 4), -20)
+
     def test_adjusted_skill_floors_at_zero(self):
         block = dict(self.block, baseline=10, skills={})
         self.assertEqual(adversary.adjusted_skill(block, "brawl", 1, 6), 0)
