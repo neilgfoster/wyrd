@@ -6,6 +6,7 @@ from __future__ import annotations
 import pathlib
 import tempfile
 import unittest
+from fractions import Fraction
 
 from wyrd import adversary, rules, state
 
@@ -373,6 +374,101 @@ class AdversaryTraitEffectsTest(unittest.TestCase):
 
     def test_wyrd_band_width_no_traits_is_zero(self):
         self.assertEqual(adversary.wyrd_band_width(self.block), 0)
+
+
+class EncounterDangerScalingTest(unittest.TestCase):
+    """docs/design/03-rules.md section 7 ("Danger scaling") / ADR 0024 /
+    specs/098-encounter-danger-scaling."""
+
+    #: The exact table docs/design/03-rules.md section 7 prints.
+    PUBLISHED_TABLE = {
+        (1, 1): 0, (1, 2): -10, (1, 3): -15, (1, 4): -15, (1, 5): -20, (1, 6): -20,
+        (2, 1): 10, (2, 2): 0, (2, 3): -5, (2, 4): -5, (2, 5): -10, (2, 6): -10,
+        (3, 1): 15, (3, 2): 5, (3, 3): 0, (3, 4): -5, (3, 5): -5, (3, 6): -5,
+        (4, 1): 15, (4, 2): 5, (4, 3): 5, (4, 4): 0, (4, 5): 0, (4, 6): -5,
+        (5, 1): 20, (5, 2): 10, (5, 3): 5, (5, 4): 0, (5, 5): 0, (5, 6): 0,
+        (6, 1): 20, (6, 2): 10, (6, 3): 5, (6, 4): 5, (6, 5): 0, (6, 6): 0,
+    }  # fmt: skip
+
+    def setUp(self):
+        self.block = {
+            "id": "the-hunter",
+            "name": "A named antagonist",
+            "baseline": 35,
+            "stamina_max": 7,
+            "armour": "modest",
+            "skills": {"blade": 55},
+            "damage": "1d6",
+            "damage_type": "slashing",
+            "ranged": False,
+        }
+
+    # -- User Story 1: the identity case ---------------------------------------------
+
+    def test_danger_effective_identity_case(self):
+        self.assertEqual(adversary.danger_effective(3, 4, 4), 3)
+
+    def test_scaled_count_identity_case(self):
+        self.assertEqual(adversary.scaled_count(6, 3, 4, 4), 6)
+
+    # -- User Story 2: a smaller party thins and eases --------------------------------
+
+    def test_danger_effective_worked_example_three_of_four(self):
+        self.assertEqual(adversary.danger_effective(3, 3, 4), Fraction(66, 25))
+        self.assertAlmostEqual(float(adversary.danger_effective(3, 3, 4)), 2.64)
+
+    def test_scaled_count_worked_example_six_cultists_to_five(self):
+        self.assertEqual(adversary.scaled_count(6, 3, 3, 4), 5)
+
+    def test_scaled_count_worked_example_three_watchmen_stays_three(self):
+        self.assertEqual(adversary.scaled_count(3, 3, 3, 4), 3)
+
+    def test_skill_adjustment_smaller_party_is_non_positive(self):
+        self.assertLessEqual(adversary.skill_adjustment(3, 4), 0)
+
+    def test_skill_adjustment_matches_published_table(self):
+        for (party, written_for), expected in self.PUBLISHED_TABLE.items():
+            with self.subTest(party=party, written_for=written_for):
+                self.assertEqual(adversary.skill_adjustment(party, written_for), expected)
+
+    # -- User Story 3: a larger party thickens and toughens ----------------------------
+
+    def test_scaled_count_larger_party_at_least_written_count(self):
+        self.assertGreaterEqual(adversary.scaled_count(6, 3, 6, 4), 6)
+
+    def test_skill_adjustment_larger_party_is_non_negative(self):
+        self.assertGreaterEqual(adversary.skill_adjustment(6, 4), 0)
+
+    # -- User Story 4: never mutates the source block ----------------------------------
+
+    def test_adjusted_skill_does_not_mutate_block(self):
+        snapshot = dict(self.block)
+        first = adversary.adjusted_skill(self.block, "blade", 3, 4)
+        second = adversary.adjusted_skill(self.block, "blade", 6, 4)
+        self.assertEqual(self.block, snapshot)
+        self.assertNotEqual(first, second)
+
+    # -- Edge cases ---------------------------------------------------------------------
+
+    def test_danger_ratio_missing_written_for_runs_as_written(self):
+        self.assertEqual(adversary.danger_ratio(3, None), 1)
+        self.assertEqual(adversary.danger_ratio(3, 0), 1)
+
+    def test_skill_adjustment_party_of_none_clips_to_bottom_rung(self):
+        self.assertEqual(adversary.skill_adjustment(0, 4), -20)
+
+    def test_adjusted_skill_floors_at_zero(self):
+        block = dict(self.block, baseline=10, skills={})
+        self.assertEqual(adversary.adjusted_skill(block, "brawl", 1, 6), 0)
+
+    def test_scaled_count_zero_written_count_stays_zero(self):
+        self.assertEqual(adversary.scaled_count(0, 3, 3, 4), 0)
+
+    def test_identity_diagonal_every_size_one_to_six(self):
+        for n in range(1, 7):
+            with self.subTest(n=n):
+                self.assertEqual(adversary.scaled_count(6, 3, n, n), 6)
+                self.assertEqual(adversary.skill_adjustment(n, n), 0)
 
 
 if __name__ == "__main__":
