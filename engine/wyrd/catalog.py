@@ -9,6 +9,8 @@ Python 3.11+, standard library only.
 
 from __future__ import annotations
 
+from wyrd import advancement
+
 TOOLS: dict[str, dict] = {
     "roll": {
         "name": "roll",
@@ -244,6 +246,52 @@ TOOLS: dict[str, dict] = {
                 "actions_json": {"type": "string"},
             },
             "required": ["career_json", "actions_json"],
+        },
+    },
+    "award-advance": {
+        "name": "award-advance",
+        "description": (
+            "Award one advance against a named session trigger -- Learned, Drove, Practised "
+            "or Endured -- per docs/design/03-rules.md section 6. Verifies that the claimed "
+            "award is legal; it never judges whether the fiction met the trigger, which is "
+            "the GM's call."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "trigger": {"type": "string", "enum": list(advancement.TRIGGERS)},
+                "awarded": {"type": "array", "items": {"type": "string"}},
+                "advances_unspent": {"type": "integer"},
+            },
+            "required": ["trigger"],
+        },
+    },
+    "begin-session": {
+        "name": "begin-session",
+        "description": (
+            "Open a new session: every award trigger becomes available again and the "
+            "unspent-advance balance carries over untouched "
+            "(docs/design/03-rules.md section 6)."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "awarded": {"type": "array", "items": {"type": "string"}},
+                "advances_unspent": {"type": "integer"},
+            },
+            "required": [],
         },
     },
     "create-character": {

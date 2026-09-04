@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import career, character, creation, resolution, rules, state
+from wyrd import advancement, career, character, creation, resolution, rules, state
 
 
 def roll(
@@ -158,6 +158,18 @@ def validate_allocation(
     """Resolve the `validate-allocation` verb."""
     result = career.validate_allocation(actions, career_data, ancestry)
     return {"verb": "validate-allocation", **result}
+
+
+def award_advance(trigger: str, awarded: list[str], advances_unspent: int) -> dict:
+    """Resolve the `award-advance` verb."""
+    record = {"triggers": list(awarded), "advances_unspent": advances_unspent}
+    return {"verb": "award-advance", **advancement.award_advance(trigger, record)}
+
+
+def begin_session(awarded: list[str], advances_unspent: int) -> dict:
+    """Resolve the `begin-session` verb."""
+    record = {"triggers": list(awarded), "advances_unspent": advances_unspent}
+    return {"verb": "begin-session", **advancement.begin_session(record)}
 
 
 def create_character(

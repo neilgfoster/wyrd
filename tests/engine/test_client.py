@@ -688,3 +688,47 @@ class RerollCliTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AdvanceAwardTest(unittest.TestCase):
+    def test_award_advance_emits_the_documented_shape(self):
+        exit_code, output = _run(["award-advance", "--trigger", "learned"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["verb"], "award-advance")
+        self.assertTrue(payload["awarded"])
+        self.assertEqual(payload["record"], {"triggers": ["learned"], "advances_unspent": 1})
+
+    def test_award_advance_refusal_names_which_rule_refused_it(self):
+        exit_code, output = _run(
+            [
+                "award-advance",
+                "--trigger",
+                "endured",
+                "--awarded",
+                "learned",
+                "--awarded",
+                "drove",
+                "--awarded",
+                "practised",
+                "--advances-unspent",
+                "3",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["refusal"], "session_ceiling")
+
+    def test_begin_session_clears_triggers_and_keeps_the_balance(self):
+        exit_code, output = _run(
+            ["begin-session", "--awarded", "learned", "--advances-unspent", "2"]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["triggers"], [])
+        self.assertEqual(payload["advances_unspent"], 2)
+
+    def test_describe_lists_both_new_verbs(self):
+        _, output = _run(["describe"])
+        names = {entry["name"] for entry in json.loads(output)["tools"]}
+        self.assertIn("award-advance", names)
+        self.assertIn("begin-session", names)

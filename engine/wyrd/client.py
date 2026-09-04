@@ -104,6 +104,21 @@ def _build_parser() -> argparse.ArgumentParser:
         allocation_parser.add_argument("--ancestry-json", default=None)
         allocation_parser.add_argument("--actions-json", required=True)
 
+    if "award-advance" in TOOLS:
+        award_parser = subparsers.add_parser(
+            "award-advance", help=TOOLS["award-advance"]["description"]
+        )
+        award_parser.add_argument("--trigger", required=True)
+        award_parser.add_argument("--awarded", action="append", default=[])
+        award_parser.add_argument("--advances-unspent", type=int, default=0)
+
+    if "begin-session" in TOOLS:
+        session_parser = subparsers.add_parser(
+            "begin-session", help=TOOLS["begin-session"]["description"]
+        )
+        session_parser.add_argument("--awarded", action="append", default=[])
+        session_parser.add_argument("--advances-unspent", type=int, default=0)
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -270,6 +285,21 @@ def _run_validate_allocation(args: argparse.Namespace) -> dict:
     return verbs.validate_allocation(actions, career_data, ancestry)
 
 
+def _run_award_advance(args: argparse.Namespace) -> dict:
+    return verbs.award_advance(
+        trigger=args.trigger,
+        awarded=args.awarded,
+        advances_unspent=args.advances_unspent,
+    )
+
+
+def _run_begin_session(args: argparse.Namespace) -> dict:
+    return verbs.begin_session(
+        awarded=args.awarded,
+        advances_unspent=args.advances_unspent,
+    )
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -358,6 +388,10 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_skill_scale(args)
     elif args.verb == "validate-allocation":
         result = _run_validate_allocation(args)
+    elif args.verb == "award-advance":
+        result = _run_award_advance(args)
+    elif args.verb == "begin-session":
+        result = _run_begin_session(args)
     elif args.verb == "create-character":
         result = _run_create_character(args)
     elif args.verb == "propose":
