@@ -69,3 +69,69 @@ def validate_allocation(actions: list[dict], career: dict, ancestry: dict | None
             return {"valid": False, "error": f"no such action: {action!r}"}
 
     return {"valid": True, "skills": skills}
+
+
+def is_entry(career: dict) -> bool:
+    """Whether `career` is an entry career -- one a character may take with no history at all.
+
+    docs/design/24-authoring-a-setting.md: a career "is either an entry point or names one or more
+    predecessors, never both and never neither", so an entry career declares no prerequisites.
+    """
+    return bool(career.get("entry"))
+
+
+def career_complete(skills: dict, career: dict) -> bool:
+    """Whether `career` is complete for a character holding `skills`.
+
+    docs/design/03-rules.md section 6: "every skill it grants at that 70% cap". Ancestry is not
+    consulted -- an ancestry widens what a character may spend on, never what a career grants, so
+    completion is a property of the career's own list.
+    """
+    return all(skills.get(skill, 0) >= cap for skill, cap in career["skills"].items())
+
+
+def find_career(career_id: str, careers: list[dict]) -> dict | None:
+    """The career in `careers` with that id, or `None`."""
+    return next((c for c in careers if c["id"] == career_id), None)
+
+
+def completed_career_ids(career_history: list[dict]) -> set[str]:
+    """The ids of careers a character has actually finished, from their recorded history.
+
+    Completion is read off the record written when a career was left, never re-derived from the
+    live skills: a later career may have raised a skill past a former career's cap, and a wound
+    may have lowered one since (docs/design/29-evolution.md -- history is never recomputed).
+    """
+    return {entry["career"] for entry in career_history if entry.get("completed")}
+
+
+def change_career_legality(target: str, careers: list[dict], career_history: list[dict]) -> dict:
+    """Whether a character with `career_history` may change career to `target`.
+
+    Returns `{"legal": True}` or `{"legal": False, "refusal": ..., "error": ...}`.
+
+    docs/design/03-rules.md section 6: any entry career is a free choice whatever the history --
+    starting over from a fresh entry point is always legal -- and a non-entry career is reachable
+    once *any one* of its declared prerequisites is complete (they are OR, not AND).
+    """
+    career = find_career(target, careers)
+    if career is None:
+        return {
+            "legal": False,
+            "refusal": "unknown_career",
+            "error": f"no such career: {target!r}",
+        }
+    if is_entry(career):
+        return {"legal": True}
+
+    prerequisites = career.get("prerequisites") or []
+    if completed_career_ids(career_history) & set(prerequisites):
+        return {"legal": True}
+    return {
+        "legal": False,
+        "refusal": "prerequisites_unmet",
+        "error": (
+            f"{target!r} requires completing one of {', '.join(prerequisites)}, "
+            "and none of them is complete"
+        ),
+    }

@@ -133,3 +133,67 @@ class AncestryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+GUARD = {"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}}
+SOLDIER = {"id": "soldier", "entry": True, "skills": {"blade": 70, "drill": 70}}
+GUARD_CAPTAIN = {
+    "id": "guard-captain",
+    "entry": False,
+    "prerequisites": ["guard", "soldier"],
+    "skills": {"blade": 70, "watch": 70, "command": 70},
+}
+CAREERS = [GUARD, SOLDIER, GUARD_CAPTAIN]
+
+
+class CareerGraphTest(unittest.TestCase):
+    def test_an_entry_career_is_entry_and_a_successor_is_not(self):
+        self.assertTrue(career.is_entry(GUARD))
+        self.assertFalse(career.is_entry(GUARD_CAPTAIN))
+
+    def test_find_career_returns_none_for_an_id_the_table_does_not_hold(self):
+        self.assertIs(career.find_career("guard", CAREERS), GUARD)
+        self.assertIsNone(career.find_career("magister", CAREERS))
+
+    def test_a_career_is_complete_only_when_every_granted_skill_is_at_its_cap(self):
+        # spec.md FR-009 / docs/design/03-rules.md section 6.
+        self.assertTrue(career.career_complete({"blade": 70, "watch": 70}, GUARD))
+        self.assertFalse(career.career_complete({"blade": 70, "watch": 65}, GUARD))
+        self.assertFalse(career.career_complete({"blade": 70}, GUARD))
+
+    def test_a_skill_above_the_cap_still_completes_the_career(self):
+        # A percentage earned under a more generous grant is never clawed back (research.md), so
+        # it cannot leave a career permanently incompletable either.
+        self.assertTrue(career.career_complete({"blade": 75, "watch": 70}, GUARD))
+
+    def test_completion_is_read_off_the_history_not_re_derived(self):
+        history = [
+            {"career": "guard", "completed": True},
+            {"career": "soldier", "completed": False},
+        ]
+        self.assertEqual(career.completed_career_ids(history), {"guard"})
+
+    def test_any_entry_career_is_reachable_from_any_history(self):
+        # spec.md FR-005: starting over from a fresh entry point is always legal.
+        for history in ([], [{"career": "guard", "completed": False}]):
+            self.assertTrue(career.change_career_legality("soldier", CAREERS, history)["legal"])
+
+    def test_completing_any_one_prerequisite_qualifies(self):
+        # spec.md FR-006: prerequisites are OR, not AND.
+        for done in ("guard", "soldier"):
+            history = [{"career": done, "completed": True}]
+            result = career.change_career_legality("guard-captain", CAREERS, history)
+            self.assertTrue(result["legal"], done)
+
+    def test_a_career_merely_entered_does_not_qualify(self):
+        history = [{"career": "guard", "completed": False}]
+        result = career.change_career_legality("guard-captain", CAREERS, history)
+        self.assertFalse(result["legal"])
+        self.assertEqual(result["refusal"], "prerequisites_unmet")
+        self.assertIn("guard", result["error"])
+
+    def test_an_unknown_career_is_refused_by_name(self):
+        result = career.change_career_legality("magister", CAREERS, [])
+        self.assertFalse(result["legal"])
+        self.assertEqual(result["refusal"], "unknown_career")
+        self.assertIn("magister", result["error"])
