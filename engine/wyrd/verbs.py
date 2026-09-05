@@ -172,6 +172,22 @@ def begin_session(awarded: list[str], advances_unspent: int) -> dict:
     return {"verb": "begin-session", **advancement.begin_session(record)}
 
 
+def spend_advance(
+    spend: str,
+    view: dict,
+    career_data: dict,
+    careers: list[dict] | None = None,
+    ancestry: dict | None = None,
+    skill: str | None = None,
+    target: str | None = None,
+) -> dict:
+    """Resolve the `spend-advance` verb."""
+    result = advancement.spend_advance(
+        spend, view, career_data, careers=careers, ancestry=ancestry, skill=skill, target=target
+    )
+    return {"verb": "spend-advance", **result}
+
+
 def create_character(
     path: pathlib.Path,
     name: str,

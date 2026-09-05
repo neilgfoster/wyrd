@@ -119,6 +119,18 @@ def _build_parser() -> argparse.ArgumentParser:
         session_parser.add_argument("--awarded", action="append", default=[])
         session_parser.add_argument("--advances-unspent", type=int, default=0)
 
+    if "spend-advance" in TOOLS:
+        spend_parser = subparsers.add_parser(
+            "spend-advance", help=TOOLS["spend-advance"]["description"]
+        )
+        spend_parser.add_argument("--spend", required=True)
+        spend_parser.add_argument("--view-json", required=True)
+        spend_parser.add_argument("--career-json", required=True)
+        spend_parser.add_argument("--careers-json", default=None)
+        spend_parser.add_argument("--ancestry-json", default=None)
+        spend_parser.add_argument("--skill", default=None)
+        spend_parser.add_argument("--target", default=None)
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -300,6 +312,18 @@ def _run_begin_session(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_spend_advance(args: argparse.Namespace) -> dict:
+    return verbs.spend_advance(
+        spend=args.spend,
+        view=json.loads(args.view_json),
+        career_data=json.loads(args.career_json),
+        careers=json.loads(args.careers_json) if args.careers_json is not None else None,
+        ancestry=json.loads(args.ancestry_json) if args.ancestry_json is not None else None,
+        skill=args.skill,
+        target=args.target,
+    )
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -392,6 +416,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_award_advance(args)
     elif args.verb == "begin-session":
         result = _run_begin_session(args)
+    elif args.verb == "spend-advance":
+        result = _run_spend_advance(args)
     elif args.verb == "create-character":
         result = _run_create_character(args)
     elif args.verb == "propose":

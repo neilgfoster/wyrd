@@ -294,6 +294,35 @@ TOOLS: dict[str, dict] = {
             "required": [],
         },
     },
+    "spend-advance": {
+        "name": "spend-advance",
+        "description": (
+            "Spend one advance: raise a granted skill by 5% to its career's cap, open a "
+            "granted skill at 25%, or change career -- freely to any entry career, or to a "
+            "non-entry career whose prerequisites the character has completed "
+            "(docs/design/03-rules.md section 6). Verifies legality only; the fictional "
+            "reason for a career change is the GM's call."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "spend": {"type": "string", "enum": list(advancement.SPENDS)},
+                "view_json": {"type": "string"},
+                "career_json": {"type": "string"},
+                "careers_json": {"type": "string"},
+                "ancestry_json": {"type": "string"},
+                "skill": {"type": "string"},
+                "target": {"type": "string"},
+            },
+            "required": ["spend", "view_json", "career_json"],
+        },
+    },
     "create-character": {
         "name": "create-character",
         "description": (

@@ -732,3 +732,76 @@ class AdvanceAwardTest(unittest.TestCase):
         names = {entry["name"] for entry in json.loads(output)["tools"]}
         self.assertIn("award-advance", names)
         self.assertIn("begin-session", names)
+
+
+class SpendAdvanceTest(unittest.TestCase):
+    CAREER = json.dumps({"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}})
+    CAREERS = json.dumps(
+        [
+            {"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}},
+            {
+                "id": "guard-captain",
+                "entry": False,
+                "prerequisites": ["guard"],
+                "skills": {"blade": 70, "watch": 70, "command": 70},
+            },
+        ]
+    )
+
+    @staticmethod
+    def _view(**overrides):
+        view = {
+            "career": "guard",
+            "career_history": [],
+            "skills": {"blade": 30},
+            "advances_unspent": 1,
+        }
+        view.update(overrides)
+        return json.dumps(view)
+
+    def test_spend_advance_emits_the_documented_shape(self):
+        exit_code, output = _run(
+            [
+                "spend-advance",
+                "--spend",
+                "raise",
+                "--view-json",
+                self._view(),
+                "--career-json",
+                self.CAREER,
+                "--skill",
+                "blade",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["verb"], "spend-advance")
+        self.assertTrue(payload["spent"])
+        self.assertEqual(payload["view"]["skills"]["blade"], 35)
+        self.assertEqual(payload["view"]["advances_unspent"], 0)
+
+    def test_spend_advance_refusal_names_which_rule_refused_it(self):
+        exit_code, output = _run(
+            [
+                "spend-advance",
+                "--spend",
+                "change_career",
+                "--view-json",
+                self._view(),
+                "--career-json",
+                self.CAREER,
+                "--careers-json",
+                self.CAREERS,
+                "--target",
+                "guard-captain",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertFalse(payload["spent"])
+        self.assertEqual(payload["refusal"], "prerequisites_unmet")
+
+    def test_describe_lists_the_spend_verb(self):
+        _, output = _run(["describe"])
+        names = {entry["name"] for entry in json.loads(output)["tools"]}
+        self.assertIn("spend-advance", names)
