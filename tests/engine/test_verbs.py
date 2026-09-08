@@ -102,6 +102,32 @@ class DeclarationBonusVerbTest(unittest.TestCase):
         self.assertTrue(result["no_roll"])
 
 
+class OraclePromptVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.oracle_prompt("oracle-prompt-npc-objective", seed=1)
+        self.assertEqual(result["verb"], "oracle-prompt")
+        self.assertEqual(result["family"], "oracle-prompt-npc-objective")
+        self.assertIn(result["roll"], range(1, 101))
+        self.assertTrue(result["effect"])
+        self.assertTrue(result["description"])
+        self.assertNotIn("state_written", result)
+
+    def test_deterministic_given_same_seed(self):
+        first = verbs.oracle_prompt("oracle-prompt-complication", seed=7)
+        second = verbs.oracle_prompt("oracle-prompt-complication", seed=7)
+        self.assertEqual(first["roll"], second["roll"])
+        self.assertEqual(first["effect"], second["effect"])
+
+    def test_unrecognized_family_raises(self):
+        with self.assertRaises(ValueError):
+            verbs.oracle_prompt("oracle-prompt-weather", seed=1)
+
+    def test_performs_no_state_write(self):
+        # verbs.oracle_prompt takes no state_path parameter at all -- confirms it can't
+        # touch state.py the way verbs.roll does.
+        self.assertNotIn("state_path", verbs.oracle_prompt.__code__.co_varnames)
+
+
 class AssistanceBonusVerbTest(unittest.TestCase):
     def test_returns_expected_shape(self):
         result = verbs.assistance_bonus(45)

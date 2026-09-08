@@ -161,6 +161,51 @@ class DeclarationBonusTest(unittest.TestCase):
             rules.declaration_bonus("bogus")
 
 
+class OraclePromptTest(unittest.TestCase):
+    def test_every_roll_1_to_100_resolves_for_every_family(self):
+        for family, table in rules.ORACLE_PROMPT_TABLES.items():
+            for roll in range(1, 101):
+                effect, description = rules.oracle_prompt(family, roll)
+                self.assertTrue(effect)
+                self.assertTrue(description)
+                # confirm it matches exactly the row whose range contains this roll
+                expected_effect = next(e for r, e, _d in table if roll in r)
+                self.assertEqual(effect, expected_effect)
+
+    def test_first_row_at_roll_1(self):
+        effect, _description = rules.oracle_prompt("oracle-prompt-npc-objective", 1)
+        self.assertEqual(effect, "protect_someone")
+
+    def test_last_row_at_roll_100(self):
+        effect, _description = rules.oracle_prompt("oracle-prompt-npc-objective", 100)
+        self.assertEqual(effect, "survive_at_any_cost")
+
+    def test_known_roll_matches_documented_row(self):
+        effect, _description = rules.oracle_prompt("oracle-prompt-npc-objective", 25)
+        self.assertEqual(effect, "prove_worth")
+
+    def test_unrecognized_family_raises(self):
+        with self.assertRaises(ValueError):
+            rules.oracle_prompt("oracle-prompt-weather", 50)
+
+    def test_out_of_range_roll_raises(self):
+        with self.assertRaises(ValueError):
+            rules.oracle_prompt("oracle-prompt-npc-objective", 0)
+        with self.assertRaises(ValueError):
+            rules.oracle_prompt("oracle-prompt-npc-objective", 101)
+
+    def test_all_four_families_present(self):
+        self.assertEqual(
+            set(rules.ORACLE_PROMPT_TABLES),
+            {
+                "oracle-prompt-npc-objective",
+                "oracle-prompt-situation-truth",
+                "oracle-prompt-thread-turn",
+                "oracle-prompt-complication",
+            },
+        )
+
+
 class AssistanceBonusTest(unittest.TestCase):
     def test_thirty_percent(self):
         self.assertEqual(rules.assistance_bonus(30), 3)

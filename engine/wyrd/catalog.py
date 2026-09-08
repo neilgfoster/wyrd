@@ -101,6 +101,39 @@ TOOLS: dict[str, dict] = {
             "required": ["category"],
         },
     },
+    "oracle-prompt": {
+        "name": "oracle-prompt",
+        "description": (
+            "Roll one of the four oracle-prompt tables (NPC objective, situation truth, "
+            "thread turn, complication) and return the natural roll, effect key and "
+            "description. Use whenever an NPC's real motive, why a situation isn't as "
+            "presented, a thread's next turn, or a scene's complication needs inventing "
+            "and nothing has already established it -- never invent this content "
+            "unconstrained. Read-only: writes nothing to any entity's state."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "family": {
+                    "type": "string",
+                    "enum": [
+                        "oracle-prompt-npc-objective",
+                        "oracle-prompt-situation-truth",
+                        "oracle-prompt-thread-turn",
+                        "oracle-prompt-complication",
+                    ],
+                },
+                "seed": {"type": "integer"},
+            },
+            "required": ["family"],
+        },
+    },
     "assistance-bonus": {
         "name": "assistance-bonus",
         "description": (

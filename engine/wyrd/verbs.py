@@ -71,6 +71,25 @@ def declaration_bonus(category: str) -> dict:
     }
 
 
+def oracle_prompt(family: str, seed: int | None = None) -> dict:
+    """Resolve the `oracle-prompt` verb: roll, then look up the row -- read-only.
+
+    docs/design/15-oracle-prompts.md: no state is written by generating a prompt; the
+    caller (GM) applies the returned content to whatever structure it fills. Unlike
+    `roll()`, this never touches `state.py`.
+    """
+    natural_roll = rules.roll_d100(seed=seed)
+    effect, description = rules.oracle_prompt(family, natural_roll)
+    return {
+        "verb": "oracle-prompt",
+        "family": family,
+        "roll": natural_roll,
+        "effect": effect,
+        "description": description,
+        "seed": seed,
+    }
+
+
 def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> dict:
     """Resolve the `assistance-bonus` verb."""
     return {
