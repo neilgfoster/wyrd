@@ -20,7 +20,7 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DOC = REPO_ROOT / "docs" / "design" / "13-oracle-prompts.md"
+DOC = REPO_ROOT / "docs" / "design" / "15-oracle-prompts.md"
 
 # One heading per table, in document order, followed by its row table.
 TABLE_KEYS = [

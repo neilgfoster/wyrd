@@ -73,6 +73,242 @@ def declaration_bonus(category: str) -> int | None:
     return DECLARATION_BONUSES[category]
 
 
+#: docs/design/15-oracle-prompts.md "The tables": four families, each ten rows of equal width
+#: (1-10, 11-20, ... 91-100) covering 1d100 exactly with no modifier. Transcribed verbatim from
+#: the design document; `tools/check_oracle_prompts.py` verifies this table stays in sync with it.
+ORACLE_PROMPT_TABLES: dict[str, list[tuple[range, str, str]]] = {
+    "oracle-prompt-npc-objective": [
+        (
+            range(1, 11),
+            "protect_someone",
+            "Wants someone or something specific protected, and will do whatever it takes.",
+        ),
+        (
+            range(11, 21),
+            "escape_a_debt",
+            "Wants out from under a debt or obligation, without anyone noticing until it's done.",
+        ),
+        (
+            range(21, 31),
+            "prove_worth",
+            "Wants to prove their worth to someone whose opinion matters more than they'll admit.",
+        ),
+        (
+            range(31, 41),
+            "recover_something_taken",
+            "Wants something taken from them recovered, by whatever means are still open.",
+        ),
+        (
+            range(41, 51),
+            "preserve_the_status_quo",
+            "Wants things to stay exactly as they are -- believes they're the last one holding "
+            "it together.",
+        ),
+        (
+            range(51, 61),
+            "gain_advantage_over_a_rival",
+            "Wants an advantage over a named rival, and sees this as the opening.",
+        ),
+        (
+            range(61, 71),
+            "keep_a_secret_buried",
+            "Wants a specific secret to stay buried, whatever the immediate cost.",
+        ),
+        (
+            range(71, 81),
+            "be_free_of_an_arrangement",
+            "Wants free of an arrangement they no longer chose, but can't simply walk away from.",
+        ),
+        (
+            range(81, 91),
+            "settle_an_old_grievance",
+            "Wants an old grievance settled that the record has forgotten but they haven't.",
+        ),
+        (
+            range(91, 101),
+            "survive_at_any_cost",
+            "Wants, above everything else, to survive whatever's coming -- at nearly any expense "
+            "to others.",
+        ),
+    ],
+    "oracle-prompt-situation-truth": [
+        (
+            range(1, 11),
+            "deliberate_front",
+            "What's presented is a deliberate front; the truth is hidden nearby, not far.",
+        ),
+        (
+            range(11, 21),
+            "no_longer_true",
+            "What's presented used to be true and no longer is -- nobody has updated it.",
+        ),
+        (
+            range(21, 31),
+            "true_but_changing",
+            "What's presented is true, but only for now -- it's actively changing.",
+        ),
+        (
+            range(31, 41),
+            "true_for_most_not_all",
+            "What's presented is true for most people here, but not for the one who matters.",
+        ),
+        (
+            range(41, 51),
+            "missing_one_fact",
+            "What's presented is missing one crucial fact that changes its meaning entirely.",
+        ),
+        (
+            range(51, 61),
+            "true_and_that_is_the_danger",
+            "What's presented is true, and the danger is precisely that it looks safe.",
+        ),
+        (
+            range(61, 71),
+            "staged_for_someone_else",
+            "What's presented was staged for someone specific, not for whoever's here now.",
+        ),
+        (
+            range(71, 81),
+            "true_on_the_surface_only",
+            "What's presented is true on the surface, false in the details underneath.",
+        ),
+        (
+            range(81, 91),
+            "an_honest_mistake",
+            "What's presented is a mistake, not a lie -- whoever set it up believed it.",
+        ),
+        (
+            range(91, 101),
+            "true_for_the_wrong_reason",
+            "What's presented is true, but the reason it's true is not what anyone assumes.",
+        ),
+    ],
+    "oracle-prompt-thread-turn": [
+        (
+            range(1, 11),
+            "someone_switches_sides",
+            "Someone involved switches sides, for reasons that make sense to them.",
+        ),
+        (
+            range(11, 21),
+            "new_information_reframes_it",
+            "New information surfaces that changes what the thread is actually about.",
+        ),
+        (
+            range(21, 31),
+            "a_deadline_moves_closer",
+            "A deadline moves closer, forced by someone else's unrelated action.",
+        ),
+        (
+            range(31, 41),
+            "an_ally_becomes_a_liability",
+            "An ally becomes a liability, through no fault of their own.",
+        ),
+        (
+            range(41, 51),
+            "the_opposition_escalates",
+            "The opposition escalates, using a method not seen from them before.",
+        ),
+        (
+            range(51, 61),
+            "an_assumed_resource_is_gone",
+            "A resource everyone assumed was available turns out not to be.",
+        ),
+        (
+            range(61, 71),
+            "the_goal_was_a_means_to_another",
+            "The thread's apparent goal turns out to be a means to a different one.",
+        ),
+        (
+            range(71, 81),
+            "an_outsider_intervenes",
+            "Someone outside the thread notices it and moves to intervene.",
+        ),
+        (
+            range(81, 91),
+            "two_threads_collide",
+            "Two threads intersect, and progress on one now costs progress on the other.",
+        ),
+        (
+            range(91, 101),
+            "the_thread_stalls",
+            "The thread stalls, and staying still becomes its own kind of danger.",
+        ),
+    ],
+    "oracle-prompt-complication": [
+        (
+            range(1, 11),
+            "an_uninvited_party_arrives",
+            "An unexpected party arrives, with their own agenda.",
+        ),
+        (
+            range(11, 21),
+            "a_resource_fails",
+            "A resource runs out or fails at the worst possible moment.",
+        ),
+        (
+            range(21, 31),
+            "the_wrong_person_overhears",
+            "Something said is overheard by someone who shouldn't have heard it.",
+        ),
+        (
+            range(31, 41),
+            "the_environment_turns",
+            "The environment itself turns hostile or unstable.",
+        ),
+        (
+            range(41, 51),
+            "an_old_debt_comes_due",
+            "An old promise or debt comes due, right now.",
+        ),
+        (
+            range(51, 61),
+            "a_misunderstanding_compounds",
+            "A misunderstanding compounds, and correcting it costs time nobody has.",
+        ),
+        (
+            range(61, 71),
+            "help_arrives_at_a_cost",
+            "Help arrives, but at a cost nobody agreed to.",
+        ),
+        (
+            range(71, 81),
+            "the_plan_works_and_backfires",
+            "The plan works, but produces a consequence nobody anticipated.",
+        ),
+        (
+            range(81, 91),
+            "an_earlier_choice_catches_up",
+            "A choice made earlier in the chronicle catches up here.",
+        ),
+        (
+            range(91, 101),
+            "someone_is_not_who_they_seem",
+            "Someone present is not who they appear to be.",
+        ),
+    ],
+}
+
+
+def oracle_prompt(family: str, roll: int) -> tuple[str, str]:
+    """Look up a natural 1d100 roll against one of the four oracle-prompt tables.
+
+    docs/design/15-oracle-prompts.md: repeatable, no modifier, ten equal-width rows per
+    family. An unrecognized family or an out-of-range roll is a load error, not a table
+    quietly skipped (matching `resolution.py`'s `_critical_band` convention).
+    """
+    if family not in ORACLE_PROMPT_TABLES:
+        raise ValueError(
+            f"no such oracle prompt family: {family!r} (valid: {sorted(ORACLE_PROMPT_TABLES)})"
+        )
+    if not isinstance(roll, int) or not (1 <= roll <= 100):
+        raise ValueError(f"roll must be an integer 1-100, got {roll!r}")
+    for row_range, effect, description in ORACLE_PROMPT_TABLES[family]:
+        if roll in row_range:
+            return effect, description
+    raise AssertionError(f"unreachable: {family} table does not cover roll {roll}")
+
+
 def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> int:
     """A helper's contribution: a tenth of their own skill, rounded down, capped at +10.
 
