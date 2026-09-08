@@ -86,8 +86,13 @@ def career_complete(skills: dict, career: dict) -> bool:
     docs/design/03-rules.md section 6: "every skill it grants at that 70% cap". Ancestry is not
     consulted -- an ancestry widens what a character may spend on, never what a career grants, so
     completion is a property of the career's own list.
+
+    A career granting nothing is never complete. `all()` over an empty grant list is vacuously
+    true, which would pay a completion's Stamina and Mark (#278) to anyone who entered such a
+    career; a career that grants nothing has nothing to finish.
     """
-    return all(skills.get(skill, 0) >= cap for skill, cap in career["skills"].items())
+    granted = career["skills"]
+    return bool(granted) and all(skills.get(skill, 0) >= cap for skill, cap in granted.items())
 
 
 def find_career(career_id: str, careers: list[dict]) -> dict | None:

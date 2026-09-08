@@ -300,8 +300,11 @@ TOOLS: dict[str, dict] = {
             "Spend one advance: raise a granted skill by 5% to its career's cap, open a "
             "granted skill at 25%, or change career -- freely to any entry career, or to a "
             "non-entry career whose prerequisites the character has completed "
-            "(docs/design/03-rules.md section 6). Verifies legality only; the fictional "
-            "reason for a career change is the GM's call."
+            "(docs/design/03-rules.md section 6). A spend that carries the last skill the "
+            "career grants up to its cap completes the career, granting +1 maximum Stamina "
+            "(to a ceiling of 10) and a permanent Mark, once per career-instance. Verifies "
+            "legality only; the fictional reason for a career change, and what a Mark means, "
+            "are the GM's call."
         ),
         "annotations": {
             "readOnlyHint": True,

@@ -780,6 +780,28 @@ class SpendAdvanceTest(unittest.TestCase):
         self.assertEqual(payload["view"]["skills"]["blade"], 35)
         self.assertEqual(payload["view"]["advances_unspent"], 0)
 
+    def test_spend_advance_round_trips_a_completion_payout(self):
+        # specs/104-career-completion: the payout rides on this verb's own view, so the CLI
+        # needs no new argument -- but it does have to carry the three fields back out.
+        exit_code, output = _run(
+            [
+                "spend-advance",
+                "--spend",
+                "raise",
+                "--view-json",
+                self._view(skills={"blade": 65, "watch": 70}),
+                "--career-json",
+                self.CAREER,
+                "--skill",
+                "blade",
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        view = json.loads(output)["view"]
+        self.assertEqual(view["marks"], [{"career": "guard"}])
+        self.assertEqual(view["stamina_max"], 7)
+        self.assertTrue(view["career_completed"])
+
     def test_spend_advance_refusal_names_which_rule_refused_it(self):
         exit_code, output = _run(
             [
