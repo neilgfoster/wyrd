@@ -206,6 +206,36 @@ def adjust_standing(standing: int, delta: int) -> dict:
     return {"verb": "adjust-standing", **result}
 
 
+def gain_allegiance(allegiance_id: str, allegiances: list[str]) -> dict:
+    """Resolve the `gain-allegiance` verb."""
+    result = economy.gain_allegiance(allegiance_id, allegiances)
+    return {"verb": "gain-allegiance", **result}
+
+
+def lose_allegiance(allegiance_id: str, allegiances: list[str]) -> dict:
+    """Resolve the `lose-allegiance` verb."""
+    result = economy.lose_allegiance(allegiance_id, allegiances)
+    return {"verb": "lose-allegiance", **result}
+
+
+def gain_holding(holding_id: str, holdings: list[str]) -> dict:
+    """Resolve the `gain-holding` verb."""
+    result = economy.gain_holding(holding_id, holdings)
+    return {"verb": "gain-holding", **result}
+
+
+def lose_holding(holding_id: str, holdings: list[str]) -> dict:
+    """Resolve the `lose-holding` verb."""
+    result = economy.lose_holding(holding_id, holdings)
+    return {"verb": "lose-holding", **result}
+
+
+def roll_standing(standing: int, roll: int) -> dict:
+    """Resolve the `roll-standing` verb."""
+    result = economy.roll_standing(standing, roll)
+    return {"verb": "roll-standing", **result}
+
+
 def create_character(
     path: pathlib.Path,
     name: str,
