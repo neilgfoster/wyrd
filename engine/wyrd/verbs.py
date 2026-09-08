@@ -272,13 +272,16 @@ def propose(
     difficulty: str = "average",
     declaration_bonus: int = 0,
     tier: str | None = None,
+    power: dict | None = None,
     weapon_dice: str | None = None,
     armour_dice: str | None = None,
     damage_type: str | None = None,
     dread_witnessed: bool = False,
     seed: int | None = None,
 ) -> dict:
-    """Resolve the `propose` verb."""
+    """Resolve the `propose` verb. `power` (docs/design/09-systems-of-power.md) carries a
+    caller-resolved system-of-power declaration; it is read only by the `system-of-power`
+    mechanic."""
     result = resolution.propose(
         actor=actor,
         mechanic=mechanic,
@@ -287,6 +290,7 @@ def propose(
         difficulty=difficulty,
         declaration_bonus=declaration_bonus,
         tier=tier,
+        power=power,
         weapon_dice=weapon_dice,
         armour_dice=armour_dice,
         damage_type=damage_type,
