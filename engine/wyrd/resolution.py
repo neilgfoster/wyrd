@@ -556,6 +556,112 @@ def _mutate_terror(roll_data: dict, **_ignored) -> list[dict]:
     ]
 
 
+def _resolve_system_of_power(
+    *,
+    actor: str,
+    actor_state: dict,
+    skill: str,
+    difficulty: str,
+    declaration_bonus: int,
+    tier: str | None,
+    power: dict | None,
+    seed: int | None,
+    **_ignored,
+) -> dict:
+    """docs/design/09-systems-of-power.md: invoking a declared system of power is an ordinary
+    test against its own `skill` -- no new dice, no new table (ADR 0036). `power` is the caller's
+    already-resolved declaration (`skill`, `strain_cost`, `requires_training`, optionally
+    `resolve_cost`/`ill_omen_taint`/`intensity_tiers`/`disabled_tracks`) -- this module has no
+    existing pattern of reading setting-declared YAML itself, so it is handed in already-resolved,
+    the same way every other mechanic here is handed its own parameters."""
+    if skill is None:
+        raise ValueError("system-of-power requires a skill")
+    if power is None:
+        raise ValueError("system-of-power requires a power declaration")
+    tier_config = None
+    if tier is not None:
+        tier_config = next(
+            (t for t in power.get("intensity_tiers") or [] if t["label"] == tier), None
+        )
+        if tier_config is None:
+            raise ValueError(f"no such intensity tier: {tier}")
+    trained = skill in actor_state.get("skills", {})
+    if power.get("requires_training") and not trained:
+        # docs/design/09-systems-of-power.md: `requires_training: true` removes the untrained
+        # attempt outright -- the same rule 03-rules.md §1 already gives a skill requiring
+        # training. No roll happens; there is nothing to resolve.
+        raise ValueError(f"{skill} requires training to invoke this system of power")
+    skill_value = actor_state.get("skills", {}).get(skill, rules.UNTRAINED_SKILL)
+    roll_data = _resolve_test(
+        actor=actor,
+        mechanic="system-of-power",
+        skill_value=skill_value,
+        difficulty=difficulty,
+        declaration_bonus=declaration_bonus,
+        seed=seed,
+    )
+    roll_data["skill"] = skill
+    roll_data["tier"] = tier
+    roll_data["power"] = power
+    roll_data["tier_config"] = tier_config
+    return roll_data
+
+
+def _mutate_system_of_power(roll_data: dict, *, actor_state: dict, **_ignored) -> list[dict]:
+    """docs/design/09-systems-of-power.md + ADR 0047/0048: cost is paid only on failure, scaled
+    by any declared intensity tier; a failure whose resulting cumulative Strain contains a
+    multiple of maximum Stamina costs that many Trauma, with Strain carrying forward at its
+    remainder (ADR 0047's `gained = (strain - 1) // max_stamina`, read against the true
+    cumulative total, not a delta scoped to this one invocation); any Ill Omen -- win or lose --
+    applies the declared `ill_omen_taint` (plus tier bonus) through the ordinary `taint` mutation,
+    letting the existing threshold-crossing cascade stage a transformation roll exactly as it
+    already does for Exposure/Bargain/Invocation (FR-009: no second table)."""
+    actor = roll_data["actor"]
+    power = roll_data["power"]
+    tier_config = roll_data["tier_config"]
+    multiplier = tier_config["cost_multiplier"] if tier_config else 1
+    taint_bonus = tier_config["ill_omen_taint_bonus"] if tier_config else 0
+    disabled = set(power.get("disabled_tracks") or [])
+    mutations: list[dict] = []
+
+    if roll_data["outcome"] == "fail":
+        strain_cost = power.get("strain_cost", 0) * multiplier
+        if strain_cost and "strain" not in disabled:
+            current_strain = _get_nested(actor_state, "strain")
+            new_strain = current_strain + strain_cost
+            max_stamina = _get_nested(actor_state, "stamina.max")
+            gained = 0
+            if max_stamina:
+                gained = (new_strain - 1) // max_stamina
+            if gained > 0:
+                new_strain -= gained * max_stamina
+            mutations.append({"entity": actor, "field": "strain", "op": "set", "value": new_strain})
+            if gained > 0 and "trauma" not in disabled:
+                mutations.append(
+                    {
+                        "entity": actor,
+                        "field": "trauma",
+                        "op": "+",
+                        "value": gained,
+                        "trauma_test_skill": roll_data["skill"],
+                    }
+                )
+        resolve_cost = (power.get("resolve_cost") or 0) * multiplier
+        if resolve_cost and "resolve" not in disabled:
+            mutations.append(
+                {"entity": actor, "field": "resolve.current", "op": "-", "value": resolve_cost}
+            )
+
+    if roll_data["wyrd_die"] == "ill_omen" and "taint" not in disabled:
+        ill_omen_taint = power.get("ill_omen_taint", 1) + taint_bonus
+        if ill_omen_taint:
+            mutations.append(
+                {"entity": actor, "field": "taint", "op": "+", "value": ill_omen_taint}
+            )
+
+    return mutations
+
+
 #: The single-step mechanic vocabulary (docs/design/31-action-resolution.md's `mechanic`
 #: parameter): mechanic name -> (resolve, mutate). `combat-attack` is handled separately below
 #: (its own outcome-triggered cascade, not a simple resolve/mutate pair); `transformation`,
@@ -565,6 +671,7 @@ _MECHANICS: dict[str, tuple[Callable[..., dict], Callable[..., list[dict]]]] = {
     "ordinary-test": (_resolve_ordinary_test, _mutate_ordinary_test),
     "exposure": (_resolve_exposure, _mutate_exposure),
     "terror": (_resolve_terror, _mutate_terror),
+    "system-of-power": (_resolve_system_of_power, _mutate_system_of_power),
 }
 
 _PUBLIC_MECHANICS = frozenset({*_MECHANICS.keys(), "combat-attack"})
@@ -1170,6 +1277,7 @@ def _normalize_request(raw_request: dict) -> dict:
         "difficulty": raw_request.get("difficulty", "average"),
         "declaration_bonus": raw_request.get("declaration_bonus", 0),
         "tier": raw_request.get("tier"),
+        "power": raw_request.get("power"),
         "weapon_dice": raw_request.get("weapon_dice"),
         "armour_dice": raw_request.get("armour_dice"),
         "damage_type": raw_request.get("damage_type"),
@@ -1248,6 +1356,7 @@ def _stage_request(
             difficulty=request["difficulty"],
             declaration_bonus=request["declaration_bonus"] + declaration_bonus_delta,
             tier=request["tier"],
+            power=request["power"],
             target_state=target_state,
             dread_witnessed=request["dread_witnessed"],
             seed=seed_cursor.next(),
@@ -1398,8 +1507,8 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     """Resolve several independent top-level requests into one proposal (docs/design/31-action-
     resolution.md "A worked example": "Two unrelated Exposure sources in the same scene, proposed
     together"). Each request takes the same keys as `propose`'s own kwargs (`actor`, `mechanic`,
-    `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `weapon_dice`, `armour_dice`,
-    `damage_type`, `dread_witnessed`).
+    `skill`, `target`, `difficulty`, `declaration_bonus`, `tier`, `power`, `weapon_dice`,
+    `armour_dice`, `damage_type`, `dread_witnessed`).
     An actor/target appearing in more than one request shares one in-memory scratch state across
     them, so a later request in the batch sees any earlier request's own staged mutations when
     checking for a threshold crossing. Writes nothing. Returns `{"proposal_id", "roll",
@@ -1436,6 +1545,7 @@ def propose(
     declaration_bonus: int = 0,
     *,
     tier: str | None = None,
+    power: dict | None = None,
     weapon_dice: str | None = None,
     armour_dice: str | None = None,
     damage_type: str | None = None,
@@ -1459,6 +1569,10 @@ def propose(
     Dread from the effective chance the same way any other points modifier stacks. It has no
     effect on any other mechanic, and defaults to `False` so every caller predating this
     parameter keeps its existing behaviour unchanged (specs/101-dread-reaction-penalty FR-004).
+    `power` (docs/design/09-systems-of-power.md) is the caller's already-resolved system-of-power
+    declaration; it is read only by the `system-of-power` mechanic and has no effect on any
+    other, defaulting to `None` so every caller predating this parameter keeps its existing
+    behaviour unchanged.
 
     A thin single-request wrapper over `propose_batch` -- see that function for proposing
     several independent requests together in one proposal.
@@ -1473,6 +1587,7 @@ def propose(
                 "difficulty": difficulty,
                 "declaration_bonus": declaration_bonus,
                 "tier": tier,
+                "power": power,
                 "weapon_dice": weapon_dice,
                 "armour_dice": armour_dice,
                 "damage_type": damage_type,

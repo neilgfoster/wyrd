@@ -14,7 +14,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
-from wyrd import character, resolution  # noqa: E402
+from wyrd import character, resolution, rules  # noqa: E402
 
 SENNA = {
     "id": "senna-vask",
@@ -2024,6 +2024,293 @@ class DreadReactionPenaltyTest(unittest.TestCase):
             with_penalty["steps"][0]["roll"]["effective_pct"],
             without_penalty["steps"][0]["roll"]["effective_pct"],
         )
+
+
+#: docs/design/09-systems-of-power.md's second worked example -- no `resolve_cost`, no tiers.
+SIGNAL_ATTUNEMENT = {
+    "strain_cost": 3,
+    "requires_training": True,
+    "ill_omen_taint": 2,
+}
+
+#: docs/design/09-systems-of-power.md's first worked example, tiered.
+EMBER_CRAFT = {
+    "strain_cost": 2,
+    "resolve_cost": 1,
+    "requires_training": True,
+    "ill_omen_taint": 1,
+    "intensity_tiers": [
+        {
+            "label": "minor",
+            "difficulty": "average",
+            "cost_multiplier": 1,
+            "ill_omen_taint_bonus": 0,
+        },
+        {
+            "label": "moderate",
+            "difficulty": "hard",
+            "cost_multiplier": 2,
+            "ill_omen_taint_bonus": 1,
+        },
+        {
+            "label": "major",
+            "difficulty": "very_hard",
+            "cost_multiplier": 4,
+            "ill_omen_taint_bonus": 3,
+        },
+    ],
+}
+
+
+class SystemOfPowerTestBase(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "senna-vask.md"
+        fixture = dict(SENNA)
+        fixture["skills"] = {"bargaining": 40, "ember-craft": 40, "signal-attunement": 30}
+        character.save(fixture, "", self.path)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def load(self):
+        frontmatter, _ = character.load(self.path)
+        return frontmatter
+
+
+class SystemOfPowerBaselineTest(SystemOfPowerTestBase):
+    """spec.md User Story 1: an ordinary test against the declared skill; cost applies on
+    failure only. signal-attunement (skill 30, no tier, average difficulty -> eff 30%): seed 3
+    -> roll 31, a clean fail with no Omen."""
+
+    def test_failure_applies_declared_strain_and_no_resolve_cost(self):
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="signal-attunement",
+            power=SIGNAL_ATTUNEMENT,
+            seed=3,
+        )
+        self.assertEqual(result["roll"]["outcome"], "fail")
+        self.assertEqual(
+            result["mutations"],
+            [
+                {
+                    "entity": str(self.path),
+                    "field": "strain",
+                    "op": "set",
+                    "value": 3,
+                    "produced_by_step": 0,
+                }
+            ],
+        )
+
+    def test_success_costs_nothing(self):
+        # seed 1: roll 18 <= eff 30 -> success.
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="signal-attunement",
+            power=SIGNAL_ATTUNEMENT,
+            seed=1,
+        )
+        self.assertEqual(result["roll"]["outcome"], "success")
+        self.assertEqual(result["mutations"], [])
+
+    def test_requires_training_true_rejects_the_untrained_attempt(self):
+        with self.assertRaises(ValueError):
+            resolution.propose(
+                actor=self.path,
+                mechanic="system-of-power",
+                skill="acrobatics",
+                power=SIGNAL_ATTUNEMENT,
+                seed=1,
+            )
+
+    def test_requires_training_false_leaves_the_untrained_roll_in_force(self):
+        untrained_ok = dict(SIGNAL_ATTUNEMENT, requires_training=False)
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="acrobatics",
+            power=untrained_ok,
+            seed=1,
+        )
+        self.assertEqual(result["roll"]["effective_pct"], rules.UNTRAINED_SKILL)
+
+    def test_unknown_tier_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            resolution.propose(
+                actor=self.path,
+                mechanic="system-of-power",
+                skill="ember-craft",
+                power=EMBER_CRAFT,
+                tier="epic",
+                seed=1,
+            )
+
+
+class SystemOfPowerIntensityTierTest(SystemOfPowerTestBase):
+    """spec.md User Story 2: a declared tier multiplies cost and adds an Ill Omen Taint bonus.
+    ember-craft, major tier (skill 40, very_hard -40 -> eff 5%): seed 1 -> roll 18, a clean fail
+    with no Omen."""
+
+    def test_major_tier_multiplies_strain_and_resolve_cost(self):
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            tier="major",
+            difficulty="very_hard",
+            seed=1,
+        )
+        self.assertEqual(result["roll"]["outcome"], "fail")
+        self.assertEqual(
+            result["mutations"],
+            [
+                {
+                    "entity": str(self.path),
+                    "field": "strain",
+                    "op": "set",
+                    "value": 8,
+                    "produced_by_step": 0,
+                },
+                {
+                    "entity": str(self.path),
+                    "field": "resolve.current",
+                    "op": "-",
+                    "value": 4,
+                    "produced_by_step": 0,
+                },
+            ],
+        )
+
+    def test_untiered_invocation_is_unaffected_by_tier_scaling(self):
+        # Same power/skill/difficulty, no tier declared -- base cost only.
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            difficulty="very_hard",
+            seed=1,
+        )
+        strain_mutation = next(m for m in result["mutations"] if m["field"] == "strain")
+        self.assertEqual(strain_mutation["value"], 2)
+
+    def test_major_tier_ill_omen_adds_the_declared_taint_bonus(self):
+        # eff 5% (skill 40, very_hard -40): seed 0 -> roll 50, fail, Ill Omen.
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            tier="major",
+            difficulty="very_hard",
+            seed=0,
+        )
+        self.assertEqual(result["roll"]["wyrd_die"], "ill_omen")
+        taint_mutation = next(m for m in result["mutations"] if m["field"] == "taint")
+        self.assertEqual(taint_mutation["value"], 4)  # base 1 + major's bonus 3
+
+
+class SystemOfPowerConsequenceTest(SystemOfPowerTestBase):
+    """spec.md User Story 3: the Strain-threshold Trauma check (ADR 0047) and the Ill Omen ->
+    Taint-accrual path."""
+
+    def test_strain_crossing_a_stamina_multiple_costs_trauma_and_leaves_the_remainder(self):
+        # Two major-tier ember-craft failures, no Omen either time (seeds 1 and 2: rolls 18 and
+        # 8, both fail eff 5%, neither an Ill Omen). Stamina max is 10 (SENNA fixture).
+        # First failure: strain 0 -> 8, gained (8-1)//10 = 0.
+        # Second failure: strain 8 -> 16, gained (16-1)//10 = 1 -> trauma +1, strain -> 6.
+        for seed in (1, 2):
+            result = resolution.propose(
+                actor=self.path,
+                mechanic="system-of-power",
+                skill="ember-craft",
+                power=EMBER_CRAFT,
+                tier="major",
+                difficulty="very_hard",
+                seed=seed,
+            )
+            resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(after["strain"], 6)
+        self.assertEqual(after["trauma"], 1)
+
+    def test_the_check_is_immune_to_rotating_between_two_systems(self):
+        # Same two rolls, but the second failure comes from a *different* declared system than
+        # the first -- the check reads only cumulative Strain and maximum Stamina, never which
+        # system produced the failure (#172 rotation-immunity, restated for this feature).
+        rotated_power = dict(SIGNAL_ATTUNEMENT, strain_cost=8)
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            tier="major",
+            difficulty="very_hard",
+            seed=1,
+        )
+        resolution.commit(result["proposal_id"])
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="signal-attunement",
+            power=rotated_power,
+            seed=3,  # eff 30%: roll 31, fail, no Omen
+        )
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(after["strain"], 6)
+        self.assertEqual(after["trauma"], 1)
+
+    def test_ill_omen_on_a_success_still_applies_taint_while_cost_is_skipped(self):
+        # eff 40% (ember-craft, skill 40, average, no tier): seed 8 -> roll 30, success, Ill
+        # Omen.
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            seed=8,
+        )
+        self.assertEqual(result["roll"]["outcome"], "success")
+        self.assertEqual(result["roll"]["wyrd_die"], "ill_omen")
+        # An Ill Omen also carries over as the actor's next pending Omen (docs/design/31-action-
+        # resolution.md "Omen carryover") -- unrelated to, and unaffected by, this mechanic.
+        fields = {(m["field"], m["value"]) for m in result["mutations"]}
+        self.assertEqual(fields, {("taint", 1), ("pending_omen", -10)})
+
+    def test_disabling_taint_skips_only_the_ill_omen_consequence(self):
+        power = dict(SIGNAL_ATTUNEMENT, disabled_tracks=["taint"])
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="signal-attunement",
+            power=power,
+            seed=0,  # roll 50, fail, Ill Omen (eff 30%)
+        )
+        fields = {m["field"] for m in result["mutations"]}
+        self.assertIn("strain", fields)
+        self.assertNotIn("taint", fields)
+
+    def test_disabling_strain_skips_strain_cost_and_its_trauma_check_but_not_resolve(self):
+        power = dict(EMBER_CRAFT, disabled_tracks=["strain"])
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=power,
+            tier="major",
+            difficulty="very_hard",
+            seed=1,  # fail, no Omen
+        )
+        fields = {m["field"] for m in result["mutations"]}
+        self.assertNotIn("strain", fields)
+        self.assertNotIn("trauma", fields)
+        self.assertIn("resolve.current", fields)
 
 
 if __name__ == "__main__":
