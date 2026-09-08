@@ -132,9 +132,10 @@ difficulty value.
   `holdings` list, refusing and leaving the list unchanged when that holding is not present.
 - **FR-005**: The engine MUST provide a verb that rolls a character's Standing (`reputation.score`)
   against a d100 and returns one of three outcomes — recognised favourably, not recognised,
-  recognised unfavourably — banded by the score's sign and magnitude, matching the existing
-  five-band oracle shape already established for other d100 rolls in this engine
-  (`docs/design/20-oracle-answers.md`).
+  recognised unfavourably — banded by the score's sign and magnitude, following the same
+  computed-row-width approach already established for this engine's other d100 rolls
+  (`docs/design/14-oracle-answers.md`'s five-band table), scaled down to the three outcomes this
+  feature names.
 - **FR-006**: None of the verbs in FR-001 through FR-005 may read or write any skill percentage,
   difficulty value, or other input to the resolution mechanic (`03-rules.md` §1).
 - **FR-007**: The engine MUST NOT introduce a mechanical field or verb for Knowledge — it stays
