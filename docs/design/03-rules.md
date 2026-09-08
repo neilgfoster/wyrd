@@ -844,6 +844,14 @@ later starts a fresh instance and grants nothing for the one abandoned, but a ca
 twice across a lifetime — legal, since eligibility for a career, once earned, never expires —
 grants its Stamina and Mark each time.
 
+**It pays on the advance that finishes the last skill**, not on leaving the career afterwards: a
+character who completes a career and stays in it for the rest of a chronicle is toughened all the
+same, and no further advance is priced for collecting it. An instance pays **once** — a later
+advance spent inside a career already finished buys only what it bought, and a skill dropped below
+the cap by a wound neither unpays the completion nor lets re-raising it pay again. What the Mark
+*is* — the "one small benefit" — is the GM's to name, the same way the fictional reason for a
+career change is.
+
 **Maximum Stamina stops climbing at 10.** Creation fixes the starting value at 6 because a further
 +1 there is a 16.7% gain, and states directly that "much above 10 [...] the sentence stops being
 true" ([`11-character-creation.md`](11-character-creation.md)) — a gain below 10% no longer

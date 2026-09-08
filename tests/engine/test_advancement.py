@@ -16,7 +16,7 @@ sys.path.insert(0, str(_ROOT / "engine"))
 sys.path.insert(0, str(_ROOT / "tools"))
 
 import check_advancement  # noqa: E402
-from wyrd import advancement, rules  # noqa: E402
+from wyrd import advancement, creation, rules  # noqa: E402
 
 
 def _fresh():
@@ -130,8 +130,26 @@ GUARD_CAPTAIN = {
 CAREERS = [GUARD, SOLDIER, GUARD_CAPTAIN]
 
 
-def _view(skills=None, advances=1, career="guard", history=None):
-    return advancement.new_view(career, skills or {"blade": 30}, advances, history)
+def _view(skills=None, advances=1, career="guard", history=None, **payout):
+    """A character view. `payout` passes through `stamina_max`/`marks`/`career_completed`."""
+    return advancement.new_view(career, skills or {"blade": 30}, advances, history, **payout)
+
+
+def _completed(career_data=GUARD, advances=1):
+    """A view whose current career-instance was completed by an actual spend, not asserted.
+
+    The departure record reads the instance's paid flag (#278), so a test needing a completed
+    instance has to have *earned* it -- constructing skills at the cap by hand no longer implies
+    a completion, which is the whole point of tracking it per instance.
+    """
+    at_cap = dict.fromkeys(career_data["skills"], 70)
+    one_short = {**at_cap, "blade": 65}
+    return advancement.spend_advance(
+        "raise",
+        _view(skills=one_short, advances=advances + 1, career=career_data["id"]),
+        career_data,
+        skill="blade",
+    )["view"]
 
 
 class SpendRaiseTest(unittest.TestCase):
@@ -215,7 +233,7 @@ class SpendChangeCareerTest(unittest.TestCase):
 
     def test_a_change_records_the_departed_career_and_whether_it_was_complete(self):
         # spec.md FR-008.
-        complete = _view(skills={"blade": 70, "watch": 70})
+        complete = _completed()
         result = advancement.spend_advance(
             "change_career", complete, GUARD, careers=CAREERS, target="soldier"
         )
@@ -257,9 +275,8 @@ class SpendChangeCareerTest(unittest.TestCase):
     def test_a_career_completed_on_departure_qualifies_the_next_change(self):
         # The two paths agree: completing guard and leaving it records the completion that a
         # later move to guard-captain reads.
-        view = _view(skills={"blade": 70, "watch": 70}, advances=2)
         view = advancement.spend_advance(
-            "change_career", view, GUARD, careers=CAREERS, target="soldier"
+            "change_career", _completed(advances=2), GUARD, careers=CAREERS, target="soldier"
         )["view"]
         result = advancement.spend_advance(
             "change_career", view, SOLDIER, careers=CAREERS, target="guard-captain"
@@ -335,6 +352,200 @@ class SpendRefusalTest(unittest.TestCase):
         before = json.loads(json.dumps(view))
         advancement.spend_advance("open", view, GUARD, skill="watch")
         self.assertEqual(view, before)
+
+
+class CareerCompletionTest(unittest.TestCase):
+    """specs/104-career-completion: what completing a career-instance actually buys."""
+
+    def _one_short(self, advances=1):
+        return _view(skills={"blade": 65, "watch": 70}, advances=advances)
+
+    def test_the_advance_that_finishes_the_last_skill_pays_stamina_and_a_mark(self):
+        # spec.md US1 scenario 1 / FR-002, FR-003.
+        result = advancement.spend_advance("raise", self._one_short(), GUARD, skill="blade")
+        view = result["view"]
+        self.assertTrue(result["spent"])
+        self.assertEqual(view["skills"], {"blade": 70, "watch": 70})
+        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA + 1)
+        self.assertEqual(view["marks"], [{"career": "guard"}])
+        self.assertTrue(view["career_completed"])
+
+    def test_the_advance_before_it_pays_nothing(self):
+        # spec.md US1 scenario 2 -- a career part-finished is not a career finished.
+        view = advancement.spend_advance(
+            "raise", _view(skills={"blade": 60, "watch": 70}), GUARD, skill="blade"
+        )["view"]
+        self.assertEqual(view["skills"]["blade"], 65)
+        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA)
+        self.assertEqual(view["marks"], [])
+        self.assertFalse(view["career_completed"])
+
+    def test_opening_the_last_granted_skill_does_not_complete_the_career(self):
+        # spec.md US1 scenario 3: opening lands at 25%, which is not the cap.
+        view = advancement.spend_advance("open", _view(skills={"blade": 70}), GUARD, skill="watch")[
+            "view"
+        ]
+        self.assertEqual(view["skills"]["watch"], rules.SKILL_OPEN_VALUE)
+        self.assertEqual(view["marks"], [])
+
+    def test_an_open_that_does_complete_the_career_pays(self):
+        # The payout keys off the predicate, not off which spend was made: a career whose last
+        # granted skill is capped at the opening value is finished by opening it.
+        scout = {"id": "scout", "entry": True, "skills": {"blade": 70, "signs": 25}}
+        view = advancement.spend_advance(
+            "open", _view(skills={"blade": 70}, career="scout"), scout, skill="signs"
+        )["view"]
+        self.assertEqual(view["marks"], [{"career": "scout"}])
+        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA + 1)
+
+    def test_the_completing_spend_still_costs_exactly_one_advance(self):
+        # spec.md US1 scenario 4: the payout is a consequence, never a second charge.
+        result = advancement.spend_advance(
+            "raise", self._one_short(advances=3), GUARD, skill="blade"
+        )
+        self.assertEqual(result["view"]["advances_unspent"], 2)
+
+    def test_a_further_spend_inside_a_paid_career_pays_nothing(self):
+        # spec.md US2 scenario 1 / FR-005 -- once per career-instance, not once per spend made
+        # while the predicate happens to be true.
+        paid = advancement.spend_advance(
+            "raise", self._one_short(advances=3), GUARD, skill="blade"
+        )["view"]
+        ancestry = {"id": "hill-folk", "skills": {"ride": 70}}
+        again = advancement.spend_advance("open", paid, GUARD, ancestry=ancestry, skill="ride")[
+            "view"
+        ]
+        self.assertEqual(again["marks"], [{"career": "guard"}])
+        self.assertEqual(again["stamina_max"], creation.STARTING_STAMINA + 1)
+
+    def test_a_career_left_unfinished_pays_on_the_fresh_instance(self):
+        # spec.md US2 scenario 2: the returning instance is judged on its own terms.
+        left = advancement.spend_advance(
+            "change_career",
+            _view(skills={"blade": 65, "watch": 70}, advances=3),
+            GUARD,
+            careers=CAREERS,
+            target="guard",
+        )["view"]
+        self.assertEqual(left["career_history"], [{"career": "guard", "completed": False}])
+        self.assertEqual(left["marks"], [])
+        finished = advancement.spend_advance("raise", left, GUARD, skill="blade")["view"]
+        self.assertEqual(finished["marks"], [{"career": "guard"}])
+
+    def test_a_career_completed_twice_pays_twice(self):
+        # spec.md US2 scenario 3: eligibility once earned never expires, and so neither does the
+        # reward -- each instance is its own.
+        view = _view(skills={"blade": 65, "watch": 70}, advances=4)
+        for _ in range(2):
+            view = advancement.spend_advance("raise", view, GUARD, skill="blade")["view"]
+            view = advancement.spend_advance(
+                "change_career", view, GUARD, careers=CAREERS, target="guard"
+            )["view"]
+            view = {**view, "skills": {"blade": 65, "watch": 70}}
+        self.assertEqual(view["marks"], [{"career": "guard"}, {"career": "guard"}])
+        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA + 2)
+
+    def test_entering_a_career_already_at_cap_is_not_a_completion(self):
+        # data-model.md: a career-instance nobody advanced in was walked into, not completed.
+        view = advancement.spend_advance(
+            "change_career",
+            _view(skills={"blade": 70, "watch": 70}, advances=2),
+            GUARD,
+            careers=CAREERS,
+            target="guard",
+        )["view"]
+        self.assertFalse(view["career_completed"])
+        self.assertEqual(view["marks"], [])
+
+    def test_the_ceiling_is_the_figure_check_advancement_computes(self):
+        # spec.md SC-001 -- asserted against the script, never restated by eye.
+        self.assertEqual(advancement.STAMINA_MAX_CEILING, check_advancement.stamina_ceiling())
+        self.assertEqual(creation.STARTING_STAMINA, check_advancement.STARTING_STAMINA)
+
+    def test_at_the_ceiling_the_mark_still_lands_and_the_stamina_does_not(self):
+        # spec.md US3 scenarios 1 and 2.
+        ceiling = advancement.STAMINA_MAX_CEILING
+        below = advancement.spend_advance(
+            "raise", self._one_short() | {"stamina_max": ceiling - 1}, GUARD, skill="blade"
+        )["view"]
+        self.assertEqual(below["stamina_max"], ceiling)
+        self.assertEqual(len(below["marks"]), 1)
+
+        at = advancement.spend_advance(
+            "raise", self._one_short() | {"stamina_max": ceiling}, GUARD, skill="blade"
+        )["view"]
+        self.assertEqual(at["stamina_max"], ceiling)
+        self.assertEqual(len(at["marks"]), 1)
+
+    def test_a_chronicle_of_completions_matches_check_advancements_own_run(self):
+        # spec.md SC-001/SC-002/SC-003: the engine's payout path must reproduce, instance by
+        # instance, the chronicle tools/check_advancement.py publishes.
+        instances = check_advancement.CHRONICLE_INSTANCES
+        expected = check_advancement.run_chronicle(instances, advancement.STAMINA_MAX_CEILING)
+
+        view = _view(skills={"blade": 65, "watch": 70}, advances=2 * instances)
+        for row in expected:
+            view = advancement.spend_advance("raise", view, GUARD, skill="blade")["view"]
+            self.assertEqual(view["stamina_max"], row["stamina"], row["instance"])
+            self.assertEqual(len(view["marks"]), row["marks"], row["instance"])
+            view = advancement.spend_advance(
+                "change_career", view, GUARD, careers=CAREERS, target="guard"
+            )["view"]
+            view = {**view, "skills": {"blade": 65, "watch": 70}}
+
+        self.assertEqual(view["stamina_max"], advancement.STAMINA_MAX_CEILING)
+        self.assertEqual(len(view["marks"]), instances)
+
+    def test_a_wound_after_completion_never_unpays_the_departure_record(self):
+        # spec.md FR-007 / research.md R3: history is never recomputed. This is the case #277's
+        # recompute-at-departure got wrong.
+        paid = advancement.spend_advance(
+            "raise", self._one_short(advances=2), GUARD, skill="blade"
+        )["view"]
+        wounded = {**paid, "skills": {**paid["skills"], "blade": 40}}
+        left = advancement.spend_advance(
+            "change_career", wounded, GUARD, careers=CAREERS, target="soldier"
+        )["view"]
+        self.assertEqual(left["career_history"], [{"career": "guard", "completed": True}])
+
+    def test_a_completion_leaves_current_stamina_and_skills_to_others(self):
+        # spec.md FR-008 / research.md R5: a completion widens the vessel, it does not fill it.
+        view = advancement.spend_advance("raise", self._one_short(), GUARD, skill="blade")["view"]
+        self.assertNotIn("stamina", view)
+
+    def test_every_refusal_leaves_the_payout_fields_untouched(self):
+        # spec.md FR-009 / SC-004.
+        view = _view(
+            skills={"blade": 70, "watch": 70},
+            advances=1,
+            stamina_max=8,
+            marks=[{"career": "soldier"}],
+            career_completed=True,
+        )
+        before = json.loads(json.dumps(view))
+        for spend, kwargs in (
+            ("study", {"skill": "blade"}),
+            ("raise", {"skill": "blade"}),
+            ("open", {"skill": "blade"}),
+            ("change_career", {"careers": CAREERS, "target": "magister"}),
+        ):
+            result = advancement.spend_advance(spend, view, GUARD, **kwargs)
+            self.assertFalse(result["spent"], spend)
+            self.assertEqual(result["view"], before, spend)
+            self.assertEqual(view, before, spend)
+
+    def test_a_pre_278_view_still_spends_and_can_still_be_paid(self):
+        # data-model.md: the three fields are optional on input, so a #277-era caller keeps
+        # working and simply starts from the creation-time maximum with nothing earned.
+        legacy = {
+            "career": "guard",
+            "career_history": [],
+            "skills": {"blade": 65, "watch": 70},
+            "advances_unspent": 1,
+        }
+        view = advancement.spend_advance("raise", legacy, GUARD, skill="blade")["view"]
+        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA + 1)
+        self.assertEqual(view["marks"], [{"career": "guard"}])
 
 
 if __name__ == "__main__":

@@ -161,6 +161,11 @@ class CareerGraphTest(unittest.TestCase):
         self.assertFalse(career.career_complete({"blade": 70, "watch": 65}, GUARD))
         self.assertFalse(career.career_complete({"blade": 70}, GUARD))
 
+    def test_a_career_granting_nothing_is_never_complete(self):
+        # specs/104 research.md R4: all() over an empty grant list is vacuously true, which would
+        # pay a completion's Stamina and Mark to anyone who entered a malformed career.
+        self.assertFalse(career.career_complete({"blade": 70}, {"id": "hollow", "skills": {}}))
+
     def test_a_skill_above_the_cap_still_completes_the_career(self):
         # A percentage earned under a more generous grant is never clawed back (research.md), so
         # it cannot leave a career permanently incompletable either.
