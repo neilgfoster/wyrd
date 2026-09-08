@@ -155,6 +155,7 @@ holdings: []
 allegiances: []
 marks: []
 advances_unspent: 0
+coin: 0
 ---
 ```
 
