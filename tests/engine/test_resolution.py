@@ -2296,6 +2296,29 @@ class SystemOfPowerConsequenceTest(SystemOfPowerTestBase):
         self.assertIn("strain", fields)
         self.assertNotIn("taint", fields)
 
+    def test_no_resolve_field_on_the_entity_invents_nothing(self):
+        # spec.md Edge Cases: an entity with no `resolve` track at all (an adversary's thin
+        # block, docs/design/12-adversaries.md) must not have one created for it just because
+        # the invoked power declares a `resolve_cost`.
+        fixture = dict(SENNA)
+        fixture["skills"] = {"ember-craft": 40}
+        del fixture["resolve"]
+        character.save(fixture, "", self.path)
+        result = resolution.propose(
+            actor=self.path,
+            mechanic="system-of-power",
+            skill="ember-craft",
+            power=EMBER_CRAFT,
+            tier="major",
+            difficulty="very_hard",
+            seed=1,  # fail, no Omen
+        )
+        fields = {m["field"] for m in result["mutations"]}
+        self.assertNotIn("resolve", fields)
+        self.assertNotIn("resolve.current", fields)
+        resolution.commit(result["proposal_id"])
+        self.assertNotIn("resolve", self.load())
+
     def test_disabling_strain_skips_strain_cost_and_its_trauma_check_but_not_resolve(self):
         power = dict(EMBER_CRAFT, disabled_tracks=["strain"])
         result = resolution.propose(

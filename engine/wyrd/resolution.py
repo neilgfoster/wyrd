@@ -615,7 +615,10 @@ def _mutate_system_of_power(roll_data: dict, *, actor_state: dict, **_ignored) -
     cumulative total, not a delta scoped to this one invocation); any Ill Omen -- win or lose --
     applies the declared `ill_omen_taint` (plus tier bonus) through the ordinary `taint` mutation,
     letting the existing threshold-crossing cascade stage a transformation roll exactly as it
-    already does for Exposure/Bargain/Invocation (FR-009: no second table)."""
+    already does for Exposure/Bargain/Invocation (FR-009: no second table). spec.md Edge Cases:
+    "nothing is invented for a track that doesn't exist" -- an entity with no `resolve`/`strain`/
+    `taint` field at all (e.g. an adversary's thin block, docs/design/12-adversaries.md) is left
+    alone rather than having that field created for it."""
     actor = roll_data["actor"]
     power = roll_data["power"]
     tier_config = roll_data["tier_config"]
@@ -626,7 +629,7 @@ def _mutate_system_of_power(roll_data: dict, *, actor_state: dict, **_ignored) -
 
     if roll_data["outcome"] == "fail":
         strain_cost = power.get("strain_cost", 0) * multiplier
-        if strain_cost and "strain" not in disabled:
+        if strain_cost and "strain" not in disabled and "strain" in actor_state:
             current_strain = _get_nested(actor_state, "strain")
             new_strain = current_strain + strain_cost
             max_stamina = _get_nested(actor_state, "stamina.max")
@@ -636,7 +639,7 @@ def _mutate_system_of_power(roll_data: dict, *, actor_state: dict, **_ignored) -
             if gained > 0:
                 new_strain -= gained * max_stamina
             mutations.append({"entity": actor, "field": "strain", "op": "set", "value": new_strain})
-            if gained > 0 and "trauma" not in disabled:
+            if gained > 0 and "trauma" not in disabled and "trauma" in actor_state:
                 mutations.append(
                     {
                         "entity": actor,
@@ -647,12 +650,12 @@ def _mutate_system_of_power(roll_data: dict, *, actor_state: dict, **_ignored) -
                     }
                 )
         resolve_cost = (power.get("resolve_cost") or 0) * multiplier
-        if resolve_cost and "resolve" not in disabled:
+        if resolve_cost and "resolve" not in disabled and "resolve" in actor_state:
             mutations.append(
                 {"entity": actor, "field": "resolve.current", "op": "-", "value": resolve_cost}
             )
 
-    if roll_data["wyrd_die"] == "ill_omen" and "taint" not in disabled:
+    if roll_data["wyrd_die"] == "ill_omen" and "taint" not in disabled and "taint" in actor_state:
         ill_omen_taint = power.get("ill_omen_taint", 1) + taint_bonus
         if ill_omen_taint:
             mutations.append(
