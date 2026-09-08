@@ -131,6 +131,26 @@ def _build_parser() -> argparse.ArgumentParser:
         spend_parser.add_argument("--skill", default=None)
         spend_parser.add_argument("--target", default=None)
 
+    if "spend-coin" in TOOLS:
+        coin_parser = subparsers.add_parser("spend-coin", help=TOOLS["spend-coin"]["description"])
+        coin_parser.add_argument("--gear-id", required=True)
+        coin_parser.add_argument("--coin", type=int, required=True)
+        coin_parser.add_argument("--catalog-json", required=True)
+
+    if "martial-weapon-sighting" in TOOLS:
+        sighting_parser = subparsers.add_parser(
+            "martial-weapon-sighting", help=TOOLS["martial-weapon-sighting"]["description"]
+        )
+        sighting_parser.add_argument("--standing", type=int, required=True)
+        sighting_parser.add_argument("--already-applied", action="store_true")
+
+    if "adjust-standing" in TOOLS:
+        adjust_parser = subparsers.add_parser(
+            "adjust-standing", help=TOOLS["adjust-standing"]["description"]
+        )
+        adjust_parser.add_argument("--standing", type=int, required=True)
+        adjust_parser.add_argument("--delta", type=int, required=True)
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -324,6 +344,28 @@ def _run_spend_advance(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_spend_coin(args: argparse.Namespace) -> dict:
+    return verbs.spend_coin(
+        gear_id=args.gear_id,
+        coin=args.coin,
+        catalog=json.loads(args.catalog_json),
+    )
+
+
+def _run_martial_weapon_sighting(args: argparse.Namespace) -> dict:
+    return verbs.martial_weapon_sighting(
+        standing=args.standing,
+        already_applied=args.already_applied,
+    )
+
+
+def _run_adjust_standing(args: argparse.Namespace) -> dict:
+    return verbs.adjust_standing(
+        standing=args.standing,
+        delta=args.delta,
+    )
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -418,6 +460,12 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_begin_session(args)
     elif args.verb == "spend-advance":
         result = _run_spend_advance(args)
+    elif args.verb == "spend-coin":
+        result = _run_spend_coin(args)
+    elif args.verb == "martial-weapon-sighting":
+        result = _run_martial_weapon_sighting(args)
+    elif args.verb == "adjust-standing":
+        result = _run_adjust_standing(args)
     elif args.verb == "create-character":
         result = _run_create_character(args)
     elif args.verb == "propose":

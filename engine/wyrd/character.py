@@ -46,6 +46,7 @@ PLAYER_CHARACTER_FIELDS = (
     "allegiances",
     "marks",
     "advances_unspent",
+    "coin",
 )
 
 #: docs/design/22-state.md "Wounds": a wound's `effect` names a mechanic the engine knows;

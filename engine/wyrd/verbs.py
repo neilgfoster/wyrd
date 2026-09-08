@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import advancement, career, character, creation, resolution, rules, state
+from wyrd import advancement, career, character, creation, economy, resolution, rules, state
 
 
 def roll(
@@ -186,6 +186,24 @@ def spend_advance(
         spend, view, career_data, careers=careers, ancestry=ancestry, skill=skill, target=target
     )
     return {"verb": "spend-advance", **result}
+
+
+def spend_coin(gear_id: str, coin: int, catalog: list[dict]) -> dict:
+    """Resolve the `spend-coin` verb."""
+    result = economy.spend_coin(gear_id, coin, catalog)
+    return {"verb": "spend-coin", **result}
+
+
+def martial_weapon_sighting(standing: int, already_applied: bool = False) -> dict:
+    """Resolve the `martial-weapon-sighting` verb."""
+    result = economy.martial_weapon_sighting(standing, already_applied)
+    return {"verb": "martial-weapon-sighting", **result}
+
+
+def adjust_standing(standing: int, delta: int) -> dict:
+    """Resolve the `adjust-standing` verb."""
+    result = economy.adjust_standing(standing, delta)
+    return {"verb": "adjust-standing", **result}
 
 
 def create_character(

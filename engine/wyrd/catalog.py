@@ -326,6 +326,73 @@ TOOLS: dict[str, dict] = {
             "required": ["spend", "view_json", "career_json"],
         },
     },
+    "spend-coin": {
+        "name": "spend-coin",
+        "description": (
+            "Spend coin against a gear.yaml entry's price (docs/design/03-rules.md section 2). "
+            "Refuses the spend, leaving coin unchanged, when the price exceeds current coin or "
+            "the gear id is not in the loaded catalogue."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "gear_id": {"type": "string"},
+                "coin": {"type": "integer"},
+                "catalog_json": {"type": "string"},
+            },
+            "required": ["gear_id", "coin", "catalog_json"],
+        },
+    },
+    "martial-weapon-sighting": {
+        "name": "martial-weapon-sighting",
+        "description": (
+            "Apply the martial-weapon Standing cost (-1, docs/design/03-rules.md section 2): "
+            "once per open sighting. Pass already_applied=true when this sighting has already "
+            "been charged this scene; Standing is then returned unchanged."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "standing": {"type": "integer"},
+                "already_applied": {"type": "boolean"},
+            },
+            "required": ["standing"],
+        },
+    },
+    "adjust-standing": {
+        "name": "adjust-standing",
+        "description": (
+            "Apply a Standing delta as a scene consequence outside Upkeep "
+            "(docs/design/03-rules.md section 2) -- positive, negative, or zero, with no floor "
+            "or ceiling the engine invents."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "standing": {"type": "integer"},
+                "delta": {"type": "integer"},
+            },
+            "required": ["standing", "delta"],
+        },
+    },
     "create-character": {
         "name": "create-character",
         "description": (
