@@ -179,6 +179,135 @@ class UnresolvedReferencesTest(unittest.TestCase):
         self.assertEqual(entity.unresolved_references(entities), [])
 
 
+class ResolveEntityTest(unittest.TestCase):
+    def test_no_overlay_returns_setting_unchanged(self):
+        setting = {"hallam": _minimal("character", id="hallam", role="bystander")}
+        frontmatter, body = entity.resolve_entity("hallam", setting, overlays={})
+        self.assertEqual(frontmatter, setting["hallam"])
+        self.assertIsNot(frontmatter, setting["hallam"])
+        self.assertEqual(body, "")
+
+    def test_unknown_id_with_no_overlay_raises(self):
+        with self.assertRaises(state.StateError):
+            entity.resolve_entity("nobody", {}, overlays={})
+
+    def test_overlay_overrides_one_field(self):
+        setting = {
+            "the-caretaker": _minimal(
+                "character", id="the-caretaker", disposition="unaware", role="bystander"
+            )
+        }
+        overlays = {
+            "the-caretaker": {"id": "ov-1", "overlay_of": "the-caretaker", "disposition": "hunting"}
+        }
+        frontmatter, _body = entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(frontmatter["disposition"], "hunting")
+        self.assertEqual(frontmatter["name"], setting["the-caretaker"]["name"])
+        self.assertEqual(frontmatter["role"], "bystander")
+
+    def test_overlay_overrides_multiple_fields(self):
+        setting = {
+            "the-caretaker": _minimal(
+                "character", id="the-caretaker", disposition="unaware", role="bystander"
+            )
+        }
+        overlays = {
+            "the-caretaker": {
+                "id": "ov-1",
+                "overlay_of": "the-caretaker",
+                "disposition": "hunting",
+                "role": "quarry",
+            }
+        }
+        frontmatter, _body = entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(frontmatter["disposition"], "hunting")
+        self.assertEqual(frontmatter["role"], "quarry")
+        self.assertEqual(frontmatter["name"], setting["the-caretaker"]["name"])
+
+    def test_excludes_overlay_bookkeeping_fields(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker")}
+        overlays = {
+            "the-caretaker": {"id": "ov-1", "overlay_of": "the-caretaker", "status": "complete"}
+        }
+        frontmatter, _body = entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(frontmatter["id"], "the-caretaker")
+        self.assertNotIn("overlay_of", frontmatter)
+
+    def test_overlay_empty_value_still_overrides(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker", tags=["notable"])}
+        overlays = {"the-caretaker": {"id": "ov-1", "overlay_of": "the-caretaker", "tags": []}}
+        frontmatter, _body = entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(frontmatter["tags"], [])
+
+    def test_overlay_invalid_merge_raises(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker")}
+        overlays = {
+            "the-caretaker": {
+                "id": "ov-1",
+                "overlay_of": "the-caretaker",
+                "disposition": "curious",
+            }
+        }
+        with self.assertRaises(state.StateError):
+            entity.resolve_entity("the-caretaker", setting, overlays)
+
+    def test_body_overlay_replaces_setting_body(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker")}
+        overlays = {"the-caretaker": {"id": "ov-1", "overlay_of": "the-caretaker"}}
+        _frontmatter, body = entity.resolve_entity(
+            "the-caretaker",
+            setting,
+            overlays,
+            setting_bodies={"the-caretaker": "the setting's account."},
+            overlay_bodies={"the-caretaker": "what actually happened."},
+        )
+        self.assertEqual(body, "what actually happened.")
+
+    def test_body_falls_through_when_overlay_body_empty(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker")}
+        overlays = {"the-caretaker": {"id": "ov-1", "overlay_of": "the-caretaker"}}
+        _frontmatter, body = entity.resolve_entity(
+            "the-caretaker",
+            setting,
+            overlays,
+            setting_bodies={"the-caretaker": "the setting's account."},
+        )
+        self.assertEqual(body, "the setting's account.")
+
+    def test_promotion_adds_new_fields_and_validates(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker", role="bystander")}
+        overlays = {
+            "the-caretaker": {
+                "id": "ov-2",
+                "overlay_of": "the-caretaker",
+                "role": "nemesis",
+                "threat": {"imminence": 2, "connection": "left them for dead"},
+            }
+        }
+        frontmatter, _body = entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(frontmatter["role"], "nemesis")
+        self.assertEqual(frontmatter["threat"]["imminence"], 2)
+
+    def test_promotion_does_not_mutate_setting_dict(self):
+        setting = {"the-caretaker": _minimal("character", id="the-caretaker", role="bystander")}
+        original = dict(setting["the-caretaker"])
+        overlays = {
+            "the-caretaker": {
+                "id": "ov-2",
+                "overlay_of": "the-caretaker",
+                "role": "nemesis",
+                "threat": {"imminence": 2, "connection": "left them for dead"},
+            }
+        }
+        entity.resolve_entity("the-caretaker", setting, overlays)
+        self.assertEqual(setting["the-caretaker"], original)
+
+    def test_dangling_overlay_of_raises(self):
+        overlays = {"ghost": {"id": "ov-3", "overlay_of": "ghost"}}
+        with self.assertRaises(state.StateError):
+            entity.resolve_entity("ghost", {}, overlays)
+
+
 class LoadSetTest(unittest.TestCase):
     def test_loads_and_validates_every_file(self):
         with tempfile.TemporaryDirectory() as tmp:

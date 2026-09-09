@@ -4,8 +4,10 @@ docs/design/25-entities.md: every fact Wyrd knows about a world is a markdown fi
 frontmatter. `engine/wyrd/state.py` already implements the file-level split (frontmatter/body)
 and atomic I/O via `parse_entity`/`dump_entity`/`save_entity`/`load_entity` -- this module reuses
 those directly and adds the layer `state.py` deliberately leaves out: common-schema and per-type
-validation, containment resolution (the `parent` tree, acyclic, children by reverse lookup), and
-connection-graph loading (free, directional, conditional, may loop, `hidden` preserved).
+validation, containment resolution (the `parent` tree, acyclic, children by reverse lookup),
+connection-graph loading (free, directional, conditional, may loop, `hidden` preserved), and --
+docs/design/25-entities.md's "chronicle overlay" section -- resolving a setting entity plus its
+chronicle's overlay into the effective entity the rest of the engine operates on.
 
 Python 3.11+, standard library only.
 """
@@ -56,6 +58,11 @@ _CONNECTION_OPTIONAL_FIELDS = ("via", "cost", "requires", "hidden")
 # Fields whose value (or whose items) may be `[[wikilink]]`-wrapped references to another
 # entity's id, checked by unresolved_references().
 _REFERENCE_FIELDS = ("parent", "links", "allegiances", "cast", "members", "based_at")
+
+# An overlay file's own bookkeeping fields -- never part of the effective entity produced by
+# resolve_entity(): `id` there names the overlay file itself, not the entity it resolves to, and
+# `overlay_of` is purely the join key to the setting entity.
+_OVERLAY_BOOKKEEPING_FIELDS = ("id", "overlay_of")
 
 
 def resolve_wikilink(value: str) -> str:
@@ -187,6 +194,68 @@ def unresolved_references(entities: dict[str, dict]) -> list[dict]:
                 _check(entity_id, f"connections[{i}].to", connection["to"])
 
     return problems
+
+
+def resolve_entity(
+    entity_id: str,
+    setting_entities: dict[str, dict],
+    overlays: dict[str, dict],
+    setting_bodies: dict[str, str] | None = None,
+    overlay_bodies: dict[str, str] | None = None,
+) -> tuple[dict, str]:
+    """Resolve `setting entity + overlay = effective entity`, per 25-entities.md.
+
+    `setting_entities` and `overlays` are both keyed by the *setting* entity id -- `overlays`
+    keyed by each overlay's `overlay_of`, not the overlay file's own `id` (an overlay may name
+    itself anything; it is the join key that matters). `setting_bodies`/`overlay_bodies` are the
+    corresponding entity-file bodies, keyed the same way; omit either mapping if bodies are not
+    tracked by the caller (an absent body behaves as empty everywhere below).
+
+    Returns `(frontmatter, body)`, matching `state.load_entity`'s shape.
+
+    With no overlay for `entity_id`, returns a shallow copy of the setting entity's frontmatter
+    (never the same dict object, so a caller cannot mutate the stored setting entity through the
+    result) and its body unchanged.
+
+    With an overlay, every field present in the overlay (other than the bookkeeping fields `id`
+    and `overlay_of`) overrides the setting entity's value for that field -- including introducing
+    a field the setting entity never had (promotion); every field absent from the overlay falls
+    through unchanged. The overlay body replaces the setting body if non-empty, else the setting
+    body is used. The merged frontmatter is validated with `validate()`; a failure raises
+    `state.StateError` naming `entity_id`.
+
+    Raises `state.StateError` if `entity_id` is not in `setting_entities` -- naming the dangling
+    overlay's target when some overlay claims that id (an overlay referencing a setting entity
+    that does not exist), or simply the unknown id otherwise.
+    """
+    overlay = overlays.get(entity_id)
+
+    if entity_id not in setting_entities:
+        if overlay is not None:
+            raise state.StateError(
+                f"overlay '{overlay.get('id', entity_id)}': overlay_of '{entity_id}' "
+                "does not name a known setting entity"
+            )
+        raise state.StateError(f"'{entity_id}' is not a known setting entity")
+
+    setting_frontmatter = setting_entities[entity_id]
+    setting_body = (setting_bodies or {}).get(entity_id, "")
+
+    if overlay is None:
+        return dict(setting_frontmatter), setting_body
+
+    overlay_fields = {
+        field: value for field, value in overlay.items() if field not in _OVERLAY_BOOKKEEPING_FIELDS
+    }
+    frontmatter = {**setting_frontmatter, **overlay_fields}
+    overlay_body = (overlay_bodies or {}).get(entity_id, "")
+    body = overlay_body if overlay_body else setting_body
+
+    result = validate(frontmatter)
+    if not result["valid"]:
+        raise state.StateError(f"'{entity_id}' (overlay resolved): {result['error']}")
+
+    return frontmatter, body
 
 
 def load_set(paths) -> dict[str, dict]:
