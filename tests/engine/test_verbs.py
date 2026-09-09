@@ -128,6 +128,33 @@ class OraclePromptVerbTest(unittest.TestCase):
         self.assertNotIn("state_path", verbs.oracle_prompt.__code__.co_varnames)
 
 
+class OracleAnswerVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.oracle_answer("Even", seed=1)
+        self.assertEqual(result["verb"], "oracle-answer")
+        self.assertEqual(result["band"], "Even")
+        self.assertIn(result["roll"], range(1, 101))
+        self.assertIn(result["outcome"], ("exceptional_yes", "yes", "no", "exceptional_no"))
+        self.assertIn(result["wyrd"], ("ill_omen", "fair_omen", "none"))
+        self.assertNotIn("state_written", result)
+
+    def test_deterministic_given_same_seed(self):
+        first = verbs.oracle_answer("Likely", seed=7)
+        second = verbs.oracle_answer("Likely", seed=7)
+        self.assertEqual(first["roll"], second["roll"])
+        self.assertEqual(first["outcome"], second["outcome"])
+        self.assertEqual(first["wyrd"], second["wyrd"])
+
+    def test_unrecognized_band_raises(self):
+        with self.assertRaises(ValueError):
+            verbs.oracle_answer("Certain", seed=1)
+
+    def test_performs_no_state_write(self):
+        # verbs.oracle_answer takes no state_path parameter at all -- confirms it can't
+        # touch state.py the way verbs.roll does.
+        self.assertNotIn("state_path", verbs.oracle_answer.__code__.co_varnames)
+
+
 class AssistanceBonusVerbTest(unittest.TestCase):
     def test_returns_expected_shape(self):
         result = verbs.assistance_bonus(45)

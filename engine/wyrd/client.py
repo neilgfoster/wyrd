@@ -62,6 +62,13 @@ def _build_parser() -> argparse.ArgumentParser:
         oracle_prompt_parser.add_argument("--family", required=True)
         oracle_prompt_parser.add_argument("--seed", type=int, default=None)
 
+    if "oracle-answer" in TOOLS:
+        oracle_answer_parser = subparsers.add_parser(
+            "oracle-answer", help=TOOLS["oracle-answer"]["description"]
+        )
+        oracle_answer_parser.add_argument("--band", required=True)
+        oracle_answer_parser.add_argument("--seed", type=int, default=None)
+
     if "assistance-bonus" in TOOLS:
         assistance_parser = subparsers.add_parser(
             "assistance-bonus", help=TOOLS["assistance-bonus"]["description"]
@@ -275,6 +282,13 @@ def _run_oracle_prompt(args: argparse.Namespace) -> dict:
         return {"error": {"verb": "oracle-prompt", "reason": str(exc)}}
 
 
+def _run_oracle_answer(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.oracle_answer(args.band, seed=args.seed)
+    except ValueError as exc:
+        return {"error": {"verb": "oracle-answer", "reason": str(exc)}}
+
+
 def _run_assistance_bonus(args: argparse.Namespace) -> dict:
     return verbs.assistance_bonus(helper_skill=args.helper_skill, can_attempt=args.can_attempt)
 
@@ -456,6 +470,8 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_declaration_bonus(args)
     elif args.verb == "oracle-prompt":
         result = _run_oracle_prompt(args)
+    elif args.verb == "oracle-answer":
+        result = _run_oracle_answer(args)
     elif args.verb == "assistance-bonus":
         result = _run_assistance_bonus(args)
     elif args.verb == "group-test":

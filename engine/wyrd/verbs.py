@@ -90,6 +90,25 @@ def oracle_prompt(family: str, seed: int | None = None) -> dict:
     }
 
 
+def oracle_answer(band: str, seed: int | None = None) -> dict:
+    """Resolve the `oracle-answer` verb: roll, then look up the row -- read-only.
+
+    docs/design/14-oracle-answers.md: no state is written by resolving an oracle-bound
+    question; the caller (GM) records the question, band, roll and outcome to the beat log
+    itself. Unlike `roll()`, this never touches `state.py`.
+    """
+    natural_roll = rules.roll_d100(seed=seed)
+    outcome, wyrd = rules.oracle_answer(band, natural_roll)
+    return {
+        "verb": "oracle-answer",
+        "band": band,
+        "roll": natural_roll,
+        "outcome": outcome,
+        "wyrd": wyrd,
+        "seed": seed,
+    }
+
+
 def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> dict:
     """Resolve the `assistance-bonus` verb."""
     return {

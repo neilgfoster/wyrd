@@ -309,6 +309,53 @@ def oracle_prompt(family: str, roll: int) -> tuple[str, str]:
     raise AssertionError(f"unreachable: {family} table does not cover roll {roll}")
 
 
+#: docs/design/14-oracle-answers.md: five fixed likelihood bands, each a Yes-threshold `T` over
+#: 1d100. Transcribed verbatim from the design document; `tools/check_oracle_answers.py` verifies
+#: these thresholds stay in sync with it.
+ORACLE_ANSWER_THRESHOLDS: dict[str, int] = {
+    "Near Certain": 90,
+    "Likely": 70,
+    "Even": 50,
+    "Unlikely": 30,
+    "Near Impossible": 10,
+}
+
+
+def _oracle_answer_rows(threshold: int) -> list[tuple[range, str]]:
+    """The four (range, outcome) rows a Yes-threshold `T` produces (docs/design/14-oracle-
+    answers.md): 1-5 exceptional yes, 6-T yes, T+1-95 no, 96-100 exceptional no. Derived from `T`
+    rather than hand-transcribed per band, since the shape is a deterministic function of `T`
+    alone and `tools/check_oracle_answers.py` already treats it that way.
+    """
+    return [
+        (range(1, 6), "exceptional_yes"),
+        (range(6, threshold + 1), "yes"),
+        (range(threshold + 1, 96), "no"),
+        (range(96, 101), "exceptional_no"),
+    ]
+
+
+def oracle_answer(band: str, roll: int) -> tuple[str, str]:
+    """Look up a natural 1d100 roll against one of the five oracle-answer bands.
+
+    docs/design/14-oracle-answers.md: repeatable, no modifier, the band selects which row set
+    is read. An unrecognized band or an out-of-range roll is a load error, not a table quietly
+    skipped (matching `oracle_prompt`'s convention). Returns `(outcome, wyrd)` -- the outcome key
+    and the Wyrd die reading for that same roll, read via this module's own `_wyrd_die` helper:
+    "an oracle roll reads the same Wyrd die as every other d100 roll, with no separate mechanism."
+    """
+    if band not in ORACLE_ANSWER_THRESHOLDS:
+        raise ValueError(
+            f"no such oracle answer band: {band!r} (valid: {sorted(ORACLE_ANSWER_THRESHOLDS)})"
+        )
+    if not isinstance(roll, int) or not (1 <= roll <= 100):
+        raise ValueError(f"roll must be an integer 1-100, got {roll!r}")
+    for row_range, outcome in _oracle_answer_rows(ORACLE_ANSWER_THRESHOLDS[band]):
+        if roll in row_range:
+            return outcome, _wyrd_die(roll)
+    raise AssertionError(f"unreachable: {band} table does not cover roll {roll}")
+
+
 def assistance_bonus(helper_skill: int, can_attempt: bool = True) -> int:
     """A helper's contribution: a tenth of their own skill, rounded down, capped at +10.
 
