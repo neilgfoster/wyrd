@@ -206,6 +206,64 @@ class OraclePromptTest(unittest.TestCase):
         )
 
 
+class OracleAnswerTest(unittest.TestCase):
+    def test_every_roll_1_to_100_resolves_for_every_band(self):
+        for band, threshold in rules.ORACLE_ANSWER_THRESHOLDS.items():
+            for roll in range(1, 101):
+                outcome, wyrd = rules.oracle_answer(band, roll)
+                self.assertIn(outcome, ("exceptional_yes", "yes", "no", "exceptional_no"))
+                self.assertIn(wyrd, ("ill_omen", "fair_omen", "none"))
+                if roll <= 5:
+                    expected = "exceptional_yes"
+                elif roll <= threshold:
+                    expected = "yes"
+                elif roll <= 95:
+                    expected = "no"
+                else:
+                    expected = "exceptional_no"
+                self.assertEqual(outcome, expected)
+
+    def test_threshold_row_is_still_yes(self):
+        # The threshold total T is the last "yes" row, not the first "no" row.
+        outcome, _wyrd = rules.oracle_answer("Near Certain", 90)
+        self.assertEqual(outcome, "yes")
+
+    def test_row_past_threshold_is_no(self):
+        outcome, _wyrd = rules.oracle_answer("Near Certain", 91)
+        self.assertEqual(outcome, "no")
+
+    def test_first_row_at_roll_1_is_exceptional_yes(self):
+        for band in rules.ORACLE_ANSWER_THRESHOLDS:
+            outcome, _wyrd = rules.oracle_answer(band, 1)
+            self.assertEqual(outcome, "exceptional_yes")
+
+    def test_last_row_at_roll_100_is_exceptional_no(self):
+        for band in rules.ORACLE_ANSWER_THRESHOLDS:
+            outcome, _wyrd = rules.oracle_answer(band, 100)
+            self.assertEqual(outcome, "exceptional_no")
+
+    def test_wyrd_die_matches_units_digit(self):
+        outcome, wyrd = rules.oracle_answer("Even", 40)
+        self.assertEqual(outcome, "yes")
+        self.assertEqual(wyrd, "ill_omen")
+
+    def test_unrecognized_band_raises(self):
+        with self.assertRaises(ValueError):
+            rules.oracle_answer("Certain", 50)
+
+    def test_out_of_range_roll_raises(self):
+        with self.assertRaises(ValueError):
+            rules.oracle_answer("Even", 0)
+        with self.assertRaises(ValueError):
+            rules.oracle_answer("Even", 101)
+
+    def test_all_five_bands_present(self):
+        self.assertEqual(
+            set(rules.ORACLE_ANSWER_THRESHOLDS),
+            {"Near Certain", "Likely", "Even", "Unlikely", "Near Impossible"},
+        )
+
+
 class AssistanceBonusTest(unittest.TestCase):
     def test_thirty_percent(self):
         self.assertEqual(rules.assistance_bonus(30), 3)

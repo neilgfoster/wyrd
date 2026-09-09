@@ -134,6 +134,39 @@ TOOLS: dict[str, dict] = {
             "required": ["family"],
         },
     },
+    "oracle-answer": {
+        "name": "oracle-answer",
+        "description": (
+            "Roll the oracle-answer table for a GM-declared likelihood band and return the "
+            "natural roll, outcome (exceptional_yes, yes, no, exceptional_no) and Wyrd die "
+            "reading. Use to settle a yes/no question of fact the fiction hasn't answered yet "
+            "and could plausibly be asked again -- never invent the answer unconstrained. "
+            "Read-only: writes nothing to any entity's state."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "band": {
+                    "type": "string",
+                    "enum": [
+                        "Near Certain",
+                        "Likely",
+                        "Even",
+                        "Unlikely",
+                        "Near Impossible",
+                    ],
+                },
+                "seed": {"type": "integer"},
+            },
+            "required": ["band"],
+        },
+    },
     "assistance-bonus": {
         "name": "assistance-bonus",
         "description": (
