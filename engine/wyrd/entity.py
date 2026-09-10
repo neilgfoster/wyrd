@@ -55,6 +55,16 @@ _TYPE_ENUM_FIELDS: dict[str, dict[str, tuple[str, ...]]] = {
 _CONNECTION_REQUIRED_FIELDS = ("to",)
 _CONNECTION_OPTIONAL_FIELDS = ("via", "cost", "requires", "hidden")
 
+# docs/design/18-arcs-and-beats.md "Conversion is lazy": each sources[] entry records provenance.
+# `pages` is only required once an entity has moved past `stub` -- a stub records where it came
+# from, a converted beat additionally records what pages it was drawn from.
+_SOURCE_REQUIRED_FIELDS = ("work", "licence", "path")
+_SOURCE_OPTIONAL_FIELDS = ("pages",)
+
+# The two legal forward moves through STATUSES; anything else (staying put, skipping a state,
+# moving backward) is rejected by legal_transition().
+_LEGAL_TRANSITIONS = {("stub", "drafted"), ("drafted", "complete")}
+
 # Fields whose value (or whose items) may be `[[wikilink]]`-wrapped references to another
 # entity's id, checked by unresolved_references().
 _REFERENCE_FIELDS = ("parent", "links", "allegiances", "cast", "members", "based_at")
@@ -118,6 +128,107 @@ def validate(frontmatter: dict) -> dict:
                 return {"valid": False, "error": problem}
 
     return {"valid": True}
+
+
+def validate_source(source: dict, *, status: str) -> dict:
+    """Check one `sources[]` entry against its field schema.
+
+    Requires `work`, `licence`, and `path`; requires `pages` too once `status` is `"drafted"` or
+    `"complete"` -- a stub records where it came from, a converted beat additionally records what
+    pages it was drawn from. Rejects any field outside `{work, pages, licence, path}`. Returns
+    `{"valid": True}` or `{"valid": False, "error": "..."}` naming the specific field.
+    """
+    if not isinstance(source, dict):
+        return {"valid": False, "error": "source entry is not a mapping"}
+
+    required = _SOURCE_REQUIRED_FIELDS
+    if status in ("drafted", "complete"):
+        required += ("pages",)
+
+    for field in required:
+        if not source.get(field):
+            return {"valid": False, "error": f"source missing required field '{field}'"}
+
+    for field in source:
+        if field not in _SOURCE_REQUIRED_FIELDS and field not in _SOURCE_OPTIONAL_FIELDS:
+            return {"valid": False, "error": f"source has unexpected field '{field}'"}
+
+    return {"valid": True}
+
+
+def check_stub_sufficiency(frontmatter: dict, body: str = "") -> dict:
+    """Check that a `status: stub` entity carries enough to be selected, per 18-arcs-and-beats.md.
+
+    A summary, tags, and a sourced path -- "enough to be selected and nothing more." The summary
+    is the entity's body text (18-arcs-and-beats.md's stub example carries it below the
+    frontmatter, not as a frontmatter field), so `body` is passed separately -- matching
+    `state.load_entity`'s `(frontmatter, body)` shape rather than folding it into `frontmatter`.
+    Entities whose status is not `stub` are exempt: this is a selectability guarantee for stubs
+    specifically, not a general completeness check (that is `validate()`'s job).
+
+    Returns `{"valid": True}` or `{"valid": False, "error": "..."}` naming the first unmet
+    requirement, checked in the order summary -> tags -> sources[].path.
+    """
+    if frontmatter.get("status") != "stub":
+        return {"valid": True}
+
+    if not body.strip():
+        return {"valid": False, "error": "stub missing required summary body text"}
+
+    if not frontmatter.get("tags"):
+        return {"valid": False, "error": "stub missing required field 'tags'"}
+
+    sources = frontmatter.get("sources") or []
+    if not any(isinstance(entry, dict) and entry.get("path") for entry in sources):
+        return {"valid": False, "error": "stub missing a sources[] entry with a 'path'"}
+
+    return {"valid": True}
+
+
+def legal_transition(from_status: str, to_status: str) -> dict:
+    """Check whether moving an entity from `from_status` to `to_status` is a legal transition.
+
+    Only `stub` -> `drafted` and `drafted` -> `complete` are legal. Returns `{"valid": True}` or
+    `{"valid": False, "error": "..."}` distinguishing "skips a state" (moving forward past an
+    intermediate status), "moves backward" (moving to an earlier status), and "not a transition"
+    (an unrecognised status, or `from_status == to_status`).
+    """
+    if (from_status, to_status) in _LEGAL_TRANSITIONS:
+        return {"valid": True}
+
+    if from_status not in STATUSES or to_status not in STATUSES:
+        return {"valid": False, "error": f"'{from_status}' -> '{to_status}' is not a transition"}
+
+    from_index = STATUSES.index(from_status)
+    to_index = STATUSES.index(to_status)
+
+    if to_index == from_index:
+        return {"valid": False, "error": f"'{from_status}' -> '{to_status}' is not a transition"}
+    if to_index < from_index:
+        return {"valid": False, "error": f"'{from_status}' -> '{to_status}' moves backward"}
+    return {"valid": False, "error": f"'{from_status}' -> '{to_status}' skips a state"}
+
+
+def status_counts(entities: dict[str, dict]) -> dict:
+    """Report the stub/drafted/complete mix over `entities`, for `doctor`-style reporting.
+
+    Returns `{status: {"count": int, "proportion": float}}` for each of `STATUSES`. An empty
+    `entities` reports zero counts and zero proportions rather than raising.
+    """
+    total = len(entities)
+    counts = dict.fromkeys(STATUSES, 0)
+    for frontmatter in entities.values():
+        status = frontmatter.get("status")
+        if status in counts:
+            counts[status] += 1
+
+    return {
+        status: {
+            "count": count,
+            "proportion": (count / total) if total else 0.0,
+        }
+        for status, count in counts.items()
+    }
 
 
 def load(path: pathlib.Path) -> dict:
