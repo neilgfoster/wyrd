@@ -329,5 +329,167 @@ class LoadSetTest(unittest.TestCase):
                 entity.load_set([path])
 
 
+def _valid_source(**overrides) -> dict:
+    base = {"work": "Corpus Vol. 3", "licence": "internal", "path": "corpus/vol3.md"}
+    base.update(overrides)
+    return base
+
+
+class ValidateSourceTest(unittest.TestCase):
+    def test_accepts_minimal_source_at_stub(self):
+        self.assertEqual(entity.validate_source(_valid_source(), status="stub"), {"valid": True})
+
+    def test_rejects_missing_work(self):
+        source = _valid_source()
+        del source["work"]
+        result = entity.validate_source(source, status="stub")
+        self.assertFalse(result["valid"])
+        self.assertIn("work", result["error"])
+
+    def test_rejects_missing_licence(self):
+        source = _valid_source()
+        del source["licence"]
+        result = entity.validate_source(source, status="stub")
+        self.assertFalse(result["valid"])
+        self.assertIn("licence", result["error"])
+
+    def test_rejects_missing_path(self):
+        source = _valid_source()
+        del source["path"]
+        result = entity.validate_source(source, status="stub")
+        self.assertFalse(result["valid"])
+        self.assertIn("path", result["error"])
+
+    def test_pages_not_required_at_stub(self):
+        self.assertEqual(entity.validate_source(_valid_source(), status="stub"), {"valid": True})
+
+    def test_pages_required_at_drafted(self):
+        result = entity.validate_source(_valid_source(), status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("pages", result["error"])
+
+    def test_pages_required_at_complete(self):
+        result = entity.validate_source(_valid_source(), status="complete")
+        self.assertFalse(result["valid"])
+        self.assertIn("pages", result["error"])
+
+    def test_accepts_source_with_pages_at_drafted(self):
+        source = _valid_source(pages="12-14")
+        self.assertEqual(entity.validate_source(source, status="drafted"), {"valid": True})
+
+    def test_rejects_unexpected_field(self):
+        source = _valid_source(author="someone")
+        result = entity.validate_source(source, status="stub")
+        self.assertFalse(result["valid"])
+        self.assertIn("author", result["error"])
+
+
+def _sufficient_stub(**overrides) -> dict:
+    base = _minimal("beat")
+    base.update(tags=["combat", "travel"], sources=[_valid_source()])
+    base.update(overrides)
+    return base
+
+
+_SUMMARY_BODY = "A river crossing goes wrong."
+
+
+class CheckStubSufficiencyTest(unittest.TestCase):
+    def test_accepts_sufficient_stub(self):
+        result = entity.check_stub_sufficiency(_sufficient_stub(), _SUMMARY_BODY)
+        self.assertEqual(result, {"valid": True})
+
+    def test_rejects_missing_summary_body(self):
+        result = entity.check_stub_sufficiency(_sufficient_stub(), "")
+        self.assertFalse(result["valid"])
+        self.assertIn("summary", result["error"])
+
+    def test_rejects_whitespace_only_summary_body(self):
+        result = entity.check_stub_sufficiency(_sufficient_stub(), "   \n")
+        self.assertFalse(result["valid"])
+        self.assertIn("summary", result["error"])
+
+    def test_rejects_missing_tags(self):
+        record = _sufficient_stub()
+        del record["tags"]
+        result = entity.check_stub_sufficiency(record, _SUMMARY_BODY)
+        self.assertFalse(result["valid"])
+        self.assertIn("tags", result["error"])
+
+    def test_rejects_missing_sources(self):
+        record = _sufficient_stub()
+        del record["sources"]
+        result = entity.check_stub_sufficiency(record, _SUMMARY_BODY)
+        self.assertFalse(result["valid"])
+        self.assertIn("sources", result["error"])
+
+    def test_rejects_source_with_empty_path(self):
+        record = _sufficient_stub(sources=[_valid_source(path="")])
+        result = entity.check_stub_sufficiency(record, _SUMMARY_BODY)
+        self.assertFalse(result["valid"])
+        self.assertIn("sources", result["error"])
+
+    def test_exempts_non_stub_entity_missing_everything(self):
+        record = _minimal("beat", status="drafted")
+        self.assertEqual(entity.check_stub_sufficiency(record, ""), {"valid": True})
+
+
+class LegalTransitionTest(unittest.TestCase):
+    def test_accepts_stub_to_drafted(self):
+        self.assertEqual(entity.legal_transition("stub", "drafted"), {"valid": True})
+
+    def test_accepts_drafted_to_complete(self):
+        self.assertEqual(entity.legal_transition("drafted", "complete"), {"valid": True})
+
+    def test_rejects_stub_to_complete_as_skip(self):
+        result = entity.legal_transition("stub", "complete")
+        self.assertFalse(result["valid"])
+        self.assertIn("skips a state", result["error"])
+
+    def test_rejects_backward_moves(self):
+        for from_status, to_status in (
+            ("complete", "stub"),
+            ("drafted", "stub"),
+            ("complete", "drafted"),
+        ):
+            with self.subTest(from_status=from_status, to_status=to_status):
+                result = entity.legal_transition(from_status, to_status)
+                self.assertFalse(result["valid"])
+                self.assertIn("moves backward", result["error"])
+
+    def test_rejects_identical_statuses(self):
+        for status in entity.STATUSES:
+            with self.subTest(status=status):
+                result = entity.legal_transition(status, status)
+                self.assertFalse(result["valid"])
+
+    def test_rejects_unrecognised_status(self):
+        result = entity.legal_transition("stub", "finished")
+        self.assertFalse(result["valid"])
+
+
+class StatusCountsTest(unittest.TestCase):
+    def test_reports_mixed_status_set(self):
+        entities = {
+            "a": {"status": "stub"},
+            "b": {"status": "stub"},
+            "c": {"status": "drafted"},
+            "d": {"status": "complete"},
+        }
+        result = entity.status_counts(entities)
+        self.assertEqual(result["stub"]["count"], 2)
+        self.assertEqual(result["drafted"]["count"], 1)
+        self.assertEqual(result["complete"]["count"], 1)
+        self.assertAlmostEqual(result["stub"]["proportion"], 0.5)
+        self.assertAlmostEqual(result["drafted"]["proportion"], 0.25)
+        self.assertAlmostEqual(result["complete"]["proportion"], 0.25)
+
+    def test_reports_zero_on_empty_set(self):
+        result = entity.status_counts({})
+        for status in entity.STATUSES:
+            self.assertEqual(result[status]["count"], 0)
+            self.assertEqual(result[status]["proportion"], 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()
