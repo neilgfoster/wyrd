@@ -618,4 +618,31 @@ TOOLS: dict[str, dict] = {
             "required": ["proposal_id", "step", "resource"],
         },
     },
+    "track": {
+        "name": "track",
+        "description": (
+            "Apply a delta to a trackable mechanism's current value (docs/design/27-tooling.md "
+            "section 4's worked example: `wyrd track <id> taint +1`). The mechanism named is "
+            "always the engine's own internal identifier, never a setting's rename -- renames "
+            "are presentation-only and are applied to the reported label, not to this input."
+        ),
+        # A setting-facing mechanism: which of `mechanisms` this verb offers is filtered by
+        # the active setting's overrides.OVERRIDABLE disable set (overrides.filter_tools).
+        "mechanisms": ["taint", "trauma"],
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "value": {"type": "integer"},
+                "mechanism": {"type": "string", "enum": ["taint", "trauma"]},
+                "delta": {"type": "integer"},
+            },
+            "required": ["value", "mechanism", "delta"],
+        },
+    },
 }

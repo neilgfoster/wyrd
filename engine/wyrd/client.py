@@ -12,10 +12,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import pathlib
 import sys
 
-from wyrd import render, state, verbs
+from wyrd import overrides, render, state, verbs
 from wyrd.catalog import TOOLS
+from wyrd.overrides import OverrideError
 from wyrd.resolution import ProposalError
 from wyrd.state import StateError
 
@@ -27,6 +29,18 @@ def _build_parser() -> argparse.ArgumentParser:
 
     describe_parser = subparsers.add_parser("describe", help="List available verbs.")
     describe_parser.add_argument("--name", help="Show only this verb's catalog entry.")
+    describe_parser.add_argument(
+        "--overridable",
+        action="store_true",
+        help="Report the closed overridable set instead of the verb catalog.",
+    )
+    describe_parser.add_argument(
+        "--setting", help="Path to a setting.yaml whose overrides:, if any, filter the catalog."
+    )
+    describe_parser.add_argument(
+        "--chronicle",
+        help="Path to a chronicle houserules.yaml, layered on top of --setting.",
+    )
 
     # Built from the catalog rather than a second, hand-maintained list of verb names --
     # today there is exactly one (roll), but adding a verb means adding a catalog entry,
@@ -165,6 +179,18 @@ def _build_parser() -> argparse.ArgumentParser:
         adjust_parser.add_argument("--standing", type=int, required=True)
         adjust_parser.add_argument("--delta", type=int, required=True)
 
+    if "track" in TOOLS:
+        track_parser = subparsers.add_parser("track", help=TOOLS["track"]["description"])
+        track_parser.add_argument("--value", type=int, required=True)
+        track_parser.add_argument("--mechanism", required=True)
+        track_parser.add_argument("--delta", type=int, required=True)
+        track_parser.add_argument(
+            "--setting", help="Path to a setting.yaml whose overrides:, if any, apply."
+        )
+        track_parser.add_argument(
+            "--chronicle", help="Path to a chronicle houserules.yaml, layered on top of --setting."
+        )
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -238,13 +264,40 @@ def _parse_bool(text: str) -> bool:
     raise argparse.ArgumentTypeError(f"expected a boolean, got {text!r}")
 
 
+def _load_resolved(
+    setting_path: str | None, chronicle_path: str | None
+) -> overrides.ResolvedConfig | None:
+    """Resolve `--setting`/`--chronicle` into a `ResolvedConfig`, or `None` if neither is given.
+
+    Reads each file's `overrides:` block through `state.parse_yaml` -- the engine's own
+    restricted reader (docs/design/27-tooling.md section 2: no third-party YAML dependency),
+    never `tools/`'s authoring-time linter, per the layering `state.py` already documents.
+    """
+    layers: list[tuple[str, dict]] = [("engine", {})]
+    if setting_path:
+        data = state.parse_yaml(pathlib.Path(setting_path).read_text(encoding="utf-8"))
+        layers.append(("setting", data.get("overrides") or {}))
+    if chronicle_path:
+        data = state.parse_yaml(pathlib.Path(chronicle_path).read_text(encoding="utf-8"))
+        layers.append(("chronicle", data.get("overrides") or data or {}))
+    if len(layers) == 1:
+        return None
+    return overrides.resolve(layers)
+
+
 def _run_describe(args: argparse.Namespace) -> dict:
+    if args.overridable:
+        return {"verb": "describe", "overridable": overrides.describe_overridable()}
+
+    resolved = _load_resolved(args.setting, args.chronicle)
+    tools = TOOLS if resolved is None else overrides.filter_tools(TOOLS, resolved)
+
     if args.name is not None:
-        entry = TOOLS.get(args.name)
+        entry = tools.get(args.name)
         if entry is None:
             return {"error": {"verb": "describe", "reason": f"no such verb: {args.name}"}}
         return entry
-    return {"verb": "describe", "tools": list(TOOLS.values())}
+    return {"verb": "describe", "tools": list(tools.values())}
 
 
 def _run_roll(args: argparse.Namespace) -> dict:
@@ -394,6 +447,16 @@ def _run_adjust_standing(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_track(args: argparse.Namespace) -> dict:
+    resolved = _load_resolved(args.setting, args.chronicle)
+    return verbs.track(
+        value=args.value,
+        mechanism=args.mechanism,
+        delta=args.delta,
+        resolved=resolved,
+    )
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -461,7 +524,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.verb == "describe":
-        result = _run_describe(args)
+        try:
+            result = _run_describe(args)
+        except OverrideError as exc:
+            result = {"error": {"verb": "describe", "reason": str(exc)}}
     elif args.verb == "roll":
         result = _run_roll(args)
     elif args.verb == "opposed-test":
@@ -508,6 +574,11 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_discard(args)
     elif args.verb == "reroll":
         result = _run_reroll(args)
+    elif args.verb == "track":
+        try:
+            result = _run_track(args)
+        except OverrideError as exc:
+            result = {"error": {"verb": "track", "reason": str(exc)}}
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

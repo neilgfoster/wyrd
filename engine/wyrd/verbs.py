@@ -9,7 +9,17 @@ from __future__ import annotations
 
 import pathlib
 
-from wyrd import advancement, career, character, creation, economy, resolution, rules, state
+from wyrd import (
+    advancement,
+    career,
+    character,
+    creation,
+    economy,
+    overrides,
+    resolution,
+    rules,
+    state,
+)
 
 
 def roll(
@@ -354,3 +364,41 @@ def reroll(proposal_id: str, step: int, resource: str, seed: int | None = None) 
     """Resolve the `reroll` verb."""
     result = resolution.reroll(proposal_id, step=step, resource=resource, seed=seed)
     return {"verb": "reroll", **result}
+
+
+def track(
+    value: int,
+    mechanism: str,
+    delta: int,
+    resolved: overrides.ResolvedConfig | None = None,
+) -> dict:
+    """Resolve the `track` verb: apply `delta` to a trackable mechanism's current `value`.
+
+    `mechanism` is always the engine's own internal identifier (docs/design/24-authoring-a-
+    setting.md: "Internal identifiers never change") -- a disabled mechanism cannot be tracked
+    at all (a structured error, never a silent no-op, per docs/design/27-tooling.md section 4),
+    and a renamed one is reported under its setting's word without this input ever accepting
+    that word.
+    """
+    if mechanism not in overrides.TRACKABLE_MECHANISMS:
+        return {
+            "error": {
+                "verb": "track",
+                "reason": f"{mechanism!r} is not a trackable mechanism",
+            }
+        }
+    if resolved is not None and not resolved.is_enabled(mechanism):
+        return {
+            "error": {
+                "verb": "track",
+                "reason": f"{mechanism!r} is disabled by the active setting",
+            }
+        }
+    label = resolved.label(mechanism) if resolved is not None else mechanism
+    return {
+        "verb": "track",
+        "mechanism": mechanism,
+        "label": label,
+        "value": value + delta,
+        "delta": delta,
+    }

@@ -827,3 +827,84 @@ class SpendAdvanceTest(unittest.TestCase):
         _, output = _run(["describe"])
         names = {entry["name"] for entry in json.loads(output)["tools"]}
         self.assertIn("spend-advance", names)
+
+
+class OverridableTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _write(self, name: str, text: str) -> str:
+        path = pathlib.Path(self._tmp.name) / name
+        path.write_text(text, encoding="utf-8")
+        return str(path)
+
+    def test_describe_overridable_reports_the_closed_set(self):
+        exit_code, output = _run(["describe", "--overridable"])
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        names = {entry["name"] for entry in payload["overridable"]}
+        self.assertIn("taint", names)
+
+    def test_setting_disabling_taint_removes_track_from_describe(self):
+        setting_path = self._write(
+            "setting.yaml",
+            "overrides:\n  disable: [taint]\n",
+        )
+        exit_code, output = _run(["describe", "--setting", setting_path])
+        self.assertEqual(exit_code, 0)
+        entry = next(t for t in json.loads(output)["tools"] if t["name"] == "track")
+        self.assertEqual(entry["mechanisms"], ["trauma"])
+
+    def test_setting_naming_something_outside_the_closed_set_is_a_load_error(self):
+        setting_path = self._write(
+            "setting.yaml",
+            "overrides:\n  disable: [not-a-mechanism]\n",
+        )
+        exit_code, output = _run(["describe", "--setting", setting_path])
+        self.assertEqual(exit_code, 0)
+        self.assertIn("error", json.loads(output))
+
+    def test_chronicle_houserule_wins_over_setting_override(self):
+        setting_path = self._write("setting.yaml", "overrides:\n  rename: {taint: shadow}\n")
+        chronicle_path = self._write(
+            "houserules.yaml", "overrides:\n  rename: {taint: corruption}\n"
+        )
+        exit_code, output = _run(
+            [
+                "track",
+                "--value",
+                "3",
+                "--mechanism",
+                "taint",
+                "--delta",
+                "1",
+                "--setting",
+                setting_path,
+                "--chronicle",
+                chronicle_path,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(payload["label"], "corruption")
+
+    def test_track_against_disabled_mechanism_is_a_structured_error(self):
+        setting_path = self._write("setting.yaml", "overrides:\n  disable: [trauma]\n")
+        exit_code, output = _run(
+            [
+                "track",
+                "--value",
+                "0",
+                "--mechanism",
+                "trauma",
+                "--delta",
+                "1",
+                "--setting",
+                setting_path,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertIn("error", json.loads(output))

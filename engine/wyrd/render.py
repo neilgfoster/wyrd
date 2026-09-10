@@ -68,8 +68,13 @@ def to_text(obj: dict) -> str:
         progress = f"{obj['progress']}/{obj['target']}"
         return f"extended-task-interval: +{obj['gained']} -> {progress}{done}"
     if obj.get("verb") == "describe":
+        if "overridable" in obj:
+            names = [entry["name"] for entry in obj["overridable"]]
+            return ", ".join(names) if names else "(nothing overridable)"
         tools = obj.get("tools", [])
         return ", ".join(tool["name"] for tool in tools) if tools else "(no tools)"
+    if obj.get("verb") == "track":
+        return f"track: {obj['label']} {obj['delta']:+d} -> {obj['value']}"
     if "name" in obj and "inputSchema" in obj:
         # A single catalog entry, as returned by `describe --name <verb>`.
         return f"{obj['name']}: {obj['description']}"

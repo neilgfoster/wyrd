@@ -176,5 +176,39 @@ class ListOfMappingRoundTripTest(unittest.TestCase):
         self.assertEqual(parsed["skills"], {"stealth": 45})
 
 
+class FlowStyleCollectionTest(unittest.TestCase):
+    """A setting.yaml `overrides:` block uses flow-style lists/mappings
+    (docs/design/24-authoring-a-setting.md), which this restricted reader must parse."""
+
+    def test_flow_list_of_scalars(self):
+        parsed = state.parse_yaml("disable: [taint, trauma]\n")
+        self.assertEqual(parsed["disable"], ["taint", "trauma"])
+
+    def test_empty_flow_list(self):
+        parsed = state.parse_yaml("disable: []\n")
+        self.assertEqual(parsed["disable"], [])
+
+    def test_flow_mapping_of_scalars(self):
+        parsed = state.parse_yaml("rename: {taint: shadow}\n")
+        self.assertEqual(parsed["rename"], {"taint": "shadow"})
+
+    def test_flow_mapping_with_multiple_entries(self):
+        parsed = state.parse_yaml(
+            "extend: {skills: setting/rules/skills.yaml, "
+            "oracle-prompt-npc-objective: setting/rules/tables/extra.yaml}\n"
+        )
+        self.assertEqual(
+            parsed["extend"],
+            {
+                "skills": "setting/rules/skills.yaml",
+                "oracle-prompt-npc-objective": "setting/rules/tables/extra.yaml",
+            },
+        )
+
+    def test_empty_flow_mapping(self):
+        parsed = state.parse_yaml("rename: {}\n")
+        self.assertEqual(parsed["rename"], {})
+
+
 if __name__ == "__main__":
     unittest.main()
