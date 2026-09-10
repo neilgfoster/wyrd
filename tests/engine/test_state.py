@@ -98,6 +98,212 @@ class StateRoundTripTest(unittest.TestCase):
         self.assertEqual(state.load(self.path), prior)
 
 
+class ChronicleStateTest(unittest.TestCase):
+    """Tests for the chronicle.yaml schema (docs/design/22-state.md,
+    specs/122-chronicle-yaml-schema)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "chronicle.yaml"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _fresh(self):
+        return state.default_chronicle_state(
+            name="test-chronicle",
+            engine_repo="wyrd",
+            engine_version="0.4.0",
+            setting_repo="some-setting",
+            setting_version="0.3.1",
+        )
+
+    # -- User Story 1: round-trip a chronicle's full identity --
+
+    def test_default_chronicle_state_shape(self):
+        fresh = self._fresh()
+        self.assertEqual(fresh["schema_version"], 1)
+        self.assertEqual(fresh["name"], "test-chronicle")
+        self.assertEqual(fresh["engine"]["created_under"], "0.4.0")
+        self.assertEqual(fresh["setting"]["created_under"], "0.3.1")
+        self.assertEqual(fresh["migrations"], [])
+        self.assertEqual(fresh["sessions"], 0)
+        self.assertIsNone(fresh["pending"])
+
+    def test_save_then_load_round_trips_a_fully_populated_chronicle(self):
+        fresh = self._fresh()
+        state.save_chronicle(fresh, self.path)
+        loaded = state.load_chronicle(self.path)
+        self.assertEqual(loaded, fresh)
+
+    def test_load_fills_missing_optional_fields_with_documented_defaults(self):
+        minimal = self._fresh()
+        del minimal["era"]
+        del minimal["intent"]
+        del minimal["pending"]
+        state.save(minimal, self.path)  # bypass save_chronicle's own validation
+        loaded = state.load_chronicle(self.path)
+        self.assertIsNone(loaded["era"])
+        self.assertIsNone(loaded["pending"])
+        self.assertEqual(loaded["intent"], state._INTENT_DEFAULTS)
+
+    def test_load_missing_required_field_raises_naming_it(self):
+        broken = self._fresh()
+        del broken["schema_version"]
+        state.save(broken, self.path)
+        with self.assertRaises(state.StateError) as ctx:
+            state.load_chronicle(self.path)
+        self.assertIn("schema_version", str(ctx.exception))
+
+    def test_load_chronicle_missing_file_raises(self):
+        with self.assertRaises(state.StateError):
+            state.load_chronicle(self.path)
+
+    def test_save_rejects_negative_sessions_without_writing(self):
+        bad = self._fresh()
+        bad["sessions"] = -1
+        with self.assertRaises(state.StateError):
+            state.save_chronicle(bad, self.path)
+        self.assertFalse(self.path.exists())
+
+    def test_save_rejects_negative_danger_rating(self):
+        bad = self._fresh()
+        bad["danger_rating"] = -1
+        with self.assertRaises(state.StateError):
+            state.save_chronicle(bad, self.path)
+
+    # -- User Story 2: current version vs. created_under --
+
+    def test_bumping_engine_version_leaves_created_under_unchanged(self):
+        fresh = self._fresh()
+        state.save_chronicle(fresh, self.path)
+        loaded = state.load_chronicle(self.path)
+        loaded["engine"]["version"] = "0.5.0"
+        state.save_chronicle(loaded, self.path)
+        reloaded = state.load_chronicle(self.path)
+        self.assertEqual(reloaded["engine"]["created_under"], "0.4.0")
+        self.assertEqual(reloaded["engine"]["version"], "0.5.0")
+
+    def test_bumping_setting_version_leaves_created_under_unchanged(self):
+        fresh = self._fresh()
+        state.save_chronicle(fresh, self.path)
+        loaded = state.load_chronicle(self.path)
+        loaded["setting"]["version"] = "0.4.0"
+        state.save_chronicle(loaded, self.path)
+        reloaded = state.load_chronicle(self.path)
+        self.assertEqual(reloaded["setting"]["created_under"], "0.3.1")
+        self.assertEqual(reloaded["setting"]["version"], "0.4.0")
+
+    # -- User Story 3: append-only migrations --
+
+    def test_append_migration_preserves_prior_entries_in_order(self):
+        fresh = self._fresh()
+        first = {
+            "from": {"engine": "0.1.0"},
+            "to": {"engine": "0.2.0"},
+            "class": "tuning",
+            "applied": "2026-01-01",
+            "note": "first",
+        }
+        second = {
+            "from": {"engine": "0.2.0"},
+            "to": {"engine": "0.3.0"},
+            "class": "additive",
+            "applied": "2026-02-01",
+            "note": "second",
+        }
+        with_two = state.append_migration(state.append_migration(fresh, first), second)
+        state.save_chronicle(with_two, self.path)
+
+        third = {
+            "from": {"engine": "0.3.0"},
+            "to": {"engine": "0.4.0"},
+            "class": "structural",
+            "applied": "2026-03-01",
+            "note": "third",
+        }
+        loaded = state.load_chronicle(self.path)
+        with_three = state.append_migration(loaded, third)
+        state.save_chronicle(with_three, self.path)
+
+        reloaded = state.load_chronicle(self.path)
+        self.assertEqual(reloaded["migrations"], [first, second, third])
+
+    def test_append_migration_rejects_invalid_class(self):
+        fresh = self._fresh()
+        with self.assertRaises(state.StateError):
+            state.append_migration(fresh, {"class": "not-a-real-class"})
+
+    def test_validate_chronicle_rejects_invalid_migration_class(self):
+        fresh = self._fresh()
+        fresh["migrations"] = [{"class": "not-a-real-class"}]
+        with self.assertRaises(state.StateError):
+            state.validate_chronicle(fresh)
+
+    def test_save_rejects_edited_prior_migration_entry(self):
+        fresh = self._fresh()
+        entry = {
+            "from": {"engine": "0.1.0"},
+            "to": {"engine": "0.2.0"},
+            "class": "tuning",
+            "applied": "2026-01-01",
+            "note": "original",
+        }
+        with_entry = state.append_migration(fresh, entry)
+        state.save_chronicle(with_entry, self.path)
+
+        tampered = state.load_chronicle(self.path)
+        tampered["migrations"][0] = {**entry, "note": "rewritten"}
+        with self.assertRaises(state.StateError):
+            state.save_chronicle(tampered, self.path)
+
+        # File on disk is unchanged.
+        unchanged = state.load_chronicle(self.path)
+        self.assertEqual(unchanged["migrations"][0]["note"], "original")
+
+    def test_save_rejects_reordered_prior_migrations(self):
+        fresh = self._fresh()
+        first = {
+            "from": {"engine": "0.1.0"},
+            "to": {"engine": "0.2.0"},
+            "class": "tuning",
+            "applied": "2026-01-01",
+            "note": "first",
+        }
+        second = {
+            "from": {"engine": "0.2.0"},
+            "to": {"engine": "0.3.0"},
+            "class": "additive",
+            "applied": "2026-02-01",
+            "note": "second",
+        }
+        with_two = state.append_migration(state.append_migration(fresh, first), second)
+        state.save_chronicle(with_two, self.path)
+
+        reordered = state.load_chronicle(self.path)
+        reordered["migrations"] = [second, first]
+        with self.assertRaises(state.StateError):
+            state.save_chronicle(reordered, self.path)
+
+    # -- User Story 4: opaque pending marker --
+
+    def test_populated_pending_round_trips_unchanged(self):
+        fresh = self._fresh()
+        fresh["pending"] = {"beat": "beat-42", "awaiting": "a decision", "rolled": None}
+        state.save_chronicle(fresh, self.path)
+        loaded = state.load_chronicle(self.path)
+        self.assertEqual(
+            loaded["pending"], {"beat": "beat-42", "awaiting": "a decision", "rolled": None}
+        )
+
+    def test_null_pending_round_trips_as_none(self):
+        fresh = self._fresh()
+        fresh["pending"] = None
+        state.save_chronicle(fresh, self.path)
+        loaded = state.load_chronicle(self.path)
+        self.assertIsNone(loaded["pending"])
+
+
 class EntityFrontmatterTest(unittest.TestCase):
     def test_parse_entity_splits_frontmatter_and_body(self):
         text = "---\nid: aria\n---\nSome prose.\n"
