@@ -351,6 +351,10 @@ drop_note: >
 manual: [setting-specific-subsystems, published-maps]
 ```
 
+Run `python3 tools/check_conversion.py setting/conversion.yaml` — same shape as
+`check_bestiary.py`/`check_gear.py`: it rejects a missing `from`/`version`, an unrecognised
+field, and a `damage_type`, `skills.method` or `armour.method` value outside its closed set.
+
 ### Conversion is versioned
 
 Every converted entity records the conversion version that produced it:
