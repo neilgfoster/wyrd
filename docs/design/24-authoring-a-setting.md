@@ -48,6 +48,10 @@ tone:                       # the tone contract — see 01-principles.md
   register: "one line naming the voice"
 ```
 
+Run `python3 tools/check_setting.py setting.yaml` — same shape as `check_bestiary.py`/
+`check_gear.py`: it rejects a missing required field, an unrecognised field, a tone value outside
+its closed vocabulary, and a `requires_engine` range the running engine does not satisfy.
+
 **The tone contract is the setting's most load-bearing declaration after `voice.md`.** The
 engine will hold whatever line it draws — refusing to invent a destiny under
 `prophecy: forbidden`, and building one under `prophecy: central`. Getting it wrong produces
