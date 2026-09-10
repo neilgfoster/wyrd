@@ -10,7 +10,7 @@ introduced here).
 ## Beat (existing entity type, `wyrd.entity`)
 
 Already defined; this feature adds no new frontmatter fields to the beat entity itself. A beat is
-not in `RECURSIVE_TYPES`. This feature adds the enforcement step: `assert_beat_has_no_children()`
+not in `RECURSIVE_TYPES`. This feature adds the enforcement step: `check_beat_has_no_children()`
 rejects any entity set where a beat has a child, using `entity.children_of` against the loaded
 set.
 
@@ -39,11 +39,16 @@ A small state machine tracking where the current session sits in the six-step lo
 | `beats_this_session` | list[str] | beat ids resolved so far, in order |
 | `closed` | bool | set `True` once close has completed; guards against running close twice |
 
-Transition rule (FR-005/FR-007): `step` may only advance `load → orient → recap → beat →
-(beat | close)`; attempting `recap` before `elapsed_applied` is `True`, or attempting `close`
-before at least one `beat` step (or an explicit stop) has occurred, is rejected. `close` is a
-terminal step — no further transition is valid after it, matching FR-007's exactly-once
-requirement.
+Transition rule (FR-005/FR-006/FR-007): `step` may only advance
+`load → orient → recap → (beat → (beat | close) | close)`; attempting `recap` before
+`elapsed_applied` is `True` is rejected. `recap → close` is legal directly, because FR-006
+permits a session with zero beats. Moving to `beat` requires a beat id, which is appended to
+`beats_this_session` — this is the only way that list is populated, so nothing can add to it
+without going through the checked transition. `close` is a terminal step — no further transition
+is valid after it, matching FR-007's exactly-once requirement. Close's own three sub-steps
+(compaction, recap regeneration, commit) are sequenced by `run_close`, which takes them as
+caller-supplied callables rather than implementing them — see `contracts/session_module.md`'s
+Non-goals.
 
 ## Pending marker (NEW, per-chronicle state)
 
@@ -54,9 +59,11 @@ requirement.
 | `set_at` | timestamp/step marker | when the interruption happened |
 
 Written only when a session stops with `step == "beat"` and the current beat has not resolved
-(FR-008). Cleared when that beat resolves cleanly on resumption (FR-010). At most one pending
-marker exists per chronicle at a time — a beat cannot itself contain a nested unresolved beat
-per the containment rule above.
+(FR-008): the caller builds the marker via `set_pending` and stores it in the chronicle's own
+per-session state (this module holds no state of its own). Cleared when that beat resolves
+cleanly on resumption (FR-010): the caller replaces the stored marker with `clear_pending()`'s
+result. At most one pending marker exists per chronicle at a time — a beat cannot itself contain
+a nested unresolved beat per the containment rule above.
 
 ## Session shape (NEW, computed, not stored on any entity)
 

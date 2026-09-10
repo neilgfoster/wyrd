@@ -31,7 +31,7 @@ give a beat a child of its own and confirm it is rejected.
 - [ ] T006 [P] [US1] Write `test_beat_with_child_is_rejected` in `tests/engine/test_session.py`
       (acceptance scenario 2), asserting the returned `{"valid": False, "beat": ..., "child": ...}`
       shape from `data-model.md`.
-- [ ] T007 [US1] Implement `assert_beat_has_no_children(entities: dict) -> dict` in
+- [ ] T007 [US1] Implement `check_beat_has_no_children(entities: dict) -> dict` in
       `engine/wyrd/session.py` per `contracts/session_module.md`, using `entity.children_of`
       against every entity of type `"beat"` in the set.
 
@@ -70,18 +70,22 @@ and close reachable at most once, per FR-005/FR-006/FR-007.
 only reachable from its declared predecessor, and that orient always completes before recap runs.
 
 - [ ] T012 [P] [US3] Write `test_loop_happy_path` in `tests/engine/test_session.py`: load → orient
-      → recap → beat → beat → close, asserting `elapsed_applied` and `closed` flip at the right
-      points (acceptance scenarios 1 and 3).
-- [ ] T013 [P] [US3] Write `test_loop_rejects_recap_before_orient` in
-      `tests/engine/test_session.py`.
-- [ ] T014 [P] [US3] Write `test_loop_rejects_close_without_a_beat_or_explicit_stop` and
-      `test_loop_rejects_transition_after_close` in `tests/engine/test_session.py` (acceptance
-      scenario 2's guard, and FR-007's exactly-once requirement).
-- [ ] T015 [US3] Implement `new_loop_state() -> dict` and
-      `advance_loop(loop_state: dict, to_step: str) -> dict` in `engine/wyrd/session.py` per
-      `contracts/session_module.md` and `data-model.md`'s "Session loop state", raising
-      `ValueError` naming the illegal transition and returning a new dict rather than mutating
-      the input in place.
+      → recap → beat → beat → close, asserting `elapsed_applied`/`closed` flip at the right
+      points and `beats_this_session` records each beat id (acceptance scenarios 1 and 3).
+- [ ] T012a [P] [US3] Write `test_recap_may_advance_directly_to_close` (FR-006: zero beats is a
+      legal session) and `test_rejects_beat_without_beat_id` in `tests/engine/test_session.py`.
+- [ ] T013 [P] [US3] Write `test_loop_rejects_recap_before_orient` and
+      `test_rejects_close_before_recap` in `tests/engine/test_session.py`.
+- [ ] T014 [P] [US3] Write `test_rejects_transition_after_close` in
+      `tests/engine/test_session.py` (FR-007's exactly-once requirement), and
+      `test_runs_steps_in_order`/`test_empty_close_is_valid` for `run_close`.
+- [ ] T015 [US3] Implement `new_loop_state() -> dict`,
+      `advance_loop(loop_state: dict, to_step: str, *, beat_id: str | None = None) -> dict`, and
+      `run_close(steps=None) -> None` in `engine/wyrd/session.py` per `contracts/session_module.md`
+      and `data-model.md`'s "Session loop state", raising `ValueError` naming the illegal
+      transition and returning a new dict rather than mutating the input in place. `recap` may
+      advance directly to `close` (FR-006); `beat_id` is required when advancing to `beat` and is
+      appended to `beats_this_session`.
 
 **Checkpoint**: The loop's ordering guarantee is independently verifiable without Phases 3/4.
 
@@ -96,13 +100,15 @@ continues from it rather than from the beat's start or the arc's start.
 
 - [ ] T016 [P] [US4] Write `test_set_pending_and_resume` in `tests/engine/test_session.py`
       (acceptance scenarios 1 and 2).
-- [ ] T017 [P] [US4] Write `test_clean_resolution_leaves_no_pending_marker` in
-      `tests/engine/test_session.py` (acceptance scenario 3) — this is a caller-discipline
-      contract (the module never fabricates a marker unasked), so assert that `narrate_beat`
-      (Phase 4) never itself produces a pending marker as a side effect.
-- [ ] T018 [US4] Implement `set_pending(beat_id: str, action: str) -> dict` and
-      `resume_from_pending(pending: dict) -> str` in `engine/wyrd/session.py` per
-      `contracts/session_module.md` and `data-model.md`'s "Pending marker".
+- [ ] T017 [P] [US4] Write `test_clean_resolution_leaves_no_pending_marker` (asserting
+      `narrate_beat` never itself produces a pending-marker shape as a side effect) and
+      `test_clear_pending_returns_the_cleared_value` in `tests/engine/test_session.py`
+      (acceptance scenario 3).
+- [ ] T018 [US4] Implement `set_pending(beat_id: str, action: str) -> dict`,
+      `resume_from_pending(pending: dict) -> str`, and `clear_pending() -> None` in
+      `engine/wyrd/session.py` per `contracts/session_module.md` and `data-model.md`'s "Pending
+      marker" — `clear_pending` is the value a caller stores in place of a cleared marker, since
+      this module holds no state of its own to delete.
 
 **Checkpoint**: Mid-beat interruption and resumption verified independently of loop/narration
 internals (this phase only wraps a plain record and an accessor).

@@ -27,30 +27,34 @@ def _minimal(entity_type: str, entity_id: str, **overrides) -> dict:
     return base
 
 
-class AssertBeatHasNoChildrenTest(unittest.TestCase):
+class CheckBeatHasNoChildrenTest(unittest.TestCase):
     def test_arc_may_contain_beat_or_arc(self):
         arc = _minimal("arc", "search-the-crypt")
         beat = _minimal("beat", "open-the-door", parent="[[search-the-crypt]]")
         entities = {arc["id"]: arc, beat["id"]: beat}
-        self.assertEqual(session.assert_beat_has_no_children(entities), {"valid": True})
+        self.assertEqual(session.check_beat_has_no_children(entities), {"valid": True})
 
         outer_arc = _minimal("arc", "the-crypt-arc")
         inner_arc = _minimal("arc", "search-the-crypt", parent="[[the-crypt-arc]]")
         entities = {outer_arc["id"]: outer_arc, inner_arc["id"]: inner_arc}
-        self.assertEqual(session.assert_beat_has_no_children(entities), {"valid": True})
+        self.assertEqual(session.check_beat_has_no_children(entities), {"valid": True})
 
-    def test_arc_of_one_beat_is_still_reported_as_valid(self):
+    def test_arc_of_one_beat_is_still_reported_as_an_arc(self):
+        # acceptance scenario 3 (User Story 1): an arc with exactly one beat child is still an
+        # arc, not "collapsed" into being treated as a beat -- checked here by confirming the
+        # arc's own entity `type` is untouched by containment validation.
         arc = _minimal("arc", "search-the-crypt")
         beat = _minimal("beat", "open-the-door", parent="[[search-the-crypt]]")
         entities = {arc["id"]: arc, beat["id"]: beat}
-        self.assertEqual(session.assert_beat_has_no_children(entities), {"valid": True})
+        session.check_beat_has_no_children(entities)
+        self.assertEqual(entities["search-the-crypt"]["type"], "arc")
 
     def test_beat_with_child_is_rejected(self):
         arc = _minimal("arc", "search-the-crypt")
         beat = _minimal("beat", "open-the-door", parent="[[search-the-crypt]]")
         illegal_child = _minimal("beat", "check-for-traps", parent="[[open-the-door]]")
         entities = {arc["id"]: arc, beat["id"]: beat, illegal_child["id"]: illegal_child}
-        result = session.assert_beat_has_no_children(entities)
+        result = session.check_beat_has_no_children(entities)
         self.assertEqual(
             result, {"valid": False, "beat": "open-the-door", "child": "check-for-traps"}
         )
@@ -92,12 +96,30 @@ class LoopTest(unittest.TestCase):
         self.assertTrue(state["elapsed_applied"])
 
         state = session.advance_loop(state, "recap")
-        state = session.advance_loop(state, "beat")
-        state = session.advance_loop(state, "beat")  # repeat
+        state = session.advance_loop(state, "beat", beat_id="open-the-door")
+        state = session.advance_loop(state, "beat", beat_id="fight-what-was-inside")  # repeat
+        self.assertEqual(state["beats_this_session"], ["open-the-door", "fight-what-was-inside"])
         self.assertFalse(state["closed"])
 
         state = session.advance_loop(state, "close")
         self.assertTrue(state["closed"])
+
+    def test_recap_may_advance_directly_to_close(self):
+        # FR-006: a session may have zero beats -- the player stops with nothing left to do.
+        state = session.new_loop_state()
+        state = session.advance_loop(state, "orient")
+        state = session.advance_loop(state, "recap")
+        state = session.advance_loop(state, "close")
+        self.assertTrue(state["closed"])
+        self.assertEqual(state["beats_this_session"], [])
+
+    def test_rejects_close_before_recap(self):
+        state = session.new_loop_state()
+        with self.assertRaises(ValueError):
+            session.advance_loop(state, "close")
+        state = session.advance_loop(state, "orient")
+        with self.assertRaises(ValueError):
+            session.advance_loop(state, "close")
 
     def test_rejects_recap_before_orient(self):
         state = session.new_loop_state()
@@ -106,21 +128,21 @@ class LoopTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             session.advance_loop(state, "recap")
 
-    def test_rejects_close_without_a_beat_or_explicit_stop(self):
+    def test_rejects_beat_without_beat_id(self):
         state = session.new_loop_state()
         state = session.advance_loop(state, "orient")
         state = session.advance_loop(state, "recap")
         with self.assertRaises(ValueError):
-            session.advance_loop(state, "close")
+            session.advance_loop(state, "beat")
 
     def test_rejects_transition_after_close(self):
         state = session.new_loop_state()
         state = session.advance_loop(state, "orient")
         state = session.advance_loop(state, "recap")
-        state = session.advance_loop(state, "beat")
+        state = session.advance_loop(state, "beat", beat_id="open-the-door")
         state = session.advance_loop(state, "close")
         with self.assertRaises(ValueError):
-            session.advance_loop(state, "beat")
+            session.advance_loop(state, "beat", beat_id="another-beat")
 
     def test_advance_loop_does_not_mutate_input(self):
         state = session.new_loop_state()
@@ -129,11 +151,31 @@ class LoopTest(unittest.TestCase):
         self.assertEqual(next_state["step"], "orient")
 
 
+class RunCloseTest(unittest.TestCase):
+    def test_runs_steps_in_order(self):
+        order = []
+        session.run_close(
+            [
+                lambda: order.append("compaction"),
+                lambda: order.append("recap_regeneration"),
+                lambda: order.append("commit"),
+            ]
+        )
+        self.assertEqual(order, ["compaction", "recap_regeneration", "commit"])
+
+    def test_empty_close_is_valid(self):
+        session.run_close([])
+        session.run_close(None)  # no assertion needed -- must simply not raise
+
+
 class PendingMarkerTest(unittest.TestCase):
     def test_set_pending_and_resume(self):
         pending = session.set_pending("open-the-door", "waiting on the lock-picking roll")
         self.assertEqual(pending["beat_id"], "open-the-door")
         self.assertEqual(session.resume_from_pending(pending), "waiting on the lock-picking roll")
+
+    def test_clear_pending_returns_the_cleared_value(self):
+        self.assertIsNone(session.clear_pending())
 
     def test_clean_resolution_leaves_no_pending_marker(self):
         # narrate_beat is the clean-resolution path; it must never itself produce a pending

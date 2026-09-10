@@ -17,13 +17,13 @@ beat = {"id": "open-the-door", "type": "beat", "name": "Open the door",
         "setting": "example-setting", "status": "stub", "parent": "[[search-the-crypt]]"}
 entities = {arc["id"]: arc, beat["id"]: beat}
 
-assert session.assert_beat_has_no_children(entities) == {"valid": True}
+assert session.check_beat_has_no_children(entities) == {"valid": True}
 
 # now give the beat a child of its own
 illegal_child = {"id": "check-for-traps", "type": "beat", "name": "Check for traps",
                   "setting": "example-setting", "status": "stub", "parent": "[[open-the-door]]"}
 entities[illegal_child["id"]] = illegal_child
-result = session.assert_beat_has_no_children(entities)
+result = session.check_beat_has_no_children(entities)
 assert result["valid"] is False
 assert result["beat"] == "open-the-door"
 ```
@@ -44,8 +44,9 @@ assert played is not summarised  # independent records, no shared state
 loop_state = session.new_loop_state()
 loop_state = session.advance_loop(loop_state, "orient")
 loop_state = session.advance_loop(loop_state, "recap")   # only legal once orient has run
-loop_state = session.advance_loop(loop_state, "beat")
+loop_state = session.advance_loop(loop_state, "beat", beat_id="open-the-door")
 loop_state = session.advance_loop(loop_state, "close")
+assert loop_state["beats_this_session"] == ["open-the-door"]
 
 # skipping orient is rejected
 fresh = session.new_loop_state()
@@ -54,6 +55,14 @@ try:
     assert False, "should have raised"
 except ValueError:
     pass
+
+# a session with zero beats can still close (FR-006)
+empty = session.new_loop_state()
+empty = session.advance_loop(empty, "orient")
+empty = session.advance_loop(empty, "recap")
+empty = session.advance_loop(empty, "close")
+
+session.run_close([lambda: None])  # sequences caller-supplied compaction/recap/commit steps
 ```
 
 ## A stopped mid-beat session persists a pending marker and resumes exactly
@@ -61,6 +70,10 @@ except ValueError:
 ```python
 pending = session.set_pending("open-the-door", "waiting on the lock-picking roll")
 assert session.resume_from_pending(pending) == "waiting on the lock-picking roll"
+
+# once the beat resolves cleanly, the caller replaces its stored marker with this:
+pending = session.clear_pending()
+assert pending is None
 ```
 
 ## Session shape never leaks into narration

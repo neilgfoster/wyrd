@@ -178,15 +178,19 @@ output the engine produces for that session for shape-identifying vocabulary.
 - **FR-005**: The engine MUST expose the session loop as six ordered steps — load, orient, recap,
   beat, repeat, close — where orient MUST complete before recap begins.
 - **FR-006**: The beat step MUST be able to repeat zero or more times before the loop proceeds to
-  close, ending only when the player stops or an arc's exit condition is reached.
-- **FR-007**: The close step MUST run exactly once per session and MUST perform compaction, recap
-  regeneration, and commit, in that order.
-- **FR-008**: When a session stops before a beat resolves, the engine MUST persist a `pending:`
-  marker naming the specific unresolved action.
-- **FR-009**: When a session resumes with an existing `pending:` marker, the engine MUST resume
-  from the named action rather than restarting the beat or its containing arc.
-- **FR-010**: When a beat resolves cleanly (no interruption), the engine MUST NOT leave a
-  `pending:` marker behind.
+  close (recap may advance directly to close), ending only when the player stops or an arc's exit
+  condition is reached.
+- **FR-007**: The close step MUST run exactly once per session and MUST sequence compaction,
+  recap regeneration, and commit in that order. The engine exposes this ordering as an interface
+  a caller supplies concrete steps to; the concrete content of compaction, recap regeneration and
+  commit is out of scope for this feature (it depends on the chronicle state layer, #300, which
+  does not exist yet).
+- **FR-008**: When a session stops before a beat resolves, the engine MUST expose a way to
+  persist a pending marker naming the specific unresolved action, for the caller to store.
+- **FR-009**: When a session resumes with an existing pending marker, the engine MUST resume from
+  the named action rather than restarting the beat or its containing arc.
+- **FR-010**: The engine MUST expose a way to clear a pending marker once its beat resolves
+  cleanly (no interruption), distinct from the way it is set.
 - **FR-011**: The engine MUST classify a completed (or in-progress, for pacing purposes) session
   into exactly one of the four session shapes — single beat, interlude, downtime, extended.
 - **FR-012**: The session shape classification MUST NOT appear in, or influence the wording of,
@@ -231,6 +235,11 @@ output the engine produces for that session for shape-identifying vocabulary.
 - This feature builds directly on the entity file format (#296, closed) for how arcs and beats are
   stored; it does not redesign that format, only adds the containment-enforcement and
   session-loop logic on top of it.
+- This module holds no persistent state of its own (matching `wyrd.entity`'s pure-function
+  style): the session loop state and the pending marker are plain values a caller stores in
+  per-chronicle state; "persisting" and "clearing" the pending marker (FR-008/FR-010) mean the
+  caller assigning the module's returned values into that storage, not this module writing to
+  disk itself.
 - The Rally mechanic (Strain/Stamina recovery, advance award, commit-on-Rally) and the Downtime
   phase's own internal steps (upkeep, undertakings, Mend) are explicitly out of scope — they are
   specified separately as #310 and #311 under the same parent epic (#297), and this feature's
