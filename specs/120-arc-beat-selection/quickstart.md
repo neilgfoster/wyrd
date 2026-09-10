@@ -17,7 +17,7 @@ beat = {
     "exit": {"emits_threads": [{"tag": "the-hinge", "if": "the player character recalls the door"}],
              "changes": ["the gap is public knowledge"], "leads_to": "[[the-tavern]]"},
 }
-result = arc_selection.validate(beat)
+result = arc_selection.validate_entry_exit(beat)
 assert result["valid"]
 ```
 
