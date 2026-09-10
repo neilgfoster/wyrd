@@ -13,7 +13,7 @@ import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
-from wyrd import state, verbs  # noqa: E402
+from wyrd import overrides, state, verbs  # noqa: E402
 
 
 class RollVerbTest(unittest.TestCase):
@@ -272,6 +272,31 @@ class CreateCharacterVerbTest(unittest.TestCase):
         )
         self.assertFalse(result["valid"])
         self.assertFalse(path.exists())
+
+
+class TrackVerbTest(unittest.TestCase):
+    def test_returns_expected_shape(self):
+        result = verbs.track(value=3, mechanism="taint", delta=1)
+        self.assertEqual(result["verb"], "track")
+        self.assertEqual(result["mechanism"], "taint")
+        self.assertEqual(result["label"], "taint")
+        self.assertEqual(result["value"], 4)
+
+    def test_untrackable_mechanism_is_a_structured_error(self):
+        result = verbs.track(value=3, mechanism="skills", delta=1)
+        self.assertIn("error", result)
+
+    def test_disabled_mechanism_is_a_structured_error_not_a_silent_no_op(self):
+        resolved = overrides.resolve([("engine", {}), ("setting", {"disable": ["taint"]})])
+        result = verbs.track(value=3, mechanism="taint", delta=1, resolved=resolved)
+        self.assertIn("error", result)
+        self.assertIn("disabled", result["error"]["reason"])
+
+    def test_renamed_mechanism_reports_the_setting_word_not_the_internal_one(self):
+        resolved = overrides.resolve([("engine", {}), ("setting", {"rename": {"taint": "shadow"}})])
+        result = verbs.track(value=3, mechanism="taint", delta=1, resolved=resolved)
+        self.assertEqual(result["mechanism"], "taint")
+        self.assertEqual(result["label"], "shadow")
 
 
 if __name__ == "__main__":

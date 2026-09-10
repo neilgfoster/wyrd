@@ -85,7 +85,33 @@ def _scalar(text: str):
         return int(text)
     if len(text) >= 2 and text[0] == text[-1] and text[0] in "\"'":
         return text[1:-1]
+    if text.startswith("[") and text.endswith("]"):
+        return _flow_list(text[1:-1])
+    if text.startswith("{") and text.endswith("}"):
+        return _flow_mapping(text[1:-1])
     return text
+
+
+def _flow_list(inner: str) -> list:
+    """Parse a flow-style sequence of scalars, e.g. `[taint, trauma]` -- setting.yaml's
+    `overrides.disable:` list is the shape this exists for. No nested flow collections."""
+    inner = inner.strip()
+    if not inner:
+        return []
+    return [_scalar(item) for item in inner.split(",")]
+
+
+def _flow_mapping(inner: str) -> dict:
+    """Parse a flow-style mapping of scalar keys to scalar values, e.g. `{taint: shadow}` --
+    setting.yaml's `overrides.rename:`/`tables:`/`extend:` shape. No nested flow collections."""
+    inner = inner.strip()
+    if not inner:
+        return {}
+    mapping: dict = {}
+    for item in inner.split(","):
+        key, _, val = item.partition(":")
+        mapping[key.strip()] = _scalar(val)
+    return mapping
 
 
 def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):

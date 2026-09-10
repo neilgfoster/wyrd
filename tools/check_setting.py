@@ -9,16 +9,19 @@ key or uses a value outside its closed vocabulary, would otherwise only surface 
 failure somewhere downstream.
 
 This is the validator for docs/design/24-authoring-a-setting.md's setting.yaml section. It fails
-loudly on four classes:
+loudly on five classes:
 
 1. **A missing required field**, top-level or within the tone contract.
 2. **An unrecognised top-level field.** Rejected rather than ignored -- the same reasoning as
-   check_bestiary.py's unrecognised-field rejection. `overrides` is the one recognised-but-not-
-   validated exception: it is a legitimate setting.yaml key owned by a separate feature (the
-   overrides mechanism), so its presence or absence is not judged here.
+   check_bestiary.py's unrecognised-field rejection.
 3. **A tone value outside its closed vocabulary.**
 4. **A requires_engine range the running engine does not satisfy**, or one that is not written in
    the closed comparator syntax this script understands.
+5. **An `overrides:` block naming anything outside the engine's closed overridable set**, or
+   using an override kind (disable/rename/tables/extend) a mechanism does not support --
+   delegated to `wyrd.overrides.validate_block`, the same validator the engine's own
+   resolution (`describe --overridable`, #316) is built on, so this script and the engine can
+   never disagree about what is overridable.
 
 Every failure is reported, not just the first, and every one names the offending field.
 
@@ -44,13 +47,14 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "engine"
 
 from check_bestiary import YamlError, read_yaml  # noqa: E402
 from wyrd import __version__ as ENGINE_VERSION  # noqa: E402
+from wyrd import overrides as wyrd_overrides  # noqa: E402
 
 # --- The shape, from docs/design/24-authoring-a-setting.md ----------------------
 
 REQUIRED_FIELDS = {"name", "title", "line", "requires_engine", "version", "description", "tone"}
 # `overrides` is a real setting.yaml key, owned by a separate feature (the overrides mechanism,
-# #316) -- recognised here so it is never wrongly flagged as an unrecognised field, but its
-# contents are not validated by this script.
+# #316) -- recognised here so it is never wrongly flagged as an unrecognised field. Its contents
+# ARE validated below, against the same closed overridable set the engine itself resolves.
 OPTIONAL_FIELDS = {"overrides"}
 ALL_FIELDS = REQUIRED_FIELDS | OPTIONAL_FIELDS
 
@@ -169,6 +173,10 @@ def validate(data, path, engine_version: str = ENGINE_VERSION) -> list[str]:
                 isinstance(tone["register"], str) and tone["register"].strip()
             ):
                 bad("tone.register", f"{tone['register']!r} is not a non-empty string")
+
+    if "overrides" in data:
+        for problem in wyrd_overrides.validate_block(data["overrides"], layer=str(path)):
+            problems.append(problem)
 
     return problems
 
