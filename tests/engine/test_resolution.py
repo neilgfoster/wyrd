@@ -2336,5 +2336,238 @@ class SystemOfPowerConsequenceTest(SystemOfPowerTestBase):
         self.assertIn("resolve.current", fields)
 
 
+class PassiveValidationUnitTest(unittest.TestCase):
+    """docs/design/22-state.md § Invariants "Passive validation", spec.md FR-001..003:
+    `_validate_proposal` against a hand-built entity set, independent of any chronicle
+    directory layout -- these three rules are cross-entity, so they are exercised directly
+    against `_validate_proposal` rather than through a real filesystem tree."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = pathlib.Path(self._tmp.name) / "senna-vask.md"
+        character.save(dict(SENNA, id="senna-vask"), "", self.path)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_duplicate_id_is_rejected(self):
+        mutations = [
+            {"entity": str(self.path), "field": "id", "op": "set", "value": "other-entity"}
+        ]
+        entities = {"senna-vask": dict(SENNA), "other-entity": {"id": "other-entity"}}
+        with self.assertRaises(resolution.ProposalError):
+            resolution._validate_proposal(mutations, entities)
+
+    def test_no_duplicate_id_when_id_is_unchanged(self):
+        mutations = [{"entity": str(self.path), "field": "taint", "op": "+", "value": 1}]
+        entities = {"senna-vask": dict(SENNA)}
+        resolution._validate_proposal(mutations, entities)  # must not raise
+
+    def test_unresolved_parent_reference_is_rejected(self):
+        mutations = [
+            {"entity": str(self.path), "field": "parent", "op": "set", "value": "[[nowhere]]"}
+        ]
+        entities = {"senna-vask": dict(SENNA)}
+        with self.assertRaises(resolution.ProposalError):
+            resolution._validate_proposal(mutations, entities)
+
+    def test_self_parent_cycle_is_rejected(self):
+        mutations = [
+            {
+                "entity": str(self.path),
+                "field": "parent",
+                "op": "set",
+                "value": "[[senna-vask]]",
+            }
+        ]
+        entities = {"senna-vask": dict(SENNA)}
+        with self.assertRaises(resolution.ProposalError):
+            resolution._validate_proposal(mutations, entities)
+
+    def test_two_entity_parent_cycle_across_the_same_proposal_is_rejected(self):
+        other_path = pathlib.Path(self._tmp.name) / "other-entity.md"
+        other = dict(SENNA, id="other-entity", parent="[[senna-vask]]")
+        character.save(other, "", other_path)
+        mutations = [
+            {
+                "entity": str(self.path),
+                "field": "parent",
+                "op": "set",
+                "value": "[[other-entity]]",
+            }
+        ]
+        entities = {
+            "senna-vask": dict(SENNA),
+            "other-entity": {"id": "other-entity", "parent": "[[senna-vask]]"},
+        }
+        with self.assertRaises(resolution.ProposalError):
+            resolution._validate_proposal(mutations, entities)
+
+
+class PassiveValidationCommitTest(ResolutionTestBase):
+    """spec.md User Story 1: `commit` rejects a violating proposal outright, applying nothing."""
+
+    def _stage(self, mutations: list[dict]) -> str:
+        """Register a synthetic proposal directly, the way `resolution._stage_requests` would,
+        bypassing `propose()` so a specific passive violation can be constructed precisely."""
+        proposal_id = f"p-test-{next(resolution._proposal_ids)}"
+        resolution._open_proposals[proposal_id] = {
+            "steps": [],
+            "mutations": mutations,
+            "open": True,
+        }
+        return proposal_id
+
+    def test_fortune_above_fate_max_is_rejected_and_nothing_is_written(self):
+        before = self.load()
+        proposal_id = self._stage(
+            [{"entity": str(self.path), "field": "fortune.current", "op": "+", "value": 5}]
+        )
+        with self.assertRaises(resolution.ProposalError):
+            resolution.commit(proposal_id)
+        self.assertEqual(self.load(), before)
+
+    def test_entity_with_no_fortune_or_fate_fields_is_unaffected_by_the_rule(self):
+        frontmatter = self.load()
+        del frontmatter["fortune"]
+        del frontmatter["fate"]
+        character.save(frontmatter, "", self.path)
+        proposal_id = self._stage(
+            [{"entity": str(self.path), "field": "taint", "op": "+", "value": 1}]
+        )
+        resolution.commit(proposal_id)  # must not raise
+
+    def test_tracker_value_above_max_is_rejected_and_nothing_is_written(self):
+        tracker_path = pathlib.Path(self._tmp.name) / "party-tension.md"
+        tracker = {
+            "id": "party-tension",
+            "type": "tracker",
+            "name": "Party Tension",
+            "setting": "s",
+            "status": "active",
+            "kind": "meter",
+            "value": 3,
+            "max": 8,
+        }
+        state_module = resolution.state_module
+        state_module.save_entity(tracker, "", tracker_path)
+        before, _ = state_module.load_entity(tracker_path)
+        proposal_id = self._stage(
+            [{"entity": str(tracker_path), "field": "value", "op": "+", "value": 10}]
+        )
+        with self.assertRaises(resolution.ProposalError):
+            resolution.commit(proposal_id)
+        after, _ = state_module.load_entity(tracker_path)
+        self.assertEqual(after, before)
+
+    def test_tracker_value_below_zero_is_rejected(self):
+        tracker_path = pathlib.Path(self._tmp.name) / "party-tension.md"
+        tracker = {
+            "id": "party-tension",
+            "type": "tracker",
+            "name": "Party Tension",
+            "setting": "s",
+            "status": "active",
+            "kind": "meter",
+            "value": 1,
+            "max": 8,
+        }
+        state_module = resolution.state_module
+        state_module.save_entity(tracker, "", tracker_path)
+        proposal_id = self._stage(
+            [{"entity": str(tracker_path), "field": "value", "op": "-", "value": 5}]
+        )
+        with self.assertRaises(resolution.ProposalError):
+            resolution.commit(proposal_id)
+
+    def test_a_clean_proposal_still_commits_exactly_as_before(self):
+        before = self.load()
+        result = resolution.propose(
+            actor=self.path, mechanic="exposure", skill="bargaining", tier="moderate", seed=20260852
+        )
+        resolution.commit(result["proposal_id"])
+        after = self.load()
+        self.assertEqual(after["taint"], before["taint"] + 2)
+
+    def test_multi_entity_proposal_rejects_as_a_whole_leaving_every_touched_file_unchanged(self):
+        other_path = pathlib.Path(self._tmp.name) / "other-vask.md"
+        character.save(dict(SENNA, id="other-vask"), "", other_path)
+        other_before, _ = character.load(other_path)
+        senna_before = self.load()
+        proposal_id = self._stage(
+            [
+                {"entity": str(other_path), "field": "stamina.current", "op": "-", "value": 1},
+                {"entity": str(self.path), "field": "fortune.current", "op": "+", "value": 5},
+            ]
+        )
+        with self.assertRaises(resolution.ProposalError):
+            resolution.commit(proposal_id)
+        self.assertEqual(self.load(), senna_before)
+        other_after, _ = character.load(other_path)
+        self.assertEqual(other_after, other_before)
+
+    def test_cascade_produced_mutation_violating_tracker_bounds_is_rejected(self):
+        """FR-006: a cascade-produced mutation gets no exemption from the passive checks a
+        directly-requested one is held to."""
+        tracker_path = pathlib.Path(self._tmp.name) / "party-tension.md"
+        tracker = {
+            "id": "party-tension",
+            "type": "tracker",
+            "name": "Party Tension",
+            "setting": "s",
+            "status": "active",
+            "kind": "meter",
+            "value": 7,
+            "max": 8,
+        }
+        state_module = resolution.state_module
+        state_module.save_entity(tracker, "", tracker_path)
+        proposal_id = self._stage(
+            [
+                {
+                    "entity": str(tracker_path),
+                    "field": "value",
+                    "op": "+",
+                    "value": 5,
+                    "produced_by_step": 0,
+                }
+            ]
+        )
+        with self.assertRaises(resolution.ProposalError):
+            resolution.commit(proposal_id)
+
+
+class IsSpentTest(unittest.TestCase):
+    """spec.md User Story 3, ADR 0049: `resolve.current <= max(taint, trauma)`, each axis
+    exempted at 0."""
+
+    def test_spent_with_both_axes_nonzero(self):
+        state = {"resolve": {"current": 2}, "taint": 5, "trauma": 3}
+        self.assertTrue(resolution.is_spent(state))
+
+    def test_spent_with_one_axis_exempted_at_zero(self):
+        state = {"resolve": {"current": 2}, "taint": 0, "trauma": 3}
+        self.assertTrue(resolution.is_spent(state))
+
+    def test_not_spent_when_resolve_exceeds_the_worse_axis(self):
+        state = {"resolve": {"current": 6}, "taint": 5, "trauma": 3}
+        self.assertFalse(resolution.is_spent(state))
+
+    def test_not_spent_when_both_axes_are_zero(self):
+        state = {"resolve": {"current": 0}, "taint": 0, "trauma": 0}
+        self.assertFalse(resolution.is_spent(state))
+
+    def test_committed_entity_never_carries_a_spent_field(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "senna-vask.md"
+            character.save(dict(SENNA), "", path)
+            result = resolution.propose(
+                actor=path, mechanic="exposure", skill="bargaining", tier="moderate", seed=20260852
+            )
+            resolution.commit(result["proposal_id"])
+            frontmatter, _ = character.load(path)
+            self.assertNotIn("spent", frontmatter)
+
+
 if __name__ == "__main__":
     unittest.main()
