@@ -141,11 +141,27 @@ class ChronicleStateTest(unittest.TestCase):
         del minimal["era"]
         del minimal["intent"]
         del minimal["pending"]
+        del minimal["eras"]
+        del minimal["era_crossings"]
         state.save(minimal, self.path)  # bypass save_chronicle's own validation
         loaded = state.load_chronicle(self.path)
         self.assertIsNone(loaded["era"])
         self.assertIsNone(loaded["pending"])
         self.assertEqual(loaded["intent"], state._INTENT_DEFAULTS)
+        self.assertEqual(loaded["eras"], [])
+        self.assertEqual(loaded["era_crossings"], [])
+
+    def test_eras_and_era_crossings_round_trip_when_populated(self):
+        populated = self._fresh()
+        populated["eras"] = [{"id": "the-long-thaw", "name": "The Long Thaw", "ambient": "hope"}]
+        populated["era"] = "the-long-thaw"
+        populated["era_crossings"] = [
+            {"from": None, "to": "the-long-thaw", "at": {"year": 1, "month": 3}}
+        ]
+        state.save_chronicle(populated, self.path)
+        loaded = state.load_chronicle(self.path)
+        self.assertEqual(loaded["eras"], populated["eras"])
+        self.assertEqual(loaded["era_crossings"], populated["era_crossings"])
 
     def test_load_missing_required_field_raises_naming_it(self):
         broken = self._fresh()

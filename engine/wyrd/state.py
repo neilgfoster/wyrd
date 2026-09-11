@@ -371,6 +371,8 @@ def default_chronicle_state(
         },
         "calendar": {"year": 0, "month": None, "day": 0},
         "era": None,
+        "eras": [],
+        "era_crossings": [],
         "sessions": 0,
         "danger_rating": 2,
         "migrations": [],
@@ -396,6 +398,8 @@ def validate_chronicle(state: dict, previous_migrations: list | None = None) -> 
     result = dict(state)
     result.setdefault("era", None)
     result.setdefault("pending", None)
+    result["eras"] = list(result.get("eras") or [])
+    result["era_crossings"] = list(result.get("era_crossings") or [])
     result["migrations"] = list(result.get("migrations") or [])
     result["intent"] = {**_INTENT_DEFAULTS, **(result.get("intent") or {})}
 
