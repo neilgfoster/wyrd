@@ -35,7 +35,7 @@ RECURSIVE_TYPES = ("place", "organisation", "arc")
 
 STATUSES = ("stub", "drafted", "complete")
 
-_ROLES = ("nemesis", "ally", "companion", "bystander", "authority", "quarry")
+_ROLES = ("player", "nemesis", "ally", "companion", "bystander", "authority", "quarry")
 _DISPOSITIONS = ("ally", "wary", "hostile", "hunting", "unaware")
 _PLACE_SCALES = ("world", "region", "settlement", "district", "building", "room")
 _ORG_SCALES = ("institution", "order", "chapter", "cell")

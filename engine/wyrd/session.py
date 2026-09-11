@@ -11,11 +11,12 @@ marker, and session-shape classification kept out of player-facing text.
 
 The Rally mechanic (Strain/Stamina recovery, advance award, commit) and the Downtime phase's own
 internal steps (upkeep, undertakings, Mend) are out of scope here -- see #310 and #311. So is the
-concrete *content* of compaction, recap regeneration and commit at close -- those depend on the
-chronicle/campaign state layer (#300, a sibling epic under #219) that does not exist yet;
+concrete *content* of compaction and commit at close -- those still depend on parts of the
+chronicle/campaign state layer (#300, a sibling epic under #219) that do not exist yet;
 `run_close` below only guarantees their *ordering*, taking each as an injected zero-argument
-callable so a caller can wire in real logic once that layer lands, without this module inventing
-it prematurely.
+callable so a caller can wire in real logic once each part lands, without this module inventing
+it prematurely. Recap regeneration's content now exists, in `wyrd.loadtier.recap_close_step`
+(#326), built as one such injected step rather than a change to `run_close`'s own signature.
 
 Python 3.11+, standard library only.
 """
