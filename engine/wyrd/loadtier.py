@@ -121,11 +121,14 @@ def generate_recap(
     placeholder when omitted, so the document stays well-formed rather than failing outright.
     The three hottest threads and who's-present are computed directly from `entities`.
 
-    `chronicle` is accepted (and reserved) for calendar/session context a future caller may add
-    to the "where and when" line; it is not itself read yet, since no calendar field exists to
-    read beyond what `where` already conveys.
+    `chronicle` names which chronicle and setting this recap belongs to (docs/design/21-parallel-
+    chronicles.md: "a session loads exactly one chronicle and one setting, and says which in the
+    recap") -- `name` and `setting.repo`, each independently falling back to the same placeholder
+    convention when absent (#363). It is otherwise reserved for calendar/session context a future
+    caller may add to the "where and when" line.
     """
-    del chronicle  # reserved: see docstring
+    chronicle_name = chronicle.get("name") or _RECAP_PLACEHOLDER
+    setting_name = (chronicle.get("setting") or {}).get("repo") or _RECAP_PLACEHOLDER
 
     tier = always_tier(entities)
     companion_names = [fm.get("name", entity_id) for entity_id, fm in tier["companions"].items()]
@@ -134,6 +137,9 @@ def generate_recap(
 
     lines = [
         "# Recap",
+        "",
+        "## Chronicle",
+        f"{chronicle_name} in {setting_name}",
         "",
         "## Where and when",
         where or _RECAP_PLACEHOLDER,
