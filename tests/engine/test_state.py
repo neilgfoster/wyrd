@@ -188,6 +188,20 @@ class ChronicleStateTest(unittest.TestCase):
         with self.assertRaises(state.StateError):
             state.save_chronicle(bad, self.path)
 
+    def test_valid_lethality_levels_pass(self):
+        for level in ("low", "standard", "high"):
+            with self.subTest(level=level):
+                chronicle = self._fresh()
+                chronicle["intent"]["lethality"] = level
+                state.validate_chronicle(chronicle)  # no error
+
+    def test_invalid_lethality_rejected(self):
+        bad = self._fresh()
+        bad["intent"]["lethality"] = "deadly"
+        with self.assertRaises(state.StateError) as ctx:
+            state.validate_chronicle(bad)
+        self.assertIn("lethality", str(ctx.exception))
+
     # -- User Story 2: current version vs. created_under --
 
     def test_bumping_engine_version_leaves_created_under_unchanged(self):
