@@ -115,5 +115,64 @@ class FadeTests(unittest.TestCase):
         self.assertIn("threat", entity)
 
 
+class ValidateConnectionsTests(unittest.TestCase):
+    def _threat(self, connection) -> dict:
+        return {"id": "some-threat", "threat": {"connection": connection}}
+
+    def test_non_empty_connection_passes(self) -> None:
+        self.assertEqual(threat.validate_connections([self._threat("he drowned your brother")]), [])
+
+    def test_absent_connection_reported(self) -> None:
+        entity = {"id": "no-connection-field", "threat": {}}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("no-connection-field", problems[0])
+
+    def test_none_connection_reported(self) -> None:
+        problems = threat.validate_connections([self._threat(None)])
+        self.assertEqual(len(problems), 1)
+
+    def test_empty_string_connection_reported(self) -> None:
+        problems = threat.validate_connections([self._threat("")])
+        self.assertEqual(len(problems), 1)
+
+    def test_whitespace_only_connection_reported(self) -> None:
+        problems = threat.validate_connections([self._threat("   ")])
+        self.assertEqual(len(problems), 1)
+
+    def test_mixed_list_order_preserved(self) -> None:
+        good = {"id": "good-threat", "threat": {"connection": "a real reason"}}
+        bad_first = {"id": "bad-first", "threat": {"connection": ""}}
+        bad_second = {"id": "bad-second", "threat": {"connection": None}}
+        problems = threat.validate_connections([bad_first, good, bad_second])
+        self.assertEqual(len(problems), 2)
+        self.assertIn("bad-first", problems[0])
+        self.assertIn("bad-second", problems[1])
+
+    def test_empty_input_list(self) -> None:
+        self.assertEqual(threat.validate_connections([]), [])
+
+    def test_threat_missing_its_own_id(self) -> None:
+        entity = {"threat": {"connection": ""}}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+
+    def test_threat_block_none_reported_not_raised(self) -> None:
+        entity = {"id": "no-threat-block", "threat": None}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("no-threat-block", problems[0])
+
+    def test_entity_with_no_threat_key_at_all_reported_not_raised(self) -> None:
+        entity = {"id": "not-even-a-threat"}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("not-even-a-threat", problems[0])
+
+    def test_never_raises(self) -> None:
+        # exercised across every case above -- none construct a try/except, all call directly
+        threat.validate_connections([{}, {"threat": {}}, {"threat": {"connection": None}}])
+
+
 if __name__ == "__main__":
     unittest.main()
