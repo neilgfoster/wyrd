@@ -1583,3 +1583,119 @@ axis, and both exemptions (Taint 0, Trauma 0) hold. This worked example is the c
 own original verification never exercised — Trauma as the binding threshold — played through
 once, with real rolls where a roll was actually involved, to confirm the formula reads sensibly
 at the table, not only in the check script's own arithmetic.
+
+## 19. A full-campaign arc: Senna Vask across three sessions, every subsystem in composition
+
+#376, part of the playtest epic #220. Every prior section proved one mechanic, or a handful in
+combination, in isolation. This section carries Senna Vask — the character created in section 1
+— through a representative multi-session arc: an ordinary test and a Rally, a conflict that
+wounds her, the downtime recovery that follows, an economic-advancement event, and a
+solo-procedure-driven scene, calling the real engine modules throughout
+(`resolution`, `rally`, `downtime`, `advancement`, `career`, `economy`, `journey`) rather than
+narrating what they would do. Real seeded rolls throughout, base seed `20260900`.
+
+Per this feature's own Definition of Done (#90), functional correctness and behavioral fidelity
+are graded and reported separately below, never folded into one verdict.
+
+### Session 1 — an ordinary test, then a Rally
+
+Senna attempts a `tracking` test (`eff. 35`) at average difficulty, seed `20260901`: roll **59**
+— fails. The roll also sets `pending_omen: 10` (a fair Wyrd-die omen), staged as a mutation and
+committed to her sheet — nothing else changes; Taint and Strain both stay at `0`.
+
+The GM claims an advance for `drove` — the second of the four fixed triggers
+(`learned`/`drove`/`practised`/`endured`). Claiming the invented trigger `tracked` first is
+refused outright (`unknown_trigger`), confirming the vocabulary is genuinely closed, not just
+documented as closed. `drove` is accepted: `advances_unspent` moves `0 → 1`.
+
+The session closes at a Rally with no further award claimed: fixed recovery only — Strain
+`0 → 0` (already floored), Stamina `6 → 6` (already at max). A Rally with nothing to recover is
+still a valid Rally.
+
+### Session 2 — a conflict producing harm, and the recovery that follows
+
+A fen-bandit (`blade: 45`) attacks Senna (`blade: 35`, Stamina `6/6`) with a `1d8` weapon against
+her `1d3` armour, seed `20260902`. The cascade resolves in one call, exactly as
+`CombatChainTest` (section 3's own precedent) predicts the shape of: `combat-attack` →
+`weapon-damage` → `armour` → `critical`.
+
+- **combat-attack**: roll **36** against `eff. 60` — success, 3 degrees, lands, not telling.
+- **weapon-damage**: `1d8` rolls **8**, not doubled (no telling blow) — total `8`.
+- **armour**: `1d3` rolls **1** — net damage `7`.
+- **critical**: roll **5** + modifier `1` = **6**, banded against the slashing table:
+  `slashing-scored`, not mortal.
+
+Committed: Senna's Stamina crosses from `6` to **`-1`**, and she gains one wound
+(`{"effect": {"dread": 1}, "closed": None}`). Aftermath is not auto-staged by the
+`combat-attack` cascade on a below-zero result — a separate, explicit proposal the GM would make
+next, matching the same (untriggered) shape `CombatChainTest` already exercises at Stamina `-2`.
+Recorded as in scope for this arc, not pursued further here — chasing Aftermath was not this
+session's own beat.
+
+**Recovery**: the following downtime's Mend, named at the fresh wound's `id`. `apply_mend` steps
+its one `dread` effect down `MEND_LADDER`'s one-rung ladder: the wound closes in a single Mend
+(`closed: True`, `effect: {}`) — the ladder's shortest case (`dread` has only one rung, unlike
+`skill`'s two), not the two-Mend case worked in earlier sections.
+
+### Session 2 continued — economic advancement
+
+Away from home, Upkeep is paid in coin rather than Standing (`destination != "home"`,
+`trade="coin"`): Standing `2` costs `2` coin, `8 → 6`.
+
+Spending the advance banked in Session 1: `spend_advance("raise", ..., skill="tracking")` against
+the wayfarer career's `70%` cap. `tracking` rises `35% → 40%`; `advances_unspent` returns to `0`.
+The career is not complete (other granted skills remain below cap), so no Stamina/Mark payout
+fires — the completion path stays untested this arc, same untested-by-design note section 9
+already recorded for the same reason.
+
+A Standing check, real roll **62** against Standing `2` (bands `15/80/5` — favourable/neutral/
+unfavourable): **neutral**. Reputation neither rises nor falls.
+
+### Session 3 — a solo-procedure-driven scene: a journey leg's hazard roll
+
+A fen-road journey leg, `hazard_rating: 3` (activates at `wyrd_roll <= 30`). Real Wyrd-die roll
+**25** — activates. The sub-table roll **30** matches a `tracking`/average entry, which
+`roll_hazard` hands back as a ready-made `resolution.propose` request rather than a second
+mechanic — the same "callers supply dice, this function bands them" split `resolution.py` itself
+follows.
+
+Resolving that request, seed `20260903`: `eff. 45` — **`tracking` at `40%` plus `+5` from the
+fair omen staged back in Session 1, still pending and unspent** until this test consumed it. Roll
+**60** — fails, and an ill-omen result is staged for whatever consumes it next. This is the arc's
+one genuinely cross-session finding: an omen staged in Session 1 rode, unconsumed, through a
+conflict, a Mend and an advance-spend, and was still live to modify a Session 3 roll — exactly
+what "pending" is supposed to mean, now confirmed across sessions rather than only within one
+`propose` call.
+
+### Session 3 continued — closing Rally
+
+Final Rally, fixed recovery only: Strain `0 → 0`, Stamina `-1 → 0` (capped at max `6`, floored
+nowhere — recovery is `+1`, not "to max"; `-1` becomes `0`, not `6`). Senna ends the arc still
+below her Stamina maximum, carrying the fresh wound's cost forward exactly as the Rally's own
+fixed, non-discretionary amount says it should — full recovery is Downtime's Rest, not a Rally's.
+
+### Findings
+
+**Functional correctness: PASS.** Every step above executed against the real engine modules
+without error and produced a legal, on-disk state transition: the ordinary test, the combat
+cascade, the Mend, the Upkeep trade, the advance spend, the Standing roll, and the hazard-driven
+test all returned the shape their own docstrings promise, and every commit left Senna's sheet in
+a state `character.load` reads back cleanly. The scripted run executed without crashing (FR-006).
+
+**Behavioral fidelity: PASS, with one point worth naming rather than silently absorbing.** Pacing,
+difficulty and outcome shape all matched what the design prose describes: a Rally recovers by its
+fixed amount only, never to full; Mend's ladder length depends on the wound's own effect, not a
+constant; Upkeep away from home genuinely costs something; an advance spend genuinely narrows
+`advances_unspent`; a Standing roll never touches a skill percentage. The one point: Session 3's
+carried-omen result (above) is *correct* behavior, not a gap, but it is easy to miss reading the
+mechanics in isolation — each prior scoped playtest exercised `pending_omen` only within a single
+session's own rolls, and this is the first time this document has actually shown it surviving a
+session boundary, a wound, and a spend intact. **No real behavioral gap was found; no follow-up
+issue is warranted.** This is stated explicitly per specs/055/059's pattern, rather than manufacturing
+a finding to fill this subsection.
+
+Untested by this arc, recorded rather than forced (matching section 11's own precedent for the
+same question): succession, career completion's Stamina/Mark payout, a Fate spend, a companion
+beat, and an oracle-answer/oracle-prompt consultation (the journey hazard above is this arc's one
+solo-procedure scene; the oracle families are established individually in section 11 and not
+re-run here).
