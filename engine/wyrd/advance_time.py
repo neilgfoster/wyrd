@@ -56,7 +56,13 @@ def expected_activation_count(
 
 
 def advance_time(
-    calendar: dict, threats: list[dict], elapsed_days: int, seed: int | None = None
+    calendar: dict,
+    threats: list[dict],
+    elapsed_days: int,
+    seed: int | None = None,
+    *,
+    world_acts_offstage: bool = True,
+    witnessed: bool = True,
 ) -> dict:
     """Advance `calendar` and generate each Threat's expected-value activations (FR-003, FR-004).
 
@@ -67,13 +73,27 @@ def advance_time(
     `offset` across the whole call, so the same `seed` reproduces identical results every time
     (this issue's own acceptance criterion) while still drawing a distinct roll for each
     activation.
+
+    docs/design/23-chronicle-bootstrap.md: "Should the world act when you are not looking?" --
+    when `world_acts_offstage` is `False` (the setting's own choice, read from
+    `chronicle["intent"]["world_acts_offstage"]` by the caller) AND `witnessed` is `False` (this
+    particular span was not one the player was present for, the caller's own per-call
+    judgment), every Threat's activation is suppressed: `activation_count: 0`, `effects: []`,
+    no roll drawn, no `offset` consumed (#370). The calendar still advances by the full span
+    regardless -- only activation is gated, never the clock. Both parameters default to `True`,
+    reproducing this function's original (#338) behaviour exactly for a caller that never opts
+    in.
     """
     new_calendar = advance_calendar(calendar, elapsed_days)
+    suppressed = not world_acts_offstage and not witnessed
 
     activations = []
     offset = 0
     for entity in threats:
         threat_block = entity.get("threat", {})
+        if suppressed:
+            activations.append({"id": entity.get("id"), "activation_count": 0, "effects": []})
+            continue
         count = expected_activation_count(threat_block.get("imminence", 0), elapsed_days)
         effects = []
         for _ in range(count):

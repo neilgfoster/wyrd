@@ -103,6 +103,82 @@ class AdvanceTimeTests(unittest.TestCase):
         self.assertEqual(result["calendar"]["day"], 35)
         self.assertEqual(result["activations"][0]["activation_count"], 2)
 
+    def test_default_reproduces_prior_behaviour(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4)]
+        implicit = advance_time.advance_time(calendar, threats, elapsed_days=35, seed=1)
+        explicit = advance_time.advance_time(
+            calendar, threats, elapsed_days=35, seed=1, world_acts_offstage=True, witnessed=True
+        )
+        self.assertEqual(implicit, explicit)
+
+    def test_suppressed_zeroes_every_activation(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4), {**self._threat(6), "id": "another-threat"}]
+        result = advance_time.advance_time(
+            calendar,
+            threats,
+            elapsed_days=35,
+            seed=1,
+            world_acts_offstage=False,
+            witnessed=False,
+        )
+        for activation in result["activations"]:
+            self.assertEqual(activation["activation_count"], 0)
+            self.assertEqual(activation["effects"], [])
+
+    def test_suppressed_calendar_still_advances(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4)]
+        normal = advance_time.advance_time(calendar, threats, elapsed_days=35, seed=1)
+        suppressed = advance_time.advance_time(
+            calendar,
+            threats,
+            elapsed_days=35,
+            seed=1,
+            world_acts_offstage=False,
+            witnessed=False,
+        )
+        self.assertEqual(normal["calendar"], suppressed["calendar"])
+
+    def test_witnessed_true_overrides_suppression(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4)]
+        result = advance_time.advance_time(
+            calendar,
+            threats,
+            elapsed_days=35,
+            seed=1,
+            world_acts_offstage=False,
+            witnessed=True,
+        )
+        self.assertEqual(result["activations"][0]["activation_count"], 2)
+
+    def test_world_acts_offstage_true_overrides_unwitnessed(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4)]
+        result = advance_time.advance_time(
+            calendar,
+            threats,
+            elapsed_days=35,
+            seed=1,
+            world_acts_offstage=True,
+            witnessed=False,
+        )
+        self.assertEqual(result["activations"][0]["activation_count"], 2)
+
+    def test_suppressed_call_consumes_no_roll_offset(self) -> None:
+        calendar = {"year": 1, "month": None, "day": 0}
+        threats = [self._threat(4)]
+        # A suppressed call followed by a normal call with the same seed should match a normal
+        # call made alone -- the suppressed call must not have consumed any seed offset.
+        advance_time.advance_time(
+            calendar, threats, elapsed_days=35, seed=1, world_acts_offstage=False, witnessed=False
+        )
+        after_suppressed = advance_time.advance_time(calendar, threats, elapsed_days=35, seed=1)
+        alone = advance_time.advance_time(calendar, threats, elapsed_days=35, seed=1)
+        self.assertEqual(after_suppressed, alone)
+
 
 if __name__ == "__main__":
     unittest.main()
