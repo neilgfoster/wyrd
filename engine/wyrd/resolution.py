@@ -49,7 +49,8 @@ import itertools
 import pathlib
 from collections.abc import Callable
 
-from wyrd import character, rules
+from wyrd import character, entity, rules
+from wyrd import state as state_module
 
 #: docs/design/03-rules.md section 1's difficulty ladder -- modifies the skill, never the roll.
 DIFFICULTY_BONUSES = {
@@ -767,6 +768,23 @@ def _stage_critical(
 #: entities (docs/design/25-entities.md), as is a named antagonist -- which is why the test is
 #: entity type and never importance, faction or whether the entity is player-facing.
 ENTITY_TYPE_CHARACTER = "character"
+
+
+def is_spent(character_state: dict) -> bool:
+    """Is this character Spent? (docs/design/22-state.md § Invariants "Derived, not stored",
+    ADR 0049): `resolve.current <= max(taint, trauma)`, with each axis exempted from the
+    comparison at `0` -- if both are `0` there is nothing to compare `resolve.current` against,
+    so the character cannot be Spent.
+
+    Computed at read time from `character_state`'s current fields; nothing writes a `spent`
+    field anywhere."""
+    taint = _get_nested(character_state, "taint")
+    trauma = _get_nested(character_state, "trauma")
+    axes = [value for value in (taint, trauma) if value != 0]
+    if not axes:
+        return False
+    resolve_current = _get_nested(character_state, "resolve.current")
+    return resolve_current <= max(axes)
 
 
 def rolls_aftermath(entity_state: dict | None) -> bool:
@@ -1764,6 +1782,126 @@ def _pop_open_proposal(proposal_id: str) -> dict:
     return proposal
 
 
+def _find_chronicle_root(any_touched_path: pathlib.Path) -> pathlib.Path | None:
+    """Walk up from `any_touched_path` to the chronicle root -- the directory holding
+    `entities/`, `overlay/` and `setting/` (docs/design/22-state.md "Where things live").
+
+    Returns `None` if no such directory is found (e.g. a proposal built directly against loose
+    entity files, as most of this module's own tests do) -- `_load_chronicle_entities` then
+    validates against only the entities a proposal actually touches, rather than failing a commit
+    outright for a layout it was never asked to assume."""
+    current = pathlib.Path(any_touched_path).resolve().parent
+    for candidate in (current, *current.parents):
+        if all((candidate / name).is_dir() for name in ("entities", "overlay", "setting")):
+            return candidate
+    return None
+
+
+def _load_chronicle_entities(any_touched_path: pathlib.Path) -> dict[str, dict]:
+    """The chronicle's full effective entity set (data-model.md), keyed by id: every
+    `setting/*.md` entity resolved against its `overlay/*.md` counterpart (`entity.resolve_entity`),
+    plus every `entities/*.md` file the chronicle invented directly. Frontmatter only -- bodies
+    are not needed for validation.
+
+    Returns `{}` if `any_touched_path` has no discoverable chronicle root -- the passive checks in
+    `_validate_proposal` then see only the entities the proposal itself touches."""
+    root = _find_chronicle_root(any_touched_path)
+    if root is None:
+        return {}
+    setting_paths = sorted((root / "setting").glob("*.md"))
+    overlay_paths = sorted((root / "overlay").glob("*.md"))
+    invented_paths = sorted((root / "entities").glob("*.md"))
+
+    setting_entities = entity.load_set(setting_paths)
+    overlay_entities = {}
+    for path in overlay_paths:
+        frontmatter, _body = state_module.load_entity(path)
+        overlay_of = frontmatter.get("overlay_of")
+        if overlay_of is not None:
+            overlay_entities[entity.resolve_wikilink(overlay_of)] = frontmatter
+
+    entities: dict[str, dict] = {}
+    for setting_id in setting_entities:
+        frontmatter, _body = entity.resolve_entity(setting_id, setting_entities, overlay_entities)
+        entities[setting_id] = frontmatter
+    entities.update(entity.load_set(invented_paths))
+    return entities
+
+
+def _check_duplicate_id(entity_id: str, prior_id: str | None, entities: dict[str, dict]) -> None:
+    """FR-001: `entity_id` must not already name a different entity than the one being mutated."""
+    if entity_id in entities and entity_id != prior_id:
+        raise ProposalError(f"duplicate entity id: {entity_id!r}")
+
+
+def _check_fortune_fate(entity_id: str, mutated_state: dict) -> None:
+    """FR-004: `fortune.current <= fate.max`, skipped for an entity with no such fields."""
+    if "fortune" not in mutated_state or "fate" not in mutated_state:
+        return
+    fortune_current = _get_nested(mutated_state, "fortune.current")
+    fate_max = _get_nested(mutated_state, "fate.max")
+    if fortune_current > fate_max:
+        raise ProposalError(
+            f"{entity_id}: fortune.current ({fortune_current}) exceeds fate.max ({fate_max})"
+        )
+
+
+def _check_tracker_bounds(entity_id: str, mutated_state: dict) -> None:
+    """FR-005: a tracker's `value` stays within `0..max`, skipped for an entity with no such
+    fields."""
+    if "value" not in mutated_state or "max" not in mutated_state:
+        return
+    value = _get_nested(mutated_state, "value")
+    max_value = _get_nested(mutated_state, "max")
+    if not (0 <= value <= max_value):
+        raise ProposalError(f"{entity_id}: tracker value {value} outside 0..{max_value}")
+
+
+def _validate_proposal(mutations: list[dict], entities: dict[str, dict]) -> None:
+    """The single passive-validation pass (data-model.md § `_validate_proposal`,
+    docs/design/22-state.md § Invariants "Passive validation"): apply every staged mutation
+    (direct or cascade-produced) to a scratch copy of its target entity, merge the scratch copies
+    into `entities`, then check the four passive rules against the merged set. Raises
+    `ProposalError` naming the specific violation on the first one found -- duplicate id,
+    unresolved reference, parent cycle, fortune/fate, tracker bounds, in that order -- and applies
+    nothing; `commit` calls this before touching any entity file, so a raise guarantees nothing
+    was written."""
+    mutations_by_entity: dict[str, list[dict]] = {}
+    for mutation in mutations:
+        mutations_by_entity.setdefault(mutation["entity"], []).append(mutation)
+
+    merged = dict(entities)
+    scratch_by_id: dict[str, tuple[str, dict]] = {}
+    for entity_path_text, entity_mutations in mutations_by_entity.items():
+        entity_path = pathlib.Path(entity_path_text)
+        frontmatter, _body = character.load(entity_path)
+        prior_id = frontmatter.get("id")
+        for mutation in entity_mutations:
+            _apply_mutation(frontmatter, mutation)
+        new_id = frontmatter.get("id")
+        _check_duplicate_id(new_id, prior_id, merged)
+        if prior_id is not None:
+            merged.pop(prior_id, None)
+        merged[new_id] = frontmatter
+        scratch_by_id[new_id] = (entity_path_text, frontmatter)
+
+    containment = entity.check_containment(merged)
+    if not containment["valid"]:
+        raise ProposalError(f"parent cycle: {containment['cycle']}")
+
+    unresolved = entity.unresolved_references(merged)
+    if unresolved:
+        problem = unresolved[0]
+        raise ProposalError(
+            f"{problem['entity']}: unresolved reference in {problem['field']!r} to "
+            f"{problem['target']!r}"
+        )
+
+    for entity_id, (_path, mutated_state) in scratch_by_id.items():
+        _check_fortune_fate(entity_id, mutated_state)
+        _check_tracker_bounds(entity_id, mutated_state)
+
+
 def commit(proposal_id: str) -> dict:
     """Apply exactly `proposal_id`'s staged mutations to state, atomically per entity, and
     invalidate it.
@@ -1781,6 +1919,9 @@ def commit(proposal_id: str) -> dict:
     """
     proposal = _pop_open_proposal(proposal_id)
     mutations = proposal["mutations"]
+    if mutations:
+        chronicle_entities = _load_chronicle_entities(pathlib.Path(mutations[0]["entity"]))
+        _validate_proposal(mutations, chronicle_entities)
     mutations_by_entity: dict[str, list[dict]] = {}
     for mutation in mutations:
         mutations_by_entity.setdefault(mutation["entity"], []).append(mutation)
