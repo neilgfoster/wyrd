@@ -4,9 +4,14 @@ docs/design/01-principles.md principle 2: persist before narrate. A write must c
 old or new state fully intact -- before any narration step runs, and a crash mid-write must
 never leave a partially-written, unparseable file (docs/design/27-tooling.md sections 1-2).
 
-This feature's state shape is deliberately minimal (specs/075-engine-scaffolding/data-model.md):
-`schema_version` and `last_roll`. Later features extend the schema; this module's read/write
-contract does not change to accommodate that -- it just carries whatever mapping it is given.
+The original minimal scaffold (specs/075-engine-scaffolding/data-model.md) carried only
+`schema_version` and `last_roll`; this module's read/write contract does not change to
+accommodate a larger schema -- it just carries whatever mapping it is given. The full
+chronicle.yaml schema (docs/design/22-state.md, specs/122-chronicle-yaml-schema) -- engine/
+setting version pins, calendar/era/sessions/danger_rating, an append-only migrations log, the
+bootstrap intent block, and an opaque `pending` marker -- is layered on top via
+`default_chronicle_state`/`validate_chronicle`/`load_chronicle`/`save_chronicle`/
+`append_migration` below, still using the same generic `save`/`load`.
 
 The reader below is a restricted YAML subset -- nested mappings, scalars, `null` -- sufficient
 for this shape. It follows the same restricted-subset approach as tools/check_bestiary.py's
@@ -25,8 +30,29 @@ import re
 import tempfile
 
 DEFAULT_STATE_PATH = pathlib.Path("chronicle_state.yaml")
+DEFAULT_CHRONICLE_PATH = pathlib.Path("chronicle.yaml")
 
 _SCHEMA_VERSION = 1
+
+_MIGRATION_CLASSES = frozenset({"additive", "tuning", "structural", "behavioural"})
+
+_INTENT_DEFAULTS = {
+    "about": None,
+    "avoid": [],
+    "session_length": 20,
+    "lethality": "standard",
+    "world_acts_offstage": True,
+}
+
+_CHRONICLE_REQUIRED_FIELDS = (
+    "schema_version",
+    "name",
+    "engine",
+    "setting",
+    "calendar",
+    "sessions",
+    "danger_rating",
+)
 
 
 class StateError(Exception):
@@ -313,3 +339,138 @@ def load(path: pathlib.Path = DEFAULT_STATE_PATH) -> dict:
         return parse_yaml(text)
     except StateError as exc:
         raise StateError(f"{path}: {exc}") from exc
+
+
+def default_chronicle_state(
+    *,
+    name: str,
+    engine_repo: str,
+    engine_version: str,
+    setting_repo: str,
+    setting_version: str,
+) -> dict:
+    """The full chronicle.yaml shape a fresh chronicle starts from (docs/design/22-state.md).
+
+    `created_under` starts equal to `version` for both engine and setting -- a chronicle
+    begins under whatever it begins under (FR-002).
+    """
+    return {
+        "schema_version": _SCHEMA_VERSION,
+        "name": name,
+        "engine": {
+            "repo": engine_repo,
+            "version": engine_version,
+            "created_under": engine_version,
+        },
+        "setting": {
+            "repo": setting_repo,
+            "version": setting_version,
+            "created_under": setting_version,
+        },
+        "calendar": {"year": 0, "month": None, "day": 0},
+        "era": None,
+        "sessions": 0,
+        "danger_rating": 2,
+        "migrations": [],
+        "intent": dict(_INTENT_DEFAULTS),
+        "pending": None,
+    }
+
+
+def validate_chronicle(state: dict, previous_migrations: list | None = None) -> dict:
+    """Validate a chronicle state against docs/design/22-state.md's schema.
+
+    Fills any absent optional field with its documented default (FR-009) and returns the
+    (possibly filled-in) mapping. Raises `StateError` naming the specific field/rule violated
+    on any failure -- a required field missing (FR-008), a negative `sessions`/
+    `danger_rating` (FR-010), an out-of-vocabulary migration `class` (FR-005), or an edit/
+    reorder of an already-saved migration entry when `previous_migrations` is given
+    (FR-003/FR-004).
+    """
+    for field in _CHRONICLE_REQUIRED_FIELDS:
+        if field not in state:
+            raise StateError(f"chronicle state is missing required field {field!r}")
+
+    result = dict(state)
+    result.setdefault("era", None)
+    result.setdefault("pending", None)
+    result["migrations"] = list(result.get("migrations") or [])
+    result["intent"] = {**_INTENT_DEFAULTS, **(result.get("intent") or {})}
+
+    if result["sessions"] < 0:
+        raise StateError(f"sessions must be non-negative, got {result['sessions']!r}")
+    if result["danger_rating"] < 0:
+        raise StateError(f"danger_rating must be non-negative, got {result['danger_rating']!r}")
+
+    for i, entry in enumerate(result["migrations"]):
+        entry_class = entry.get("class")
+        if entry_class not in _MIGRATION_CLASSES:
+            raise StateError(
+                f"migrations[{i}].class {entry_class!r} is not one of {sorted(_MIGRATION_CLASSES)}"
+            )
+
+    if previous_migrations:
+        prefix = result["migrations"][: len(previous_migrations)]
+        if prefix != previous_migrations:
+            for i, (old, new) in enumerate(zip(previous_migrations, prefix, strict=False)):
+                if old != new:
+                    raise StateError(
+                        f"migrations[{i}] was edited or reordered -- "
+                        "an already-appended migration entry is immutable"
+                    )
+            raise StateError(
+                "migrations list no longer contains every previously-saved entry, in order"
+            )
+
+    return result
+
+
+def append_migration(state: dict, entry: dict) -> dict:
+    """Return a new state with `entry` appended to `state["migrations"]`.
+
+    Does not mutate `state`'s own `migrations` list in place -- a caller holding a reference
+    to the old list is unaffected. Raises `StateError` if `entry["class"]` is not one of the
+    four allowed values (also re-checked by `validate_chronicle` at save time).
+    """
+    if entry.get("class") not in _MIGRATION_CLASSES:
+        raise StateError(
+            f"migration class {entry.get('class')!r} is not one of {sorted(_MIGRATION_CLASSES)}"
+        )
+    new_state = dict(state)
+    new_state["migrations"] = [*state.get("migrations", []), entry]
+    return new_state
+
+
+def load_chronicle(path: pathlib.Path = DEFAULT_CHRONICLE_PATH) -> dict:
+    """Read chronicle.yaml from `path`, validating its schema.
+
+    Unlike `load()`, a missing file raises `StateError` naming the path -- a fresh
+    chronicle's identity (`name`, `engine`, `setting`) cannot be invented by the loader; the
+    caller must first `save_chronicle(default_chronicle_state(...), path)`.
+    """
+    path = pathlib.Path(path)
+    if not path.exists():
+        raise StateError(f"{path}: no such chronicle file")
+    text = path.read_text(encoding="utf-8")
+    try:
+        raw = parse_yaml(text)
+    except StateError as exc:
+        raise StateError(f"{path}: {exc}") from exc
+    try:
+        return validate_chronicle(raw)
+    except StateError as exc:
+        raise StateError(f"{path}: {exc}") from exc
+
+
+def save_chronicle(state: dict, path: pathlib.Path = DEFAULT_CHRONICLE_PATH) -> None:
+    """Validate and write chronicle state to `path`, atomically.
+
+    Validates first, comparing against the file's currently-saved migrations if it already
+    exists (FR-003/FR-004) -- a rejected write never touches the file on disk.
+    """
+    path = pathlib.Path(path)
+    previous_migrations = None
+    if path.exists():
+        previous_migrations = parse_yaml(path.read_text(encoding="utf-8")).get("migrations")
+    validated = validate_chronicle(state, previous_migrations=previous_migrations)
+    _atomic_write_text(dump_yaml(validated), path)
