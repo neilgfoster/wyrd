@@ -128,6 +128,38 @@ class SearchTest(unittest.TestCase):
 
 
 class GenerateRecapTest(unittest.TestCase):
+    def test_names_chronicle_and_setting(self):
+        entities = {"the-player": _character("the-player", role="player")}
+        chronicle = {"name": "the-drowned-chronicle", "setting": {"repo": "my-setting"}}
+        text = loadtier.generate_recap(entities, chronicle)
+        self.assertIn("the-drowned-chronicle", text)
+        self.assertIn("my-setting", text)
+
+    def test_differing_chronicles_produce_differing_recaps(self):
+        entities = {"the-player": _character("the-player", role="player")}
+        text_a = loadtier.generate_recap(
+            entities, {"name": "chronicle-a", "setting": {"repo": "my-setting"}}
+        )
+        text_b = loadtier.generate_recap(
+            entities, {"name": "chronicle-b", "setting": {"repo": "my-setting"}}
+        )
+        self.assertNotEqual(text_a, text_b)
+        self.assertIn("chronicle-a", text_a)
+        self.assertIn("chronicle-b", text_b)
+
+    def test_missing_name_and_setting_fall_back_to_placeholder(self):
+        entities = {"the-player": _character("the-player", role="player")}
+        text = loadtier.generate_recap(entities, {})
+        chronicle_section = text.split("## Chronicle")[1].split("## Where and when")[0]
+        self.assertIn(loadtier._RECAP_PLACEHOLDER, chronicle_section)
+
+    def test_name_present_setting_missing_reports_each_independently(self):
+        entities = {"the-player": _character("the-player", role="player")}
+        text = loadtier.generate_recap(entities, {"name": "the-drowned-chronicle"})
+        self.assertIn("the-drowned-chronicle", text)
+        chronicle_section = text.split("## Chronicle")[1].split("## Where and when")[0]
+        self.assertIn(loadtier._RECAP_PLACEHOLDER, chronicle_section)
+
     def test_includes_supplied_sections_and_present_companions(self):
         entities = _sample_entities()
         text = loadtier.generate_recap(
