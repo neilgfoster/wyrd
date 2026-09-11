@@ -6,8 +6,15 @@ gives the *shape* of this distinction (`arc` is in `entity.RECURSIVE_TYPES`, `be
 `entity.children_of`/`entity.check_containment` already resolve the `parent` tree); this module
 adds what `entity.py` deliberately leaves out: the enforcement that a beat given a child is
 rejected, per-narration `mode` recording (played/summarised) independent of the beat's own
-frontmatter, the six-step session loop as a checkable state machine, the `pending:` mid-beat
-marker, and session-shape classification kept out of player-facing text.
+frontmatter, the six-step session loop as a checkable state machine, and session-shape
+classification kept out of player-facing text.
+
+The `pending:` mid-beat marker's real semantics -- resuming from it, and discarding a proposal
+recorded in it -- live in `wyrd.chronicle` (#328), against `chronicle.yaml`'s actual schema
+(`{beat, awaiting, rolled}`, specs/122-chronicle-yaml-schema). This module's own earlier
+`set_pending`/`resume_from_pending`/`clear_pending` used a different, ad hoc shape that predated
+that schema and was never wired to a real `pending` field; they have been removed in favour of
+`wyrd.chronicle`'s functions rather than left as a second, unconnected mechanism for the same idea.
 
 The Rally mechanic (Strain/Stamina recovery, advance award, commit) and the Downtime phase's own
 internal steps (upkeep, undertakings, Mend) are out of scope here -- see #310 and #311. So is the
@@ -143,28 +150,6 @@ def run_close(steps: list[Callable[[], None]] | None = None) -> None:
     """
     for step in steps or []:
         step()
-
-
-def set_pending(beat_id: str, action: str) -> dict:
-    """A pending marker naming the specific unresolved action inside an interrupted beat."""
-    return {"beat_id": beat_id, "action": action, "set_at": time.time()}
-
-
-def resume_from_pending(pending: dict) -> str:
-    """The action to resume from, given a pending marker."""
-    return pending["action"]
-
-
-def clear_pending() -> None:
-    """The value a caller stores in place of a pending marker once its beat resolves cleanly.
-
-    A pending marker lives in caller-owned per-chronicle state (this module never stores one
-    itself -- `set_pending` only builds the record); clearing it is the caller replacing that
-    slot's value with this function's result. Exposed as a named entry point, matching
-    `resume_from_pending`, so callers don't just assign `None` inline without it being clear
-    that's the module's own clearing convention.
-    """
-    return None
 
 
 def classify_shape(beats_this_session: list[str], used_dice: bool, ran_downtime: bool) -> str:
