@@ -36,6 +36,13 @@ _SCHEMA_VERSION = 1
 
 _MIGRATION_CLASSES = frozenset({"additive", "tuning", "structural", "behavioural"})
 
+#: docs/design/23-chronicle-bootstrap.md: "How lethal? Sets starting Fate, and whether the
+#: Aftermath table's death rows are closed" -- the same vocabulary `creation.MORTALITY_FATE`
+#: and `resolution.MORTALITY_LEVELS` already use. Declared independently here rather than
+#: imported (state.py -> creation.py would cycle via character.py), matching resolution.py's
+#: own existing independent declaration of the same three-value set (#369).
+_LETHALITY_LEVELS = frozenset({"low", "standard", "high"})
+
 _INTENT_DEFAULTS = {
     "about": None,
     "avoid": [],
@@ -402,6 +409,12 @@ def validate_chronicle(state: dict, previous_migrations: list | None = None) -> 
     result["era_crossings"] = list(result.get("era_crossings") or [])
     result["migrations"] = list(result.get("migrations") or [])
     result["intent"] = {**_INTENT_DEFAULTS, **(result.get("intent") or {})}
+
+    if result["intent"]["lethality"] not in _LETHALITY_LEVELS:
+        raise StateError(
+            f"intent.lethality {result['intent']['lethality']!r} is not one of "
+            f"{sorted(_LETHALITY_LEVELS)}"
+        )
 
     if result["sessions"] < 0:
         raise StateError(f"sessions must be non-negative, got {result['sessions']!r}")
