@@ -102,7 +102,8 @@ def validate_connections(threats: list[dict]) -> list[str]:
     """
     problems = []
     for entity in threats:
-        connection = entity.get("threat", {}).get("connection")
+        threat_block = entity.get("threat") or {}
+        connection = threat_block.get("connection")
         if connection is None or not connection.strip():
             problems.append(f"{entity.get('id', entity)!r}: threat has no connection")
     return problems

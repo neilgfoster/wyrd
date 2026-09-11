@@ -157,6 +157,18 @@ class ValidateConnectionsTests(unittest.TestCase):
         problems = threat.validate_connections([entity])
         self.assertEqual(len(problems), 1)
 
+    def test_threat_block_none_reported_not_raised(self) -> None:
+        entity = {"id": "no-threat-block", "threat": None}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("no-threat-block", problems[0])
+
+    def test_entity_with_no_threat_key_at_all_reported_not_raised(self) -> None:
+        entity = {"id": "not-even-a-threat"}
+        problems = threat.validate_connections([entity])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("not-even-a-threat", problems[0])
+
     def test_never_raises(self) -> None:
         # exercised across every case above -- none construct a try/except, all call directly
         threat.validate_connections([{}, {"threat": {}}, {"threat": {"connection": None}}])
