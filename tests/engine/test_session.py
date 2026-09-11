@@ -167,6 +167,21 @@ class RunCloseTest(unittest.TestCase):
         session.run_close([])
         session.run_close(None)  # no assertion needed -- must simply not raise
 
+    def test_recap_close_step_writes_recap_at_close(self):
+        import tempfile
+
+        from wyrd import loadtier
+
+        pc = _minimal("character", "the-player", role="player")
+        entities = {pc["id"]: pc}
+        with tempfile.TemporaryDirectory() as tmp:
+            recap_path = pathlib.Path(tmp) / "recap.md"
+            session.run_close(
+                [loadtier.recap_close_step(entities, {}, recap_path, where="the crypt")]
+            )
+            self.assertTrue(recap_path.exists())
+            self.assertIn("the crypt", recap_path.read_text(encoding="utf-8"))
+
 
 class PendingMarkerTest(unittest.TestCase):
     def test_set_pending_and_resume(self):

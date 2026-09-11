@@ -244,8 +244,10 @@ def default_state() -> dict:
     return {"schema_version": _SCHEMA_VERSION, "last_roll": None}
 
 
-def _atomic_write_text(text: str, path: pathlib.Path) -> None:
-    """Write `text` to `path`, atomically -- shared by `save` and `save_entity` (FR-007)."""
+def write_text_atomic(text: str, path: pathlib.Path) -> None:
+    """Write `text` to `path`, atomically -- shared by `save`, `save_entity` and `save_chronicle`
+    (FR-007), and exposed publicly (specs/123-chronicle-load-tiers) for `recap.md`'s regeneration
+    to reuse rather than duplicating a fourth atomic-write implementation."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(
         dir=str(path.parent) or ".", prefix=f".{path.name}.", suffix=".tmp"
@@ -270,7 +272,7 @@ def save(state: dict, path: pathlib.Path = DEFAULT_STATE_PATH) -> None:
     fully-valid state, or this fully-valid state (FR-007).
     """
     path = pathlib.Path(path)
-    _atomic_write_text(dump_yaml(state), path)
+    write_text_atomic(dump_yaml(state), path)
 
 
 _FRONTMATTER_DELIMITER = "---"
@@ -303,7 +305,7 @@ def dump_entity(frontmatter: dict, body: str = "") -> str:
 def save_entity(frontmatter: dict, body: str, path: pathlib.Path) -> None:
     """Write an entity file (frontmatter + body) to `path`, atomically."""
     path = pathlib.Path(path)
-    _atomic_write_text(dump_entity(frontmatter, body), path)
+    write_text_atomic(dump_entity(frontmatter, body), path)
 
 
 def load_entity(path: pathlib.Path) -> tuple[dict, str]:
@@ -473,4 +475,4 @@ def save_chronicle(state: dict, path: pathlib.Path = DEFAULT_CHRONICLE_PATH) -> 
     if path.exists():
         previous_migrations = parse_yaml(path.read_text(encoding="utf-8")).get("migrations")
     validated = validate_chronicle(state, previous_migrations=previous_migrations)
-    _atomic_write_text(dump_yaml(validated), path)
+    write_text_atomic(dump_yaml(validated), path)
