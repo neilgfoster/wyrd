@@ -88,3 +88,21 @@ def promote(entity: dict, threat: dict, objective: str) -> dict:
     if threat.get("imminence", 0) <= 0:
         raise ValueError("a promoted threat's imminence must be greater than 0")
     return {**entity, "threat": threat, "objective": objective}
+
+
+def validate_connections(threats: list[dict]) -> list[str]:
+    """Report every Threat entity whose `connection` is absent, `None`, empty, or
+    whitespace-only (#371, docs/design/19-campaign.md: "A threat with no connection is
+    scenery").
+
+    Returns one formatted problem string per offending entity, naming its `id` (falling back to
+    the entity dict itself when `id` is absent) -- `[]` for an empty input or a fully-connected
+    list. Never raises: reports, doesn't gate, matching this codebase's existing
+    report-don't-raise convention for cross-cutting invariant checks (#327).
+    """
+    problems = []
+    for entity in threats:
+        connection = entity.get("threat", {}).get("connection")
+        if connection is None or not connection.strip():
+            problems.append(f"{entity.get('id', entity)!r}: threat has no connection")
+    return problems
