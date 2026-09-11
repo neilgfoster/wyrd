@@ -184,13 +184,9 @@ class RunCloseTest(unittest.TestCase):
 
 
 class PendingMarkerTest(unittest.TestCase):
-    def test_set_pending_and_resume(self):
-        pending = session.set_pending("open-the-door", "waiting on the lock-picking roll")
-        self.assertEqual(pending["beat_id"], "open-the-door")
-        self.assertEqual(session.resume_from_pending(pending), "waiting on the lock-picking roll")
-
-    def test_clear_pending_returns_the_cleared_value(self):
-        self.assertIsNone(session.clear_pending())
+    # set_pending/resume_from_pending/clear_pending (this module's pre-#328 scaffold) have been
+    # removed in favour of wyrd.chronicle's functions against chronicle.yaml's real `pending`
+    # schema -- see tests/engine/test_chronicle.py.
 
     def test_clean_resolution_leaves_no_pending_marker(self):
         # narrate_beat is the clean-resolution path; it must never itself produce a pending
