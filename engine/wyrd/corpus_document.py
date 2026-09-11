@@ -102,18 +102,22 @@ def build_concordance(text: str, doc: str, setting: str) -> dict:
     sentence_starts = _sentence_initial_positions(text)
     concordance: dict[str, dict] = {}
     for match in _WORD_TOKEN.finditer(text):
-        token = match.group().strip(".,;:!?\"'()")
+        raw = match.group()
+        token = raw.strip(".,;:!?\"'()")
         if not token or not token[0].isupper():
             continue
         if token.lower() in _STOP_WORDS:
             continue
         if match.start() in sentence_starts:
             continue
+        # `token` may have shed leading punctuation `raw` still carries (e.g. "(Osric)" ->
+        # "Osric") -- the offset must point at the token's own first character, not `raw`'s.
+        offset = match.start() + (len(raw) - len(raw.lstrip(".,;:!?\"'()")))
         entry = concordance.setdefault(
             token, {"doc": doc, "setting": setting, "count": 0, "offsets": []}
         )
         entry["count"] += 1
-        entry["offsets"].append(match.start())
+        entry["offsets"].append(offset)
     return {name: [entry] for name, entry in concordance.items()}
 
 

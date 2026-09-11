@@ -65,6 +65,18 @@ class BuildConcordanceTests(unittest.TestCase):
         self.assertEqual(postings["count"], 1)
         self.assertEqual(TEXT[postings["offsets"][0] : postings["offsets"][0] + 5], "Osric")
 
+    def test_offset_skips_leading_stripped_punctuation(self) -> None:
+        text = "She saw (Osric) leave."
+        concordance = cd.build_concordance(text, doc="d1", setting="s1")
+        offset = concordance["Osric"][0]["offsets"][0]
+        self.assertEqual(text[offset : offset + 5], "Osric")
+
+    def test_offset_skips_leading_quote_punctuation(self) -> None:
+        text = 'He said, "Brannoc lied."'
+        concordance = cd.build_concordance(text, doc="d1", setting="s1")
+        offset = concordance["Brannoc"][0]["offsets"][0]
+        self.assertEqual(text[offset : offset + 7], "Brannoc")
+
     def test_sentence_initial_excluded(self) -> None:
         text = "The village was quiet. The well was old."
         concordance = cd.build_concordance(text, doc="d1", setting="s1")
