@@ -284,9 +284,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 tools/setting_pass0.py .
-      - run: python3 -c "from wyrd.corpus_pipeline import build_setting_corpus_indexes; ..."
+      - run: python3 tools/setting_build.py .
 ```
+
+`tools/setting_build.py` (#388) runs Pass 0's catalogue/gap-survey pass and the four deterministic
+indexes together, in order, and is idempotent by itself — a run against an unchanged `library/`
+does no work. A setting repo's own scheduled workflow needs only this one step.
 
 **The `scenarios` index is excluded from the scheduled run.** Its one Haiku call per adventure is
 the pipeline's only non-deterministic step, and it already has the right cadence for that:
