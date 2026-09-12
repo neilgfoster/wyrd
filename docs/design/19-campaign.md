@@ -206,9 +206,9 @@ At the start of an arc, or when a scenario closes, the GM picks the next by:
 5. Recording `source:` — what it was adapted from and what changed
 
 **Sourcing is by theme, not system.** An investigation written for another world and a *a periodical*
-six-pager about a corrupt official are equally valid inputs. See
-[scenarios.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/scenarios.md) and
-[library-triage.md](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md).
+six-pager about a corrupt official are equally valid inputs, triaged into the setting's own
+`library/` on that basis rather than by system
+([ADR 0052](../adr/0052-the-research-repository-is-retired.md)).
 
 **Prefer short-form.** The magazine and fanzine archives are the richest seam precisely
 because a six-page adventure about a corrupt official has no ambition to be a finale.

@@ -2,18 +2,17 @@
 
 How the pieces separate, and what is code versus prose.
 
-## Six repositories
+## Five repositories
 
-Wyrd is six kinds of thing with six different lifecycles, so it is six repositories.
+Wyrd is five kinds of thing with five different lifecycles, so it is five repositories.
 
 | Repo | Holds | Changes |
 |---|---|---|
 | **`wyrd`** | the engine — rules, CLI, GM contract, design | when a rule changes |
 | **`wyrd-setting-template`** | the skeleton a new setting is cloned from | rarely |
-| **`wyrd-setting-<name>`** | one setting: world, content, indexes, corpus | when content is added |
+| **`wyrd-setting-<name>`** | one setting: world, content, indexes, corpus, source library | when content is added |
 | **`wyrd-chronicle-template`** | cloned to start a chronicle | rarely |
 | **`wyrd-chronicle-<name>`** | one per chronicle — its state and entities | every beat |
-| **`wyrd-research`** | corpus, mining notes, extractions, source tooling — never public | when a source is mined |
 
 There is one setting repository **per setting**, not per genre. A chronicle **references** an
 engine version and a setting version; a setting declares a minimum engine version. Nothing
@@ -39,19 +38,17 @@ an engine rule.**
 
 ### Where the corpus lives
 
-Extracted source text lives **once**, in a private research repository — not in setting
-repos. Sources do not divide cleanly by setting: a single magazine issue may carry material
-for several different worlds, and duplicating it per setting would be absurd while
-apportioning it would be wrong.
+All source material lives in the setting repo it belongs to — its `library/`, extracted into
+its own `corpus/`, indexed into its own `index/`
+([ADR 0052](../adr/0052-the-research-repository-is-retired.md)). Even a periodical whose issues
+carry content for several different worlds divides cleanly once triage happens at the
+**article**, not the issue: the relevant excerpt is copied into each setting it belongs to, so
+nothing is ever actually shared between settings reading the same stored text.
 
 | | Lives in |
 |---|---|
-| Extracted source text | the private research repo, once |
-| Per-setting indexes over it | the setting repo ([`26-corpus-index.md`](26-corpus-index.md)) |
-| Entities converted from it | the setting repo, carrying `sources:` back to the document |
-
-Indexes reference documents **by id**, so a setting index can point into shared source
-material without holding a copy of it.
+| Source, extracted text and indexes | the setting repo it belongs to |
+| Entities converted from it | the same setting repo, carrying `sources:` back to the document |
 
 The engine repo holds none of it, because it is intended to become public and nothing
 unpublishable may enter it.

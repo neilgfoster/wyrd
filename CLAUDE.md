@@ -14,14 +14,14 @@ gets built.
 |---|---|---|
 | **wyrd** *(this one)* | engine, design, decision records | **intended public** |
 | **wyrd-setting-template** | the skeleton a new setting is cloned from | template |
-| **wyrd-setting-\<name\>** | one setting: world, content, indexes | private where its sources are |
+| **wyrd-setting-\<name\>** | one setting: world, content, indexes, source library, corpus | private where its sources are |
 | **wyrd-chronicle-template** | cloned to start a chronicle | template |
 | **wyrd-chronicle-\<name\>** | one per chronicle | the player's |
-| **wyrd-research** | corpus, mining notes, extractions, source tooling | **never public** |
 
 **Nothing unpublishable may enter this repository.** No extracted source text, no quotes from
 copyrighted rulebooks, no catalogue of a personal library, no tooling that fetches source
-material. If it derives from someone else's book, it belongs in research.
+material. If it derives from someone else's book, it belongs in the setting repo it was
+triaged into ([ADR 0052](docs/adr/0052-the-research-repository-is-retired.md)).
 
 ## Decisions are recorded
 

@@ -34,8 +34,8 @@ One record per extracted file: id, source path, system, edition, document type
 (rules / setting / adventure / magazine / fanzine), page count, whether it came from a text
 layer or OCR, and an OCR-confidence estimate.
 
-Deterministic. Built at ingest. This is [`library.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library.md)
-made machine-queryable and extended with what extraction learned.
+Deterministic. Built at ingest, per setting repo, catalogueing that setting's own `library/`
+([ADR 0052](../adr/0052-the-research-repository-is-retired.md)).
 
 **OCR confidence matters** and is cheap to compute — dictionary-word ratio per document. A
 1980s scan at 60% is usable for locating a passage and untrustworthy for quoting a table.
@@ -86,10 +86,11 @@ term for "a village with something under it."**
 It does three jobs: describe the scenario, let it be *filtered* for fitness, and let
 scenarios *chain* into a meta-campaign.
 
-Scope is **the whole library, not one shelf of it** — an investigation written for another world, a
-folk-horror village haunting and a magazine six-pager are equally valid inputs, judged on theme
-([`library-triage.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/library-triage.md)). `adaptation` records
-what conversion costs.
+Scope is **this setting's whole library, not one shelf of it** — an investigation written for
+another system, a folk-horror village haunting and a magazine six-pager are equally valid
+inputs, judged on theme, once triaged into this setting's own `library/`
+([ADR 0052](../adr/0052-the-research-repository-is-retired.md)). `adaptation` records what
+conversion costs.
 
 ```yaml
 id: the-drowning-well
