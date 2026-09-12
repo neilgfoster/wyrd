@@ -198,6 +198,89 @@ Run `python3 tools/check_gear.py setting/gear.yaml` — same shape as `check_bes
 rejects a missing required field, a field the schema does not define, an out-of-range armour
 rank or damage type, a `class` outside casual/martial, and a negative price.
 
+### `loyalties.yaml`
+
+The Loyalties a character can carry, and the relations between them
+([`11-character-creation.md`](11-character-creation.md) §4,
+[ADR 0015](../adr/0015-loyalty-has-three-relations-not-two.md)):
+
+```yaml
+loyalties:
+  - id: the-crown
+  - id: the-old-faith
+relations:
+  - a: the-crown
+    b: the-old-faith
+    kind: strained          # strained | irreconcilable
+```
+
+**At least one Loyalty must be declared.** `relations` may be empty or absent entirely — a
+setting with a single Loyalty declares none, and the question never arises. Only the
+**non-default** pairs are written down: two Loyalties with no relation entry between them mix
+freely. Each relation names two *distinct* declared Loyalties and a `kind` from the closed
+two-value vocabulary ADR 0015 defines; the same unordered pair may not be declared twice.
+
+### `drives.yaml` and `misfortunes.yaml`
+
+The things a character wants, and the things already working against them — chosen at creation
+steps 7 and 8 ([`11-character-creation.md`](11-character-creation.md) §1) and read together to
+write the Fault Line:
+
+```yaml
+drives:                       # misfortunes.yaml has the identical shape, under `misfortunes:`
+  - id: find-the-sister
+    text: "Find my sister, wherever the roads have taken her."
+```
+
+Each file is a non-empty list; every entry has a stable `id` and a non-empty `text`. The engine
+holds no vocabulary to judge a Drive or Misfortune's content, the same reasoning
+[ADR 0013](../adr/0013-the-engine-names-no-skill.md) applies to skills — `text` is free prose the
+schema never inspects beyond "present and non-empty."
+
+### `names.yaml`
+
+Enough to name a person of this world ([`11-character-creation.md`](11-character-creation.md) §4):
+
+```yaml
+cultures:
+  - id: riverfolk
+    given: [Mara, Toln, Isbet]
+    family: [Ashwell, Dray]
+    place: [Ottersmere, Cray's Ford]
+```
+
+At least one culture is required, each with a unique `id` and at least one non-empty list among
+`given`, `family` and `place` — a culture naming nobody at all fails the requirement outright.
+
+### `ancestries.yaml` — optional
+
+**A setting may optionally declare an ancestry** — a species, lineage or cultural grouping that
+widens which skills the creation advances above may open, exactly as a career does
+([`11-character-creation.md`](11-character-creation.md) §3,
+[ADR 0040](../adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md)):
+
+```yaml
+ancestries:
+  - id: hill-kin
+    skills: [climb, forage]
+```
+
+This file's absence is not an error — a setting with no ancestry concept declares nothing.
+When present, each entry has a unique `id` and a non-empty `skills` list, and carries neither
+`entry` nor `prerequisites`: an ancestry is never an entry point and has no prerequisite chain: it
+only ever widens the pool of eligible skills, never how many advances there are to spend.
+
+### Validating the character-creation surface as a whole
+
+Run `python3 tools/check_character_creation_data.py <setting-dir>` — it checks `careers.yaml`
+(against the shape above, including the acyclic-prerequisites and at-least-one-entry-career
+rules this document has always stated but which had no validator before this check existed),
+`loyalties.yaml`, `drives.yaml`, `misfortunes.yaml` and `names.yaml` together, plus
+`ancestries.yaml` when present, reporting every failure across every file rather than stopping at
+the first — the same "everything a setting must provide before creation can run" list
+[`11-character-creation.md`](11-character-creation.md) §4 names, checked in one pass instead of
+five separate ones.
+
 ## `voice.md` is the hard part
 
 Everything else is data that can be typed in. The voice is the setting.

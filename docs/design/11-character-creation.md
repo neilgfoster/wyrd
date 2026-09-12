@@ -142,24 +142,32 @@ other stat modifier — its only mechanical effect is widening which skills are 
 many advances there are to spend on them
 ([ADR 0040](../adr/0040-ancestry-widens-the-skill-pool-never-the-budget.md)). Two characters who
 took the same entry career can still read as different if their ancestries differ; a setting with
-no ancestry concept declares nothing, and creation is exactly as described above.
+no ancestry concept declares nothing, and creation is exactly as described above. Where a setting
+does declare one, its shape is
+[`ancestries.yaml`](24-authoring-a-setting.md#ancestriesyaml--optional).
 
 ## 4. What a setting must provide
 
 Creation cannot run without these. A setting missing any of them fails to load, rather than being
 filled in by the GM's judgement.
 
-| | Requirement |
-|---|---|
-| **Entry careers** | at least one career marked as an entry point, each declaring the skills it grants |
-| **Names** | enough to name a person of this world |
-| **Places** | somewhere to be from |
-| **Drives** | the things a character wants, in this world's terms |
-| **Misfortunes** | the things already working against a character, in this world's terms — what step 8 draws on to write the Fault Line |
-| **Loyalties** | at least one, and the relations between any that are strained or irreconcilable. A setting with a single Loyalty is legal, and means the question never arises |
+| | Requirement | Schema |
+|---|---|---|
+| **Entry careers** | at least one career marked as an entry point, each declaring the skills it grants | [`careers.yaml`](24-authoring-a-setting.md#careersyaml) |
+| **Names** | enough to name a person of this world | [`names.yaml`](24-authoring-a-setting.md#namesyaml) |
+| **Places** | somewhere to be from | [`names.yaml`](24-authoring-a-setting.md#namesyaml) |
+| **Drives** | the things a character wants, in this world's terms | [`drives.yaml`](24-authoring-a-setting.md#drivesyaml-and-misfortunesyaml) |
+| **Misfortunes** | the things already working against a character, in this world's terms — what step 8 draws on to write the Fault Line | [`misfortunes.yaml`](24-authoring-a-setting.md#drivesyaml-and-misfortunesyaml) |
+| **Loyalties** | at least one, and the relations between any that are strained or irreconcilable. A setting with a single Loyalty is legal, and means the question never arises | [`loyalties.yaml`](24-authoring-a-setting.md#loyaltiesyaml) |
 
 Everything else a character carries starts empty: no wounds, no Marks, no career history, no
 Reputation, no Allegiances, no Holdings, no Bonds beyond the one chosen at step 7.
+
+Every file above, plus the optional ancestry declaration (§3), is validated together by
+`python3 tools/check_character_creation_data.py <setting-dir>`
+([`24-authoring-a-setting.md`](24-authoring-a-setting.md#validating-the-character-creation-surface-as-a-whole)) —
+a setting missing or misshaping one of them is caught before creation is ever attempted, rather
+than failing partway through.
 
 ## 5. Where creation hands off
 
