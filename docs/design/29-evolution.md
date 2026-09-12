@@ -134,10 +134,9 @@ chronicle so the history remains interpretable. House rules are **Tuning-class b
 definition** and therefore forward-only — changing one mid-chronicle does not rewrite what
 came before.
 
-This matters because the open questions in
-[`dice-design.md`](https://github.com/neilgfoster/wyrd-research/blob/main/reference/dice-design.md) — is 44% side-effect frequency
-too busy? should triples be distinguished? — are settled by *playing*, not by argument, and
-that settling should not require an engine release.
+This matters because open questions like these — is 44% side-effect frequency too busy? should
+triples be distinguished? — are settled by *playing*, not by argument, and that settling should
+not require an engine release.
 
 ---
 

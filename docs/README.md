@@ -89,6 +89,7 @@ records that exist mark the places where the obvious answer was wrong.
 | [0048](adr/0048-system-of-power-costs-paid-only-on-failure.md) | System-of-power costs (Strain, Resolve) are paid only on a failed invocation |
 | [0049](adr/0049-resolve-counters-both-taint-and-trauma.md) | Resolve's cap widens to counter both Taint and Trauma, via a dual threshold |
 | [0050](adr/0050-action-resolution-proposes-before-it-commits.md) | Action resolution proposes a result before it commits, rather than writing immediately |
+| [0052](adr/0052-the-research-repository-is-retired.md) | The shared research repository is retired; all source material lives in setting repos |
 
 This index is **checked**, not maintained by hand alone: `python3 tools/check_docs.py` fails
 when a record exists on disk that this table does not list. It had already drifted three
