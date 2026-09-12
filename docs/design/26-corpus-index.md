@@ -259,6 +259,74 @@ Rebuilding is a `wyrd optimise` function
 ([`28-maintenance.md`](28-maintenance.md)), and `wyrd doctor` reports index staleness
 against the corpus.
 
+## Scheduled execution
+
+Pass 0's catalogue, gap-survey and idempotence pass, and the four deterministic indexes above
+(`documents`, `nouns`, `terms`, `tables`), share one property the `scenarios` index does not: no
+step in them calls a model, so nothing about running them stops them running unattended, on a
+schedule, with nobody watching. They are recommended to run that way.
+
+**The workflow runs inside the setting repository, never anywhere else.** A setting repository is
+already its own GitHub repository, private where its sources require it. GitHub Actions'
+`schedule` (cron) trigger, defined in that repository's own `.github/workflows/`, keeps every
+read of `library/` and every write to `index/` inside that one repository's own runner and
+permission boundary — no source material or derived index ever crosses into a shared or public
+repository to make this work. A schedule looks like:
+
+```yaml
+# illustrative only -- belongs in a wyrd-setting-<name> repo's own
+# .github/workflows/, never in this repo
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # weekly; a setting repo tunes this to how often library/ changes
+jobs:
+  build-corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/setting_pass0.py .
+      - run: python3 -c "from wyrd.corpus_pipeline import build_setting_corpus_indexes; ..."
+```
+
+**The `scenarios` index is excluded from the scheduled run.** Its one Haiku call per adventure is
+the pipeline's only non-deterministic step, and it already has the right cadence for that:
+lazy, on first need, cached forever, regenerated only on a schema change. Putting it behind a
+blind schedule would add a new failure mode — a bad or drifted generation, unnoticed until
+something reads it — that the lazy path does not have; nothing about issue #102's own request
+requires trading that away.
+
+**A scheduled run's failure must be observable, never silent.** Nobody is watching a scheduled
+run in real time, so its failure — a step errors, or the workflow itself never fires — has to
+surface through the runner's own failure reporting (GitHub Actions' own run-failure status and
+notification) rather than disappearing. A scheduled workflow that fails quietly is worse than no
+schedule at all, because it replaces a known gap with an unknown one.
+
+## Public augmentation and provenance
+
+A setting's library is private, but a gap Pass 0's own gap survey names (#100) does not have to
+stay a gap forever — a public source may fill it, under one explicit rule:
+
+> **A public source is in-bounds only when it carries its own independently checkable
+> provenance, not contingent on the private library already existing.** A public-domain text, an
+> author's or publisher's own freely and openly published material (errata, an SRD, an open-
+> licensed glossary), or broadly attested common knowledge (folklore, an independently checkable
+> real-world reference fact) all qualify. **"Found on the open internet" does not, by itself** —
+> an arbitrary page with no traceable origin or licence is out of bounds, the same way an
+> unverified claim is everywhere else in this engine's own deterministic-over-inference rule
+> ([`27-tooling.md`](27-tooling.md)).
+
+Every derived fact produced this way — whether from the library or from a qualifying public
+source — carries a **provenance record**: `origin` (`library` or `public`) and, when `origin` is
+`public`, a `reference` naming the specific source a reader could go check. A library-sourced
+fact needs no separate reference — its provenance is the `documents.json` record it was already
+extracted from. `engine/wyrd/corpus_provenance.py`'s `build_provenance_record` is this record's
+pure, no-I/O implementation: a setting repository's own tooling calls it with a source it has
+already identified and cited, exactly as it already calls `corpus_pipeline.build_setting_corpus_
+indexes` with text it has already extracted. Neither this module nor anything else in this
+repository performs the fetch itself — CLAUDE.md's "no tooling that fetches source material"
+applies here exactly as it does to every other corpus module; an actual web fetch, if a setting
+repository wants one, is that repository's own tooling to write.
+
 ## World-building content, and what is not indexed
 
 Prose world-building material — regional gazetteers, organisation write-ups, histories, what an
