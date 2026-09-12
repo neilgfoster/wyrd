@@ -35,7 +35,13 @@ One record per extracted file: id, source path, system, edition, document type
 layer or OCR, and an OCR-confidence estimate.
 
 Deterministic. Built at ingest, per setting repo, catalogueing that setting's own `library/`
-([ADR 0052](../adr/0052-the-research-repository-is-retired.md)).
+([ADR 0052](../adr/0052-the-research-repository-is-retired.md)). A setting repo's own tooling
+extracts its `library/` into plain text (extraction and OCR are that repo's own concern, never
+the engine's — CLAUDE.md), then calls the engine's `build_setting_corpus_indexes` once across the
+whole document set to produce `documents`, `nouns`, `terms` and `tables` together — the
+per-document builders behind it never differ from setting to setting, which is what makes this a
+pipeline "any `wyrd-setting-*` repo can run against its own `library/`," not bespoke code per
+setting.
 
 **OCR confidence matters** and is cheap to compute — dictionary-word ratio per document. A
 1980s scan at 60% is usable for locating a passage and untrustworthy for quoting a table.
@@ -242,13 +248,28 @@ Four of five are free and built once. The expensive one is **lazy** — an adven
 thematic record the first time anything asks for it, not up front. Most of the library will
 never need one.
 
+The lazy-cache rule is concrete, not just descriptive: a document's cached `scenarios.json`
+record is **fresh** only when both its content hash and the record schema's version still match
+what produced it; either one changing marks it **stale** and due for regeneration, and a document
+with no cache entry at all is **missing**. The engine decides freshness; it never performs the
+model call itself — that stays injected by the caller, so building this decision is fully
+testable without ever reaching a real model.
+
 Rebuilding is a `wyrd optimise` function
 ([`28-maintenance.md`](28-maintenance.md)), and `wyrd doctor` reports index staleness
 against the corpus.
 
-## What is not indexed
+## World-building content, and what is not indexed
 
-Prose setting material — regional gazetteers, organisation write-ups, histories. It is read on
-demand and its value is in the reading. The concordance already makes it findable by name,
-which is how it is actually reached in play: not "tell me about Ostland" but "what is this
-place the player just mentioned?"
+Prose world-building material — regional gazetteers, organisation write-ups, histories, what an
+ordinary person knows about daily life — is tagged with one of a closed set of categories
+(`geography`, `factions`, `history`, `daily-life`) at ingest. A tagged document still gets a
+`documents.json` record and contributes to the concordance exactly like any other document — that
+is how such material is actually reached in play, not "tell me about Ostland" but "what is this
+place the player just mentioned?" — but it is **never** run through `terms.json`/`tables.json`
+detection: mechanical-vocabulary and table-shape detection have nothing to find in prose, and
+running them anyway would only risk false-positive matches. This is the one boundary the pipeline enforces on the setting's behalf, rather than leaving it to
+per-document judgment: world-building content is produced and kept distinct from mechanical
+content in `terms.json`/`tables.json`, while still being catalogued and concordance-findable from
+the moment it is ingested, the same as everything else in the corpus. Its value past that point is
+still in the reading, not in a mechanical index that was never the right tool for prose.
