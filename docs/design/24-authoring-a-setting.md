@@ -375,6 +375,84 @@ that rewrites what happened in play.
    and the entity stays `status: stub`. A guessed stat is worse than an absent one.
 3. **Lose provenance.** Every converted entity records the source work and pages.
 
+---
+
+## Related settings — shared worlds and kindred tone
+
+Settings are not independent of one another. Several share a world outright — different games
+covering one far-future setting from different angles, or two settings covering one pre-modern
+world. Others are unrelated in world but close in **tone and register**: similar grit, similar
+scale of heroism, similar attitude to mortality. Both kinds of kinship make content converted for
+one setting — characters, creatures, locations, adventures, threats — a productive starting point
+for a related one, at much lower cost than authoring or converting it fresh.
+
+Kinship is declared in exactly **one place**: `relations:` in the settings catalogue
+(`settings.yaml`, repository root), as a pairwise, typed, unordered relation:
+
+```yaml
+relations:
+  - a: <setting id>
+    b: <setting id>
+    kind: same-world      # or: kindred-tone
+```
+
+A relation names two settings and one relation kind, and is recorded once — it implies both
+directions, so there is never a second statement to fall out of sync with the first. The two
+kinds are distinct, never conflated, and a pair may not hold both at once:
+
+- **`same-world`** — different games within one setting. Content is largely **portable as-is**:
+  a creature, location or NPC can be borrowed with no reskinning.
+- **`kindred-tone`** — different worlds, close enough in tone contract that a borrowed entity's
+  **mechanical shape carries over** (stats, danger rating, structure) but its **vocabulary and
+  flavour must be reskinned** for the destination setting.
+
+`tools/check_settings_catalogue.py` validates `relations:` against `settings:`: every relation
+must name two distinct, existing setting ids, and a pair may not be declared more than once or
+under both kinds at once.
+
+**Kinship is always author-asserted, never derived from the tone contract.** The tone contract's
+seven dimensions (`prophecy`, `victory`, `power_curve`, `scope`, `scale_drift`, `mortality`,
+`register`) are each a small closed set of categorical values, not a scalar — deriving a
+"kindred" threshold from them would mean inventing a distance function over a mixed categorical
+space that the contract was never designed to support, which is precisely the kind of fabricated
+precision [`27-tooling.md`](27-tooling.md) warns against when there is no principled derivation to
+check. An author's judgement that two settings are kindred is the honest fit; the checker
+validates the *declaration's structure*, never its truth.
+
+### Borrowing content, and its provenance
+
+Borrowing an entity from a related setting carries the same provenance discipline conversion
+already requires — the borrowed entity is stamped, on the entity itself:
+
+```yaml
+borrowed:
+  from_setting: <origin setting id>
+  from_entity: <origin entity id>
+  relation: same-world      # or: kindred-tone -- must match a declared relation between the two
+  on: <date>
+```
+
+This mirrors `converted: {rules, on}` above, and an entity carries **at most one of the two,
+never both**: `converted:` means "derived from a published source"; `borrowed:` means "derived
+from a sibling Wyrd setting." Borrowing between two settings with **no declared relation** is not
+a distinct reuse path at all — it is an ordinary fresh conversion, and follows the conversion
+rules above instead.
+
+A borrowed entity's `borrowed:` stamp names only its *immediate* origin. If that origin entity is
+itself `converted:` or `borrowed:`, that stamp stays on the origin and the chain is followed one
+hop at a time — never flattened into a single record, since flattening would lose exactly the
+trail this discipline exists to keep.
+
+Nothing about this mechanism moves a private setting's content into a public place: the relation
+declaration and the provenance schema are public (they name settings and entity ids, nothing
+more); the settings and their entities themselves live, and stay, in their own `wyrd-setting-*`
+repositories, exactly as private or public as the setting already was
+([`../../CLAUDE.md`](../../CLAUDE.md)).
+
+This specification covers declaring kinship and recording provenance; it does not include tooling
+that performs an actual borrow (copying and reskinning an entity's file from one setting
+repository into another) — that remains future work built on this schema.
+
 ## A worked example: a mythic-fantasy setting
 
 Useful because it is unlike the settings already built, so it tests the boundary.
