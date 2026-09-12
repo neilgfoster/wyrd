@@ -31,8 +31,10 @@ deterministic corpus index files exist and contain records for every present lib
    corpus indexes on disk, and reports what it built.
 2. **Given** a setting directory where Pass 0's catalogue already exists but a library file has
    changed since the catalogue's content hash was recorded, **When** the command runs, **Then**
-   only that file's catalogue record and corpus index contributions are rebuilt; every other
-   already-indexed document is left untouched.
+   Pass 0's own catalogue step rebuilds only that file's record (unchanged records are left
+   byte-for-byte alone, per #100); the corpus-index step detects the changed hash and rebuilds
+   its whole four-index set from every present document (research.md's whole-set-rebuild
+   decision, since `build_setting_corpus_indexes` is not an incremental, per-document API).
 
 ---
 
