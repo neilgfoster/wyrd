@@ -12,8 +12,15 @@
 #   indexed         a real index exists over the library
 #   playable        indexed and confirmed usable at the table
 #
-# `group:` (optional) names a shared world for settings that are distinct entries within one
-# (e.g. `wh40k`, `maelstrom`) — data only; no engine behaviour reads it yet.
+# `relations:` (below the catalogue) declares kinship between settings, pairwise and typed:
+#   same-world     different games covering one world; content is largely portable as-is
+#   kindred-tone   different worlds, close enough in tone/register that content is a reuse
+#                  starting point, but needs reskinning — mechanical shape carries, vocabulary
+#                  and flavour do not
+# A relation is recorded once, as an unordered pair, and implies both directions. Kinship is
+# always author-asserted, never derived from the tone contract (docs/design/24-authoring-a-setting.md,
+# docs/adr/0004-tone-belongs-to-the-setting.md) — the contract's dimensions are categorical
+# judgements, not a distance metric, so no automatic threshold would be more than a guess.
 #
 # A setting derived from copyrighted material is PRIVATE and its repository will not be
 # reachable by anyone but its owner. Such entries are listed so the catalogue is complete,
@@ -51,35 +58,30 @@ settings:
     repo: wyrd-setting-wh40k-darkheresy
     visibility: private
     status: library-loaded
-    group: wh40k
 
   - id: wh40k-onlywar
     title: "Only War — the Spinward Front"
     repo: wyrd-setting-wh40k-onlywar
     visibility: private
     status: library-loaded
-    group: wh40k
 
   - id: wh40k-roguetrader
     title: "Rogue Trader — the Koronus Expanse"
     repo: wyrd-setting-wh40k-roguetrader
     visibility: private
     status: library-loaded
-    group: wh40k
 
   - id: wh40k-blackcrusade
     title: "Black Crusade"
     repo: wyrd-setting-wh40k-blackcrusade
     visibility: private
     status: library-loaded
-    group: wh40k
 
   - id: wh40k-deathwatch
     title: "Deathwatch"
     repo: wyrd-setting-wh40k-deathwatch
     visibility: private
     status: library-loaded
-    group: wh40k
 
   - id: tor
     title: "The One Ring — Wilderland"
@@ -92,14 +94,12 @@ settings:
     repo: wyrd-setting-maelstrom
     visibility: private
     status: library-loaded
-    group: maelstrom
 
   - id: maelstrom-domesday
     title: "Maelstrom: Domesday"
     repo: wyrd-setting-maelstrom-domesday
     visibility: private
     status: library-loaded
-    group: maelstrom
 
   - id: titan
     title: "Titan"
@@ -114,3 +114,48 @@ settings:
     status: library-loaded
 
 # Candidates, unstarted: D6 Star Wars, Mordheim, Stars Without Number.
+
+relations:
+  - a: wh40k-darkheresy
+    b: wh40k-onlywar
+    kind: same-world
+
+  - a: wh40k-darkheresy
+    b: wh40k-roguetrader
+    kind: same-world
+
+  - a: wh40k-darkheresy
+    b: wh40k-blackcrusade
+    kind: same-world
+
+  - a: wh40k-darkheresy
+    b: wh40k-deathwatch
+    kind: same-world
+
+  - a: wh40k-onlywar
+    b: wh40k-roguetrader
+    kind: same-world
+
+  - a: wh40k-onlywar
+    b: wh40k-blackcrusade
+    kind: same-world
+
+  - a: wh40k-onlywar
+    b: wh40k-deathwatch
+    kind: same-world
+
+  - a: wh40k-roguetrader
+    b: wh40k-blackcrusade
+    kind: same-world
+
+  - a: wh40k-roguetrader
+    b: wh40k-deathwatch
+    kind: same-world
+
+  - a: wh40k-blackcrusade
+    b: wh40k-deathwatch
+    kind: same-world
+
+  - a: maelstrom
+    b: maelstrom-domesday
+    kind: same-world
