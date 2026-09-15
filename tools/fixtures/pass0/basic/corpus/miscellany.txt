@@ -1,0 +1,1 @@
+A fixture standing in for extracted plain text from a file with no classification signal at all.
