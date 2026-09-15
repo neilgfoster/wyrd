@@ -1,0 +1,9 @@
+This is the opening line of a small fixture document used only by
+test_corpus_excerpt.py. Somewhere in the middle of this text sits a
+distinctive phrase: the wandering lantern-keeper walks the sea wall
+at dusk. Nothing about this fixture is meant to resemble real corpus
+content -- it exists purely to give read_excerpt something real to
+slice, with a known phrase at a known offset for the tests to assert
+against. The text continues for a little longer after the phrase so
+that a window on either side has real content to return, and then it
+simply ends here.

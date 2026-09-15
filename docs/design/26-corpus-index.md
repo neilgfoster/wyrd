@@ -216,21 +216,27 @@ Tagging beats duplicating; scoping beats sharing.
 ## Retrieval
 
 ```
-wyrd find noun "<a name>"
-wyrd find rule "fear test"
-wyrd find table --dice d100 --about transformation
-wyrd find scenario --hook conspiracy --tone investigation --length short
-wyrd find doc --work "<periodical>" --issue 98
+wyrd find-noun --setting <setting> --name "<a name>"
+wyrd find-rule --setting <setting> --term "fear test"
+wyrd find-table --setting <setting> --dice d100 --about transformation
 ```
 
 **Plain `grep` is the fallback and is usually fast enough** — a few tens of MB of text is
 nothing. The indexes exist not for speed but to answer questions grep cannot: what exists,
 what kind of thing it is, and which of forty mentions is the one that matters.
 
-Every result returns `doc + offset`, so the next step is always a bounded read of the
-surrounding passage rather than loading a whole book into context. That bounded read is the
-point — it keeps corpus access compatible with the memory tiers in
-[`02-architecture.md`](02-architecture.md).
+Every result returns `doc + offset` **and its resolved excerpt** — the bounded read is not a
+manual next step a caller performs by hand; `find-noun`/`find-rule`/`find-table` already resolve
+it, reading the matching document's `corpus/` text and returning the surrounding passage
+alongside the coordinates. That bounded read is the point — it keeps corpus access compatible
+with the memory tiers in [`02-architecture.md`](02-architecture.md), and a caller never has to
+load a whole extracted document into context to see one passage. A result whose excerpt cannot
+be resolved (a stale offset, a missing corpus file) still appears, with a `null` excerpt, rather
+than being dropped — the coordinate lookup and the excerpt resolution are independent.
+
+Bibliographic and thematic lookups (`find_doc`, `find_scenario`) remain library-only entry
+points, not yet exposed as their own CLI verbs — a bibliographic result carries no offset to
+resolve, and a scenario result's relevant unit is the whole record, not a passage.
 
 ---
 

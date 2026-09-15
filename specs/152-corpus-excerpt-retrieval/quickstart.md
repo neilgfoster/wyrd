@@ -42,8 +42,9 @@ print(corpus_excerpt.read_excerpt([], 'titan', __import__('pathlib').Path('.'), 
 ## 3. CLI end-to-end
 
 ```bash
-cd ../wyrd-setting-titan
-python3 -m wyrd.client find noun --setting titan --name Azzur
+cd /root/source/neilgfoster/wyrd
+PYTHONPATH=engine python3 -m wyrd.client find-noun --setting titan --name Azzur \
+  --setting-dir ../wyrd-setting-titan
 ```
 
 **Expected outcome**: JSON with at least one result naming `doc`, `offset`, and a non-null
