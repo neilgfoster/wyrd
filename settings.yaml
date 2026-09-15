@@ -105,7 +105,7 @@ settings:
     title: "Titan"
     repo: wyrd-setting-titan
     visibility: private
-    status: library-loaded
+    status: playable
 
   - id: darkfuture
     title: "Dark Future"
