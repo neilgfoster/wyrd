@@ -48,7 +48,7 @@ from wyrd import (  # noqa: E402
 #: The one career/allocation this suite's character is created with -- an entry career granting
 #: `stealth`/`swordplay`, matching `tests/engine/test_creation.py`'s own `CAREER`/`VALID_ACTIONS`
 #: (open+raise costs verified there, not re-derived here).
-CAREER = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+CAREER = {"skills": ["stealth", "swordplay"], "entry_point": True}
 VALID_ACTIONS = (
     [
         {"action": "open", "skill": "stealth"},

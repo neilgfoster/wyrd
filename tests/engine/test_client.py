@@ -356,7 +356,7 @@ class ValidateAllocationCliTest(unittest.TestCase):
         self.assertEqual(payload["name"], "validate-allocation")
 
     def test_valid_allocation(self):
-        career_json = json.dumps({"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True})
+        career_json = json.dumps({"skills": ["stealth", "swordplay"], "entry_point": True})
         actions_json = json.dumps(
             [{"action": "open", "skill": "stealth"}, {"action": "open", "skill": "swordplay"}]
             + [{"action": "raise", "skill": "stealth"}] * 6
@@ -375,7 +375,7 @@ class ValidateAllocationCliTest(unittest.TestCase):
         self.assertTrue(payload["valid"])
 
     def test_invalid_allocation_still_exits_zero(self):
-        career_json = json.dumps({"skills": {"stealth": 55}, "entry_point": True})
+        career_json = json.dumps({"skills": ["stealth"], "entry_point": True})
         exit_code, output = _run(
             ["validate-allocation", "--career-json", career_json, "--actions-json", "[]"]
         )
@@ -405,7 +405,7 @@ class CreateCharacterCliTest(unittest.TestCase):
         self.assertEqual(payload["name"], "create-character")
 
     def test_valid_creation_produces_a_loadable_file(self):
-        career_json = json.dumps({"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True})
+        career_json = json.dumps({"skills": ["stealth", "swordplay"], "entry_point": True})
         actions_json = json.dumps(
             [{"action": "open", "skill": "stealth"}, {"action": "open", "skill": "swordplay"}]
             + [{"action": "raise", "skill": "stealth"}] * 6
@@ -437,7 +437,7 @@ class CreateCharacterCliTest(unittest.TestCase):
         self.assertEqual(json.loads(load_output)["frontmatter"]["name"], "Aria")
 
     def test_rejected_allocation_writes_no_file(self):
-        career_json = json.dumps({"skills": {"stealth": 55}, "entry_point": True})
+        career_json = json.dumps({"skills": ["stealth"], "entry_point": True})
         exit_code, output = _run(
             [
                 "create-character",
@@ -735,15 +735,15 @@ class AdvanceAwardTest(unittest.TestCase):
 
 
 class SpendAdvanceTest(unittest.TestCase):
-    CAREER = json.dumps({"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}})
+    CAREER = json.dumps({"id": "guard", "entry": True, "skills": ["blade", "watch"]})
     CAREERS = json.dumps(
         [
-            {"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}},
+            {"id": "guard", "entry": True, "skills": ["blade", "watch"]},
             {
                 "id": "guard-captain",
                 "entry": False,
                 "prerequisites": ["guard"],
-                "skills": {"blade": 70, "watch": 70, "command": 70},
+                "skills": ["blade", "watch", "command"],
             },
         ]
     )

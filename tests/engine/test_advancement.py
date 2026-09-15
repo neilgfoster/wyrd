@@ -119,13 +119,13 @@ class SessionBoundaryTest(unittest.TestCase):
         self.assertEqual(advancement.begin_session(_fresh())["advances_unspent"], 0)
 
 
-GUARD = {"id": "guard", "entry": True, "skills": {"blade": 70, "watch": 70}}
-SOLDIER = {"id": "soldier", "entry": True, "skills": {"blade": 70, "drill": 70}}
+GUARD = {"id": "guard", "entry": True, "skills": ["blade", "watch"]}
+SOLDIER = {"id": "soldier", "entry": True, "skills": ["blade", "drill"]}
 GUARD_CAPTAIN = {
     "id": "guard-captain",
     "entry": False,
     "prerequisites": ["guard", "soldier"],
-    "skills": {"blade": 70, "watch": 70, "command": 70},
+    "skills": ["blade", "watch", "command"],
 }
 CAREERS = [GUARD, SOLDIER, GUARD_CAPTAIN]
 
@@ -184,7 +184,9 @@ class SpendRaiseTest(unittest.TestCase):
 
     def test_an_ancestry_widens_what_a_spend_may_raise(self):
         # spec.md Assumptions: the spend reuses career.effective_cap rather than a second rule.
-        ancestry = {"skills": {"drill": 60}}
+        # An ancestry widens which skills are eligible, never the flat cap that applies once one
+        # of them is (docs/design/03-rules.md section 6).
+        ancestry = {"skills": ["drill"]}
         result = advancement.spend_advance(
             "raise", _view(skills={"drill": 40}), GUARD, ancestry=ancestry, skill="drill"
         )
@@ -388,16 +390,6 @@ class CareerCompletionTest(unittest.TestCase):
         self.assertEqual(view["skills"]["watch"], rules.SKILL_OPEN_VALUE)
         self.assertEqual(view["marks"], [])
 
-    def test_an_open_that_does_complete_the_career_pays(self):
-        # The payout keys off the predicate, not off which spend was made: a career whose last
-        # granted skill is capped at the opening value is finished by opening it.
-        scout = {"id": "scout", "entry": True, "skills": {"blade": 70, "signs": 25}}
-        view = advancement.spend_advance(
-            "open", _view(skills={"blade": 70}, career="scout"), scout, skill="signs"
-        )["view"]
-        self.assertEqual(view["marks"], [{"career": "scout"}])
-        self.assertEqual(view["stamina_max"], creation.STARTING_STAMINA + 1)
-
     def test_the_completing_spend_still_costs_exactly_one_advance(self):
         # spec.md US1 scenario 4: the payout is a consequence, never a second charge.
         result = advancement.spend_advance(
@@ -411,7 +403,7 @@ class CareerCompletionTest(unittest.TestCase):
         paid = advancement.spend_advance(
             "raise", self._one_short(advances=3), GUARD, skill="blade"
         )["view"]
-        ancestry = {"id": "hill-folk", "skills": {"ride": 70}}
+        ancestry = {"id": "hill-folk", "skills": ["ride"]}
         again = advancement.spend_advance("open", paid, GUARD, ancestry=ancestry, skill="ride")[
             "view"
         ]
