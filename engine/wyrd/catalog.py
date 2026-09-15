@@ -710,4 +710,266 @@ TOOLS: dict[str, dict] = {
             "required": ["setting"],
         },
     },
+    "session-context": {
+        "name": "session-context",
+        "description": (
+            "The Always-loaded memory tier in one call: the player character, present "
+            "companions, open threads worth surfacing, the recap, and the contract "
+            "(docs/design/02-architecture.md's Memory tiers)."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "get": {
+        "name": "get",
+        "description": (
+            "Resolve one entity to its effective form (setting + overlay, or "
+            "chronicle-native). Errors on an id that does not resolve, distinct from a "
+            "query that legitimately matches nothing."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["id", "chronicle-dir"],
+        },
+    },
+    "find": {
+        "name": "find",
+        "description": (
+            "A general query over the chronicle's effective entity set: entities matching "
+            "every given filter (type required; status and tag optional)."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "type": {"type": "string"},
+                "status": {"type": "string"},
+                "tag": {"type": "string"},
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["type", "chronicle-dir"],
+        },
+    },
+    "party": {
+        "name": "party",
+        "description": (
+            "A named query: entities with role: companion and status: with-party -- a "
+            "thin wrapper over the same query pattern find generalises."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "threads": {
+        "name": "threads",
+        "description": (
+            "A named query: the full status: open thread set, ordered by heat descending "
+            "-- broader than session-context's heat >= 3 slice."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "threats": {
+        "name": "threats",
+        "description": ("A named query: entities carrying an active threat block (imminence > 0)."),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "log": {
+        "name": "log",
+        "description": (
+            "Read the Archival memory tier (log/), in beat order: the last N entries, or "
+            "every entry from a named beat onward. Full-text search is deferred."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "last": {"type": "integer", "minimum": 0},
+                "since": {"type": "string"},
+                "chronicle-dir": {"type": "string"},
+                "chronicle-name": {"type": "string"},
+            },
+            "required": ["chronicle-dir", "chronicle-name"],
+        },
+    },
+    "save": {
+        "name": "save",
+        "description": "Validate and write chronicle state to chronicle.yaml, atomically.",
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "state-json": {"type": "string"},
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["state-json", "chronicle-dir"],
+        },
+    },
+    "load": {
+        "name": "load",
+        "description": "Read and schema-validate chronicle.yaml.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "validate": {
+        "name": "validate",
+        "description": (
+            "Schema-validate chronicle.yaml, reporting the specific violation rather than "
+            "merely pass/fail."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "recap": {
+        "name": "recap",
+        "description": "Regenerate recap.md from current chronicle state.",
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "chronicle-dir": {"type": "string"},
+                "where": {"type": "string"},
+                "changes": {"type": "array", "items": {"type": "string"}},
+                "body-mind": {"type": "string"},
+            },
+            "required": ["chronicle-dir"],
+        },
+    },
+    "advance-time": {
+        "name": "advance-time",
+        "description": (
+            "Advance the calendar by a number of days, and resolve each active threat's "
+            "expected-value activation and effects across that span."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "days": {"type": "integer", "minimum": 0},
+                "seed": {"type": "integer"},
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["days", "chronicle-dir"],
+        },
+    },
+    "threat-check": {
+        "name": "threat-check",
+        "description": "Resolve a single threat's activation roll, on demand.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "seed": {"type": "integer"},
+                "chronicle-dir": {"type": "string"},
+            },
+            "required": ["id", "chronicle-dir"],
+        },
+    },
 }
