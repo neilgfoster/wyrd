@@ -111,7 +111,7 @@ settings:
     title: "Dark Future"
     repo: wyrd-setting-darkfuture
     visibility: private
-    status: library-loaded
+    status: playable
 
 # Candidates, unstarted: D6 Star Wars, Mordheim, Stars Without Number.
 
