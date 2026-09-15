@@ -1,0 +1,21 @@
+name: basic-fixture
+title: "Basic Fixture"
+line: fantasy
+requires_engine: ">=0.1.0"
+version: 0.1.0
+description: "A minimal setting_build.py test fixture."
+
+tone:
+  prophecy: forbidden
+  victory: mitigation
+  power_curve: flat
+  scope: personal
+  scale_drift: suppressed
+  mortality: high
+  register: "test fixture, not a real setting"
+
+overrides:
+  disable: []
+  rename: {}
+  tables: {}
+  extend: {}
