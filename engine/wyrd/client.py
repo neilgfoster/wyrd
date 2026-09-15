@@ -312,6 +312,26 @@ def _build_parser() -> argparse.ArgumentParser:
             "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
         )
 
+    if "downtime" in TOOLS:
+        downtime_parser = subparsers.add_parser("downtime", help=TOOLS["downtime"]["description"])
+        downtime_parser.add_argument("--action", required=True)
+        downtime_parser.add_argument("--destination", default=None)
+        downtime_parser.add_argument("--standing", type=int, default=None)
+        downtime_parser.add_argument("--coin", type=int, default=None)
+        downtime_parser.add_argument("--trade", default=None)
+        downtime_parser.add_argument("--wound-id", default=None)
+        downtime_parser.add_argument("--wounds-json", default=None)
+        downtime_parser.add_argument("--stamina-max", type=int, default=None)
+
+    if "rally" in TOOLS:
+        rally_parser = subparsers.add_parser("rally", help=TOOLS["rally"]["description"])
+        rally_parser.add_argument("--strain", type=int, required=True)
+        rally_parser.add_argument("--stamina", type=int, required=True)
+        rally_parser.add_argument("--stamina-max", type=int, required=True)
+        rally_parser.add_argument("--advancement-record-json", required=True)
+        rally_parser.add_argument("--trigger", default=None)
+        rally_parser.add_argument("--pending-json", default=None)
+
     if "threat-check" in TOOLS:
         threat_check_parser = subparsers.add_parser(
             "threat-check", help=TOOLS["threat-check"]["description"]
@@ -695,6 +715,39 @@ def _run_threat_check(args: argparse.Namespace) -> dict:
         return {"error": {"verb": "threat-check", "reason": str(exc)}}
 
 
+def _run_downtime(args: argparse.Namespace) -> dict:
+    try:
+        wounds = json.loads(args.wounds_json) if args.wounds_json is not None else None
+        return verbs.downtime(
+            action=args.action,
+            destination=args.destination,
+            standing=args.standing,
+            coin=args.coin,
+            trade=args.trade,
+            wound_id=args.wound_id,
+            wounds=wounds,
+            stamina_max=args.stamina_max,
+        )
+    except (ValueError, json.JSONDecodeError) as exc:
+        return {"error": {"verb": "downtime", "reason": str(exc)}}
+
+
+def _run_rally(args: argparse.Namespace) -> dict:
+    try:
+        advancement_record = json.loads(args.advancement_record_json)
+        pending = json.loads(args.pending_json) if args.pending_json is not None else None
+        return verbs.rally(
+            strain=args.strain,
+            stamina=args.stamina,
+            stamina_max=args.stamina_max,
+            advancement_record=advancement_record,
+            trigger=args.trigger,
+            pending=pending,
+        )
+    except (ValueError, json.JSONDecodeError) as exc:
+        return {"error": {"verb": "rally", "reason": str(exc)}}
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -849,6 +902,10 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_advance_time(args)
     elif args.verb == "threat-check":
         result = _run_threat_check(args)
+    elif args.verb == "downtime":
+        result = _run_downtime(args)
+    elif args.verb == "rally":
+        result = _run_rally(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

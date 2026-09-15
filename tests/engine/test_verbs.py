@@ -659,5 +659,131 @@ class TrackVerbTest(unittest.TestCase):
         self.assertEqual(result["label"], "shadow")
 
 
+class DowntimeVerbTest(unittest.TestCase):
+    def test_upkeep_home_is_a_no_op(self):
+        result = verbs.downtime(action="upkeep", destination="home", standing=3, coin=5)
+        self.assertEqual(result["verb"], "downtime")
+        self.assertEqual(result["action"], "upkeep")
+        self.assertEqual(result["standing"], 3)
+        self.assertEqual(result["coin"], 5)
+        self.assertEqual(result["trade"], "none")
+
+    def test_upkeep_away_standing_trade(self):
+        result = verbs.downtime(
+            action="upkeep", destination="away", standing=3, coin=5, trade="standing"
+        )
+        self.assertEqual(result["standing"], 2)
+        self.assertEqual(result["coin"], 5)
+        self.assertEqual(result["trade"], "standing")
+
+    def test_upkeep_away_coin_trade(self):
+        result = verbs.downtime(
+            action="upkeep", destination="away", standing=3, coin=5, trade="coin"
+        )
+        self.assertEqual(result["standing"], 3)
+        self.assertEqual(result["coin"], 2)
+        self.assertEqual(result["trade"], "coin")
+
+    def test_upkeep_away_insufficient_coin_is_refused(self):
+        result = verbs.downtime(
+            action="upkeep", destination="away", standing=3, coin=1, trade="coin"
+        )
+        self.assertIsNone(result["trade"])
+        self.assertIn("reason", result)
+        self.assertEqual(result["standing"], 3)
+        self.assertEqual(result["coin"], 1)
+
+    def test_rest_returns_stamina_max_unconditionally(self):
+        result = verbs.downtime(action="rest", stamina_max=8)
+        self.assertEqual(result["verb"], "downtime")
+        self.assertEqual(result["action"], "rest")
+        self.assertEqual(result["stamina"], 8)
+
+    def test_mend_steps_the_wound_one_grade(self):
+        wounds = [{"id": "w1", "effect": {"skill": -10}, "recurring": False, "closed": None}]
+        result = verbs.downtime(action="mend", wound_id="w1", wounds=wounds)
+        self.assertTrue(result["success"])
+        self.assertFalse(result["closed"])
+        self.assertEqual(result["wounds"][0]["effect"], {"skill": -5})
+
+    def test_mend_closes_at_the_ladder_end(self):
+        wounds = [{"id": "w1", "effect": {"stamina_max": -1}, "recurring": False, "closed": None}]
+        result = verbs.downtime(action="mend", wound_id="w1", wounds=wounds)
+        self.assertTrue(result["success"])
+        self.assertTrue(result["closed"])
+        self.assertEqual(result["wounds"][0]["effect"], {})
+
+    def test_mend_refuses_a_recurring_wound(self):
+        wounds = [{"id": "w1", "effect": {"dread": 1}, "recurring": True, "closed": None}]
+        result = verbs.downtime(action="mend", wound_id="w1", wounds=wounds)
+        self.assertFalse(result["success"])
+        self.assertEqual(result["reason"], "recurring")
+
+    def test_mend_refuses_an_unknown_wound(self):
+        result = verbs.downtime(action="mend", wound_id="nope", wounds=[])
+        self.assertFalse(result["success"])
+        self.assertEqual(result["reason"], "unknown_wound")
+
+    def test_unknown_action_raises(self):
+        with self.assertRaises(ValueError):
+            verbs.downtime(action="destination")
+
+
+class RallyVerbTest(unittest.TestCase):
+    def test_recovery_with_no_trigger(self):
+        result = verbs.rally(
+            strain=2,
+            stamina=3,
+            stamina_max=8,
+            advancement_record={"triggers": [], "advances_unspent": 0},
+        )
+        self.assertEqual(result["verb"], "rally")
+        self.assertEqual(result["strain"], 1)
+        self.assertEqual(result["stamina"], 4)
+        self.assertIsNone(result["award"])
+        self.assertIsNone(result["pending"])
+
+    def test_recovery_with_an_accepted_trigger_reports_an_award(self):
+        result = verbs.rally(
+            strain=0,
+            stamina=8,
+            stamina_max=8,
+            advancement_record={"triggers": [], "advances_unspent": 0},
+            trigger="learned",
+        )
+        self.assertEqual(result["award"]["awarded"], True)
+
+    def test_recovery_with_a_refused_trigger_still_recovers(self):
+        result = verbs.rally(
+            strain=2,
+            stamina=3,
+            stamina_max=8,
+            advancement_record={"triggers": [], "advances_unspent": 0},
+            trigger="not-a-real-trigger",
+        )
+        self.assertEqual(result["strain"], 1)
+        self.assertEqual(result["stamina"], 4)
+        self.assertFalse(result["award"]["awarded"])
+
+    def test_never_calls_a_commit_callback(self):
+        calls = []
+        # verbs.rally accepts no `commit` parameter of its own -- confirms the CLI wrapper
+        # never exposes one (research.md: committing is the calling skill's own git step).
+        self.assertNotIn(
+            "commit", verbs.rally.__code__.co_varnames[: verbs.rally.__code__.co_argcount]
+        )
+        self.assertEqual(calls, [])
+
+    def test_discards_a_pending_rolled_proposal(self):
+        result = verbs.rally(
+            strain=0,
+            stamina=0,
+            stamina_max=8,
+            advancement_record={"triggers": [], "advances_unspent": 0},
+            pending={"rolled": None},
+        )
+        self.assertEqual(result["pending"], {"rolled": None})
+
+
 if __name__ == "__main__":
     unittest.main()

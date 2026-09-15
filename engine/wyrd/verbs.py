@@ -25,7 +25,9 @@ from wyrd import (
     rules,
     state,
 )
+from wyrd import downtime as downtime_module
 from wyrd import log as log_module
+from wyrd import rally as rally_module
 from wyrd import threat as threat_module
 
 
@@ -693,3 +695,58 @@ def threat_check(chronicle_dir: pathlib.Path, threat_id: str, *, seed: int | Non
     wyrd_roll = rules.roll_d100(seed=seed)
     activated = threat_module.check_activation(imminence, wyrd_roll)
     return {"verb": "threat-check", "id": threat_id, "activated": activated, "roll": wyrd_roll}
+
+
+def downtime(
+    action: str,
+    *,
+    destination: str | None = None,
+    standing: int | None = None,
+    coin: int | None = None,
+    trade: str | None = None,
+    wound_id: str | None = None,
+    wounds: list[dict] | None = None,
+    stamina_max: int | None = None,
+) -> dict:
+    """Resolve the `downtime` verb: dispatch on `action` to `downtime.py`'s `apply_upkeep`,
+    `apply_mend` or `apply_rest`, merging `{"verb": "downtime", "action": action}` into whichever
+    result it returns. Raises ValueError for an unknown `action` or a missing required parameter
+    for the chosen one -- this wrapper adds no arithmetic of its own (contracts/cli-verbs.md)."""
+    if action == "upkeep":
+        if destination is None or standing is None or coin is None:
+            raise ValueError("downtime --action upkeep requires destination, standing and coin")
+        result = downtime_module.apply_upkeep(destination, standing, coin, trade=trade)
+    elif action == "mend":
+        if wound_id is None or wounds is None:
+            raise ValueError("downtime --action mend requires wound_id and wounds")
+        result = downtime_module.apply_mend(wound_id, wounds)
+    elif action == "rest":
+        if stamina_max is None:
+            raise ValueError("downtime --action rest requires stamina_max")
+        result = {"stamina": downtime_module.apply_rest(stamina_max)}
+    else:
+        raise ValueError(f"unknown downtime action: {action!r}")
+    return {"verb": "downtime", "action": action, **result}
+
+
+def rally(
+    strain: int,
+    stamina: int,
+    stamina_max: int,
+    advancement_record: dict,
+    *,
+    trigger: str | None = None,
+    pending: dict | None = None,
+) -> dict:
+    """Resolve the `rally` verb: `rally.py`'s `apply_rally`, always called with `commit=None`
+    (research.md -- committing is the calling skill's own git step, not this verb's)."""
+    result = rally_module.apply_rally(
+        strain,
+        stamina,
+        stamina_max,
+        advancement_record,
+        trigger=trigger,
+        pending=pending,
+        commit=None,
+    )
+    return {"verb": "rally", **result}

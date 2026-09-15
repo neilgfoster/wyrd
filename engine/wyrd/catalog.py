@@ -972,4 +972,58 @@ TOOLS: dict[str, dict] = {
             "required": ["id", "chronicle-dir"],
         },
     },
+    "downtime": {
+        "name": "downtime",
+        "description": (
+            "Resolve one Downtime step -- Upkeep's Standing/coin trade away from home, Mend's "
+            "one-step wound ladder, or Rest's unconditional Stamina-to-maximum -- selected by "
+            "--action (docs/design/16-session.md)."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "action": {"type": "string", "enum": ["upkeep", "mend", "rest"]},
+                "destination": {"type": "string", "enum": ["home", "away"]},
+                "standing": {"type": "integer"},
+                "coin": {"type": "integer"},
+                "trade": {"type": "string", "enum": ["standing", "coin"]},
+                "wound-id": {"type": "string"},
+                "wounds-json": {"type": "string"},
+                "stamina-max": {"type": "integer"},
+            },
+            "required": ["action"],
+        },
+    },
+    "rally": {
+        "name": "rally",
+        "description": (
+            "Resolve a Rally: fixed Strain/Stamina recovery, discard of any proposal left open "
+            "in pending.rolled, and an optional advance award for a claimed trigger "
+            "(docs/design/16-session.md). Never commits -- the calling skill's own git step."
+        ),
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "strain": {"type": "integer"},
+                "stamina": {"type": "integer"},
+                "stamina-max": {"type": "integer"},
+                "advancement-record-json": {"type": "string"},
+                "trigger": {"type": "string"},
+                "pending-json": {"type": "string"},
+            },
+            "required": ["strain", "stamina", "stamina-max", "advancement-record-json"],
+        },
+    },
 }
