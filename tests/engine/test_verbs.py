@@ -24,14 +24,15 @@ def _write_entity(path: pathlib.Path, frontmatter_lines: list[str]) -> None:
 def _make_chronicle_dir(tmp_path: pathlib.Path) -> pathlib.Path:
     """A minimal on-disk chronicle: setting/overlay/entities/engine/log dirs, a
     schema-conformant chronicle.yaml, and a handful of entities using type/status
-    combinations `entity.validate()` already accepts (place/organisation, `status: complete`) --
-    a real companion (`status: with-party`) or thread (`status: open`) file cannot currently be
-    loaded through `entity.load_set` at all: `entity.py`'s single global `STATUSES =
-    ("stub", "drafted", "complete")` check rejects both values outright, even though
-    docs/design/22-state.md documents them as those two types' own status vocabularies. This is
-    a real, pre-existing gap in `entity.py`, out of scope for #402's CLI-wiring feature to fix;
-    verbs whose predicate depends on `with-party`/`open` are instead tested directly against
-    in-memory entity dicts below, matching `tests/engine/test_loadtier.py`'s own convention.
+    combinations `entity.validate()` accepts (place/organisation, `status: complete`).
+
+    A real companion (`status: with-party`) or thread (`status: open`) file loads fine through
+    `entity.load_set` as of #408 -- `entity.py` now checks each type's own documented status
+    vocabulary (docs/design/22-state.md) rather than one global list. Verbs whose predicate
+    depends on `with-party`/`open` are still tested directly against in-memory entity dicts
+    below, matching `tests/engine/test_loadtier.py`'s own convention -- that choice was never
+    the gap #408 fixed, and unrelated to whether such a file can now be loaded from disk (see
+    `tests/engine/test_entity.py`'s `EndToEndStatusVocabularyTest` for that end-to-end coverage).
     """
     for name in ("setting", "overlay", "entities", "engine", "log"):
         (tmp_path / name).mkdir(parents=True, exist_ok=True)

@@ -35,6 +35,16 @@ RECURSIVE_TYPES = ("place", "organisation", "arc")
 
 STATUSES = ("stub", "drafted", "complete")
 
+# docs/design/22-state.md documents two closed vocabularies that replace STATUSES outright for
+# the entity shapes named below -- not additional legal values on top of it, and not a linear
+# progression the way STATUSES is. Everything else (place, organisation, arc, beat, creature,
+# item, tracker, lore, and any character whose role is not "companion") keeps the STATUSES
+# default: 25-entities.md's common schema documents `stub | drafted | complete` for every entity
+# and neither design document overrides it for these types, confirmed by reading both in full
+# rather than assumed.
+COMPANION_STATUSES = ("with-party", "away", "dead", "lost", "departed")
+THREAD_STATUSES = ("open", "resolved", "cold", "never-answered")
+
 _ROLES = ("player", "nemesis", "ally", "companion", "bystander", "authority", "quarry")
 _DISPOSITIONS = ("ally", "wary", "hostile", "hunting", "unaware")
 _PLACE_SCALES = ("world", "region", "settlement", "district", "building", "room")
@@ -62,7 +72,11 @@ _SOURCE_REQUIRED_FIELDS = ("work", "licence", "path")
 _SOURCE_OPTIONAL_FIELDS = ("pages",)
 
 # The two legal forward moves through STATUSES; anything else (staying put, skipping a state,
-# moving backward) is rejected by legal_transition().
+# moving backward) is rejected by legal_transition(). This models the authoring-lifecycle
+# vocabulary only: neither COMPANION_STATUSES nor THREAD_STATUSES has a documented ordering
+# (22-state.md never describes one companion/thread status as "further along" than another), so
+# legal_transition() and status_counts() intentionally stay scoped to STATUSES rather than
+# growing a transition table for vocabularies that were never linear.
 _LEGAL_TRANSITIONS = {("stub", "drafted"), ("drafted", "complete")}
 
 # Fields whose value (or whose items) may be `[[wikilink]]`-wrapped references to another
@@ -80,6 +94,22 @@ def resolve_wikilink(value: str) -> str:
     if isinstance(value, str) and value.startswith("[[") and value.endswith("]]"):
         return value[2:-2]
     return value
+
+
+def _status_vocabulary(frontmatter: dict) -> tuple[tuple[str, ...], str]:
+    """The (allowed values, vocabulary name) for this entity's `status`, per 22-state.md.
+
+    Selected by `type` and, for `character`, also by `role`: a companion character
+    (`role: companion`) uses `COMPANION_STATUSES`, a `thread` uses `THREAD_STATUSES`, and every
+    other type/role combination falls back to the default `STATUSES` -- there is no third
+    override documented anywhere, and this is the single place that fact is encoded.
+    """
+    entity_type = frontmatter.get("type")
+    if entity_type == "character" and frontmatter.get("role") == "companion":
+        return COMPANION_STATUSES, "companion"
+    if entity_type == "thread":
+        return THREAD_STATUSES, "thread"
+    return STATUSES, "default"
 
 
 def _validate_connection(connection: dict) -> str | None:
@@ -113,8 +143,12 @@ def validate(frontmatter: dict) -> dict:
         return {"valid": False, "error": f"unknown type '{entity_type}'"}
 
     status = frontmatter["status"]
-    if status not in STATUSES:
-        return {"valid": False, "error": f"invalid status '{status}'"}
+    allowed_statuses, vocabulary = _status_vocabulary(frontmatter)
+    if status not in allowed_statuses:
+        return {
+            "valid": False,
+            "error": f"invalid status '{status}' for {vocabulary} vocabulary {allowed_statuses}",
+        }
 
     for field, allowed in _TYPE_ENUM_FIELDS.get(entity_type, {}).items():
         value = frontmatter.get(field)
