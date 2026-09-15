@@ -118,7 +118,7 @@ class ChangeInvalidatesCacheTests(unittest.TestCase):
         setting_dir = _copy_fixture(FIXTURES, "basic")
         sb.run(setting_dir)
 
-        rulebook = setting_dir / "library" / "core" / "rulebook.md"
+        rulebook = setting_dir / "corpus" / "core" / "rulebook.txt"
         rulebook.write_text(rulebook.read_text() + "\nAn added sentence about dread.\n")
 
         summary = sb.run(setting_dir)
@@ -151,6 +151,14 @@ class ReportingTests(unittest.TestCase):
         self.assertIn("built", summary["corpus"])
         self.assertIn("documents", summary["corpus"])
         self.assertIn("skipped_reason", summary["corpus"])
+        self.assertIn("not_yet_extracted", summary["corpus"])
+
+    def test_text_report_names_the_gap(self):
+        setting_dir = _copy_fixture(FIXTURES, "partial_extraction")
+        summary = sb.run(setting_dir)
+        text = sb._format_text(summary)
+        self.assertIn("Not yet extracted", text)
+        self.assertIn("community/unextracted.md", text)
 
 
 class WorldCategoryAlwaysNoneTests(unittest.TestCase):
@@ -190,6 +198,43 @@ class NoLibraryDirTests(unittest.TestCase):
     def test_missing_library_dir_exits_1(self):
         tmp = Path(tempfile.mkdtemp())
         self.assertEqual(sb.main([str(tmp)]), 1)
+
+
+class NotYetExtractedTests(unittest.TestCase):
+    def test_missing_corpus_file_is_reported_not_raised(self):
+        setting_dir = _copy_fixture(FIXTURES, "partial_extraction")
+        summary = sb.run(setting_dir)
+
+        self.assertIn("community/unextracted.md", summary["corpus"]["not_yet_extracted"])
+        documents = json.loads((setting_dir / "index" / "documents.json").read_text())
+        paths = {d["path"] for d in documents}
+        self.assertIn("core/rulebook.md", paths)
+        self.assertNotIn("community/unextracted.md", paths)
+
+    def test_extraction_appearing_later_triggers_rebuild_and_clears_the_gap(self):
+        setting_dir = _copy_fixture(FIXTURES, "partial_extraction")
+        sb.run(setting_dir)
+
+        missing = setting_dir / "corpus" / "community" / "unextracted.txt"
+        missing.parent.mkdir(parents=True, exist_ok=True)
+        missing.write_text("Now extracted.", encoding="utf-8")
+
+        summary = sb.run(setting_dir)
+        self.assertTrue(summary["corpus"]["built"])
+        self.assertEqual(summary["corpus"]["not_yet_extracted"], [])
+        documents = json.loads((setting_dir / "index" / "documents.json").read_text())
+        self.assertIn("community/unextracted.md", {d["path"] for d in documents})
+
+    def test_extraction_disappearing_reverts_to_not_yet_extracted(self):
+        setting_dir = _copy_fixture(FIXTURES, "basic")
+        sb.run(setting_dir)
+
+        (setting_dir / "corpus" / "core" / "rulebook.txt").unlink()
+
+        summary = sb.run(setting_dir)
+        self.assertIn("core/rulebook.md", summary["corpus"]["not_yet_extracted"])
+        documents = json.loads((setting_dir / "index" / "documents.json").read_text())
+        self.assertNotIn("core/rulebook.md", {d["path"] for d in documents})
 
 
 class NonPresentRecordsExcludedTests(unittest.TestCase):

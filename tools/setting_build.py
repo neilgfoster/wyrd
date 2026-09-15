@@ -89,18 +89,19 @@ def write_corpus_build_cache(setting_dir: Path, setting: str, documents: dict[st
 
 
 def corpus_step_needed(
-    present_records: list[pass0.CatalogueRecord], setting: str, cache: CorpusBuildCache | None
+    current: dict[str, str], setting: str, cache: CorpusBuildCache | None
 ) -> bool:
-    """Whether the corpus-index step must (re)build, per FR-005/FR-006.
+    """Whether the corpus-index step must (re)build (#393).
 
     `True` when there is no prior cache, the setting name differs from the cache's own, or the
-    current present-record `(path, content_hash)` set differs at all from the cache's -- an
-    addition, a removal, or a changed hash. `False` only on an exact match, in which case the
-    corpus-index step does no work this run.
+    current `(path, corpus-text-hash)` set differs at all from the cache's -- an addition, a
+    removal, or a changed hash. `False` only on an exact match, in which case the corpus-index
+    step does no work this run. `current` carries a hash only for present records that have a
+    `corpus/` text file today (#393) -- a record with none is simply absent from this dict, so its
+    extraction appearing or disappearing is itself a difference that triggers a rebuild.
     """
     if cache is None or cache.setting != setting:
         return True
-    current = {r.path: r.content_hash for r in present_records}
     return current != cache.documents
 
 
@@ -129,23 +130,50 @@ def build_corpus_document(record: pass0.CatalogueRecord, text: str, setting: str
     }
 
 
+def corpus_text_path(setting_dir: Path, record_path: str) -> Path:
+    """Where a present catalogue record's extracted text lives (#393): the same relative path
+    under `corpus/` as the record has under `library/`, with its suffix changed to `.txt`."""
+    return setting_dir / "corpus" / Path(record_path).with_suffix(".txt")
+
+
 def run_corpus_step(setting_dir: Path, catalogue: pass0.Catalogue, setting: str) -> dict:
     """Build (or skip) the four deterministic corpus indexes for `setting_dir`'s present
-    documents. Returns the `corpus` report sub-object (FR-007)."""
+    documents. Returns the `corpus` report sub-object (FR-007).
+
+    Reads each present record's text from its `corpus/` counterpart, never from `library/` (#393)
+    -- `library/` holds only source documents, opaque to this step beyond Pass 0's own
+    classification. A present record with no `corpus/` counterpart is excluded from the built
+    indexes and named in the returned `not_yet_extracted` list instead of raising.
+    """
     present = [r for r in catalogue.records.values() if r.status == "present"]
     cache = load_corpus_build_cache(setting_dir)
 
-    if not corpus_step_needed(present, setting, cache):
+    extracted_paths: dict[str, Path] = {}
+    not_yet_extracted: list[str] = []
+    for record in present:
+        corpus_file = corpus_text_path(setting_dir, record.path)
+        if corpus_file.is_file():
+            extracted_paths[record.path] = corpus_file
+        else:
+            not_yet_extracted.append(record.path)
+    not_yet_extracted.sort()
+
+    current_hashes = {path: pass0.hash_file(file) for path, file in extracted_paths.items()}
+
+    if not corpus_step_needed(current_hashes, setting, cache):
         return {
             "built": False,
-            "documents": len(present),
+            "documents": len(extracted_paths),
             "skipped_reason": "no catalogue or corpus-index changes since the last build",
+            "not_yet_extracted": not_yet_extracted,
         }
 
-    library_dir = setting_dir / "library"
     documents = []
     for record in present:
-        text = (library_dir / record.path).read_text(encoding="utf-8")
+        corpus_file = extracted_paths.get(record.path)
+        if corpus_file is None:
+            continue
+        text = corpus_file.read_text(encoding="utf-8")
         documents.append(build_corpus_document(record, text, setting))
 
     indexes = corpus_pipeline.build_setting_corpus_indexes(documents)
@@ -164,9 +192,14 @@ def run_corpus_step(setting_dir: Path, catalogue: pass0.Catalogue, setting: str)
     (index_dir / "tables.json").write_text(
         json.dumps(indexes["tables"], indent=2, sort_keys=False) + "\n", encoding="utf-8"
     )
-    write_corpus_build_cache(setting_dir, setting, {r.path: r.content_hash for r in present})
+    write_corpus_build_cache(setting_dir, setting, current_hashes)
 
-    return {"built": True, "documents": len(present), "skipped_reason": None}
+    return {
+        "built": True,
+        "documents": len(documents),
+        "skipped_reason": None,
+        "not_yet_extracted": not_yet_extracted,
+    }
 
 
 def run(setting_dir: Path) -> dict:
@@ -192,6 +225,12 @@ def _format_text(summary: dict) -> str:
         lines.append(f"Corpus indexes: built ({corpus['documents']} documents).")
     else:
         lines.append(f"Corpus indexes: skipped -- {corpus['skipped_reason']}.")
+    not_yet_extracted = corpus.get("not_yet_extracted") or []
+    if not_yet_extracted:
+        count = len(not_yet_extracted)
+        noun = "document" if count == 1 else "documents"
+        paths = ", ".join(not_yet_extracted)
+        lines.append(f"Not yet extracted: {count} {noun} ({paths}).")
     return "\n".join(lines)
 
 
