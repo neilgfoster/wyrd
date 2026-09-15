@@ -47,6 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(REPO_ROOT / "engine"))
 
 import setting_pass0 as pass0  # noqa: E402
+from check_bestiary import YamlError, read_yaml  # noqa: E402
 from wyrd import corpus_pipeline  # noqa: E402
 
 CACHE_FILENAME = "corpus_build_cache.json"
@@ -202,6 +203,31 @@ def run_corpus_step(setting_dir: Path, catalogue: pass0.Catalogue, setting: str)
     }
 
 
+def resolve_setting_id(setting_dir: Path) -> str:
+    """The setting id stamped into every corpus index record: `setting.yaml`'s own `name:`
+    field, not `setting_dir`'s basename (#399).
+
+    A setting directory is routinely checked out or copied under a name that has nothing to do
+    with its identity -- `wyrd-setting-titan` cloned into `.`, a test fixture copied into a
+    tempdir named `setting` -- so the directory's basename was never a safe stand-in for the
+    setting's own id, only a coincidentally-matching one in every case this bug's own tests
+    happened to cover. Falls back to the basename only when `setting.yaml` is missing, unparsable,
+    or has no usable `name:` -- a setting under active construction, or a fixture with no
+    `setting.yaml` at all, still gets *a* setting id rather than failing the whole build.
+    """
+    setting_yaml = setting_dir / "setting.yaml"
+    if setting_yaml.is_file():
+        try:
+            data = read_yaml(setting_yaml)
+        except YamlError:
+            data = None
+        if isinstance(data, dict):
+            name = data.get("name")
+            if isinstance(name, str) and name:
+                return name
+    return setting_dir.name
+
+
 def run(setting_dir: Path) -> dict:
     """Run Pass 0 then the corpus-index step end to end against `setting_dir` (FR-001).
 
@@ -209,7 +235,7 @@ def run(setting_dir: Path) -> dict:
     """
     pass0_summary = pass0.run(setting_dir)
     catalogue = pass0.load_catalogue(setting_dir)
-    setting = setting_dir.name
+    setting = resolve_setting_id(setting_dir)
     corpus_summary = run_corpus_step(setting_dir, catalogue, setting)
 
     return {**pass0_summary, "corpus": corpus_summary}

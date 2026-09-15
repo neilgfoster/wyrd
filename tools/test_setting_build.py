@@ -8,6 +8,7 @@ table).
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -249,6 +250,45 @@ class NonPresentRecordsExcludedTests(unittest.TestCase):
         self.assertIn("miscellany.txt", summary["removed"])
         documents = json.loads((setting_dir / "index" / "documents.json").read_text())
         self.assertNotIn("miscellany.txt", {d["path"] for d in documents})
+
+
+class ResolveSettingIdTests(unittest.TestCase):
+    """#399: the setting id stamped into the corpus indexes must be setting.yaml's own `name:`,
+    not the directory's basename -- a real setting is routinely checked out under a name that
+    disagrees with its identity (`wyrd-setting-titan` cloned into `.`, giving an empty
+    basename; a setting cloned into a differently-named directory)."""
+
+    def test_uses_setting_yaml_name_over_directory_basename(self):
+        setting_dir = _copy_fixture(FIXTURES, "basic")
+        # _copy_fixture always names the directory "setting"; the fixture's own setting.yaml
+        # deliberately names it "basic-fixture" instead, so this only passes when the fix reads
+        # setting.yaml rather than the basename.
+        self.assertEqual(setting_dir.name, "setting")
+        self.assertEqual(sb.resolve_setting_id(setting_dir), "basic-fixture")
+
+    def test_falls_back_to_basename_with_no_setting_yaml(self):
+        setting_dir = _copy_fixture(FIXTURES, "world_building")
+        self.assertFalse((setting_dir / "setting.yaml").is_file())
+        self.assertEqual(sb.resolve_setting_id(setting_dir), setting_dir.name)
+
+    def test_dot_as_setting_dir_no_longer_yields_empty_string(self):
+        # The real bug: `python3 setting_build.py .` gives `Path(".").name == ""`, which is
+        # exactly what wyrd-setting-titan's real index shipped with before this fix.
+        setting_dir = _copy_fixture(FIXTURES, "basic")
+        cwd = Path.cwd()
+        try:
+            os.chdir(setting_dir)
+            self.assertEqual(sb.resolve_setting_id(Path(".")), "basic-fixture")
+        finally:
+            os.chdir(cwd)
+
+    def test_end_to_end_build_stamps_setting_yaml_name_into_documents_json(self):
+        setting_dir = _copy_fixture(FIXTURES, "basic")
+        sb.run(setting_dir)
+        documents = json.loads((setting_dir / "index" / "documents.json").read_text())
+        self.assertTrue(documents)
+        for doc in documents:
+            self.assertEqual(doc["setting"], "basic-fixture")
 
 
 if __name__ == "__main__":
