@@ -16,6 +16,365 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 from wyrd import overrides, state, verbs  # noqa: E402
 
 
+def _write_entity(path: pathlib.Path, frontmatter_lines: list[str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("---\n" + "\n".join(frontmatter_lines) + "\n---\n", encoding="utf-8")
+
+
+def _make_chronicle_dir(tmp_path: pathlib.Path) -> pathlib.Path:
+    """A minimal on-disk chronicle: setting/overlay/entities/engine/log dirs, a
+    schema-conformant chronicle.yaml, and a handful of entities using type/status
+    combinations `entity.validate()` already accepts (place/organisation, `status: complete`) --
+    a real companion (`status: with-party`) or thread (`status: open`) file cannot currently be
+    loaded through `entity.load_set` at all: `entity.py`'s single global `STATUSES =
+    ("stub", "drafted", "complete")` check rejects both values outright, even though
+    docs/design/22-state.md documents them as those two types' own status vocabularies. This is
+    a real, pre-existing gap in `entity.py`, out of scope for #402's CLI-wiring feature to fix;
+    verbs whose predicate depends on `with-party`/`open` are instead tested directly against
+    in-memory entity dicts below, matching `tests/engine/test_loadtier.py`'s own convention.
+    """
+    for name in ("setting", "overlay", "entities", "engine", "log"):
+        (tmp_path / name).mkdir(parents=True, exist_ok=True)
+    (tmp_path / "engine" / "contract.md").write_text("# Contract\n", encoding="utf-8")
+    _write_entity(
+        tmp_path / "setting" / "place-1.md",
+        [
+            "id: place-1",
+            "type: place",
+            "name: Place One",
+            "setting: example-setting",
+            "status: complete",
+            "tags: [waypoint]",
+        ],
+    )
+    (tmp_path / "chronicle.yaml").write_text(
+        "\n".join(
+            [
+                "schema_version: 1",
+                "name: test-chronicle",
+                "engine:",
+                "  repo: wyrd",
+                "  version: 0.1.0",
+                "  created_under: 0.1.0",
+                "setting:",
+                "  repo: example-setting",
+                "  version: 0.1.0",
+                "  created_under: 0.1.0",
+                "calendar:",
+                "  year: 1",
+                "  month: null",
+                "  day: 0",
+                "era: null",
+                "eras: []",
+                "era_crossings: []",
+                "sessions: 0",
+                "danger_rating: 2",
+                "migrations: []",
+                "intent:",
+                "  lethality: standard",
+                "  world_acts_offstage: true",
+                "pending: null",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    return tmp_path
+
+
+class LoadEffectiveEntitiesTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_resolves_setting_entities(self):
+        entities = verbs.load_effective_entities(self.chronicle_dir)
+        self.assertIn("place-1", entities)
+        self.assertEqual(entities["place-1"]["type"], "place")
+
+
+class FindEntitiesTest(unittest.TestCase):
+    def test_filters_by_type_only(self):
+        entities = {
+            "a": {"id": "a", "type": "place", "status": "complete"},
+            "b": {"id": "b", "type": "character", "status": "complete"},
+        }
+        result = verbs.find_entities(entities, type="place")
+        self.assertEqual(set(result), {"a"})
+
+    def test_filters_by_type_and_status(self):
+        entities = {
+            "a": {"id": "a", "type": "place", "status": "complete"},
+            "b": {"id": "b", "type": "place", "status": "stub"},
+        }
+        result = verbs.find_entities(entities, type="place", status="stub")
+        self.assertEqual(set(result), {"b"})
+
+    def test_filters_by_tag(self):
+        entities = {
+            "a": {"id": "a", "type": "place", "status": "complete", "tags": ["waypoint"]},
+            "b": {"id": "b", "type": "place", "status": "complete", "tags": []},
+        }
+        result = verbs.find_entities(entities, type="place", tag="waypoint")
+        self.assertEqual(set(result), {"a"})
+
+    def test_no_matches_is_empty_not_an_error(self):
+        entities = {"a": {"id": "a", "type": "place", "status": "complete"}}
+        result = verbs.find_entities(entities, type="organisation")
+        self.assertEqual(result, {})
+
+
+class CompanionsWithPartyTest(unittest.TestCase):
+    def test_only_role_companion_and_status_with_party(self):
+        entities = {
+            "c1": {"id": "c1", "type": "character", "role": "companion", "status": "with-party"},
+            "c2": {"id": "c2", "type": "character", "role": "companion", "status": "away"},
+            "c3": {"id": "c3", "type": "character", "role": "player", "status": "with-party"},
+        }
+        result = verbs.companions_with_party(entities)
+        self.assertEqual(set(result), {"c1"})
+
+
+class OpenThreadsByHeatTest(unittest.TestCase):
+    def test_full_open_set_ordered_by_heat_descending(self):
+        entities = {
+            "t-hot": {"id": "t-hot", "type": "thread", "status": "open", "heat": 5},
+            "t-warm": {"id": "t-warm", "type": "thread", "status": "open", "heat": 3},
+            "t-cool": {"id": "t-cool", "type": "thread", "status": "open", "heat": 1},
+            "t-resolved": {"id": "t-resolved", "type": "thread", "status": "resolved", "heat": 5},
+        }
+        result = verbs.open_threads_by_heat(entities)
+        self.assertEqual([fm["id"] for fm in result], ["t-hot", "t-warm", "t-cool"])
+
+
+class SessionContextVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_returns_always_loaded_shape(self):
+        result = verbs.session_context(self.chronicle_dir)
+        self.assertEqual(result["verb"], "session-context")
+        self.assertIn("player_character", result)
+        self.assertIn("companions", result)
+        self.assertIn("threads", result)
+        self.assertEqual(result["contract"], "# Contract\n")
+
+    def test_no_open_threads_is_empty_not_an_error(self):
+        result = verbs.session_context(self.chronicle_dir)
+        self.assertEqual(result["threads"], {})
+
+
+class GetVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_resolves_known_id(self):
+        result = verbs.get("place-1", self.chronicle_dir)
+        self.assertEqual(result["verb"], "get")
+        self.assertEqual(result["entity"]["id"], "place-1")
+
+    def test_resolves_overlay_form_not_the_unmodified_setting_form(self):
+        _write_entity(
+            self.chronicle_dir / "overlay" / "place-1.md",
+            ["id: place-1-overlay", "overlay_of: place-1", "tags: [waypoint, ruined]"],
+        )
+        result = verbs.get("place-1", self.chronicle_dir)
+        self.assertEqual(result["entity"]["tags"], ["waypoint", "ruined"])
+
+    def test_unresolvable_id_raises(self):
+        with self.assertRaises(state.StateError):
+            verbs.get("no-such-id", self.chronicle_dir)
+
+
+class FindVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_matches_type_filter(self):
+        result = verbs.find(self.chronicle_dir, type="place")
+        self.assertIn("place-1", result["results"])
+
+    def test_unmatched_combination_is_empty_not_an_error(self):
+        result = verbs.find(self.chronicle_dir, type="organisation")
+        self.assertEqual(result["results"], {})
+
+
+class PartyVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_returns_empty_results_shape(self):
+        result = verbs.party(self.chronicle_dir)
+        self.assertEqual(result["verb"], "party")
+        self.assertEqual(result["results"], {})
+
+
+class ThreadsVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_returns_empty_results_shape(self):
+        result = verbs.threads(self.chronicle_dir)
+        self.assertEqual(result["verb"], "threads")
+        self.assertEqual(result["results"], [])
+
+
+class ThreatsVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_returns_empty_results_shape(self):
+        result = verbs.threats(self.chronicle_dir)
+        self.assertEqual(result["verb"], "threats")
+        self.assertEqual(result["results"], {})
+
+
+class SaveLoadValidateVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_save_then_load_round_trips(self):
+        loaded = verbs.load(self.chronicle_dir)["state"]
+        modified = {**loaded, "sessions": loaded["sessions"] + 1}
+        verbs.save(modified, self.chronicle_dir)
+        reloaded = verbs.load(self.chronicle_dir)["state"]
+        self.assertEqual(reloaded["sessions"], loaded["sessions"] + 1)
+
+    def test_validate_reports_success_for_conformant_state(self):
+        result = verbs.validate(self.chronicle_dir)
+        self.assertTrue(result["valid"])
+        self.assertIsNone(result["error"])
+
+    def test_validate_reports_the_specific_violation(self):
+        path = self.chronicle_dir / "chronicle.yaml"
+        path.write_text(path.read_text(encoding="utf-8").replace("sessions: 0", "sessions: -1"))
+        result = verbs.validate(self.chronicle_dir)
+        self.assertFalse(result["valid"])
+        self.assertIn("sessions", result["error"])
+
+
+class RecapVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_regenerates_recap_md(self):
+        result = verbs.recap(self.chronicle_dir, where="a waypoint")
+        self.assertEqual(result["verb"], "recap")
+        self.assertIn("a waypoint", result["text"])
+        written = (self.chronicle_dir / "recap.md").read_text(encoding="utf-8")
+        self.assertEqual(written, result["text"])
+
+
+class AdvanceTimeVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_advances_calendar_by_exactly_the_given_days(self):
+        result = verbs.advance_time(self.chronicle_dir, 14, seed=1)
+        self.assertEqual(result["verb"], "advance-time")
+        self.assertEqual(result["calendar"]["day"], 14)
+
+    def test_negative_days_raises(self):
+        with self.assertRaises(ValueError):
+            verbs.advance_time(self.chronicle_dir, -1)
+
+    def test_persists_the_advanced_calendar(self):
+        verbs.advance_time(self.chronicle_dir, 7, seed=1)
+        reloaded = verbs.load(self.chronicle_dir)["state"]
+        self.assertEqual(reloaded["calendar"]["day"], 7)
+
+
+class ThreatCheckVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+        _write_entity(
+            self.chronicle_dir / "setting" / "nemesis-1.md",
+            [
+                "id: nemesis-1",
+                "type: character",
+                "name: Nemesis One",
+                "setting: example-setting",
+                "status: complete",
+                "role: nemesis",
+                "threat:",
+                "  imminence: 4",
+                '  connection: "left them for dead"',
+            ],
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_returns_deterministic_result_for_a_fixed_seed(self):
+        first = verbs.threat_check(self.chronicle_dir, "nemesis-1", seed=1)
+        second = verbs.threat_check(self.chronicle_dir, "nemesis-1", seed=1)
+        self.assertEqual(first, second)
+        self.assertIn(first["activated"], (True, False))
+
+    def test_unknown_threat_id_raises(self):
+        with self.assertRaises(state.StateError):
+            verbs.threat_check(self.chronicle_dir, "no-such-threat")
+
+
+class LogVerbTest(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_requires_exactly_one_of_last_or_since(self):
+        with self.assertRaises(ValueError):
+            verbs.log(self.chronicle_dir, "test-chronicle")
+        with self.assertRaises(ValueError):
+            verbs.log(self.chronicle_dir, "test-chronicle", last=1, since="beat-1")
+
+    def test_last_returns_empty_list_for_no_entries(self):
+        result = verbs.log(self.chronicle_dir, "test-chronicle", last=5)
+        self.assertEqual(result["entries"], [])
+
+
 class RollVerbTest(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()

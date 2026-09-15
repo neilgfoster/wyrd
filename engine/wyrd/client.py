@@ -222,6 +222,106 @@ def _build_parser() -> argparse.ArgumentParser:
             "--setting-dir", default=".", help="Root of the setting repository (default: cwd)."
         )
 
+    if "session-context" in TOOLS:
+        session_context_parser = subparsers.add_parser(
+            "session-context", help=TOOLS["session-context"]["description"]
+        )
+        session_context_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "get" in TOOLS:
+        get_parser = subparsers.add_parser("get", help=TOOLS["get"]["description"])
+        get_parser.add_argument("id")
+        get_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "find" in TOOLS:
+        find_parser = subparsers.add_parser("find", help=TOOLS["find"]["description"])
+        find_parser.add_argument("--type", required=True)
+        find_parser.add_argument("--status", default=None)
+        find_parser.add_argument("--tag", default=None)
+        find_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "party" in TOOLS:
+        party_parser = subparsers.add_parser("party", help=TOOLS["party"]["description"])
+        party_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "threads" in TOOLS:
+        threads_parser = subparsers.add_parser("threads", help=TOOLS["threads"]["description"])
+        threads_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "threats" in TOOLS:
+        threats_parser = subparsers.add_parser("threats", help=TOOLS["threats"]["description"])
+        threats_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "log" in TOOLS:
+        log_parser = subparsers.add_parser("log", help=TOOLS["log"]["description"])
+        log_group = log_parser.add_mutually_exclusive_group(required=True)
+        log_group.add_argument("--last", type=int, default=None)
+        log_group.add_argument("--since", default=None)
+        log_parser.add_argument("--chronicle-name", required=True)
+        log_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "save" in TOOLS:
+        save_parser = subparsers.add_parser("save", help=TOOLS["save"]["description"])
+        save_parser.add_argument("--state-json", required=True)
+        save_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "load" in TOOLS:
+        load_parser = subparsers.add_parser("load", help=TOOLS["load"]["description"])
+        load_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "validate" in TOOLS:
+        validate_parser = subparsers.add_parser("validate", help=TOOLS["validate"]["description"])
+        validate_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "recap" in TOOLS:
+        recap_parser = subparsers.add_parser("recap", help=TOOLS["recap"]["description"])
+        recap_parser.add_argument("--where", default=None)
+        recap_parser.add_argument("--changes", action="append", default=None)
+        recap_parser.add_argument("--body-mind", default=None)
+        recap_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "advance-time" in TOOLS:
+        advance_time_parser = subparsers.add_parser(
+            "advance-time", help=TOOLS["advance-time"]["description"]
+        )
+        advance_time_parser.add_argument("days", type=int)
+        advance_time_parser.add_argument("--seed", type=int, default=None)
+        advance_time_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
+    if "threat-check" in TOOLS:
+        threat_check_parser = subparsers.add_parser(
+            "threat-check", help=TOOLS["threat-check"]["description"]
+        )
+        threat_check_parser.add_argument("id")
+        threat_check_parser.add_argument("--seed", type=int, default=None)
+        threat_check_parser.add_argument(
+            "--chronicle-dir", default=".", help="Root of the chronicle (default: cwd)."
+        )
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -509,6 +609,92 @@ def _run_find_table(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_session_context(args: argparse.Namespace) -> dict:
+    return verbs.session_context(pathlib.Path(args.chronicle_dir))
+
+
+def _run_get(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.get(args.id, pathlib.Path(args.chronicle_dir))
+    except StateError as exc:
+        return {"error": {"verb": "get", "reason": str(exc)}}
+
+
+def _run_find(args: argparse.Namespace) -> dict:
+    return verbs.find(
+        pathlib.Path(args.chronicle_dir), type=args.type, status=args.status, tag=args.tag
+    )
+
+
+def _run_party(args: argparse.Namespace) -> dict:
+    return verbs.party(pathlib.Path(args.chronicle_dir))
+
+
+def _run_threads(args: argparse.Namespace) -> dict:
+    return verbs.threads(pathlib.Path(args.chronicle_dir))
+
+
+def _run_threats(args: argparse.Namespace) -> dict:
+    return verbs.threats(pathlib.Path(args.chronicle_dir))
+
+
+def _run_log(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.log(
+            pathlib.Path(args.chronicle_dir),
+            args.chronicle_name,
+            last=args.last,
+            since=args.since,
+        )
+    except ValueError as exc:
+        return {"error": {"verb": "log", "reason": str(exc)}}
+
+
+def _run_save(args: argparse.Namespace) -> dict:
+    try:
+        chronicle_state = json.loads(args.state_json)
+        return verbs.save(chronicle_state, pathlib.Path(args.chronicle_dir))
+    except (StateError, json.JSONDecodeError) as exc:
+        return {"error": {"verb": "save", "reason": str(exc)}}
+
+
+def _run_load(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.load(pathlib.Path(args.chronicle_dir))
+    except StateError as exc:
+        return {"error": {"verb": "load", "reason": str(exc)}}
+
+
+def _run_validate(args: argparse.Namespace) -> dict:
+    return verbs.validate(pathlib.Path(args.chronicle_dir))
+
+
+def _run_recap(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.recap(
+            pathlib.Path(args.chronicle_dir),
+            where=args.where,
+            changes=args.changes,
+            body_mind=args.body_mind,
+        )
+    except StateError as exc:
+        return {"error": {"verb": "recap", "reason": str(exc)}}
+
+
+def _run_advance_time(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.advance_time(pathlib.Path(args.chronicle_dir), args.days, seed=args.seed)
+    except (ValueError, StateError) as exc:
+        return {"error": {"verb": "advance-time", "reason": str(exc)}}
+
+
+def _run_threat_check(args: argparse.Namespace) -> dict:
+    try:
+        return verbs.threat_check(pathlib.Path(args.chronicle_dir), args.id, seed=args.seed)
+    except StateError as exc:
+        return {"error": {"verb": "threat-check", "reason": str(exc)}}
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -637,6 +823,32 @@ def main(argv: list[str] | None = None) -> int:
         result = _run_find_rule(args)
     elif args.verb == "find-table":
         result = _run_find_table(args)
+    elif args.verb == "session-context":
+        result = _run_session_context(args)
+    elif args.verb == "get":
+        result = _run_get(args)
+    elif args.verb == "find":
+        result = _run_find(args)
+    elif args.verb == "party":
+        result = _run_party(args)
+    elif args.verb == "threads":
+        result = _run_threads(args)
+    elif args.verb == "threats":
+        result = _run_threats(args)
+    elif args.verb == "log":
+        result = _run_log(args)
+    elif args.verb == "save":
+        result = _run_save(args)
+    elif args.verb == "load":
+        result = _run_load(args)
+    elif args.verb == "validate":
+        result = _run_validate(args)
+    elif args.verb == "recap":
+        result = _run_recap(args)
+    elif args.verb == "advance-time":
+        result = _run_advance_time(args)
+    elif args.verb == "threat-check":
+        result = _run_threat_check(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

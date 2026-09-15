@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import pathlib
 
+from wyrd import advance_time as advance_time_module
 from wyrd import (
     advancement,
     career,
@@ -18,11 +19,14 @@ from wyrd import (
     corpus_find,
     creation,
     economy,
+    loadtier,
     overrides,
     resolution,
     rules,
     state,
 )
+from wyrd import log as log_module
+from wyrd import threat as threat_module
 
 
 def roll(
@@ -474,3 +478,218 @@ def find_table(
         "verb": "find-table",
         "results": _with_excerpts(results, documents_index, setting, setting_dir),
     }
+
+
+# --- Chronicle-level verbs (#402) --------------------------------------------------------
+#
+# docs/design/02-architecture.md's Memory tiers: session-context/get/find/party/threads/
+# threats read the chronicle's effective entity set; log reads the Archival tier; save/load/
+# validate/recap wrap wyrd.state/wyrd.loadtier; advance-time/threat-check wrap
+# wyrd.advance_time/wyrd.threat. Each is a thin wrapper over an existing pure function
+# (specs/153-chronicle-cli-verbs/research.md) -- no new mechanic is invented here.
+
+
+def load_effective_entities(chronicle_dir: pathlib.Path) -> dict[str, dict]:
+    """The chronicle's full effective entity set, keyed by id (docs/design/22-state.md):
+    every `setting/*.md` entity resolved against its `overlay/*.md` counterpart, plus every
+    `entities/*.md` file the chronicle invented directly.
+
+    Reuses `wyrd.resolution._load_chronicle_entities` -- the same effective-entity-set
+    assembly `commit`'s own passive validation already performs -- rather than a second copy
+    of the same glob-and-resolve logic (specs/153-chronicle-cli-verbs/research.md).
+    """
+    chronicle_dir = pathlib.Path(chronicle_dir)
+    return resolution._load_chronicle_entities(chronicle_dir / "chronicle.yaml")
+
+
+def find_entities(
+    entities: dict[str, dict], *, type: str, status: str | None = None, tag: str | None = None
+) -> dict[str, dict]:
+    """`find --type T [--status S] [--tag G]` (docs/design/02-architecture.md): every entity in
+    `entities` matching every filter given. Omitted filters are not applied."""
+    results = {}
+    for entity_id, frontmatter in entities.items():
+        if frontmatter.get("type") != type:
+            continue
+        if status is not None and frontmatter.get("status") != status:
+            continue
+        if tag is not None and tag not in (frontmatter.get("tags") or []):
+            continue
+        results[entity_id] = frontmatter
+    return results
+
+
+def companions_with_party(entities: dict[str, dict]) -> dict[str, dict]:
+    """`party`'s own predicate: `role: companion` + `status: with-party`
+
+    (docs/design/02-architecture.md; not a literal `find` call -- `find`'s public flags don't
+    expose `role`, per spec.md's Clarifications)."""
+    return {
+        entity_id: fm
+        for entity_id, fm in entities.items()
+        if fm.get("role") == "companion" and fm.get("status") == "with-party"
+    }
+
+
+def open_threads_by_heat(entities: dict[str, dict]) -> list[dict]:
+    """`threads`: the full `status: open` thread set, ordered by `heat` descending
+    (docs/design/02-architecture.md) -- broader than `session-context`'s `heat >= 3` slice."""
+    open_threads = [
+        fm for fm in entities.values() if fm.get("type") == "thread" and fm.get("status") == "open"
+    ]
+    open_threads.sort(key=lambda fm: (-(fm.get("heat") or 0), fm["id"]))
+    return open_threads
+
+
+def session_context(chronicle_dir: pathlib.Path) -> dict:
+    """`session-context`: the Always-loaded tier in one call (docs/design/02-architecture.md) --
+    player character, with-party companions, `heat >= 3` threads, the recap, and the contract."""
+    chronicle_dir = pathlib.Path(chronicle_dir)
+    entities = load_effective_entities(chronicle_dir)
+    tier = loadtier.always_tier(entities)
+
+    recap_path = chronicle_dir / "recap.md"
+    recap = recap_path.read_text(encoding="utf-8") if recap_path.exists() else ""
+
+    contract_path = chronicle_dir / "engine" / "contract.md"
+    contract = contract_path.read_text(encoding="utf-8") if contract_path.exists() else ""
+
+    return {
+        "verb": "session-context",
+        "player_character": tier["player_character"],
+        "companions": tier["companions"],
+        "threads": tier["threads"],
+        "recap": recap,
+        "contract": contract,
+    }
+
+
+def get(entity_id: str, chronicle_dir: pathlib.Path) -> dict:
+    """`get <id>`: one entity resolved to its effective form; raises `state.StateError` (via
+    `load_effective_entities`'s underlying `entity.resolve_entity`) if `entity_id` does not
+    resolve in either the setting, the overlay, or the chronicle's own entities."""
+    entities = load_effective_entities(chronicle_dir)
+    if entity_id not in entities:
+        raise state.StateError(f"'{entity_id}' is not a known entity in this chronicle")
+    return {"verb": "get", "id": entity_id, "entity": entities[entity_id]}
+
+
+def find(
+    chronicle_dir: pathlib.Path, *, type: str, status: str | None = None, tag: str | None = None
+) -> dict:
+    """`find --type T [--status S] [--tag G]`: every entity matching every filter given."""
+    entities = load_effective_entities(chronicle_dir)
+    results = find_entities(entities, type=type, status=status, tag=tag)
+    return {
+        "verb": "find",
+        "filters": {"type": type, "status": status, "tag": tag},
+        "results": results,
+    }
+
+
+def party(chronicle_dir: pathlib.Path) -> dict:
+    """`party`: `role: companion` + `status: with-party` -- a named query."""
+    entities = load_effective_entities(chronicle_dir)
+    return {"verb": "party", "results": companions_with_party(entities)}
+
+
+def threads(chronicle_dir: pathlib.Path) -> dict:
+    """`threads`: the full `status: open` set, ordered by `heat` descending -- a named query."""
+    entities = load_effective_entities(chronicle_dir)
+    return {"verb": "threads", "results": open_threads_by_heat(entities)}
+
+
+def threats(chronicle_dir: pathlib.Path) -> dict:
+    """`threats`: entities carrying an active threat block -- a named query."""
+    entities = load_effective_entities(chronicle_dir)
+    active = threat_module.active_threats(list(entities.values()))
+    return {"verb": "threats", "results": {fm["id"]: fm for fm in active}}
+
+
+def log(
+    chronicle_dir: pathlib.Path,
+    chronicle_name: str,
+    *,
+    last: int | None = None,
+    since: str | None = None,
+) -> dict:
+    """`log --last N | --since <beat>`: the Archival tier, in beat order (docs/design/
+    02-architecture.md). Exactly one of `last`/`since` must be given."""
+    if (last is None) == (since is None):
+        raise ValueError("log requires exactly one of --last or --since")
+    entries = log_module.read_log(chronicle_dir, chronicle_name, last=last, since=since)
+    return {"verb": "log", "entries": entries}
+
+
+def save(chronicle_state: dict, chronicle_dir: pathlib.Path) -> dict:
+    """`save`: validate and write chronicle state to `chronicle.yaml`, atomically."""
+    path = pathlib.Path(chronicle_dir) / "chronicle.yaml"
+    state.save_chronicle(chronicle_state, path)
+    return {"verb": "save", "path": str(path)}
+
+
+def load(chronicle_dir: pathlib.Path) -> dict:
+    """`load`: read and validate `chronicle.yaml`."""
+    path = pathlib.Path(chronicle_dir) / "chronicle.yaml"
+    return {"verb": "load", "state": state.load_chronicle(path)}
+
+
+def validate(chronicle_dir: pathlib.Path) -> dict:
+    """`validate`: schema-validate `chronicle.yaml`, reporting the violation rather than
+    raising."""
+    path = pathlib.Path(chronicle_dir) / "chronicle.yaml"
+    try:
+        state.load_chronicle(path)
+    except state.StateError as exc:
+        return {"verb": "validate", "valid": False, "error": str(exc)}
+    return {"verb": "validate", "valid": True, "error": None}
+
+
+def recap(
+    chronicle_dir: pathlib.Path,
+    *,
+    where: str | None = None,
+    changes: list[str] | None = None,
+    body_mind: str | None = None,
+) -> dict:
+    """`recap`: regenerate `recap.md` from current chronicle state."""
+    chronicle_dir = pathlib.Path(chronicle_dir)
+    entities = load_effective_entities(chronicle_dir)
+    chronicle_state = state.load_chronicle(chronicle_dir / "chronicle.yaml")
+    text = loadtier.generate_recap(
+        entities, chronicle_state, where=where, changes=changes, body_mind=body_mind
+    )
+    path = chronicle_dir / "recap.md"
+    state.write_text_atomic(text, path)
+    return {"verb": "recap", "path": str(path), "text": text}
+
+
+def advance_time(chronicle_dir: pathlib.Path, days: int, *, seed: int | None = None) -> dict:
+    """`advance-time <days>`: advance the calendar and resolve threat activation/expected-value
+    events across the span."""
+    if days < 0:
+        raise ValueError(f"days must be non-negative, got {days!r}")
+    chronicle_dir = pathlib.Path(chronicle_dir)
+    chronicle_state = state.load_chronicle(chronicle_dir / "chronicle.yaml")
+    entities = load_effective_entities(chronicle_dir)
+    active = threat_module.active_threats(list(entities.values()))
+    result = advance_time_module.advance_time(chronicle_state["calendar"], active, days, seed=seed)
+    new_state = {**chronicle_state, "calendar": result["calendar"]}
+    state.save_chronicle(new_state, chronicle_dir / "chronicle.yaml")
+    return {
+        "verb": "advance-time",
+        "calendar": result["calendar"],
+        "activations": result["activations"],
+    }
+
+
+def threat_check(chronicle_dir: pathlib.Path, threat_id: str, *, seed: int | None = None) -> dict:
+    """`threat-check`: one threat's activation roll, on demand."""
+    entities = load_effective_entities(chronicle_dir)
+    if threat_id not in entities:
+        raise state.StateError(f"'{threat_id}' is not a known entity in this chronicle")
+    threat_block = entities[threat_id].get("threat") or {}
+    imminence = threat_block.get("imminence", 0)
+    wyrd_roll = rules.roll_d100(seed=seed)
+    activated = threat_module.check_activation(imminence, wyrd_roll)
+    return {"verb": "threat-check", "id": threat_id, "activated": activated, "roll": wyrd_roll}
