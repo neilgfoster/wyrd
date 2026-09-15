@@ -28,11 +28,25 @@ def _minimal(entity_type: str, **overrides) -> dict:
     return base
 
 
+def _minimal_valid_status(entity_type: str, **overrides) -> dict:
+    """Like `_minimal()`, but with a `status` legal for `entity_type`'s own vocabulary.
+
+    `_minimal()`'s default `status: stub` is only legal for types using the default vocabulary --
+    a `thread` needs `status: open` instead (entity.THREAD_STATUSES). Every other type keeps
+    `_minimal()`'s default. Callers that also want `role: companion` must pass a companion-legal
+    `status` themselves; this helper only accounts for `entity_type`.
+    """
+    status_by_type = {"thread": "open"}
+    overrides.setdefault("status", status_by_type.get(entity_type, "stub"))
+    return _minimal(entity_type, **overrides)
+
+
 class ValidateTest(unittest.TestCase):
     def test_accepts_minimal_entity_of_each_type(self):
         for entity_type in entity.ENTITY_TYPES:
             with self.subTest(entity_type=entity_type):
-                self.assertEqual(entity.validate(_minimal(entity_type)), {"valid": True})
+                record = _minimal_valid_status(entity_type)
+                self.assertEqual(entity.validate(record), {"valid": True})
 
     def test_rejects_missing_common_field(self):
         record = _minimal("place")
@@ -96,12 +110,112 @@ class ValidateTest(unittest.TestCase):
         self.assertFalse(result["valid"])
 
 
+class CompanionStatusVocabularyTest(unittest.TestCase):
+    """#408: a companion's own documented status vocabulary (22-state.md), not the default."""
+
+    def test_accepts_every_documented_companion_status(self):
+        for status in entity.COMPANION_STATUSES:
+            with self.subTest(status=status):
+                record = _minimal("character", role="companion", status=status)
+                self.assertEqual(entity.validate(record), {"valid": True})
+
+    def test_rejects_default_vocabulary_status_for_companion(self):
+        # "complete" is legal for the *default* vocabulary but the companion vocabulary
+        # replaces the default for companions rather than extending it.
+        record = _minimal("character", role="companion", status="complete")
+        result = entity.validate(record)
+        self.assertFalse(result["valid"])
+        self.assertIn("complete", result["error"])
+
+    def test_non_companion_character_keeps_default_vocabulary(self):
+        for role in ("player", "nemesis", None):
+            with self.subTest(role=role):
+                record = _minimal("character", status="complete")
+                if role is not None:
+                    record["role"] = role
+                self.assertEqual(entity.validate(record), {"valid": True})
+
+    def test_non_companion_character_rejects_companion_status(self):
+        record = _minimal("character", role="nemesis", status="with-party")
+        result = entity.validate(record)
+        self.assertFalse(result["valid"])
+
+
+class ThreadStatusVocabularyTest(unittest.TestCase):
+    """#408: a thread's own documented status vocabulary (22-state.md), not the default."""
+
+    def test_accepts_every_documented_thread_status(self):
+        for status in entity.THREAD_STATUSES:
+            with self.subTest(status=status):
+                record = _minimal("thread", status=status)
+                self.assertEqual(entity.validate(record), {"valid": True})
+
+    def test_rejects_default_vocabulary_status_for_thread(self):
+        # "stub" is legal for the *default* vocabulary but not for threads.
+        record = _minimal("thread", status="stub")
+        result = entity.validate(record)
+        self.assertFalse(result["valid"])
+        self.assertIn("stub", result["error"])
+
+
+class OtherTypesKeepDefaultStatusVocabularyTest(unittest.TestCase):
+    """#408 Acceptance Criterion 3 / User Story 3: no other type's validation narrows or changes."""
+
+    def test_every_default_status_still_accepted_for_every_other_type(self):
+        other_types = [t for t in entity.ENTITY_TYPES if t != "thread"]
+        for entity_type in other_types:
+            for status in entity.STATUSES:
+                with self.subTest(entity_type=entity_type, status=status):
+                    record = _minimal(entity_type, status=status)
+                    self.assertEqual(entity.validate(record), {"valid": True})
+
+    def test_still_rejects_an_unrecognised_status_for_a_non_overridden_type(self):
+        result = entity.validate(_minimal("place", status="active"))
+        self.assertFalse(result["valid"])
+
+
+class EndToEndStatusVocabularyTest(unittest.TestCase):
+    """#408: the exact gap that let the bug ship -- no prior test loaded such a file from disk.
+
+    Writes a real companion entity file and a real thread entity file to a temporary directory,
+    loads each with `entity.load()` (which round-trips through `wyrd.state.load_entity` and then
+    calls `validate()`), and confirms both pass -- not an in-memory frontmatter dict.
+    """
+
+    def test_real_companion_file_with_documented_status_loads(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = _minimal(
+                "character",
+                id="hallam",
+                role="companion",
+                status="with-party",
+                bond=1,
+            )
+            path = pathlib.Path(tmp) / "hallam.md"
+            state.save_entity(record, "A companion who travels with the party.", path)
+            loaded = entity.load(path)
+            self.assertEqual(loaded["status"], "with-party")
+
+    def test_real_thread_file_with_documented_status_loads(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = _minimal(
+                "thread",
+                id="the-missing-envoy",
+                status="open",
+                heat=3,
+            )
+            path = pathlib.Path(tmp) / "the-missing-envoy.md"
+            state.save_entity(record, "An open loop the chronicle is carrying.", path)
+            loaded = entity.load(path)
+            self.assertEqual(loaded["status"], "open")
+
+
 class LoadTest(unittest.TestCase):
     def test_round_trips_each_type(self):
         with tempfile.TemporaryDirectory() as tmp:
             for entity_type in entity.ENTITY_TYPES:
                 with self.subTest(entity_type=entity_type):
-                    record = _minimal(entity_type)
+                    record = _minimal_valid_status(entity_type)
                     path = pathlib.Path(tmp) / f"{entity_type}.md"
                     state.save_entity(record, "", path)
                     loaded = entity.load(path)
