@@ -908,3 +908,129 @@ class OverridableTest(unittest.TestCase):
         )
         self.assertEqual(exit_code, 0)
         self.assertIn("error", json.loads(output))
+
+
+class FindCliTest(unittest.TestCase):
+    """Covers the find-noun/find-rule/find-table verbs (#397)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        setting_dir = pathlib.Path(self._tmp.name)
+        (setting_dir / "corpus").mkdir()
+        (setting_dir / "corpus" / "doc-a.txt").write_text(
+            "A short fixture passage naming Osric the ferryman.", encoding="utf-8"
+        )
+        (setting_dir / "index").mkdir()
+        documents = [{"id": "doc-a", "path": "doc-a.md", "setting": "fixture"}]
+        (setting_dir / "index" / "documents.json").write_text(json.dumps(documents))
+        nouns = {"Osric": [{"doc": "doc-a", "setting": "fixture", "count": 1, "offsets": [32]}]}
+        (setting_dir / "index" / "nouns.json").write_text(json.dumps(nouns))
+        terms = {"fear": [{"doc": "doc-a", "setting": "fixture", "rank": "mention", "offset": 0}]}
+        (setting_dir / "index" / "terms.json").write_text(json.dumps(terms))
+        tables = [
+            {"doc": "doc-a", "setting": "fixture", "offset": 0, "dice": "d6", "caption": "Fate"}
+        ]
+        (setting_dir / "index" / "tables.json").write_text(json.dumps(tables))
+        self.setting_dir = str(setting_dir)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_describe_by_name(self):
+        exit_code, output = _run(["describe", "--name", "find-noun"])
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["name"], "find-noun")
+
+    def test_find_noun_returns_excerpt(self):
+        exit_code, output = _run(
+            [
+                "find-noun",
+                "--setting",
+                "fixture",
+                "--name",
+                "Osric",
+                "--setting-dir",
+                self.setting_dir,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(len(payload["results"]), 1)
+        self.assertIn("Osric", payload["results"][0]["excerpt"])
+
+    def test_find_noun_unknown_name_returns_empty_results(self):
+        exit_code, output = _run(
+            [
+                "find-noun",
+                "--setting",
+                "fixture",
+                "--name",
+                "Nobody",
+                "--setting-dir",
+                self.setting_dir,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["results"], [])
+
+    def test_find_rule_returns_excerpt(self):
+        exit_code, output = _run(
+            [
+                "find-rule",
+                "--setting",
+                "fixture",
+                "--term",
+                "fear",
+                "--setting-dir",
+                self.setting_dir,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(len(payload["results"]), 1)
+        self.assertIsNotNone(payload["results"][0]["excerpt"])
+
+    def test_find_table_returns_excerpt(self):
+        exit_code, output = _run(
+            [
+                "find-table",
+                "--setting",
+                "fixture",
+                "--dice",
+                "d6",
+                "--setting-dir",
+                self.setting_dir,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(len(payload["results"]), 1)
+        self.assertIsNotNone(payload["results"][0]["excerpt"])
+
+    def test_find_against_setting_with_no_indexes_returns_empty_not_error(self):
+        empty_dir = tempfile.mkdtemp()
+        exit_code, output = _run(
+            ["find-noun", "--setting", "fixture", "--name", "Osric", "--setting-dir", empty_dir]
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(json.loads(output)["results"], [])
+
+    def test_result_with_unresolvable_excerpt_still_appears(self):
+        # Delete the corpus text so the coordinate lookup still matches but the excerpt cannot
+        # be resolved -- the result must still appear, with excerpt: null.
+        (pathlib.Path(self.setting_dir) / "corpus" / "doc-a.txt").unlink()
+        exit_code, output = _run(
+            [
+                "find-noun",
+                "--setting",
+                "fixture",
+                "--name",
+                "Osric",
+                "--setting-dir",
+                self.setting_dir,
+            ]
+        )
+        self.assertEqual(exit_code, 0)
+        payload = json.loads(output)
+        self.assertEqual(len(payload["results"]), 1)
+        self.assertIsNone(payload["results"][0]["excerpt"])

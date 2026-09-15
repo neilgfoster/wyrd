@@ -645,4 +645,69 @@ TOOLS: dict[str, dict] = {
             "required": ["value", "mechanism", "delta"],
         },
     },
+    "find-noun": {
+        "name": "find-noun",
+        "description": (
+            "Look up a proper noun in a setting's corpus concordance, returning every "
+            "occurrence with a resolved excerpt of the surrounding text (docs/design/"
+            "26-corpus-index.md's 'Retrieval': a bounded read, never a whole document)."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "setting": {"type": "string"},
+                "name": {"type": "string"},
+            },
+            "required": ["setting", "name"],
+        },
+    },
+    "find-rule": {
+        "name": "find-rule",
+        "description": (
+            "Look up a mechanical term in a setting's corpus, returning every posting "
+            "(definition-ranked first) with a resolved excerpt of the surrounding text."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "setting": {"type": "string"},
+                "term": {"type": "string"},
+            },
+            "required": ["setting", "term"],
+        },
+    },
+    "find-table": {
+        "name": "find-table",
+        "description": (
+            "Look up a dice table in a setting's corpus by dice type and/or caption "
+            "substring, returning matching records with a resolved excerpt where available."
+        ),
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "setting": {"type": "string"},
+                "dice": {"type": "string", "enum": ["d6", "d10", "d66", "d100"]},
+                "about": {"type": "string"},
+            },
+            "required": ["setting"],
+        },
+    },
 }

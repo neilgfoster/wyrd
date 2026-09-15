@@ -191,6 +191,37 @@ def _build_parser() -> argparse.ArgumentParser:
             "--chronicle", help="Path to a chronicle houserules.yaml, layered on top of --setting."
         )
 
+    if "find-noun" in TOOLS:
+        find_noun_parser = subparsers.add_parser(
+            "find-noun", help=TOOLS["find-noun"]["description"]
+        )
+        find_noun_parser.add_argument("--setting", required=True)
+        find_noun_parser.add_argument("--name", required=True)
+        find_noun_parser.add_argument(
+            "--setting-dir", default=".", help="Root of the setting repository (default: cwd)."
+        )
+
+    if "find-rule" in TOOLS:
+        find_rule_parser = subparsers.add_parser(
+            "find-rule", help=TOOLS["find-rule"]["description"]
+        )
+        find_rule_parser.add_argument("--setting", required=True)
+        find_rule_parser.add_argument("--term", required=True)
+        find_rule_parser.add_argument(
+            "--setting-dir", default=".", help="Root of the setting repository (default: cwd)."
+        )
+
+    if "find-table" in TOOLS:
+        find_table_parser = subparsers.add_parser(
+            "find-table", help=TOOLS["find-table"]["description"]
+        )
+        find_table_parser.add_argument("--setting", required=True)
+        find_table_parser.add_argument("--dice", default=None, choices=("d6", "d10", "d66", "d100"))
+        find_table_parser.add_argument("--about", default=None)
+        find_table_parser.add_argument(
+            "--setting-dir", default=".", help="Root of the setting repository (default: cwd)."
+        )
+
     if "create-character" in TOOLS:
         creation_parser = subparsers.add_parser(
             "create-character", help=TOOLS["create-character"]["description"]
@@ -457,6 +488,27 @@ def _run_track(args: argparse.Namespace) -> dict:
     )
 
 
+def _run_find_noun(args: argparse.Namespace) -> dict:
+    return verbs.find_noun(
+        setting=args.setting, name=args.name, setting_dir=pathlib.Path(args.setting_dir)
+    )
+
+
+def _run_find_rule(args: argparse.Namespace) -> dict:
+    return verbs.find_rule(
+        setting=args.setting, term=args.term, setting_dir=pathlib.Path(args.setting_dir)
+    )
+
+
+def _run_find_table(args: argparse.Namespace) -> dict:
+    return verbs.find_table(
+        setting=args.setting,
+        setting_dir=pathlib.Path(args.setting_dir),
+        dice=args.dice,
+        about=args.about,
+    )
+
+
 def _run_create_character(args: argparse.Namespace) -> dict:
     career_data = json.loads(args.career_json)
     ancestry = json.loads(args.ancestry_json) if args.ancestry_json is not None else None
@@ -579,6 +631,12 @@ def main(argv: list[str] | None = None) -> int:
             result = _run_track(args)
         except OverrideError as exc:
             result = {"error": {"verb": "track", "reason": str(exc)}}
+    elif args.verb == "find-noun":
+        result = _run_find_noun(args)
+    elif args.verb == "find-rule":
+        result = _run_find_rule(args)
+    elif args.verb == "find-table":
+        result = _run_find_table(args)
     else:  # pragma: no cover - argparse's `required=True` already prevents this
         parser.error(f"unknown verb: {args.verb}")
         return 2

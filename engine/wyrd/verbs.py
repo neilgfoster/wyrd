@@ -7,12 +7,15 @@ write happens as part of resolving the verb -- before the result is returned for
 
 from __future__ import annotations
 
+import json
 import pathlib
 
 from wyrd import (
     advancement,
     career,
     character,
+    corpus_excerpt,
+    corpus_find,
     creation,
     economy,
     overrides,
@@ -401,4 +404,73 @@ def track(
         "label": label,
         "value": value + delta,
         "delta": delta,
+    }
+
+
+def _load_setting_index(setting_dir: pathlib.Path, name: str):
+    """One of a setting's `index/*.json` files, or its empty-shaped default if absent."""
+    path = setting_dir / "index" / f"{name}.json"
+    if not path.exists():
+        return {} if name in ("nouns", "terms") else []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _with_excerpts(
+    results: list[dict], documents_index: list[dict], setting: str, setting_dir: pathlib.Path
+) -> list[dict]:
+    """Extend every `doc`/`offset`-bearing result with its resolved excerpt (#397, FR-006).
+
+    A result carrying no `offset` (there is none for this shape) is left unchanged. A result
+    whose excerpt cannot be resolved still appears, with `excerpt: None` -- the coordinate
+    lookup and the excerpt resolution are independent (contracts/find-verb.md)."""
+    extended = []
+    for result in results:
+        if "offset" not in result:
+            extended.append(result)
+            continue
+        excerpt = corpus_excerpt.read_excerpt(
+            documents_index, setting, setting_dir, result["doc"], result["offset"]
+        )
+        extended.append({**result, "excerpt": excerpt})
+    return extended
+
+
+def find_noun(setting: str, name: str, setting_dir: pathlib.Path) -> dict:
+    """Resolve the `find-noun` verb (#397): every occurrence of `name`, each carrying its
+    resolved excerpt."""
+    nouns_index = _load_setting_index(setting_dir, "nouns")
+    documents_index = _load_setting_index(setting_dir, "documents")
+    results = corpus_find.find_noun(nouns_index, setting, name)
+    return {
+        "verb": "find-noun",
+        "results": _with_excerpts(results, documents_index, setting, setting_dir),
+    }
+
+
+def find_rule(setting: str, term: str, setting_dir: pathlib.Path) -> dict:
+    """Resolve the `find-rule` verb (#397): every posting for `term`, each carrying its
+    resolved excerpt."""
+    terms_index = _load_setting_index(setting_dir, "terms")
+    documents_index = _load_setting_index(setting_dir, "documents")
+    results = corpus_find.find_rule(terms_index, setting, term)
+    return {
+        "verb": "find-rule",
+        "results": _with_excerpts(results, documents_index, setting, setting_dir),
+    }
+
+
+def find_table(
+    setting: str,
+    setting_dir: pathlib.Path,
+    dice: str | None = None,
+    about: str | None = None,
+) -> dict:
+    """Resolve the `find-table` verb (#397): matching table records, each carrying its resolved
+    excerpt where the record has an offset."""
+    tables_index = _load_setting_index(setting_dir, "tables")
+    documents_index = _load_setting_index(setting_dir, "documents")
+    results = corpus_find.find_table(tables_index, setting, dice=dice, about=about)
+    return {
+        "verb": "find-table",
+        "results": _with_excerpts(results, documents_index, setting, setting_dir),
     }

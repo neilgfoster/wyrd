@@ -1,0 +1,4 @@
+A second fixture document, nested one directory deeper, to exercise
+a record whose library-relative path itself has a subdirectory. It
+contains its own distinctive phrase: the copper key rusted shut long
+ago.
