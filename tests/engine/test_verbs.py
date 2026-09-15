@@ -573,7 +573,7 @@ class SkillScaleVerbTest(unittest.TestCase):
 
 class ValidateAllocationVerbTest(unittest.TestCase):
     def test_accepted_allocation_shape(self):
-        career_data = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+        career_data = {"skills": ["stealth", "swordplay"], "entry_point": True}
         actions = [
             {"action": "open", "skill": "stealth"},
             {"action": "open", "skill": "swordplay"},
@@ -584,7 +584,7 @@ class ValidateAllocationVerbTest(unittest.TestCase):
         self.assertEqual(result["skills"]["stealth"], 55)
 
     def test_rejected_allocation_shape(self):
-        career_data = {"skills": {"stealth": 55}, "entry_point": True}
+        career_data = {"skills": ["stealth"], "entry_point": True}
         result = verbs.validate_allocation([], career_data)
         self.assertEqual(result["verb"], "validate-allocation")
         self.assertFalse(result["valid"])
@@ -600,7 +600,7 @@ class CreateCharacterVerbTest(unittest.TestCase):
 
     def test_accepted_creation_shape(self):
         path = pathlib.Path(self._tmp.name) / "aria.md"
-        career_data = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+        career_data = {"skills": ["stealth", "swordplay"], "entry_point": True}
         actions = [
             {"action": "open", "skill": "stealth"},
             {"action": "open", "skill": "swordplay"},
@@ -620,7 +620,7 @@ class CreateCharacterVerbTest(unittest.TestCase):
 
     def test_rejected_creation_writes_nothing(self):
         path = pathlib.Path(self._tmp.name) / "bad.md"
-        career_data = {"skills": {"stealth": 55}, "entry_point": True}
+        career_data = {"skills": ["stealth"], "entry_point": True}
         result = verbs.create_character(
             path=path,
             name="X",

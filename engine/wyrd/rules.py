@@ -444,6 +444,12 @@ UNTRAINED_SKILL = 10
 SKILL_OPEN_VALUE = 25
 SKILL_ADVANCE_STEP = 5
 
+#: docs/design/03-rules.md section 6, "Careers": "Every career caps its skills at 70% -- the top
+#: of the expert band -- one figure applied to every skill that career grants." A single flat
+#: value, not a per-skill one -- no advance may raise a skill past this whichever career or
+#: ancestry grants it.
+CAREER_SKILL_CAP = 70
+
 GROUP_TEST_MODES = ("most_capable", "least_capable")
 
 

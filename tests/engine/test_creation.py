@@ -9,12 +9,16 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
-from wyrd import character, creation  # noqa: E402
+from wyrd import character, creation, rules  # noqa: E402
 
-CAREER = {"skills": {"stealth": 55, "swordplay": 45}, "entry_point": True}
+#: docs/design/24-authoring-a-setting.md's careers.yaml schema: `skills` is a plain list of names,
+#: never a per-skill dict of caps (#411) -- every skill it grants shares the one flat cap in
+#: rules.CAREER_SKILL_CAP.
+CAREER = {"skills": ["stealth", "swordplay"], "entry_point": True}
 VALID_ACTIONS = (
     [
         {"action": "open", "skill": "stealth"},
@@ -116,13 +120,17 @@ class AllocationCompositionTest(unittest.TestCase):
         self.assertFalse(path.exists())
 
     def test_cap_exceeded_rejected_and_writes_nothing(self):
+        # The 8-advance creation budget alone can never reach the real 70% cap (open + 7 raises
+        # tops out at 60%), so this exercises the rejection path against a lower cap via a patch
+        # rather than via an unreachable-in-creation real value.
         path = pathlib.Path(self._tmp.name) / "bad2.md"
         kwargs = _base_kwargs(path)
         kwargs["actions"] = [
             {"action": "open", "skill": "stealth"},
             {"action": "open", "skill": "swordplay"},
         ] + [{"action": "raise", "skill": "swordplay"}] * 6
-        result = creation.create_character(**kwargs)
+        with mock.patch.object(rules, "CAREER_SKILL_CAP", 45):
+            result = creation.create_character(**kwargs)
         self.assertFalse(result["valid"])
         self.assertFalse(path.exists())
 

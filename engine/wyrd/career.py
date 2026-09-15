@@ -18,12 +18,15 @@ MIN_SKILLS_OPENED = 2
 
 
 def effective_cap(skill: str, career: dict, ancestry: dict | None = None) -> int | None:
-    """The cap that binds `skill`, from whichever of career/ancestry grants it (the higher, if
-    both do -- an ancestry widens eligibility, never narrows what the career already permits).
-    `None` if neither grants it.
+    """The cap that binds `skill`, if either career or ancestry grants it -- an ancestry widens
+    eligibility, never narrows what the career already permits. `None` if neither grants it.
+
+    docs/design/03-rules.md section 6: every career (and any ancestry) applies one flat cap to
+    every skill it grants -- `career["skills"]`/`ancestry["skills"]` is a plain list of skill
+    names, never a per-skill dict of caps, so there is only ever one cap value to return.
     """
-    caps = [d["skills"][skill] for d in (career, ancestry) if d and skill in d["skills"]]
-    return max(caps) if caps else None
+    granted = (d["skills"] for d in (career, ancestry) if d)
+    return rules.CAREER_SKILL_CAP if any(skill in skills for skills in granted) else None
 
 
 def validate_allocation(actions: list[dict], career: dict, ancestry: dict | None = None) -> dict:
@@ -92,7 +95,9 @@ def career_complete(skills: dict, career: dict) -> bool:
     career; a career that grants nothing has nothing to finish.
     """
     granted = career["skills"]
-    return bool(granted) and all(skills.get(skill, 0) >= cap for skill, cap in granted.items())
+    return bool(granted) and all(
+        skills.get(skill, 0) >= rules.CAREER_SKILL_CAP for skill in granted
+    )
 
 
 def find_career(career_id: str, careers: list[dict]) -> dict | None:
