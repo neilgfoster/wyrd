@@ -175,14 +175,20 @@ def run_commit(setting_dir: Path, path_prefix: str, records_path: Path) -> dict:
             raise MissingRecordError(f"no scenario record supplied for document {doc['id']!r}")
         return corpus_scenario.validate_scenario_record(record)
 
-    records, updated_cache = corpus_pipeline.build_scenario_index(
+    _records_for_this_run, updated_cache = corpus_pipeline.build_scenario_index(
         documents, cache, generate, SCHEMA_VERSION
     )
 
-    write_scenarios_index(setting_dir, records)
+    # scenarios.json reflects every document this setting has ever cached a record for, not just
+    # the ones matching this run's own --path-prefix -- a narrower prefix on one run must never
+    # clobber records a broader or differently-scoped earlier run already wrote (spec.md Edge
+    # Cases: this tool's own index is additive across invocations, keyed by the cache itself).
+    all_records = [entry["record"] for _key, entry in sorted(updated_cache.items())]
+
+    write_scenarios_index(setting_dir, all_records)
     write_scenario_cache(setting_dir, updated_cache)
 
-    return {"setting": setting, "documents": len(records)}
+    return {"setting": setting, "documents": len(all_records)}
 
 
 def main(argv: list[str] | None = None) -> int:
