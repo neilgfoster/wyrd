@@ -227,11 +227,31 @@ def _parse_block(lines: list[tuple[int, int, str]], start: int, indent: int):
     return (items if items else mapping), i
 
 
+def _strip_comment(line: str) -> str:
+    """Drop a trailing `# ...` comment, honouring single/double-quoted strings.
+
+    A `#` inside quotes is data, not a comment marker -- this scans character by character
+    rather than splitting on the first `#`, so a quoted value containing `#` survives intact.
+    """
+    in_quote = None
+    for i, ch in enumerate(line):
+        if in_quote:
+            if ch == in_quote:
+                in_quote = None
+            continue
+        if ch in ("'", '"'):
+            in_quote = ch
+        elif ch == "#":
+            return line[:i]
+    return line
+
+
 def parse_yaml(text: str) -> dict:
     """Parse this feature's restricted YAML subset back into a mapping."""
     raw_lines = text.splitlines()
     lines: list[tuple[int, int, str]] = []
-    for lineno, line in enumerate(raw_lines, 1):
+    for lineno, raw_line in enumerate(raw_lines, 1):
+        line = _strip_comment(raw_line)
         if not line.strip():
             continue
         lines.append((lineno, len(line) - len(line.lstrip()), line.strip()))
