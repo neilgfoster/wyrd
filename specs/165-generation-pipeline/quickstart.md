@@ -17,7 +17,10 @@ request = generation.new_request(
 )
 assert generation.validate_request(request) is None
 
-# The caller has already obtained both model responses out of process.
+# The caller has already obtained both model responses out of process, and has already
+# extracted the structured facts the capable model's prose implies (which entities it named,
+# any threat changes, any coincidences it relied on, any prophecy claim). Leaving these at their
+# defaults means generation_checks' five checks have nothing to evaluate and pass vacuously.
 haiku_response = {"entry_requires_threads": ["thread-a"], "beat_count": None}
 capable_prose = "The warehouse is quiet. Someone moved the crates last night."
 
@@ -26,6 +29,7 @@ result = generation_pipeline.run_pipeline(
     haiku_response=haiku_response,
     capable_prose=capable_prose,
     known_entities=["thread-a"],
+    named_entities=["thread-a"],
 )
 
 # result is a GenerationResult ready for the already-merged sibling modules, unchanged:

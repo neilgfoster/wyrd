@@ -196,6 +196,37 @@ class WriteProseTests(unittest.TestCase):
         self.assertEqual(result["checks"], [])
         self.assertEqual(result["candidate"]["body"], "The warehouse is quiet.")
         self.assertEqual(result["candidate"]["prophecy_claim"], "none")
+        self.assertEqual(result["consumed"], [])
+
+    def test_threads_structured_extraction_through_to_candidate(self) -> None:
+        # A real bug this guards: write_prose must not hardcode named_entities/threat_updates/
+        # coincidences/prophecy_claim to empty/none regardless of what the caller supplies --
+        # doing so would make every one of generation_checks' five checks pass vacuously.
+        request = _live_play_request()
+        result = generation_pipeline.write_prose(
+            request,
+            {"danger": 30, "written_for": 4},
+            "A stranger asks after the ledger.",
+            ["thread-a"],
+            named_entities=["thread-a", {"name": "an invented name", "invented": True}],
+            threat_updates=[{"entity_id": "thread-a", "imminence_delta": 1}],
+            coincidences=[{"claim": "a lucky break", "supported_by": "thread-a"}],
+            prophecy_claim="destiny",
+            consumed=["thread-a"],
+        )
+        candidate = result["candidate"]
+        self.assertEqual(
+            candidate["named_entities"],
+            ["thread-a", {"name": "an invented name", "invented": True}],
+        )
+        self.assertEqual(
+            candidate["threat_updates"], [{"entity_id": "thread-a", "imminence_delta": 1}]
+        )
+        self.assertEqual(
+            candidate["coincidences"], [{"claim": "a lucky break", "supported_by": "thread-a"}]
+        )
+        self.assertEqual(candidate["prophecy_claim"], "destiny")
+        self.assertEqual(result["consumed"], ["thread-a"])
 
 
 class RunPipelineTests(unittest.TestCase):
@@ -248,6 +279,37 @@ class RunPipelineTests(unittest.TestCase):
             known_entities=["thread-a"],
         )
         self.assertEqual(result["consumed"], ["thread-a"])
+
+    def test_reject_outcomes_are_actually_reachable_through_run_pipeline(self) -> None:
+        # Proves generation_checks' five checks have real teeth when driven through this
+        # pipeline, not just when called directly against a hand-built candidate: an
+        # ungrounded, non-invented named entity must be rejected by FR-007 end to end.
+        request = _live_play_request()
+        result = generation_pipeline.run_pipeline(
+            request,
+            haiku_response={},
+            capable_prose="A stranger nobody has heard of.",
+            known_entities=["thread-a"],
+            named_entities=["someone-never-mentioned-anywhere"],
+        )
+        self.assertFalse(generation_commit.can_commit(result))
+        outcomes = {entry["rule"]: entry["outcome"] for entry in result["checks"]}
+        self.assertEqual(outcomes["FR-007"], "reject")
+
+    def test_prophecy_reject_is_reachable_through_run_pipeline(self) -> None:
+        request = _live_play_request(
+            tone_contract={"prophecy": "forbidden", "scale_drift": "allowed"}
+        )
+        result = generation_pipeline.run_pipeline(
+            request,
+            haiku_response={},
+            capable_prose="It was foretold.",
+            known_entities=["thread-a"],
+            prophecy_claim="destiny",
+        )
+        self.assertFalse(generation_commit.can_commit(result))
+        outcomes = {entry["rule"]: entry["outcome"] for entry in result["checks"]}
+        self.assertEqual(outcomes["FR-008"], "reject")
 
 
 if __name__ == "__main__":

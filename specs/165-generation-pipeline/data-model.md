@@ -53,6 +53,15 @@ A single free-form `str` — the finished body text (and any Q3-permitted invent
 inline within it). This is the *only* unstructured input anywhere in this pipeline (FR-020,
 SC-003).
 
+Alongside it, `write_prose` also takes the caller's own **structured extraction** of that same
+capable-model call — `named_entities`, `threat_updates`, `coincidences`, `prophecy_claim` — since
+these are discrete facts about what the model produced, not free prose, and accepting them here
+does not weaken FR-020's "capable tier is the only step accepting free-form text" boundary. Each
+defaults to an empty/neutral value; leaving them all at their defaults means `generation_checks`'s
+five checks (FR-007-FR-011) have nothing to evaluate and every one passes vacuously — a valid
+choice for a caller with nothing to declare, never evidence the checks actually ran against real
+content.
+
 ## Candidate (built incrementally, final shape matches `generation.new_result`'s `candidate`)
 
 ```text
@@ -71,8 +80,8 @@ SC-003).
 ```
 
 `write_prose` is the step that finalizes this shape and wraps it via `generation.new_result` into
-a `GenerationResult` — `{"candidate": ..., "checks": [], "consumed": selection["consumed"]}` —
-ready for `generation_checks.run_checks` to populate `checks` in place.
+a `GenerationResult` — `{"candidate": ..., "checks": [], "consumed": <the consumed argument, "[]"
+if omitted>}` — ready for `generation_checks.run_checks` to populate `checks` in place.
 
 ## Call sequence (FR-021)
 
@@ -80,13 +89,19 @@ ready for `generation_checks.run_checks` to populate `checks` in place.
 selection   = select_grounding(request, candidate_pool=..., current=...)
 structural  = compute_structural_fields(request, selection)
 paced       = assemble_pacing(request, selection, structural, haiku_response)
-result      = write_prose(request, paced, capable_prose, known_entities)
+result      = write_prose(
+    request, paced, capable_prose, known_entities,
+    named_entities=..., threat_updates=..., coincidences=..., prophecy_claim=...,
+    consumed=selection["consumed"],
+)
 result["checks"] = generation_checks.run_checks(request, result["candidate"], known_entities)
 # then: generation_commit.accept_result(result, ...) or generation_commit.reject_result(result)
 ```
 
 `run_pipeline(request, *, candidate_pool=None, current=None, haiku_response, capable_prose,
-known_entities)` performs exactly this sequence and returns the populated `GenerationResult` — a
-caller may call it directly, or call the four functions individually if it needs to inspect an
-intermediate step (e.g. to build its own Haiku-tier prompt from `structural`'s output before that
-model call is made).
+known_entities, named_entities=None, threat_updates=None, coincidences=None,
+prophecy_claim="none")` performs exactly this sequence (threading `selection["consumed"]` into
+`write_prose` itself) and returns the populated `GenerationResult` — a caller may call it
+directly, or call the four functions individually if it needs to inspect an intermediate step
+(e.g. to build its own Haiku-tier prompt from `structural`'s output before that model call is
+made).

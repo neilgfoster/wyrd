@@ -30,7 +30,9 @@ runtime choice:
   (`26-corpus-index.md`'s "Build and maintenance": "that stays injected by the caller").
 - `write_prose` (FR-019, capable tier) -- takes the capable model's already-generated prose as an
   ordinary `str` argument (never calls a model itself), and is the only step in this pipeline
-  accepting free-form text (FR-020, SC-003).
+  accepting free-form text (FR-020, SC-003). Also takes the caller's own structured extraction of
+  that same model call -- `named_entities`/`threat_updates`/`coincidences`/`prophecy_claim` -- so
+  #421's five checks have real content to evaluate rather than vacuous defaults.
 
 `run_pipeline` composes all four in order, then runs `generation_checks.run_checks`, returning a
 `GenerationResult` ready for `generation_commit.accept_result`/`reject_result` with no reshaping
@@ -169,6 +171,12 @@ def write_prose(
     paced_candidate: dict,
     capable_prose: str,
     known_entities: list[str],
+    *,
+    named_entities: list | None = None,
+    threat_updates: list[dict] | None = None,
+    coincidences: list[dict] | None = None,
+    prophecy_claim: str = "none",
+    consumed: list[str] | None = None,
 ) -> dict:
     """FR-019/FR-007/FR-020: capable tier -- the only step in this pipeline accepting free-form
     text. `capable_prose` MUST already be the capable model's generated body text (and, under
@@ -178,15 +186,25 @@ def write_prose(
     Raises `TypeError` when `capable_prose` is not a `str` -- the FR-020 boundary distinguishing
     this step from `assemble_pacing`'s structured-only input.
 
+    `named_entities`/`threat_updates`/`coincidences`/`prophecy_claim` are the structured facts a
+    caller has already extracted from that same capable-model call (naming which entities the
+    prose mentions, which threats it updates, which coincidences it relies on, and what it claims
+    about prophecy) -- not free prose, so accepting them as ordinary structured arguments does not
+    weaken FR-020's "capable tier is the only step accepting free-form text" boundary. Each
+    defaults to an empty/neutral value so a caller with nothing to declare need not pass them, but
+    every one of them MUST be populated for `generation_checks.run_checks`'s five checks (FR-007
+    through FR-011) to have anything to actually evaluate -- leaving them at their defaults means
+    every check passes vacuously, not that nothing was generated.
+
     `known_entities` is accepted (matching `generation_checks.check_entity_membership`'s own
     required parameter) so a caller building `named_entities` can consult it, but this function
     does not itself run the membership check -- that stays `generation_checks.run_checks`'s job,
     run by `run_pipeline` immediately after this step.
 
     Returns a finished `GenerationResult` (`generation.new_result`'s shape) with `checks: []` --
-    unpopulated until `generation_checks.run_checks` runs -- and `consumed` unused here (populated
-    by `run_pipeline` from the selection step; this function does not receive `selection`
-    directly, keeping its own signature limited to what a capable-tier prose call actually needs).
+    unpopulated until `generation_checks.run_checks` runs -- and `consumed` set from the caller-
+    supplied `consumed` (normally `select_grounding`'s own output, threaded straight through by
+    `run_pipeline`), defaulting to `[]` when this function is called on its own.
     """
     if not isinstance(capable_prose, str):
         raise TypeError(
@@ -197,12 +215,12 @@ def write_prose(
     candidate = {
         **paced_candidate,
         "body": capable_prose,
-        "named_entities": [],
-        "threat_updates": [],
-        "coincidences": [],
-        "prophecy_claim": "none",
+        "named_entities": list(named_entities or []),
+        "threat_updates": list(threat_updates or []),
+        "coincidences": list(coincidences or []),
+        "prophecy_claim": prophecy_claim,
     }
-    return generation.new_result(candidate)
+    return generation.new_result(candidate, consumed=list(consumed or []))
 
 
 def run_pipeline(
@@ -213,6 +231,10 @@ def run_pipeline(
     haiku_response: dict,
     capable_prose: str,
     known_entities: list[str],
+    named_entities: list | None = None,
+    threat_updates: list[dict] | None = None,
+    coincidences: list[dict] | None = None,
+    prophecy_claim: str = "none",
 ) -> dict:
     """FR-021: the documented call sequence a caller (a future `/wyrd-*` skill, or
     `create-setting`'s Q3 path) follows end to end -- selection (FR-016) -> structural computation
@@ -222,11 +244,25 @@ def run_pipeline(
 
     Both `haiku_response` and `capable_prose` must already be the caller's own model calls' actual
     output -- this function, like every step it composes, never calls a model itself.
+    `named_entities`/`threat_updates`/`coincidences`/`prophecy_claim` are `write_prose`'s own
+    structured extraction of that same capable-model call, threaded straight through unchanged --
+    leaving them at their defaults means `generation_checks.run_checks`'s five checks have nothing
+    to evaluate and every one passes vacuously, which is correct for a caller with nothing to
+    declare but not a substitute for a real caller populating them.
     """
     selection = select_grounding(request, candidate_pool=candidate_pool, current=current)
     structural = compute_structural_fields(request, selection)
     paced = assemble_pacing(request, selection, structural, haiku_response)
-    result = write_prose(request, paced, capable_prose, known_entities)
-    result["consumed"] = selection["consumed"]
+    result = write_prose(
+        request,
+        paced,
+        capable_prose,
+        known_entities,
+        named_entities=named_entities,
+        threat_updates=threat_updates,
+        coincidences=coincidences,
+        prophecy_claim=prophecy_claim,
+        consumed=selection["consumed"],
+    )
     result["checks"] = generation_checks.run_checks(request, result["candidate"], known_entities)
     return result
