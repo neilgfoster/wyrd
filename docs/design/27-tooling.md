@@ -255,13 +255,28 @@ Use the smallest model that can do the job correctly.
 |---|---|
 | **No model** | Anything in the left column of §1. Dice, arithmetic, state, activation, validation, table lookups. |
 | **Haiku** | Mechanical language work with a right answer: extracting entity updates from a session log, regenerating `recap.md` from state, matching arc hooks against live threads, picking names from setting tables, formatting a roll into a sentence. |
-| **Sonnet / Opus** | The GM itself. Narration, character voice and motive, arc adaptation, party tension events, judgement about what a result means and when to call for a roll. |
+| **Sonnet** | The GM itself. Narration, character voice and motive, arc adaptation, party tension events, judgement about what a result means and when to call for a roll. |
+
+**Sonnet is a ceiling, not a default: no wyrd skill is ever tiered `model: opus`, however
+narration-heavy or judgement-heavy its work is.** Effort (`effort: high` in a skill's own
+frontmatter) is the dial for a judgement-heavy skill's quality; model choice is not. A skill's
+own `SKILL.md` states its tier and, where the choice is not self-evident, argues it against this
+table directly — see `/wyrd-play` and `/wyrd-bootstrap` in `wyrd-chronicle-template` (both
+`model: sonnet`, `effort: high`, with a written justification against this section) and
+`/wyrd-character` and `/wyrd-end-session` (both `model: haiku`, as pure CLI-verb dispatch with a
+right answer). See [ADR 0053](../adr/0053-skill-model-tiering-caps-at-sonnet-never-opus.md) for
+why the ceiling holds even for narration.
 
 Mechanical steps are delegated to a **Haiku subagent** — an agent definition in
 `.claude/agents/` with `model: haiku` frontmatter — rather than being done inline by the
 session model. Session-close compaction is the clearest case: it is bulk structured
 extraction against files that already exist, it has a right answer, and it does not need
-the GM's context.
+the GM's context. `wyrd-setting-template`'s `create-setting` skill gives a second, real example:
+`.claude/agents/corpus-fact-finder.md` (`model: haiku`, `tools: Read, Grep, Glob`) does nothing
+but locate and quote a claim's supporting or contradicting text in a setting's corpus — a closed
+retrieval task with a checkable right answer — so that `create-setting` itself, tiered
+`model: sonnet`, is left to spend its own judgement on voice, register, and what content belongs,
+rather than on searching text.
 
 The GM session itself stays on the capable model. Wyrd's whole value is the quality of the
 fiction; that is the one place not to economise.
