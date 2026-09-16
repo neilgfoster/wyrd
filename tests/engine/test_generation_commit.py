@@ -214,6 +214,19 @@ class AcceptResultWritePathTests(unittest.TestCase):
                     ),
                 )
 
+    def test_thread_new_missing_required_field_raises_value_error_not_key_error(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "a-new-beat.md"
+            with self.assertRaises(ValueError):
+                generation_commit.accept_result(
+                    _passing_result(),
+                    **_accept_kwargs(
+                        path,
+                        thread_updates=[{"action": "new", "id": "t2"}],
+                        live_threads={},
+                    ),
+                )
+
     def test_threat_new_calls_threat_promote(self) -> None:
         target = {"id": "the-quiet-hollow", "type": "place"}
         update = {

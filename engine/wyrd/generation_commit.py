@@ -74,6 +74,11 @@ def _apply_thread_updates(thread_updates: list[dict], live_threads: dict[str, di
         action = update.get("action")
         thread_id = update.get("id")
         if action == "new":
+            missing = [f for f in ("opened", "summary", "hooks") if f not in update]
+            if missing:
+                raise ValueError(
+                    f"thread_updates: a new thread requires {missing} (id={thread_id!r})"
+                )
             live_threads[thread_id] = thread.new_thread(
                 id=thread_id,
                 opened=update["opened"],
