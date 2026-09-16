@@ -196,6 +196,21 @@ class DangerBandTests(unittest.TestCase):
         entry = generation_checks.check_danger_band(request, candidate)
         self.assertEqual(entry["outcome"], "pass")
 
+    def test_setting_authoring_request_passes_without_a_danger_rating(self) -> None:
+        """A setting-authoring request has no danger_rating (generation.py rejects one that
+        sets it) -- nothing to band against, so this must pass rather than crash comparing
+        against None."""
+        request = _setting_authoring_request()
+        candidate = _candidate(danger=99)
+        entry = generation_checks.check_danger_band(request, candidate)
+        self.assertEqual(entry["outcome"], "pass")
+
+    def test_run_checks_does_not_raise_for_a_setting_authoring_request(self) -> None:
+        request = _setting_authoring_request()
+        candidate = _candidate(danger=99)
+        entries = generation_checks.run_checks(request, candidate, known_entities=[])
+        self.assertEqual(len(entries), 5)
+
 
 class ScaleDriftTests(unittest.TestCase):
     """User Story 3: FR-010, reject vs. narrow under scale_drift: suppressed."""

@@ -119,11 +119,20 @@ def check_danger_band(request: dict, candidate: dict) -> dict:
     """FR-009: the candidate's own `danger` must not exceed `request['danger_rating']`, banded
     through `corpus_scenario.scale_danger` -- the existing danger-scaling arithmetic (research.md)
     -- rather than compared as a raw number.
+
+    `danger_rating` is a `live-play`-only field (`generation.py`'s `_LIVE_PLAY_FIELDS`) --
+    `validate_request` rejects a `setting-authoring` request that sets it, so a well-formed
+    `setting-authoring` request always has `danger_rating: None` here. There is no chronicle
+    danger rating to band against yet in that mode, so this check has nothing to enforce and
+    passes unconditionally, rather than comparing against `None`.
     """
+    danger_rating = request.get("danger_rating")
+    if danger_rating is None:
+        return _entry("FR-009", "pass")
+
     written_for = request.get("written_for")
     record = {"danger": candidate.get("danger"), "written_for": written_for}
     effective = corpus_scenario.scale_danger(record, written_for)
-    danger_rating = request.get("danger_rating")
 
     if effective > danger_rating:
         return _entry(
