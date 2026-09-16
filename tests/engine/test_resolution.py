@@ -2599,6 +2599,132 @@ class IsSpentTest(unittest.TestCase):
             self.assertNotIn("spent", frontmatter)
 
 
+def _write_entity(path: pathlib.Path, frontmatter: dict, body: str = "") -> None:
+    """A minimal entity file writer for chronicle-layout fixtures below -- `character.save`
+    assumes a character-shaped frontmatter, so this writes the bare `state.load_entity` shape
+    directly instead."""
+    from wyrd import state as state_module
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    state_module.save_entity(frontmatter, body, path)
+
+
+class LoadChronicleEntitiesTest(unittest.TestCase):
+    """specs/170-chronicle-entity-loader-layout: `_load_chronicle_entities` must find entity
+    files nested one level under a per-type subdirectory, in `.yaml`, matching the layout a
+    chronicle bootstrap actually produces -- not only the previously-assumed flat top-level
+    `.md` glob."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = pathlib.Path(self._tmp.name)
+        (self.root / "setting" / "entities").mkdir(parents=True)
+        (self.root / "overlay").mkdir(parents=True)
+        (self.root / "entities").mkdir(parents=True)
+        self.marker_path = self.root / "entities" / "marker.md"
+        _write_entity(
+            self.marker_path,
+            {
+                "id": "marker",
+                "type": "lore",
+                "name": "Marker",
+                "setting": "test",
+                "status": "stub",
+            },
+        )
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _load(self) -> dict[str, dict]:
+        return resolution._load_chronicle_entities(self.marker_path)
+
+    def test_nested_yaml_entities_are_found_in_all_three_directories(self):
+        _write_entity(
+            self.root / "setting" / "entities" / "lore" / "the-caretaker.yaml",
+            {
+                "id": "the-caretaker",
+                "type": "lore",
+                "name": "The Caretaker",
+                "setting": "test",
+                "status": "stub",
+                "disposition": "unaware",
+            },
+        )
+        _write_entity(
+            self.root / "entities" / "lore" / "invented-thing.yaml",
+            {
+                "id": "invented-thing",
+                "type": "lore",
+                "name": "Invented Thing",
+                "setting": "test",
+                "status": "stub",
+            },
+        )
+        entities = self._load()
+        self.assertIn("the-caretaker", entities)
+        self.assertIn("invented-thing", entities)
+        self.assertIn("marker", entities)
+
+    def test_overlay_resolution_is_unaffected_by_the_nested_layout(self):
+        _write_entity(
+            self.root / "setting" / "entities" / "lore" / "the-caretaker.yaml",
+            {
+                "id": "the-caretaker",
+                "type": "lore",
+                "name": "The Caretaker",
+                "setting": "test",
+                "status": "stub",
+                "disposition": "unaware",
+            },
+        )
+        _write_entity(
+            self.root / "overlay" / "lore" / "the-caretaker.yaml",
+            {"overlay_of": "the-caretaker", "disposition": "hunting"},
+        )
+        entities = self._load()
+        self.assertEqual(entities["the-caretaker"]["disposition"], "hunting")
+        self.assertEqual(entities["the-caretaker"]["name"], "The Caretaker")
+
+    def test_readme_at_directory_top_level_does_not_crash_or_count_as_an_entity(self):
+        (self.root / "setting" / "README.md").write_text("# setting\n\nNot an entity.\n")
+        _write_entity(
+            self.root / "setting" / "entities" / "lore" / "the-caretaker.yaml",
+            {
+                "id": "the-caretaker",
+                "type": "lore",
+                "name": "The Caretaker",
+                "setting": "test",
+                "status": "stub",
+            },
+        )
+        entities = self._load()  # must not raise
+        self.assertIn("the-caretaker", entities)
+        self.assertNotIn("README", entities)
+        self.assertEqual(len(entities), 2)  # the-caretaker and marker; nothing from README
+
+    def test_gitkeep_placeholder_in_an_empty_type_directory_contributes_nothing(self):
+        (self.root / "entities" / "faction").mkdir(parents=True)
+        (self.root / "entities" / "faction" / ".gitkeep").write_text("")
+        entities = self._load()  # must not raise
+        self.assertEqual(entities, {"marker": entities["marker"]})
+
+    def test_flat_top_level_md_layout_still_loads_unchanged(self):
+        _write_entity(
+            self.root / "setting" / "old-style.md",
+            {
+                "id": "old-style",
+                "type": "lore",
+                "name": "Old Style",
+                "setting": "test",
+                "status": "stub",
+            },
+        )
+        entities = self._load()
+        self.assertIn("old-style", entities)
+        self.assertIn("marker", entities)
+
+
 class CrossProcessProposalPersistenceTest(unittest.TestCase):
     """specs/159-persist-open-proposals: a proposal staged by one `python3 -m wyrd.client`
     invocation must be visible to a `commit`/`discard` run as a genuinely separate later
