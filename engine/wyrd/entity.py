@@ -71,6 +71,14 @@ _CONNECTION_OPTIONAL_FIELDS = ("via", "cost", "requires", "hidden")
 _SOURCE_REQUIRED_FIELDS = ("work", "licence", "path")
 _SOURCE_OPTIONAL_FIELDS = ("pages",)
 
+# specs/164-commit-back-path-for-generated-content FR-002: a sibling shape for a sources[] entry
+# recording generated (rather than extracted) provenance, gated on `generated: true` -- additive
+# to the authored shape above, never a replacement for it. `mode` mirrors
+# `engine/wyrd/generation.py`'s own `MODES` tuple; not imported directly to avoid a dependency
+# from this common-schema module onto a feature-specific one, so the values are restated here.
+_GENERATED_SOURCE_FIELDS = ("generated", "mode", "consumed")
+_GENERATED_SOURCE_MODES = ("live-play", "setting-authoring")
+
 # The two legal forward moves through STATUSES; anything else (staying put, skipping a state,
 # moving backward) is rejected by legal_transition(). This models the authoring-lifecycle
 # vocabulary only: neither COMPANION_STATUSES nor THREAD_STATUSES has a documented ordering
@@ -164,16 +172,45 @@ def validate(frontmatter: dict) -> dict:
     return {"valid": True}
 
 
+def _validate_generated_source(source: dict) -> dict:
+    """The `{generated, mode, consumed}` shape (FR-002 above) -- gated on `generated: true`."""
+    for field in _GENERATED_SOURCE_FIELDS:
+        if field not in source or source.get(field) is None:
+            return {"valid": False, "error": f"generated source missing required field '{field}'"}
+
+    if source["mode"] not in _GENERATED_SOURCE_MODES:
+        return {
+            "valid": False,
+            "error": f"generated source has invalid mode '{source['mode']}'",
+        }
+    if not isinstance(source["consumed"], list):
+        return {"valid": False, "error": "generated source 'consumed' is not a list"}
+
+    for field in source:
+        if field not in _GENERATED_SOURCE_FIELDS:
+            return {"valid": False, "error": f"generated source has unexpected field '{field}'"}
+
+    return {"valid": True}
+
+
 def validate_source(source: dict, *, status: str) -> dict:
     """Check one `sources[]` entry against its field schema.
 
-    Requires `work`, `licence`, and `path`; requires `pages` too once `status` is `"drafted"` or
-    `"complete"` -- a stub records where it came from, a converted beat additionally records what
-    pages it was drawn from. Rejects any field outside `{work, pages, licence, path}`. Returns
-    `{"valid": True}` or `{"valid": False, "error": "..."}` naming the specific field.
+    An entry with `generated: true` is checked against the additive generated-provenance shape
+    (`_validate_generated_source`, FR-002) instead of the authored shape below -- the two shapes
+    are siblings, never merged.
+
+    Otherwise: requires `work`, `licence`, and `path`; requires `pages` too once `status` is
+    `"drafted"` or `"complete"` -- a stub records where it came from, a converted beat additionally
+    records what pages it was drawn from. Rejects any field outside `{work, pages, licence, path}`.
+
+    Returns `{"valid": True}` or `{"valid": False, "error": "..."}` naming the specific field.
     """
     if not isinstance(source, dict):
         return {"valid": False, "error": "source entry is not a mapping"}
+
+    if source.get("generated") is True:
+        return _validate_generated_source(source)
 
     required = _SOURCE_REQUIRED_FIELDS
     if status in ("drafted", "complete"):
