@@ -446,5 +446,52 @@ class FlowStyleCollectionTest(unittest.TestCase):
         self.assertEqual(parsed["rename"], {})
 
 
+class CommentTest(unittest.TestCase):
+    """wyrd-chronicle-template ships chronicle.yaml with a full-line header comment and
+    per-field inline comments (docs/design/23-chronicle-bootstrap.md's placeholder) -- a
+    save() on a fresh chronicle reads that file back for its prior migrations before this
+    fix landed and crashed on line 1, closes wyrd#439."""
+
+    def test_full_line_comment_is_skipped(self):
+        parsed = state.parse_yaml("# a header comment\nname: null\n")
+        self.assertEqual(parsed, {"name": None})
+
+    def test_indented_full_line_comment_is_skipped(self):
+        parsed = state.parse_yaml("intent:\n  # a note\n  about: null\n")
+        self.assertEqual(parsed, {"intent": {"about": None}})
+
+    def test_inline_comment_is_stripped(self):
+        parsed = state.parse_yaml("lethality: null     # low | standard | grim\n")
+        self.assertIsNone(parsed["lethality"])
+
+    def test_hash_inside_quotes_is_not_a_comment(self):
+        parsed = state.parse_yaml('name: "room #4"\n')
+        self.assertEqual(parsed["name"], "room #4")
+
+    def test_the_template_placeholder_parses(self):
+        text = (
+            "# Written by ./bootstrap. Placeholder until then.\n"
+            "name: null\n"
+            "engine: {repo: wyrd, version: null}\n"
+            "setting: {repo: null, version: null}\n"
+            "calendar: {year: null, month: null, day: null}\n"
+            "era: null\n"
+            "sessions: 0\n"
+            "migrations: []\n"
+            "\n"
+            "# Answers from the bootstrap interview. Read every session.\n"
+            "intent:\n"
+            "  about: null              # what you want this chronicle to be about\n"
+            "  avoid: []                # honoured, always\n"
+            "  session_length: null     # minutes\n"
+            "  lethality: null          # low | standard | grim\n"
+            "  world_acts_offstage: true\n"
+        )
+        parsed = state.parse_yaml(text)
+        self.assertIsNone(parsed["name"])
+        self.assertEqual(parsed["intent"]["avoid"], [])
+        self.assertIs(parsed["intent"]["world_acts_offstage"], True)
+
+
 if __name__ == "__main__":
     unittest.main()
