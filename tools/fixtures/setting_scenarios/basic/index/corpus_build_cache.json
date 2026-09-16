@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-01-01T00:00:00Z",
+  "setting": "fixture-setting",
+  "documents": {
+    "adventures/one.pdf": "sha256:aaa",
+    "adventures/two.pdf": "sha256:bbb",
+    "rules/core.pdf": "sha256:ccc"
+  }
+}
