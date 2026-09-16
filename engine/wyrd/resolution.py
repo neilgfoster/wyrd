@@ -45,8 +45,9 @@ Python 3.11+, standard library only.
 
 from __future__ import annotations
 
-import itertools
+import json
 import pathlib
+import uuid
 from collections.abc import Callable
 
 from wyrd import character, entity, rules
@@ -680,12 +681,38 @@ _MECHANICS: dict[str, tuple[Callable[..., dict], Callable[..., list[dict]]]] = {
 
 _PUBLIC_MECHANICS = frozenset({*_MECHANICS.keys(), "combat-attack"})
 
-_proposal_ids = itertools.count(1)
+#: Where an open proposal's full contents live on disk (specs/159-persist-open-proposals):
+#: one JSON file per proposal, under a fixed, cwd-relative directory -- a sibling of the
+#: chronicle's existing `log/` directory (docs/design/22-state.md). `propose`/`propose_batch`/
+#: `commit`/`discard`/`reroll` all default to this path, mirroring exactly how `state.py`
+#: already defaults `DEFAULT_CHRONICLE_PATH`/`DEFAULT_STATE_PATH` to a cwd-relative path and lets
+#: a caller (or a test) override it. Every real CLI invocation already runs with cwd set to the
+#: chronicle directory -- this is not a new convention, it is the same one applied to one more
+#: file.
+DEFAULT_PROPOSALS_DIR = pathlib.Path("log/proposals")
 
-#: Process-local proposal store (docs/design/31-action-resolution.md: "an unpersisted,
-#: in-memory ... record"). Never written to disk -- the engine has no backend/daemon
-#: (CLAUDE.md, docs/design/27-tooling.md).
-_open_proposals: dict[str, dict] = {}
+
+def _proposal_path(proposal_id: str, proposals_dir: pathlib.Path) -> pathlib.Path:
+    return proposals_dir / f"{proposal_id}.json"
+
+
+def _new_proposal_id() -> str:
+    """A random, collision-resistant id -- two separate processes must never mint the same one
+    (specs/159-persist-open-proposals Decision 2). Nothing in the design or any test reads a
+    proposal id as an ordered sequence; every id shown in design docs is illustrative
+    (`p-8f2c`, `p-3a91`), never asserted against a literal `p-1`/`p-2`)."""
+    return f"p-{uuid.uuid4().hex[:12]}"
+
+
+def _read_open_proposal(proposal_id: str, proposals_dir: pathlib.Path) -> dict:
+    path = _proposal_path(proposal_id, proposals_dir)
+    if not path.is_file():
+        raise ProposalError(f"no open proposal: {proposal_id}")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _write_open_proposal(proposal_id: str, proposal: dict, proposals_dir: pathlib.Path) -> None:
+    state_module.write_text_atomic(json.dumps(proposal), _proposal_path(proposal_id, proposals_dir))
 
 
 def _roll_dice(spec: str, seed_cursor: _SeedCursor) -> tuple[list[int], int]:
@@ -1524,7 +1551,12 @@ def _stage_requests(
             )
 
 
-def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
+def propose_batch(
+    requests: list[dict],
+    *,
+    seed: int | None = None,
+    proposals_dir: pathlib.Path = DEFAULT_PROPOSALS_DIR,
+) -> dict:
     """Resolve several independent top-level requests into one proposal (docs/design/31-action-
     resolution.md "A worked example": "Two unrelated Exposure sources in the same scene, proposed
     together"). Each request takes the same keys as `propose`'s own kwargs (`actor`, `mechanic`,
@@ -1532,10 +1564,11 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     `armour_dice`, `damage_type`, `dread_witnessed`).
     An actor/target appearing in more than one request shares one in-memory scratch state across
     them, so a later request in the batch sees any earlier request's own staged mutations when
-    checking for a threshold crossing. Writes nothing. Returns `{"proposal_id", "roll",
-    "mutations", "steps"}` -- `roll`/`mutations` cover the *first* request's own first step, for
-    #235 single-request backward compatibility; `steps` is the full, possibly multi-request,
-    cascade.
+    checking for a threshold crossing. Writes nothing to any entity file; stages the proposal
+    itself to `proposals_dir` (specs/159-persist-open-proposals) so a later `commit`/`discard`/
+    `reroll` can find it from a separate process. Returns `{"proposal_id", "roll", "mutations",
+    "steps"}` -- `roll`/`mutations` cover the *first* request's own first step, for #235
+    single-request backward compatibility; `steps` is the full, possibly multi-request, cascade.
     """
     if not requests:
         raise ValueError("propose_batch requires at least one request")
@@ -1547,8 +1580,8 @@ def propose_batch(requests: list[dict], *, seed: int | None = None) -> dict:
     _stage_requests(steps, ordered_requests, state_cache, seed_cursor)
 
     all_mutations = [mutation for step in steps for mutation in step["mutations"]]
-    proposal_id = f"p-{next(_proposal_ids)}"
-    _open_proposals[proposal_id] = {"steps": steps, "mutations": all_mutations, "open": True}
+    proposal_id = _new_proposal_id()
+    _write_open_proposal(proposal_id, {"steps": steps, "mutations": all_mutations}, proposals_dir)
     return {
         "proposal_id": proposal_id,
         "roll": steps[0]["roll"],
@@ -1572,10 +1605,14 @@ def propose(
     damage_type: str | None = None,
     dread_witnessed: bool = False,
     seed: int | None = None,
+    proposals_dir: pathlib.Path = DEFAULT_PROPOSALS_DIR,
 ) -> dict:
     """Resolve `mechanic` against `actor`'s own state, cascading into further steps whenever the
-    mechanic's own rule calls for one (module docstring). Writes nothing -- state on disk is
-    unchanged by this call, verifiably (spec.md User Story 2). Returns `{"proposal_id", "roll",
+    mechanic's own rule calls for one (module docstring). Writes nothing to any entity file --
+    state on disk for `actor`/`target` is unchanged by this call, verifiably (spec.md User
+    Story 2); stages the proposal itself to `proposals_dir` (specs/159-persist-open-proposals)
+    so a later `commit`/`discard`/`reroll` can find it from a separate process. Returns
+    `{"proposal_id", "roll",
     "mutations", "steps"}` -- `roll`/`mutations` keep #235's exact shape (`roll` is `steps[0]`'s
     own roll data; `mutations` is every step's mutations, concatenated in step order) for
     backward compatibility; `steps` is the full cascade. Raises `ValueError` for an unknown
@@ -1616,6 +1653,7 @@ def propose(
             }
         ],
         seed=seed,
+        proposals_dir=proposals_dir,
     )
 
 
@@ -1660,7 +1698,14 @@ def _renumber_and_merge(
     return kept_steps + new_steps
 
 
-def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = None) -> dict:
+def reroll(
+    proposal_id: str,
+    step: int,
+    resource: str,
+    *,
+    seed: int | None = None,
+    proposals_dir: pathlib.Path = DEFAULT_PROPOSALS_DIR,
+) -> dict:
     """Spend `resource` (`resolve`, `fortune`, or `bargain`) against staged `step`: compute its
     downstream set (itself and everything depending on it, transitively) from `depends_on`,
     discard exactly that set, and freshly resolve `step` under the resource's own modifier,
@@ -1682,9 +1727,7 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
     """
     if resource not in RESOURCE_MODIFIERS:
         raise ValueError(f"no such reroll resource: {resource}")
-    proposal = _open_proposals.get(proposal_id)
-    if proposal is None or not proposal["open"]:
-        raise ProposalError(f"no open proposal: {proposal_id}")
+    proposal = _read_open_proposal(proposal_id, proposals_dir)
 
     steps = proposal["steps"]
     target_step = next((s for s in steps if s["step_id"] == step), None)
@@ -1764,21 +1807,25 @@ def reroll(proposal_id: str, step: int, resource: str, *, seed: int | None = Non
     )
 
     merged = _renumber_and_merge(kept_steps, new_steps, step)
-    proposal["steps"] = merged
-    proposal["mutations"] = [mutation for s in merged for mutation in s["mutations"]]
+    merged_mutations = [mutation for s in merged for mutation in s["mutations"]]
+    _write_open_proposal(
+        proposal_id, {"steps": merged, "mutations": merged_mutations}, proposals_dir
+    )
     return {
         "proposal_id": proposal_id,
         "roll": merged[0]["roll"],
-        "mutations": proposal["mutations"],
+        "mutations": merged_mutations,
         "steps": merged,
     }
 
 
-def _pop_open_proposal(proposal_id: str) -> dict:
-    proposal = _open_proposals.get(proposal_id)
-    if proposal is None or not proposal["open"]:
-        raise ProposalError(f"no open proposal: {proposal_id}")
-    proposal["open"] = False
+def _pop_open_proposal(proposal_id: str, proposals_dir: pathlib.Path) -> dict:
+    """Read `proposal_id`'s staged contents and invalidate it. Deleting the file *is*
+    invalidating the id (specs/159-persist-open-proposals Decision 1) -- there is no separate
+    `open` flag to keep in sync with the file's own existence, so a second `commit`/`discard`
+    against the same id raises exactly as before (the file is simply gone)."""
+    proposal = _read_open_proposal(proposal_id, proposals_dir)
+    _proposal_path(proposal_id, proposals_dir).unlink()
     return proposal
 
 
@@ -1902,7 +1949,7 @@ def _validate_proposal(mutations: list[dict], entities: dict[str, dict]) -> None
         _check_tracker_bounds(entity_id, mutated_state)
 
 
-def commit(proposal_id: str) -> dict:
+def commit(proposal_id: str, *, proposals_dir: pathlib.Path = DEFAULT_PROPOSALS_DIR) -> dict:
     """Apply exactly `proposal_id`'s staged mutations to state, atomically per entity, and
     invalidate it.
 
@@ -1915,9 +1962,11 @@ def commit(proposal_id: str) -> dict:
 
     Raises `ProposalError` if `proposal_id` does not resolve to a currently-open proposal
     (already committed, already discarded, or never issued) -- never a silent no-op
-    (spec.md User Story 3).
+    (spec.md User Story 3). `proposal_id` may have been staged by a wholly separate process
+    (specs/159-persist-open-proposals) -- resolved via `proposals_dir` on disk, never an
+    in-process store.
     """
-    proposal = _pop_open_proposal(proposal_id)
+    proposal = _pop_open_proposal(proposal_id, proposals_dir)
     mutations = proposal["mutations"]
     if mutations:
         chronicle_entities = _load_chronicle_entities(pathlib.Path(mutations[0]["entity"]))
@@ -1934,10 +1983,11 @@ def commit(proposal_id: str) -> dict:
     return {"proposal_id": proposal_id, "mutations": mutations}
 
 
-def discard(proposal_id: str) -> dict:
-    """Invalidate `proposal_id` without writing anything.
+def discard(proposal_id: str, *, proposals_dir: pathlib.Path = DEFAULT_PROPOSALS_DIR) -> dict:
+    """Invalidate `proposal_id` without writing anything to any entity file. `proposal_id` may
+    have been staged by a wholly separate process (specs/159-persist-open-proposals).
 
     Raises `ProposalError` if `proposal_id` does not resolve to a currently-open proposal.
     """
-    _pop_open_proposal(proposal_id)
+    _pop_open_proposal(proposal_id, proposals_dir)
     return {"proposal_id": proposal_id}
