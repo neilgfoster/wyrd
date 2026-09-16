@@ -498,6 +498,61 @@ class ValidateSourceTest(unittest.TestCase):
         self.assertIn("author", result["error"])
 
 
+def _valid_generated_source(**overrides) -> dict:
+    base = {"generated": True, "mode": "live-play", "consumed": ["the-ledger"]}
+    base.update(overrides)
+    return base
+
+
+class ValidateGeneratedSourceTest(unittest.TestCase):
+    """specs/164-commit-back-path-for-generated-content FR-002/T004."""
+
+    def test_accepts_well_formed_generated_entry(self):
+        result = entity.validate_source(_valid_generated_source(), status="drafted")
+        self.assertEqual(result, {"valid": True})
+
+    def test_rejects_missing_mode(self):
+        source = _valid_generated_source()
+        del source["mode"]
+        result = entity.validate_source(source, status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("mode", result["error"])
+
+    def test_rejects_missing_consumed(self):
+        source = _valid_generated_source()
+        del source["consumed"]
+        result = entity.validate_source(source, status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("consumed", result["error"])
+
+    def test_rejects_invalid_mode_value(self):
+        source = _valid_generated_source(mode="dreamed-up")
+        result = entity.validate_source(source, status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("mode", result["error"])
+
+    def test_rejects_non_list_consumed(self):
+        source = _valid_generated_source(consumed="the-ledger")
+        result = entity.validate_source(source, status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("consumed", result["error"])
+
+    def test_rejects_unexpected_field(self):
+        source = _valid_generated_source(pages="12-14")
+        result = entity.validate_source(source, status="drafted")
+        self.assertFalse(result["valid"])
+        self.assertIn("pages", result["error"])
+
+    def test_pages_never_required_for_generated_entry(self):
+        # Unlike the authored shape, a generated entry never requires 'pages', at any status.
+        result = entity.validate_source(_valid_generated_source(), status="complete")
+        self.assertEqual(result, {"valid": True})
+
+    def test_authored_shape_tests_still_pass_unchanged(self):
+        # Sanity check: the additive change does not alter the pre-existing authored-shape gate.
+        self.assertEqual(entity.validate_source(_valid_source(), status="stub"), {"valid": True})
+
+
 def _sufficient_stub(**overrides) -> dict:
     base = _minimal("beat")
     base.update(tags=["combat", "travel"], sources=[_valid_source()])
