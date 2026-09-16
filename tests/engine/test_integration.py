@@ -21,6 +21,7 @@ earlier step in this same test, not by a second, independent fixture.
 
 from __future__ import annotations
 
+import os
 import pathlib
 import sys
 import tempfile
@@ -86,7 +87,12 @@ JOURNEY_HAZARD_SEED = 1
 
 class EndToEndSequenceTest(unittest.TestCase):
     def setUp(self):
+        # `resolution.propose`/`commit`/`discard` now stage an open proposal under a
+        # cwd-relative `log/proposals/` directory by default (specs/159-persist-open-proposals)
+        # -- chdir into this test's own tmpdir so that lands there too.
         self._tmp = tempfile.TemporaryDirectory()
+        self._cwd = pathlib.Path.cwd()
+        os.chdir(self._tmp.name)
         self.root = pathlib.Path(self._tmp.name)
         self.pc_path = self.root / "aria.md"
         self.attacker_path = self.root / "attacker.md"
@@ -96,6 +102,7 @@ class EndToEndSequenceTest(unittest.TestCase):
         self.chronicle_path = self.root / "chronicle.yaml"
 
     def tearDown(self):
+        os.chdir(self._cwd)
         self._tmp.cleanup()
 
     def load_pc(self):

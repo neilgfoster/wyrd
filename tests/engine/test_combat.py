@@ -6,12 +6,36 @@ stdlib unittest, no pytest (docs/design/27-tooling.md section 6).
 from __future__ import annotations
 
 import inspect
+import os
 import pathlib
 import sys
 import tempfile
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
+
+_module_tmp: tempfile.TemporaryDirectory | None = None
+_module_original_cwd: str | None = None
+
+
+def setUpModule():
+    """A handful of this module's tests call `resolution.propose` directly, which now stages an
+    open proposal under a cwd-relative `log/proposals/` directory by default
+    (specs/159-persist-open-proposals). Chdir into a module-scoped tmpdir for the whole module,
+    same as test_resolution.py, rather than touching each of those test classes individually."""
+    global _module_tmp, _module_original_cwd
+    _module_tmp = tempfile.TemporaryDirectory()
+    _module_original_cwd = os.getcwd()
+    os.chdir(_module_tmp.name)
+
+
+def tearDownModule():
+    global _module_tmp, _module_original_cwd
+    os.chdir(_module_original_cwd)
+    _module_tmp.cleanup()
+    _module_tmp = None
+    _module_original_cwd = None
+
 
 from wyrd import character, combat, resolution, state  # noqa: E402
 

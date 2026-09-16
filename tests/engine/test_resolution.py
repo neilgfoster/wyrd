@@ -6,6 +6,8 @@ stdlib unittest, no pytest (docs/design/27-tooling.md section 6).
 from __future__ import annotations
 
 import inspect
+import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -15,6 +17,33 @@ import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "engine"))
 
 from wyrd import character, resolution, rules  # noqa: E402
+
+_module_tmp: tempfile.TemporaryDirectory | None = None
+_module_original_cwd: str | None = None
+
+
+def setUpModule():
+    """`propose`/`commit`/`discard`/`reroll` now stage an open proposal to a cwd-relative
+    `log/proposals/` directory by default (specs/159-persist-open-proposals) -- exactly what a
+    real CLI invocation, run with cwd set to the chronicle directory, needs. None of this
+    module's own tests set an explicit `proposals_dir`, so without this, every proposal this
+    file's tests stage would land under wherever the test runner's own cwd happens to be (this
+    repo's root, in practice) rather than each test's own isolated tmpdir. Chdir into a
+    module-scoped tmpdir once, for the whole module, rather than touching every one of this
+    file's many test classes individually."""
+    global _module_tmp, _module_original_cwd
+    _module_tmp = tempfile.TemporaryDirectory()
+    _module_original_cwd = os.getcwd()
+    os.chdir(_module_tmp.name)
+
+
+def tearDownModule():
+    global _module_tmp, _module_original_cwd
+    os.chdir(_module_original_cwd)
+    _module_tmp.cleanup()
+    _module_tmp = None
+    _module_original_cwd = None
+
 
 SENNA = {
     "id": "senna-vask",
@@ -2409,13 +2438,14 @@ class PassiveValidationCommitTest(ResolutionTestBase):
 
     def _stage(self, mutations: list[dict]) -> str:
         """Register a synthetic proposal directly, the way `resolution._stage_requests` would,
-        bypassing `propose()` so a specific passive violation can be constructed precisely."""
-        proposal_id = f"p-test-{next(resolution._proposal_ids)}"
-        resolution._open_proposals[proposal_id] = {
-            "steps": [],
-            "mutations": mutations,
-            "open": True,
-        }
+        bypassing `propose()` so a specific passive violation can be constructed precisely.
+        Proposals are file-backed (specs/159-persist-open-proposals), so this writes one
+        directly via the same helper `propose_batch` itself uses, rather than poking an
+        in-process dict that no longer exists."""
+        proposal_id = resolution._new_proposal_id()
+        resolution._write_open_proposal(
+            proposal_id, {"steps": [], "mutations": mutations}, resolution.DEFAULT_PROPOSALS_DIR
+        )
         return proposal_id
 
     def test_fortune_above_fate_max_is_rejected_and_nothing_is_written(self):
@@ -2567,6 +2597,83 @@ class IsSpentTest(unittest.TestCase):
             resolution.commit(result["proposal_id"])
             frontmatter, _ = character.load(path)
             self.assertNotIn("spent", frontmatter)
+
+
+class CrossProcessProposalPersistenceTest(unittest.TestCase):
+    """specs/159-persist-open-proposals: a proposal staged by one `python3 -m wyrd.client`
+    invocation must be visible to a `commit`/`discard` run as a genuinely separate later
+    invocation -- the exact class of bug that shipped unnoticed, since every other propose/
+    commit/discard/reroll test in this file (and test_client.py's in-process `client.main()`
+    calls) runs both halves in the same Python process, which happened to work regardless of
+    whether persistence was real. This test spawns two actual OS processes via `subprocess.run`."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.cwd = pathlib.Path(self._tmp.name)
+        self.path = self.cwd / "senna-vask.md"
+        character.save(dict(SENNA), "", self.path)
+        self._engine_dir = str(pathlib.Path(__file__).resolve().parents[2] / "engine")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _run_cli(self, argv: list[str]) -> dict:
+        result = subprocess.run(
+            [sys.executable, "-m", "wyrd.client", *argv],
+            cwd=self.cwd,
+            env={"PYTHONPATH": self._engine_dir, "PATH": os.environ.get("PATH", "")},
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return json.loads(result.stdout)
+
+    def test_propose_then_commit_as_separate_processes(self):
+        proposed = self._run_cli(
+            [
+                "propose",
+                "--actor",
+                str(self.path),
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "moderate",
+                "--seed",
+                "1",
+            ]
+        )
+        committed = self._run_cli(["commit", proposed["proposal_id"]])
+        self.assertEqual(committed["mutations"], proposed["mutations"])
+        # The proposal file is gone once committed -- a second commit sees no open proposal,
+        # exactly as the in-process behaviour already guaranteed (SC-003). client.py reports
+        # this as a structured {"error": ...} at exit 0, not a nonzero exit (its own convention
+        # for every ProposalError/ValueError/StateError -- see client.py's own except clauses).
+        second_commit = self._run_cli(["commit", proposed["proposal_id"]])
+        self.assertIn("error", second_commit)
+        self.assertIn(proposed["proposal_id"], second_commit["error"]["reason"])
+
+    def test_propose_then_discard_as_separate_processes(self):
+        proposed = self._run_cli(
+            [
+                "propose",
+                "--actor",
+                str(self.path),
+                "--mechanic",
+                "exposure",
+                "--skill",
+                "bargaining",
+                "--tier",
+                "moderate",
+                "--seed",
+                "1",
+            ]
+        )
+        discarded = self._run_cli(["discard", proposed["proposal_id"]])
+        self.assertEqual(discarded["proposal_id"], proposed["proposal_id"])
+        frontmatter, _ = character.load(self.path)
+        self.assertEqual(frontmatter["taint"], SENNA["taint"])
 
 
 if __name__ == "__main__":

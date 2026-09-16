@@ -5,6 +5,7 @@ stdlib unittest, no pytest (docs/design/27-tooling.md section 6). Run with PYTHO
 
 from __future__ import annotations
 
+import os
 import pathlib
 import sys
 import tempfile
@@ -142,11 +143,17 @@ class RallyIntegrationTest(unittest.TestCase):
     """Integration with wyrd.rally.apply_rally and a real proposal from wyrd.resolution."""
 
     def setUp(self):
+        # `resolution.propose`/`discard` now stage/find an open proposal under a cwd-relative
+        # `log/proposals/` directory by default (specs/159-persist-open-proposals) -- chdir into
+        # this test's own tmpdir so that lands there too.
         self._tmp = tempfile.TemporaryDirectory()
+        self._cwd = pathlib.Path.cwd()
+        os.chdir(self._tmp.name)
         self.path = pathlib.Path(self._tmp.name) / "senna-vask.md"
         character.save(dict(SENNA), "", self.path)
 
     def tearDown(self):
+        os.chdir(self._cwd)
         self._tmp.cleanup()
 
     def test_apply_rally_discards_a_surviving_open_proposal(self):

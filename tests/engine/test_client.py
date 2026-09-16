@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
 import pathlib
 import sys
 import tempfile
@@ -63,13 +64,9 @@ class RollCliTest(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self._cwd = pathlib.Path.cwd()
         self._path = pathlib.Path(self._tmp.name)
-        import os
-
         os.chdir(self._path)
 
     def tearDown(self):
-        import os
-
         os.chdir(self._cwd)
         self._tmp.cleanup()
 
@@ -465,7 +462,13 @@ class CreateCharacterCliTest(unittest.TestCase):
 
 class ProposeCommitDiscardCliTest(unittest.TestCase):
     def setUp(self):
+        # `propose`/`commit`/`discard` now stage an open proposal under a cwd-relative
+        # `log/proposals/` directory by default (specs/159-persist-open-proposals) -- chdir into
+        # this test's own tmpdir so that lands there too, not in whatever directory the test
+        # runner happened to be invoked from.
         self._tmp = tempfile.TemporaryDirectory()
+        self._cwd = pathlib.Path.cwd()
+        os.chdir(self._tmp.name)
         self.path = str(pathlib.Path(self._tmp.name) / "senna.md")
         exit_code, _ = _run(
             [
@@ -479,6 +482,7 @@ class ProposeCommitDiscardCliTest(unittest.TestCase):
         self.assertEqual(exit_code, 0)
 
     def tearDown(self):
+        os.chdir(self._cwd)
         self._tmp.cleanup()
 
     def test_describe_by_name(self):
@@ -575,7 +579,10 @@ class ProposeCommitDiscardCliTest(unittest.TestCase):
 
 class RerollCliTest(unittest.TestCase):
     def setUp(self):
+        # See ProposeCommitDiscardCliTest's setUp for why this test also needs an isolated cwd.
         self._tmp = tempfile.TemporaryDirectory()
+        self._cwd = pathlib.Path.cwd()
+        os.chdir(self._tmp.name)
         self.path = str(pathlib.Path(self._tmp.name) / "senna.md")
         exit_code, _ = _run(
             [
@@ -592,6 +599,7 @@ class RerollCliTest(unittest.TestCase):
         self.assertEqual(exit_code, 0)
 
     def tearDown(self):
+        os.chdir(self._cwd)
         self._tmp.cleanup()
 
     def test_describe_by_name(self):
