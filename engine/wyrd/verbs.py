@@ -19,6 +19,7 @@ from wyrd import (
     corpus_find,
     creation,
     economy,
+    entity,
     loadtier,
     overrides,
     resolution,
@@ -494,14 +495,28 @@ def find_table(
 def load_effective_entities(chronicle_dir: pathlib.Path) -> dict[str, dict]:
     """The chronicle's full effective entity set, keyed by id (docs/design/22-state.md):
     every `setting/*.md` entity resolved against its `overlay/*.md` counterpart, plus every
-    `entities/*.md` file the chronicle invented directly.
+    `entities/*.md` file the chronicle invented directly, plus `pc.yaml` (the player character)
+    when the chronicle has one.
 
     Reuses `wyrd.resolution._load_chronicle_entities` -- the same effective-entity-set
     assembly `commit`'s own passive validation already performs -- rather than a second copy
     of the same glob-and-resolve logic (specs/153-chronicle-cli-verbs/research.md).
+
+    `pc.yaml` is deliberately not part of that glob: it lives at the chronicle root as its own
+    file, not under `entities/`, per `wyrd-chronicle-template`'s deployed layout and the
+    already-merged `/wyrd-bootstrap` skill (specs/156-wyrd-bootstrap-skill) -- confirmed against
+    docs/design/23-chronicle-bootstrap.md and docs/design/02-architecture.md before assuming
+    either shape (#415). Loaded here, once, via the same single-file `entity.load` every other
+    entity file uses, so `session-context`/`get`/`find`/`party` all see the player character
+    consistently instead of `session-context` special-casing it alone.
     """
     chronicle_dir = pathlib.Path(chronicle_dir)
-    return resolution._load_chronicle_entities(chronicle_dir / "chronicle.yaml")
+    entities = resolution._load_chronicle_entities(chronicle_dir / "chronicle.yaml")
+    pc_path = chronicle_dir / "pc.yaml"
+    if pc_path.exists():
+        frontmatter = entity.load(pc_path)
+        entities[frontmatter["id"]] = frontmatter
+    return entities
 
 
 def find_entities(

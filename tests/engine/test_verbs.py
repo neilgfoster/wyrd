@@ -97,6 +97,53 @@ class LoadEffectiveEntitiesTest(unittest.TestCase):
         self.assertEqual(entities["place-1"]["type"], "place")
 
 
+def _write_pc_yaml(chronicle_dir: pathlib.Path, entity_id: str = "pc-1", **overrides) -> None:
+    """A real chronicle's `pc.yaml` -- a chronicle-root file, not one under `entities/`, per
+    `wyrd-chronicle-template`'s deployed layout and specs/156-wyrd-bootstrap-skill (#415)."""
+    frontmatter = {
+        "id": entity_id,
+        "type": "character",
+        "role": "player",
+        "name": "Test Character",
+        "setting": "example-setting",
+        "status": "drafted",
+        **overrides,
+    }
+    lines = [f"{key}: {value}" for key, value in frontmatter.items()]
+    _write_entity(chronicle_dir / "pc.yaml", lines)
+
+
+class LoadEffectiveEntitiesPcYamlTest(unittest.TestCase):
+    """#415: session-context/get/find/party never discovered pc.yaml -- player_character was
+    always null against a real chronicle. `pc.yaml` lives at the chronicle root, not under
+    `entities/` (docs/design/23-chronicle-bootstrap.md, specs/156-wyrd-bootstrap-skill,
+    wyrd-chronicle-template's own README) -- confirmed before assuming session-context's own
+    glob was simply missing a directory."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.chronicle_dir = _make_chronicle_dir(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_pc_yaml_at_root_is_discovered_without_being_mirrored_into_entities(self):
+        _write_pc_yaml(self.chronicle_dir)
+        entities = verbs.load_effective_entities(self.chronicle_dir)
+        self.assertIn("pc-1", entities)
+        self.assertEqual(entities["pc-1"]["role"], "player")
+        self.assertEqual(list((self.chronicle_dir / "entities").iterdir()), [])
+
+    def test_no_pc_yaml_is_not_an_error(self):
+        entities = verbs.load_effective_entities(self.chronicle_dir)
+        self.assertNotIn("pc-1", entities)
+
+    def test_invalid_pc_yaml_raises_state_error(self):
+        _write_entity(self.chronicle_dir / "pc.yaml", ["type: character", "role: player"])
+        with self.assertRaises(state.StateError):
+            verbs.load_effective_entities(self.chronicle_dir)
+
+
 class FindEntitiesTest(unittest.TestCase):
     def test_filters_by_type_only(self):
         entities = {
@@ -171,6 +218,39 @@ class SessionContextVerbTest(unittest.TestCase):
         result = verbs.session_context(self.chronicle_dir)
         self.assertEqual(result["threads"], {})
 
+    def test_player_character_populated_from_pc_yaml_real_layout(self):
+        """#415's own Definition of Done: against a real, unmodified chronicle layout (pc.yaml
+        at the chronicle root, nothing mirrored into entities/), session-context's
+        player_character field is populated -- not null."""
+        _write_pc_yaml(self.chronicle_dir)
+        result = verbs.session_context(self.chronicle_dir)
+        self.assertIsNotNone(result["player_character"])
+        self.assertEqual(result["player_character"]["id"], "pc-1")
+        self.assertEqual(list((self.chronicle_dir / "entities").iterdir()), [])
+
+    def test_player_character_stays_null_without_pc_yaml(self):
+        result = verbs.session_context(self.chronicle_dir)
+        self.assertIsNone(result["player_character"])
+
+    def test_two_role_player_entities_raises(self):
+        """pc.yaml colliding with an entities/*.md file that also declares role: player is a
+        data error this function is not positioned to arbitrate silently, matching
+        loadtier.always_tier's existing multiple-player-character behavior."""
+        _write_pc_yaml(self.chronicle_dir)
+        _write_entity(
+            self.chronicle_dir / "entities" / "pc-2.md",
+            [
+                "id: pc-2",
+                "type: character",
+                "role: player",
+                "name: Stray Duplicate",
+                "setting: example-setting",
+                "status: drafted",
+            ],
+        )
+        with self.assertRaises(ValueError):
+            verbs.session_context(self.chronicle_dir)
+
 
 class GetVerbTest(unittest.TestCase):
     def setUp(self):
@@ -197,6 +277,13 @@ class GetVerbTest(unittest.TestCase):
         with self.assertRaises(state.StateError):
             verbs.get("no-such-id", self.chronicle_dir)
 
+    def test_resolves_player_character_from_pc_yaml(self):
+        """#415 User Story 2: get sees the same entity session-context reports, without pc.yaml
+        being mirrored into entities/."""
+        _write_pc_yaml(self.chronicle_dir)
+        result = verbs.get("pc-1", self.chronicle_dir)
+        self.assertEqual(result["entity"]["role"], "player")
+
 
 class FindVerbTest(unittest.TestCase):
     def setUp(self):
@@ -213,6 +300,12 @@ class FindVerbTest(unittest.TestCase):
     def test_unmatched_combination_is_empty_not_an_error(self):
         result = verbs.find(self.chronicle_dir, type="organisation")
         self.assertEqual(result["results"], {})
+
+    def test_includes_player_character_from_pc_yaml(self):
+        """#415 User Story 2: find --type character sees pc.yaml's entity."""
+        _write_pc_yaml(self.chronicle_dir)
+        result = verbs.find(self.chronicle_dir, type="character")
+        self.assertIn("pc-1", result["results"])
 
 
 class PartyVerbTest(unittest.TestCase):
