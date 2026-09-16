@@ -15,14 +15,20 @@ chronicle/
 ├─ chronicle.yaml     # the only non-entity file: pins, calendar, era, intent
 ├─ engine/            # copied at bootstrap. Read-only.
 ├─ setting/           # copied at bootstrap. Read-only.
-├─ overlay/           # deltas to setting entities — what this chronicle changed
-├─ entities/          # entities this chronicle created
+│  └─ entities/<type>/<id>   # one subdirectory per entity type
+├─ overlay/<type>/<id>       # deltas to setting entities — what this chronicle changed
+├─ entities/<type>/<id>      # entities this chronicle created
 ├─ log/
 └─ recap.md           # regenerated at session close
 ```
 
-An **effective entity** is `setting/<id>` + `overlay/<id>`, or `entities/<id>` if the
-chronicle invented it. Nothing else needs resolving.
+Every entity file, wherever it lives, is nested one level under a subdirectory named for its
+entity type — `setting/entities/character/hallam`, `overlay/character/hallam`,
+`entities/lore/the-caretaker`. A type directory that holds nothing yet still exists as an empty
+placeholder rather than being omitted.
+
+An **effective entity** is `setting/entities/<type>/<id>` + `overlay/<type>/<id>`, or
+`entities/<type>/<id>` if the chronicle invented it. Nothing else needs resolving.
 
 ## Versioning
 

@@ -1844,20 +1844,65 @@ def _find_chronicle_root(any_touched_path: pathlib.Path) -> pathlib.Path | None:
     return None
 
 
+def _looks_like_entity_file(path: pathlib.Path) -> bool:
+    """Whether `path` opens with the `---` frontmatter delimiter `state.parse_entity` requires --
+    cheap enough to check on every glob candidate without duplicating `parse_entity` itself.
+    A file that fails this check is not an entity at all (a README, a stray note); a file that
+    passes but is otherwise malformed still raises through the normal `entity.load` path
+    (specs/170-chronicle-entity-loader-layout: this distinguishes "not an entity" from "a broken
+    entity" -- only the former is silently skipped)."""
+    try:
+        with path.open(encoding="utf-8") as handle:
+            return handle.readline().strip() == "---"
+    except OSError:
+        return False
+
+
+def _entity_paths(
+    directory: pathlib.Path, *, nested_under: str | None = None
+) -> list[pathlib.Path]:
+    """Every entity file `directory` holds, in either supported layout: the flat top-level
+    `*.md` this module has always read (FR-004 back-compat), plus the nested per-type
+    `<type>/*.yaml` a chronicle bootstrap actually produces (FR-001/FR-002) -- rooted at
+    `directory` itself, or at `directory / nested_under` for `setting/`, whose nested entities
+    live under `setting/entities/<type>/` rather than directly under `setting/<type>/`
+    (specs/170-chronicle-entity-loader-layout data-model.md). Filtered to files that actually
+    look like entities (`_looks_like_entity_file`), so a `README.md` sitting at either
+    directory's top level is silently excluded rather than crashing the load (#440)."""
+    flat = sorted(directory.glob("*.md"))
+    nested_root = directory / nested_under if nested_under else directory
+    nested = sorted(nested_root.glob("*/*.yaml"))
+    return [path for path in (*flat, *nested) if _looks_like_entity_file(path)]
+
+
 def _load_chronicle_entities(any_touched_path: pathlib.Path) -> dict[str, dict]:
     """The chronicle's full effective entity set (data-model.md), keyed by id: every
-    `setting/*.md` entity resolved against its `overlay/*.md` counterpart (`entity.resolve_entity`),
-    plus every `entities/*.md` file the chronicle invented directly. Frontmatter only -- bodies
-    are not needed for validation.
+    `setting/entities/<type>/*.yaml` entity resolved against its `overlay/<type>/*.yaml`
+    counterpart (`entity.resolve_entity`), plus every `entities/<type>/*.yaml` file the chronicle
+    invented directly. Frontmatter only -- bodies are not needed for validation.
+
+    Also accepts the previously-supported flat top-level `setting/*.md`, `overlay/*.md`,
+    `entities/*.md` layout, for back-compat with chronicles or fixtures that predate the nested
+    per-type-subdirectory bootstrap (specs/170-chronicle-entity-loader-layout FR-004). Both
+    layouts are read into the same list; a chronicle need not fully migrate to gain the fix.
+
+    A `.gitkeep` placeholder inside an empty type subdirectory never matches `*.yaml`, so it needs
+    no guard. But the flat top-level `*.md` glob kept for back-compat (FR-004) does still catch a
+    plain `setting/README.md`/`overlay/README.md` sitting alongside it -- every real chronicle
+    checked has exactly such a README -- so `_looks_like_entity_file` filters every candidate path
+    down to ones that actually open with the `---` frontmatter delimiter `state.parse_entity`
+    requires, before `entity.load`/`entity.load_set` ever sees them (#440,
+    specs/170-chronicle-entity-loader-layout). A file that opens with `---` but is otherwise
+    malformed still raises normally -- this filters out non-entity files, not broken ones.
 
     Returns `{}` if `any_touched_path` has no discoverable chronicle root -- the passive checks in
     `_validate_proposal` then see only the entities the proposal itself touches."""
     root = _find_chronicle_root(any_touched_path)
     if root is None:
         return {}
-    setting_paths = sorted((root / "setting").glob("*.md"))
-    overlay_paths = sorted((root / "overlay").glob("*.md"))
-    invented_paths = sorted((root / "entities").glob("*.md"))
+    setting_paths = _entity_paths(root / "setting", nested_under="entities")
+    overlay_paths = _entity_paths(root / "overlay")
+    invented_paths = _entity_paths(root / "entities")
 
     setting_entities = entity.load_set(setting_paths)
     overlay_entities = {}
