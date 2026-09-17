@@ -126,6 +126,10 @@ finding only. If a finding cannot be stated without quoting the chronicle's actu
 not belong in this file — it belongs in ordinary session prose instead. A later harvest pass
 mines these entries into engine issues; only the mechanical finding ever travels with it.
 
+The harvest itself is `tools/harvest_friction.py` in the engine repo: it reads one or more
+chronicles' `log/friction.md` files, applies this section's own triage line, and proposes
+correctly-scoped `wyrd` issues for an operator to confirm — nothing is filed automatically.
+
 ## The session loop
 
 ```
