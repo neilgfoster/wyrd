@@ -72,6 +72,60 @@ beat closes and always accept `stop` there.
 **No session ever ends mid-beat.** If the player must stop mid-beat, the GM persists state
 and writes a `pending:` marker naming the unresolved action, so resumption is exact.
 
+## Session friction capture
+
+Play surfaces things design-time review cannot: a mechanic that reads one way in a design
+document and plays another, a table that produces a result that feels wrong even though it was
+followed correctly, a moment the GM has to improvise because nothing covers it. Left to memory,
+that observation is gone by the next session. Capturing it is the GM's job, on the GM's own side
+of the fourth wall, and it must cost no more attention mid-beat than reading a die.
+
+**Where it lives.** Each chronicle repo keeps a running append-only file at `log/friction.md`,
+alongside the session logs already written there
+([`23-chronicle-bootstrap.md`](23-chronicle-bootstrap.md)). Nothing about this file is read
+during play; it exists purely so a later pass can mine it.
+
+**What an entry looks like.** A short Markdown note, appended the moment the friction occurs —
+not deferred to the Rally or session close. Three parts:
+
+- **mechanic** — which rule, table, or design section was involved
+- **what happened** — the reading that surprised the GM, the result that felt wrong, or the gap
+  that forced improvisation
+- **what the GM did** — the ruling made in the moment
+
+```markdown
+- mechanic: opposed test resolution (03-rules.md §1)
+  what happened: a 65% skill against a 40% skill produced a result the GM had not expected
+  what the GM did: played it as written, noted the surprise for review
+```
+
+**What qualifies.** An entry is warranted when at least one holds:
+
+1. a mechanic or table produced a reading in play that a GM following the document as written
+   would not have predicted;
+2. a table or roll produced an outcome that, given the situation, felt wrong even though the
+   mechanic was followed correctly;
+3. the GM had to improvise a ruling because nothing — engine or setting — covered the situation.
+
+Ordinary narrative color never qualifies on its own, however memorable. A player's in-character
+line, a scene description, a companion's flavor reaction: none of these touch a rule, so none
+belong here.
+
+*Qualifying*: "The difficulty table gave a result the GM had not expected for an opposed test
+between a 65% skill and a 40% skill — played as written, noted for review." *Non-qualifying*:
+"The player described their character's coat catching on a nail on the way out the door" — color,
+no rules question, no entry.
+
+**No second person required.** Wyrd's default mode is one player with the GM running the entire
+rest of the party ("The party" below). Nothing here assumes a second
+real participant is present to notice something — the GM (the engine, narrating) is the one who
+notices and records, in every mode of play.
+
+**Nothing narrative crosses the boundary.** An entry names the mechanic and the mechanical
+finding only. If a finding cannot be stated without quoting the chronicle's actual story, it does
+not belong in this file — it belongs in ordinary session prose instead. A later harvest pass
+mines these entries into engine issues; only the mechanical finding ever travels with it.
+
 ## The session loop
 
 ```
